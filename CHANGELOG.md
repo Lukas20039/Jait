@@ -4,6 +4,17 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.924](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.924) — 2026-10-10
+
+- test(e2e): give team chat specs an explicit navigation budget — 21e09215
+- test(gateway): use a temporary project root in the browser surface suite — 43e81f6f
+- fix(web): release the new-turn scroll reserve when a reply finishes — b1e5d4b5
+- fix(web): separate interrupted and failed agent controls — 4a8bd107
+- feat(web): give team chats their own panel with room creation — 4b0722a2
+- feat(gateway): support named team chats with explicit membership — b6a8c313
+
+Give team chats their own panel with named rooms and explicit membership, so a room can be created from the agent grid and reach only its members. Separate interrupted agent runs from genuine failures in the chat controls and release the scroll reserve once a new reply finishes. Keep the browser surface suite isolated in a temporary project root and give the team chat specs an explicit navigation budget.
+
 ## [v0.1.923](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.923) — 2026-10-10
 
 - test(e2e): cover editor panel, terminal cards, and subscription usage — 3752e8d6
