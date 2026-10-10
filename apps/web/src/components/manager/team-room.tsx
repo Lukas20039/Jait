@@ -44,8 +44,10 @@ export function TeamGoalPanel({ roomId, goal }: { roomId: string; goal: NonNulla
   </details>
 }
 
-export function TeamRoomView({ roomId, onBack, embedded = false, initialInput = '', onInputChange, onRuntimeChange }: {
+export function TeamRoomView({ roomId, onBack, embedded = false, initialInput = '', onInputChange, onRuntimeChange, backLabel = 'Back to agents', showBack = true }: {
   roomId: string
+  backLabel?: string
+  showBack?: boolean
   onBack: () => void
   embedded?: boolean
   initialInput?: string
@@ -118,7 +120,7 @@ export function TeamRoomView({ roomId, onBack, embedded = false, initialInput = 
   }
   return <div className="flex min-h-0 flex-1 flex-col">
     {!embedded && <header className="flex shrink-0 items-center gap-3 border-b px-4 py-3">
-      <Button size="icon" variant="ghost" onClick={onBack} aria-label="Back to agents"><ArrowLeft className="h-4 w-4" /></Button>
+      {showBack && <Button size="icon" variant="ghost" onClick={onBack} aria-label={backLabel}><ArrowLeft className="h-4 w-4" /></Button>}
       <TeamAvatar members={snapshot?.members ?? []} runningIds={runningIds} />
       <div className="min-w-0"><h1 className="truncate font-semibold">{snapshot?.room.name ?? 'Team conversation'}</h1>
         <p className="truncate text-xs text-muted-foreground">{snapshot?.members.map(member => member.name).join(', ')}</p></div>

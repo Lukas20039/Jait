@@ -71,5 +71,6 @@ describe('ManagerMode', () => {
     expect(markup).toContain('aria-label="Workspace sidebar"')
     expect(markup).toContain('>Agents</span>')
     expect(markup).toContain('Agents page')
+    expect(markup).toContain('aria-label="Team Chats"')
   })
 })

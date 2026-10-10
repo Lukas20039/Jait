@@ -21,6 +21,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 export const teamChatApi = {
   list: () => request<{ rooms: TeamRoom[] }>('/api/team-rooms'),
+  create: (input: { name: string; memberIds: string[] }) => request<{ room: TeamRoom }>('/api/team-rooms', { method: 'POST', body: JSON.stringify(input) }),
   get: (roomId: string) => request<TeamRoomSnapshot>('/api/team-rooms/' + encodeURIComponent(roomId)),
   post: (roomId: string, input: { content: string; attachments?: TeamRoomMessage["attachments"]; clientKey: string; targetSessionId?: string; recipientIds?: string[]; kind?: TeamMessageKind }) =>
     request<{ message: TeamRoomMessage }>('/api/team-rooms/' + encodeURIComponent(roomId) + '/messages', { method: 'POST', body: JSON.stringify(input) }),

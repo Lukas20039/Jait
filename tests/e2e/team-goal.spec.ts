@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('room goals start collapsed behind one control and persist independently for the session', async ({ page }) => {
+  await page.route('**/api/auth/refresh', route => route.fulfill({ status: 401, json: {} }))
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.route('**/api/team-rooms/*', route => {
     const id = new URL(route.request().url()).pathname.split('/').pop()

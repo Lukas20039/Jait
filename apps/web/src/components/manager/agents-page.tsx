@@ -1,19 +1,14 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TeamRoom } from '@jait/shared'
-import { teamChatApi } from '@/lib/team-chat-api'
-import { TeamRoomView } from './team-room'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { ArrowLeft, Clock3, ExternalLink, ListChecks, Maximize2, Play, MessageSquare, Minimize2, Plus, Settings2, Sparkles, Trash2, UsersRound, Wrench } from 'lucide-react'
+import { ArrowLeft, Clock3, ExternalLink, ListChecks, Maximize2, MessageSquare, Minimize2, Plus, Settings2, Sparkles, Trash2, UsersRound, Wrench } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Conversation, Message, PromptInput } from '@/components/chat'
 import type { PromptSkill, ReferencedFile } from '@/components/chat'
 import { ProviderModelSelector } from '@/components/chat/provider-model-selector'
 import { AgentAvatar } from './agent-avatar'
-import { TeamAvatar } from './team-avatar'
 import { AgentRow } from './agent-row'
-import { agentContinuation } from '@/lib/agent-continuation'
 import { AgentsGraph } from './agents-graph'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -26,7 +21,7 @@ import { userMessageTextFromSegments, type UserMessageSegment } from '@/lib/user
 import { getAuthToken } from '@/lib/auth-token'
 import { getApiUrl } from '@/lib/gateway-url'
 import { jobsApi } from '@/lib/jobs-api'
-import { availableManagers, organizationEntries, teamMembers } from '@/lib/agent-organization'
+import { availableManagers, organizationEntries } from '@/lib/agent-organization'
 import {
   agentTaskPrompt, newPersonaAgentDraft, normalizePersonaAvatar, PERSONA_AGENTS_STORAGE_KEY,
   PERSONA_AVATARS, readPersonaAgentDrafts, type PersonaAgentDraft, type PersonaTask,
@@ -79,32 +74,6 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
   const agentsRef = useRef(agents)
   agentsRef.current = agents
   const [organizationView, setOrganizationView] = useState<'list' | 'graph'>('graph')
-  const [teamRoomId, setTeamRoomId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('teamRoom'))
-  const [teamRooms, setTeamRooms] = useState<TeamRoom[]>([])
-  const initialRoomChosen = useRef(false)
-  const [teamRuntime, setTeamRuntime] = useState<{ roomId: string; runningIds: ReadonlySet<string> } | null>(null)
-  const teamDrafts = useRef(new Map<string, string>())
-  useEffect(() => { teamDrafts.current.clear() }, [token])
-  const openTeamRoom = (id: string | null) => {
-    if (id) { setSelectedId(null); setCreating(null); setChatFullscreen(false) }
-    setTeamRoomId(id)
-    const url = new URL(window.location.href)
-    if (id) url.searchParams.set('teamRoom', id)
-    else url.searchParams.delete('teamRoom')
-    window.history.replaceState(window.history.state, '', url)
-  }
-  useEffect(() => {
-    let active = true
-    teamChatApi.list().then(result => {
-      if (!active) return
-      setTeamRooms(result.rooms)
-      if (!initialRoomChosen.current) {
-        initialRoomChosen.current = true
-        if (window.innerWidth >= 640 && !selectedId) setTeamRoomId(id => id ?? result.rooms[0]?.id ?? null)
-      }
-    }).catch(() => {})
-    return () => { active = false }
-  }, [agents.map(agent => agent.id).join(",")])
   const [loading, setLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
@@ -119,7 +88,6 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
     } catch { return 'chat' }
   })
   const [busy, setBusy] = useState(false)
-  const [resuming, setResuming] = useState(false)
   const resumePending = useRef(new Set<string>())
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleteName, setDeleteName] = useState('')
@@ -251,24 +219,6 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
       await agentsApi.resumeThread(threadId)
     } finally { resumePending.current.delete(threadId); onRefreshThreads() }
   }
-  const interruptedAgents = agents.flatMap(agent => {
-    const thread = agentContinuation(agent, threads)
-    return thread ? [{ agent, thread }] : []
-  })
-  const resumeInterrupted = async () => {
-    setResuming(true)
-    const failures: string[] = []
-    try {
-      await saveQueue.current
-      for (const { agent, thread } of interruptedAgents) {
-        try { await resumeWork(thread.id) }
-        catch (error) { failures.push(`${agent.name}: ${error instanceof Error ? error.message : 'Could not resume'}`) }
-      }
-      if (failures.length) toast.error(failures.join('\n'))
-      else toast.success('Interrupted agents continued')
-    } finally { setResuming(false) }
-  }
-
   const save = (agent: PersonaAgentDraft) => {
     setAgents((existing) => existing.map((item) => item.id === agent.id ? agent : item))
     saveQueue.current = saveQueue.current.catch(() => {}).then(async () => { await agentsApi.savePersonaAgent(agent) })
@@ -456,31 +406,22 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
       <h1 className="flex items-center gap-2 text-base font-semibold"><UsersRound className="h-4 w-4 text-muted-foreground" />Agents</h1>
       <span className="hidden text-xs text-muted-foreground sm:inline">{agents.length} people</span>
       <div className="ml-auto flex items-center gap-1">
-        <Button size="sm" variant={organizationView === 'graph' ? 'secondary' : 'ghost'} aria-pressed={organizationView === 'graph'} onClick={() => { setOrganizationView('graph'); if (window.innerWidth < 640) openTeamRoom(null) }}>Graph</Button>
-        <Button size="sm" variant={organizationView === 'list' ? 'secondary' : 'ghost'} aria-pressed={organizationView === 'list'} onClick={() => { setOrganizationView('list'); if (window.innerWidth < 640) openTeamRoom(null) }}>List</Button>
-        {teamRooms.length > 0 && <Button size="sm" variant={teamRoomId ? 'secondary' : 'ghost'} aria-expanded={!!teamRoomId} aria-controls="agent-group-chats" onClick={() => { setSelectedId(null); setCreating(null); openTeamRoom(teamRoomId ? null : teamRooms[0].id) }}><MessageSquare className="mr-1 h-4 w-4" /><span className="hidden sm:inline">Group chats</span><span className="sm:hidden">Chats</span></Button>}
-        <Button size="sm" className={window.jaitDesktop ? 'mr-36' : undefined} onClick={() => { openTeamRoom(null); setCreating({ ...newPersonaAgentDraft(), skillIds: availableSkills.map((skill) => skill.id), usesAllSkills: true }) }}><Plus className="h-4 w-4 sm:mr-1" /><span className="sr-only sm:not-sr-only">New agent</span></Button>
+        <Button size="sm" variant={organizationView === 'graph' ? 'secondary' : 'ghost'} aria-pressed={organizationView === 'graph'} onClick={() => { setOrganizationView('graph');  }}>Graph</Button>
+        <Button size="sm" variant={organizationView === 'list' ? 'secondary' : 'ghost'} aria-pressed={organizationView === 'list'} onClick={() => { setOrganizationView('list');  }}>List</Button>
+
+        <Button size="sm" className={window.jaitDesktop ? 'mr-36' : undefined} onClick={() => { setCreating({ ...newPersonaAgentDraft(), skillIds: availableSkills.map((skill) => skill.id), usesAllSkills: true }) }}><Plus className="h-4 w-4 sm:mr-1" /><span className="sr-only sm:not-sr-only">New agent</span></Button>
       </div>
     </header>
     <div className="relative flex min-h-0 flex-1">
     <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${current && !chatFullscreen ? "sm:mr-[min(560px,50%)]" : ""}`}>
       <div className="flex min-h-0 flex-1 flex-col">
-        {interruptedAgents.length > 0 && <div className="flex shrink-0 flex-wrap items-center gap-3 border-b px-4 py-2" role="status">
-          <p className="flex-1 text-xs text-muted-foreground">{interruptedAgents.length} agent{interruptedAgents.length === 1 ? '' : 's'} interrupted. Choose a provider/model, then press Play to continue saved work.</p>
-          <Button size="sm" variant="outline" disabled={resuming} onClick={() => void resumeInterrupted()}><Play className="mr-1 h-3.5 w-3.5" />{resuming ? 'Continuing…' : 'Resume interrupted agents'}</Button>
-        </div>}
         {loading && <p className="mt-8 text-center text-sm text-muted-foreground">Loading agents…</p>}
         {!loading && agents.length === 0 && <p className="mt-12 text-center text-sm text-muted-foreground">Create an agent to start a conversation or schedule work.</p>}
         <div className="flex min-h-0 min-w-0 flex-1">
-        {agents.length > 0 && <div className={`${teamRoomId ? 'hidden sm:flex' : 'flex'} min-h-0 min-w-0 flex-1 flex-col`}>{organizationView === 'graph' ? <AgentsGraph onResume={resumeWork} resumeBusy={resuming} agents={agents} threads={threads} selectedId={selectedId} onRefresh={onRefreshThreads} onSave={saveProvider} onOpen={id => { openTeamRoom(null); setSelectedId(id); setCreating(null); setConversationThreadId(null); setTab('chat') }} onChooseTask={id => { openTeamRoom(null); setSelectedId(id); setCreating(null); setConversationThreadId(null); setTab('runs') }} /> : <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-4">{organizationEntries(agents).map(({ agent, depth }) => {
-          return <AgentRow onResume={resumeWork} resumeBusy={resuming} key={agent.id} agent={agent} depth={depth} threads={threads} onSaveProvider={(provider, model) => saveProvider(agent.id, provider, model)} onOpen={() => { openTeamRoom(null); setSelectedId(agent.id); setConversationThreadId(null); setTab('chat') }} onChooseTask={() => { openTeamRoom(null); setSelectedId(agent.id); setConversationThreadId(null); setTab('runs') }} onRefresh={onRefreshThreads} />
+        {agents.length > 0 && <div className={'flex min-h-0 min-w-0 flex-1 flex-col'}>{organizationView === 'graph' ? <AgentsGraph onResume={resumeWork} agents={agents} threads={threads} selectedId={selectedId} onRefresh={onRefreshThreads} onSave={saveProvider} onOpen={id => { setSelectedId(id); setCreating(null); setConversationThreadId(null); setTab('chat') }} onChooseTask={id => { setSelectedId(id); setCreating(null); setConversationThreadId(null); setTab('runs') }} /> : <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-4">{organizationEntries(agents).map(({ agent, depth }) => {
+          return <AgentRow onResume={resumeWork} key={agent.id} agent={agent} depth={depth} threads={threads} onSaveProvider={(provider, model) => saveProvider(agent.id, provider, model)} onOpen={() => { setSelectedId(agent.id); setConversationThreadId(null); setTab('chat') }} onChooseTask={() => { setSelectedId(agent.id); setConversationThreadId(null); setTab('runs') }} onRefresh={onRefreshThreads} />
         })}</div>}</div>}
-        {teamRoomId && <aside id="agent-group-chats" aria-label="Group chats" className="flex min-h-0 w-full shrink-0 flex-col border-l bg-background sm:w-[42%] sm:min-w-[320px] sm:max-w-[480px]">
-          <nav className="flex shrink-0 gap-1 overflow-x-auto border-b px-2 py-1" aria-label="Team conversations">
-            {teamRooms.map(room => <Button key={room.id} size="sm" variant={room.id === teamRoomId ? 'secondary' : 'ghost'} aria-label={room.name} aria-pressed={room.id === teamRoomId} className="shrink-0 gap-2" onClick={() => openTeamRoom(room.id)}><TeamAvatar members={teamMembers(room.rootAgentId, agents)} runningIds={room.id === teamRoomId && room.id === teamRuntime?.roomId ? teamRuntime.runningIds : undefined} size={24} /><span className="max-w-48 truncate">{room.name}</span></Button>)}
-          </nav>
-          <TeamRoomView key={teamRoomId} onRuntimeChange={setTeamRuntime} embedded roomId={teamRoomId} onBack={() => openTeamRoom(null)} initialInput={teamDrafts.current.get(teamRoomId) ?? ''} onInputChange={text => teamDrafts.current.set(teamRoomId, text)} />
-        </aside>}
+
         </div>
       </div>
     </div>
