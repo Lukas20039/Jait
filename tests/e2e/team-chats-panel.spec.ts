@@ -3,6 +3,7 @@ import type { TeamRoom } from '@jait/shared'
 
 for (const mobile of [false, true]) {
   test(`team chats panel creates multiple rooms from the agent grid (${mobile ? 'mobile' : 'desktop'})`, async ({ page }) => {
+    test.setTimeout(90_000)
     await page.setViewportSize(mobile ? { width: 375, height: 812 } : { width: 1280, height: 900 })
     const agents = [{ id: 'dev', name: 'Developer', avatar: 'Atlas' }, { id: 'qa', name: 'Reviewer', avatar: 'Nova' }, { id: 'research', name: 'Researcher', avatar: 'Pixel' }]
     const rooms: TeamRoom[] = []

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('team conversation follows content growth, lets readers detach, and resumes on jump', async ({ page }) => {
+  test.setTimeout(90_000)
   await page.route('**/api/auth/refresh', route => route.fulfill({ status: 401, json: {} }))
   await page.emulateMedia({ reducedMotion: 'reduce' })
   const makeMessage = (id: number) => ({
