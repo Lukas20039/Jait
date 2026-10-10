@@ -37,6 +37,43 @@ describe("persistent team coordination", () => {
   afterEach(() => { service.close(); if (!databaseClosed) opened.sqlite.close(); });
   const post = (content: string, key: string, recipientIds?: string[]) => service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
 
+  it("persists multiple chats with independent selected membership and histories", () => {
+    const first = service.createRoom(owner, { name: "Implementation", memberIds: ["Developer", "Research"] });
+    const second = service.createRoom(owner, { name: "Review", memberIds: ["Developer", "QA"] });
+    expect(first.id).not.toBe(second.id);
+    expect(service.list(owner).map(room => room.id)).toEqual(expect.arrayContaining([room.id, first.id, second.id]));
+    expect(service.ensureRoom(owner, "Developer").id).toBe(room.id);
+    expect(service.roomMembers(owner, first.id).map(agent => agent.id).sort()).toEqual(["Developer", "Research"]);
+    service.post(owner, first.id, { content: "Investigate", clientKey: "same-key", sender: human, recipientIds: [] });
+    service.post(owner, second.id, { content: "Review", clientKey: "same-key", sender: human, recipientIds: [] });
+    expect(service.history(owner, first.id).map(message => message.content)).toEqual(["Investigate"]);
+    expect(service.history(owner, second.id).map(message => message.content)).toEqual(["Review"]);
+    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
+    expect(service.roomMembers(owner, first.id).map(agent => agent.id)).toContain("Research");
+    expect(service.roomMembers(owner, second.id).map(agent => agent.id)).not.toContain("Research");
+    const reopened = new TeamChatService(opened.db, sessions, profiles);
+    expect(reopened.get(owner, first.id).memberIds).toEqual(["Developer", "Research"]);
+    reopened.close();
+  });
+
+  it("rejects foreign members and handoffs outside a room's selected membership", async () => {
+    profiles.savePersonaAgent("other", profile("Foreign"));
+    expect(() => service.createRoom(owner, { name: "", memberIds: ["QA"] })).toThrow();
+    expect(() => service.createRoom(owner, { name: "Empty", memberIds: [] })).toThrow();
+    expect(() => service.createRoom(owner, { name: "Foreign", memberIds: ["Foreign"] })).toThrow();
+    const selected = service.createRoom(owner, { name: "Selected", memberIds: ["Developer", "Research", "Research"] });
+    expect(selected.memberIds).toEqual(["Developer", "Research"]);
+    expect(() => service.get("other", selected.id)).toThrow();
+    expect(service.list("other")).toEqual([]);
+    expect(() => service.post(owner, selected.id, { content: "QA review", clientKey: "outside", sender: human, recipientIds: ["QA"] })).toThrow(/members/);
+    expect(() => service.post(owner, selected.id, { content: "Joining", clientKey: "sender", sender: sender("Scrum") })).toThrow(/member/);
+    const routed = await service.postRouted(owner, selected.id, { content: "Research this", clientKey: "routing", sender: human });
+    expect(routed.recipientIds).toEqual(["Research"]);
+    const delivery = service.deliveries(owner, selected.id)[0]!;
+    expect(service.context(owner, delivery.sessionId)).not.toContain("Your manager: Scrum");
+    expect(service.context(owner, delivery.sessionId)).toContain(selected.id);
+  });
+
   it("runs assignments in persona threads without creating ordinary chats", () => {
     post("Implement ticket", "thread-first", ["Developer"]);
     const delivery = service.deliveries(owner, room.id)[0]!;

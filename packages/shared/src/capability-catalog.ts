@@ -34,7 +34,7 @@ export const JAIT_PAGES = {
     description: "Manage persistent Jait people and teams: profiles, personas, roles, reporting lines, providers, models, repositories, skills, and tool preferences. These are saved agents from the Agents page, distinct from temporary execution workers.",
     examples: ["Set up a Scrum team", "Create an agent", "Give the developer a manager", "Pause an agent", "Assign skills to my team"],
     features: [{ id: "profiles", description: "List, inspect, create, update, pause, and delete persistent agent profiles and configure reporting relationships.", toolRefs: ["agent.profiles.inspect", "agent.profiles"] },
-      { id: "team_chat", description: "Persistent hierarchy team rooms with independent agent work chats, addressed handoffs, user participation, and neutral source-chat relays.", toolRefs: ["team.chat"] },
+      { id: "team_chat", description: "Named team chats with selected agent membership, a room list and avatar grid on the Agents page, existing hierarchy rooms, addressed handoffs, user participation, and neutral source-chat relays.", toolRefs: ["team.chat"] },
       { id: "work", description: "Run work using a saved personaAgentId; use cron tools for executable schedules. Profile schedules and tasks describe preferences; saving a profile alone does not launch work.", toolRefs: ["thread.control", "cron.add", "cron.update"] }],
     toolPrefixes: ["agent.profiles", "team."],
   },

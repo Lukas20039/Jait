@@ -831,7 +831,7 @@ export const teamRooms = sqliteTable("team_rooms", {
   userId: text("user_id").notNull(),
   rootAgentId: text("root_agent_id").notNull(),
   data: text("data").notNull(),
-}, table => [uniqueIndex("idx_team_room_root").on(table.userId, table.rootAgentId)]);
+}, table => [index("idx_team_room_root").on(table.userId, table.rootAgentId)]);
 export const teamMessages = sqliteTable("team_room_messages", {
   id: text("id").primaryKey(),
   roomId: text("room_id").notNull(),

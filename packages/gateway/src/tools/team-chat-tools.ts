@@ -40,7 +40,7 @@ export function createTeamChatTool(service: TeamChatService, _sessions: SessionS
         const roomId = input.roomId ?? work?.roomId ?? (input.agentId ? service.ensureRoom(userId, input.agentId, context.sessionId).id : undefined);
         if (!roomId) return { ok: false, message: "Choose a roomId from action=list or provide agentId." };
         const room = service.get(userId, roomId);
-        if (input.action === "get") return { ok: true, message: room.name, data: { room, members: service.members(userId, room.rootAgentId), messages: service.history(userId, roomId), deliveries: service.deliveries(userId, roomId) } };
+        if (input.action === "get") return { ok: true, message: room.name, data: { room, members: service.roomMembers(userId, room.id), messages: service.history(userId, roomId), deliveries: service.deliveries(userId, roomId) } };
         const sender = service.sender(userId, context.sessionId, roomId);
         if (input.action === "goal") return { ok: true, message: "Team goal recorded.", data: { room: service.setGoal(userId, roomId, input.content ?? "", input.criteria ?? [], sender) } };
         if (input.action === "complete") return { ok: true, message: "Team goal completed with verification.", data: { room: service.completeGoal(userId, roomId, input.evidence ?? [], sender) } };

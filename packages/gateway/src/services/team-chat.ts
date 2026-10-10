@@ -79,13 +79,29 @@ export class TeamChatService {
     const agents = this.agents(userId);
     return agents.filter(agent => teamRoot(agent.id, agents) === rootAgentId);
   }
+  roomMembers(userId: string, roomId: string) {
+    const room = this.get(userId, roomId);
+    return room.memberIds ? this.agents(userId).filter(agent => room.memberIds!.includes(agent.id)) : this.members(userId, room.rootAgentId);
+  }
+  createRoom(userId: string, input: { name: string; memberIds: string[]; sourceSessionId?: string }): TeamRoom {
+    const name = input.name.trim();
+    const memberIds = [...new Set(input.memberIds)];
+    if (!name || name.length > 100 || !memberIds.length || memberIds.length > 50) throw new Error("Provide a name and 1–50 team members.");
+    const agents = this.agents(userId);
+    if (memberIds.some(id => !agents.some(agent => agent.id === id))) throw new Error("Members must be your saved agents.");
+    const source = input.sourceSessionId ? this.sessions.getById(input.sourceSessionId, userId) : null;
+    if (input.sourceSessionId && !source) throw new Error("Source chat not found.");
+    const room: TeamRoom = { id: uuidv7(), name, memberIds, rootAgentId: memberIds[0]!, projectId: source?.projectId ?? null, projectPath: source?.projectPath ?? null, goal: null };
+    this.db.insert(teamRooms).values({ id: room.id, userId, rootAgentId: room.rootAgentId, data: JSON.stringify(room) }).run();
+    return room;
+  }
   ensureRoom(userId: string, agentId: string, sourceSessionId?: string): TeamRoom {
     const root = teamRoot(agentId, this.agents(userId));
     const sourceThread = sourceSessionId ? this.threadById(userId, sourceSessionId) : undefined;
     const source = sourceSessionId ? this.sessions.getById(sourceSessionId, userId) ??
       (sourceThread ? { projectPath: sourceThread.workingDirectory, projectId: null } : null) : null;
     if (sourceSessionId && !source) throw new Error("Source chat not found.");
-    const existing = this.db.select().from(teamRooms).where(and(eq(teamRooms.userId, userId), eq(teamRooms.rootAgentId, root))).get();
+    const existing = this.db.select().from(teamRooms).where(and(eq(teamRooms.userId, userId), eq(teamRooms.rootAgentId, root))).all().find(row => !(JSON.parse(row.data) as TeamRoom).memberIds);
     if (existing) {
       const room: TeamRoom = JSON.parse(existing.data);
       if (!room.projectPath && source?.projectPath) {
@@ -99,14 +115,12 @@ export class TeamChatService {
     this.db.insert(teamRooms).values({ id: room.id, userId, rootAgentId: root, data: JSON.stringify(room) }).run();
     return room;
   }
-  list(userId: string) {
-    const agents = this.agents(userId);
-    const roots = new Set(agents.map(agent => teamRoot(agent.id, agents)));
-    return [...roots].map(root => this.ensureRoom(userId, root));
+  list(userId: string): TeamRoom[] {
+    return this.db.select().from(teamRooms).where(eq(teamRooms.userId, userId)).orderBy(desc(teamRooms.id)).all().map(row => JSON.parse(row.data));
   }
   get(userId: string, roomId: string): TeamRoom {
     const row = this.db.select().from(teamRooms).where(and(eq(teamRooms.id, roomId), eq(teamRooms.userId, userId))).get();
-    if (!row || !this.agent(row.rootAgentId, userId)) throw new Error("Team room not found.");
+    if (!row) throw new Error("Team room not found.");
     return JSON.parse(row.data);
   }
   history(userId: string, roomId: string): TeamRoomMessage[] {
@@ -148,7 +162,7 @@ export class TeamChatService {
     const agent = this.profileForSession(userId, sessionId);
     if (work && work.roomId !== roomId) throw new Error("Work chat belongs to another team room.");
     if (agent) {
-      if (!this.members(userId, this.get(userId, roomId).rootAgentId).some(member => member.id === agent.id)) throw new Error("Agent is not a member of this team.");
+      if (!this.roomMembers(userId, roomId).some(member => member.id === agent.id)) throw new Error("Agent is not a member of this team.");
       return { kind: "agent", id: agent.id, name: agent.name, avatar: agent.avatar, sourceSessionId: sessionId, ...(thread ? { sourceThreadId: thread.id } : {}) };
     }
     return { kind: "chat", id: session!.id, name: session!.name?.trim() || "Developer Chat", avatar: null, sourceSessionId: session!.id };
@@ -167,7 +181,7 @@ export class TeamChatService {
       if (saved.sender.id !== input.sender.id || saved.sender.kind !== input.sender.kind) throw new Error("Message key belongs to another sender.");
       return saved;
     }
-    const members = this.members(userId, room.rootAgentId);
+    const members = this.roomMembers(userId, room.id);
     if (input.sender.kind === "agent" && !members.some(agent => agent.id === input.sender.id)) throw new Error("Sender is not a team member.");
     const recipients = [...new Set(input.recipientIds ?? (["user", "chat"].includes(input.sender.kind) ? [room.rootAgentId] : []))];
     if (recipients.length > 10 || recipients.some(id => !members.some(agent => agent.id === id))) throw new Error("Recipients must be members of this team.");
@@ -215,7 +229,7 @@ export class TeamChatService {
     const history = this.history(userId, roomId);
     const duplicate = this.db.select().from(teamMessages).where(and(eq(teamMessages.roomId, roomId), eq(teamMessages.clientKey, input.clientKey))).get();
     if (duplicate) return this.post(userId, roomId, input);
-    const members = this.members(userId, room.rootAgentId);
+    const members = this.roomMembers(userId, room.id);
     const previous = [...history].reverse().find(message => message.sender.kind === "agent");
     const ranked = rankTeamRecipients(input.content, members, room.rootAgentId, previous?.sender.id);
     let recipient = ranked[0]?.id;
@@ -293,11 +307,11 @@ export class TeamChatService {
     const agent = selectedAgent ?? this.profileForSession(userId, sessionId);
     if (!agent) return undefined;
     const room = work ? this.get(userId, work.roomId) : this.ensureRoom(userId, agent.id, sessionId);
-    const members = this.members(userId, room.rootAgentId).map(member => ({ id: member.id, name: member.name, role: member.role, reportsToId: member.reportsToId, paused: member.paused }));
+    const members = this.roomMembers(userId, room.id).map(member => ({ id: member.id, name: member.name, role: member.role, reportsToId: member.reportsToId, paused: member.paused }));
     return [
       "You are " + agent.name + ". " + agent.persona,
       "Your persistent identity is independent of your work conversations. Coordinate through team.chat, not by starting other agents.",
-      "Coordinator: " + room.rootAgentId + ". Your manager: " + (agent.reportsToId ?? "none (you coordinate this team)") + ". Your direct reports: " + members.filter(member => member.reportsToId === agent.id).map(member => member.id).join(", "),
+      "Coordinator: " + room.rootAgentId + ". Your manager: " + (members.some(member => member.id === agent.reportsToId) ? agent.reportsToId : "none in this room (coordinate with the listed members)") + ". Your direct reports: " + members.filter(member => member.reportsToId === agent.id).map(member => member.id).join(", "),
       "Delegate to the member whose role fits the task. Escalate blockers, conflicts and decisions beyond your role to your manager; the coordinator resolves cross-team priorities. Use recipientIds with the listed IDs, and preserve existing authorization boundaries. Paused members cannot take work.",
       "Team room: " + room.id + ". Members: " + JSON.stringify(members),
       "Use team.chat action=send with recipientIds for assignments, questions and review requests. The harness executes assignments, questions and review requests in persona-linked Threads. Group chat is for coordination; Threads are the primary work surface.",
@@ -334,7 +348,7 @@ export class TeamChatService {
     const manager = agent.reportsToId ? this.agent(agent.reportsToId, userId) : undefined;
     const assignment = this.history(userId, room.id).find(item => item.id === delivery.messageId);
     // Escalate up the hierarchy once per failure. Never retry the worker automatically.
-    if (!manager || manager.paused || !assignment || assignment.depth >= 32 || room.goal?.status === "completed") return;
+    if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id) || !assignment || assignment.depth >= 32 || room.goal?.status === "completed") return;
     // The same exhausted backend cannot perform a recovery review.
     if (manager.providerId === agent.providerId && manager.model === agent.model &&
       /API quota|quota exhausted|rate.limit|HTTP 429/i.test(reason)) return;
@@ -351,7 +365,7 @@ export class TeamChatService {
     const userId = row.userId;
     const agent = this.agent(delivery.agentId, userId);
     try {
-      if (!agent || agent.paused || !this.members(userId, row.rootAgentId).some(member => member.id === agent.id)) throw new Error("Recipient is unavailable or has left the team.");
+      if (!agent || agent.paused || !this.roomMembers(userId, row.id).some(member => member.id === agent.id)) throw new Error("Recipient is unavailable or has left the team.");
       const message = this.history(userId, delivery.roomId).find(item => item.id === delivery.messageId)!;
       // Identity and coordination instructions live in context; deliver only the message body.
       const response = await this.dispatch!(delivery, agent, message.content);

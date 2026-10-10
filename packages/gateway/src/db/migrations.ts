@@ -1699,4 +1699,11 @@ export const migrations: Migration[] = [
       try { db.exec("ALTER TABLE messages ADD COLUMN persona TEXT"); } catch { /* exists */ }
     },
   },
+  {
+    id: 72, name: "multiple_team_chats",
+    run(db) {
+      db.exec("DROP INDEX IF EXISTS idx_team_room_root");
+      db.exec("CREATE INDEX idx_team_room_root ON team_rooms(user_id, root_agent_id)");
+    },
+  },
 ];

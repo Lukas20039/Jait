@@ -101,16 +101,16 @@ export function registerTeamChatRoutes(app: FastifyInstance, config: AppConfig, 
   });
   app.post("/api/team-rooms", async (request, reply) => {
     const user = await requireAuth(request, reply, config.jwtSecret); if (!user) return;
-    const body = z.object({ agentId: z.string().min(1), sourceSessionId: z.string().optional() }).safeParse(request.body);
+    const body = z.union([z.object({ name: z.string().trim().min(1).max(100), memberIds: z.array(z.string().min(1)).min(1).max(50), sourceSessionId: z.string().optional() }), z.object({ agentId: z.string().min(1), sourceSessionId: z.string().optional() })]).safeParse(request.body);
     if (!body.success) return reply.status(400).send({ error: "Invalid room request." });
-    try { return { room: service.ensureRoom(user.id, body.data.agentId, body.data.sourceSessionId) }; }
+    try { return { room: "memberIds" in body.data ? service.createRoom(user.id, body.data) : service.ensureRoom(user.id, body.data.agentId, body.data.sourceSessionId) }; }
     catch (error) { return reply.status(400).send({ error: String(error) }); }
   });
   app.get<{ Params: { id: string } }>("/api/team-rooms/:id", async (request, reply) => {
     const user = await requireAuth(request, reply, config.jwtSecret); if (!user) return;
     try {
       const room = service.get(user.id, request.params.id);
-      return { room, members: service.members(user.id, room.rootAgentId), messages: service.history(user.id, room.id), deliveries: service.deliveries(user.id, room.id) };
+      return { room, members: service.roomMembers(user.id, room.id), messages: service.history(user.id, room.id), deliveries: service.deliveries(user.id, room.id) };
     } catch { return reply.status(404).send({ error: "Team room not found." }); }
   });
   app.post<{ Params: { id: string } }>("/api/team-rooms/:id/messages", async (request, reply) => {

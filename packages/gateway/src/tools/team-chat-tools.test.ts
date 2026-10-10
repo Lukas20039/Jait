@@ -9,7 +9,7 @@ function fixture() {
   const service = {
     list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
     ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
-    members: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
     deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
     sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
     completeGoal: vi.fn().mockReturnValue(room),

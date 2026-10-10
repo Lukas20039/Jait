@@ -17,6 +17,8 @@ export interface TeamGoal {
 export interface TeamRoom {
   id: string;
   rootAgentId: string;
+  /** Explicit membership for user-created chats; omitted on legacy hierarchy rooms. */
+  memberIds?: string[];
   name: string;
   projectId: string | null;
   projectPath: string | null;

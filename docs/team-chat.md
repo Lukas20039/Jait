@@ -1,6 +1,8 @@
 # Persistent team conversations
 
-The Agents page now has a team conversation for each connected reporting hierarchy. Everyone who reports to the same top-level agent shares that room. The user can participate directly; addressed members receive handoffs in separate work conversations linked from the message.
+On the Agents page, **Team Chats** in the left sidebar opens a vertical chat list beside the selected conversation, matching the developer mode Projects & Chats layout. Use **New team chat** to name a room and select its members from a grid of saved agent avatars and names. The same agent can belong to multiple rooms. Search and switch between chats; unsent drafts are retained while switching rooms. On mobile, the list and conversation occupy separate screens.
+
+User-created rooms have explicit membership independent of reporting relationships. Existing hierarchy rooms remain available with their history; `team.chat` can still resolve a default hierarchy room by agent ID. The user can participate directly, and addressed members receive handoffs in separate work conversations linked from the message. Routing and handoffs are restricted to that room's members.
 
 Team entry buttons and room headers compose members' saved SVG avatars, showing up to four people with an overflow count. The header animates only members whose session or thread runtime confirms they are running, and respects reduced-motion preferences. Room goals start collapsed; expanding or collapsing is remembered separately for each room within the browser session. New messages follow the latest output until you scroll up to read history; use **Jump to latest messages** to resume following.
 
@@ -10,6 +12,6 @@ Messages addressed to a member open an independent work chat. A busy agent can r
 
 Agents coordinate with `team.chat` assignments, questions, review requests, results, verification and blocked messages. Each work chat receives the saved persona, provider/model and skill preferences, and uses the existing chat execution and consent paths. The coordinator can set a goal with explicit acceptance criteria. Completion requires an evidence entry per criterion and a subsequent verification message from another member; these records remain reviewable by the user. They record the participants' evidence, rather than independently proving its truth.
 
-SQLite migration 69 adds rooms, messages and deliveries. History survives reloads and gateway restarts. Retry keys prevent duplicate handoffs. Queued work resumes after restart; previously running work is marked interrupted for review instead of automatically replaying actions. Addressed handoff chains have a depth limit and dispatch runs at most eight conversations at once.
+SQLite migration 69 adds rooms, messages and deliveries. Migration 72 replaces the unique hierarchy index with a non-unique index so multiple rooms can share a coordinator; existing rooms and messages are preserved. Explicit member IDs are stored in the room JSON. History survives reloads and gateway restarts. Retry keys prevent duplicate handoffs. Queued work resumes after restart; previously running work is marked interrupted for review instead of automatically replaying actions. Addressed handoff chains have a depth limit and dispatch runs at most eight conversations at once.
 
 No new environment variables are required. These changes are in the source checkout; an installed gateway needs the usual build and deployment to expose them.

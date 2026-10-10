@@ -80,6 +80,19 @@ describe("team room routes and work chat integration", () => {
   afterEach(async () => { await app.close(); opened.sqlite.close(); });
   const snapshot = async () => (await app.inject({ method: "GET", url: "/api/team-rooms/" + roomId, headers })).json();
 
+  it("creates named chats, validates owned members, and returns only selected agents", async () => {
+    const create = (name: string, memberIds: string[]) => app.inject({ method: "POST", url: "/api/team-rooms", headers, payload: { name, memberIds } });
+    const first = await create("Implementation", ["Developer", "QA"]);
+    const second = await create("Review", ["Developer"]);
+    expect(first.statusCode).toBe(200); expect(second.statusCode).toBe(200);
+    expect(first.json().room.id).not.toBe(second.json().room.id);
+    const snapshot = await app.inject({ method: "GET", url: "/api/team-rooms/" + second.json().room.id, headers });
+    expect(snapshot.json().members.map((agent: { id: string }) => agent.id)).toEqual(["Developer"]);
+    expect((await create("Invalid", ["missing"])).statusCode).toBe(400);
+    expect((await create("Empty", [])).statusCode).toBe(400);
+    expect((await app.inject({ method: "POST", url: "/api/team-rooms", payload: { name: "No auth", memberIds: ["Developer"] } })).statusCode).toBe(401);
+  });
+
   it("automatically addresses role-matched team messages with shared-composer attachments", async () => {
     const response = await app.inject({ method: "POST", url: "/api/team-rooms/" + roomId + "/messages", headers,
       payload: { content: "Developer, implement the fix", clientKey: "automatic", attachments: [{ name: "notes.txt", mimeType: "text/plain", data: "bm90ZXM=" }] } });
