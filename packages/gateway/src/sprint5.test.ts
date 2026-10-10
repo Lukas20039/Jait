@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { tmpdir } from "node:os";
 import { SurfaceRegistry } from "./surfaces/registry.js";
 import {
   BrowserSurfaceFactory,
@@ -18,10 +19,12 @@ import {
 } from "./tools/browser-tools.js";
 import { SSRFGuard } from "./security/ssrf-guard.js";
 
+// Screenshots resolve against the active project root, so tests need a real
+// writable directory instead of a fixed absolute path that may not exist.
 const toolContext = {
   sessionId: "sprint5",
   actionId: "a1",
-  projectRoot: "/project/Jait",
+  projectRoot: "",
   requestedBy: "test",
 };
 
@@ -167,11 +170,18 @@ class MockBrowserDriver implements BrowserDriver {
 describe("Sprint 5 — Browser surface and tools", () => {
   let registry: SurfaceRegistry;
   let driver: MockBrowserDriver;
+  let projectRoot: string;
 
   beforeEach(() => {
+    projectRoot = mkdtempSync(join(tmpdir(), "jait-sprint5-"));
+    toolContext.projectRoot = projectRoot;
     registry = new SurfaceRegistry();
     driver = new MockBrowserDriver();
     registry.register(new BrowserSurfaceFactory({ driverFactory: async () => driver }));
+  });
+
+  afterEach(() => {
+    rmSync(projectRoot, { recursive: true, force: true });
   });
 
   it("navigates and snapshots using browser tools", async () => {
@@ -255,7 +265,9 @@ describe("Sprint 5 — Browser surface and tools", () => {
     const displayPath = (screenshot.data as { result: { path: string } }).result.path;
     expect(readFileSync(displayPath).toString()).toBe("test screenshot");
     unlinkSync(displayPath);
-    unlinkSync("artifacts/page.png");
+    const capturePath = join(projectRoot, "artifacts/page.png");
+    expect(readFileSync(capturePath).toString()).toBe("test screenshot");
+    unlinkSync(capturePath);
     expect(driver.calls).toEqual(
       expect.arrayContaining([
         "click:#submit",
@@ -263,7 +275,7 @@ describe("Sprint 5 — Browser surface and tools", () => {
         "scroll:0,200",
         "select:#country:US",
         "wait:#ready:50",
-        "screenshot:artifacts/page.png",
+        `screenshot:${capturePath}`,
       ]),
     );
   });
