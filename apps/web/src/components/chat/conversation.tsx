@@ -15,6 +15,8 @@ interface ConversationProps {
   compact?: boolean
   mobile?: boolean
   loading?: boolean
+  /** Release the new-prompt scroll reserve when the live reply finishes. */
+  isStreaming?: boolean
   onLatestContentViewed?: () => void
   loadingLabel?: string
   /** Raw text per child item for pretext-based virtual item height estimation. */
@@ -432,7 +434,7 @@ function ConversationPositioningSkeleton({ label }: { label: string }) {
   )
 }
 
-export function Conversation({ children, className, mobile = false, loading, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
+export function Conversation({ children, className, mobile = false, loading, isStreaming, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   // The scroll container may not exist yet on first mount (history still
   // loading renders the skeleton branch), and a plain ref object is not
@@ -732,7 +734,7 @@ export function Conversation({ children, className, mobile = false, loading, loa
   const topAnchoredMeasurement = topAnchoredMessageIndex < 0
     ? undefined
     : virtualizer.measurementsCache[topAnchoredMessageIndex]
-  const newTurnTailPadding = topAnchoredMeasurement
+  const newTurnTailPadding = isStreaming !== false && topAnchoredMeasurement
     ? computeNewTurnTailPadding({
         viewportHeight: conversationViewportHeight,
         messageStart: topAnchoredMeasurement.start,
@@ -1192,6 +1194,18 @@ export function Conversation({ children, className, mobile = false, loading, loa
     pendingTopAlignIdRef.current = target
     setTopAnchoredMessageId(target)
   }, [scrollToMessageId, childItems.length, loading])
+
+  // Top alignment reserves a viewport while the reply grows. A short reply
+  // can finish without consuming it, so completion must end that ownership
+  // even if no later message or resize arrives to release the reserve.
+  useLayoutEffect(() => {
+    if (isStreaming !== false || topAnchoredMessageId == null) return
+    pendingTopAlignIdRef.current = null
+    heldNewTurnSpaceRef.current = false
+    alignedTurnSizeRef.current = null
+    setTopAnchoredMessageId(null)
+    if (stickToBottomRef.current && !detachedRef.current) scrollToBottom('auto', true)
+  }, [isStreaming, topAnchoredMessageId, scrollToBottom])
 
   useLayoutEffect(() => {
     const target = topAnchoredMessageId

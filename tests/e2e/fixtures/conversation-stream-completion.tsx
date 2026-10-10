@@ -12,17 +12,22 @@ const answer: OptimisticUserMessageLike = { id: 'local-answer', role: 'assistant
 function Harness() {
   const [messages, setMessages] = useState(history)
   const [answerHeight, setAnswerHeight] = useState(80)
+  const [isStreaming, setIsStreaming] = useState(false)
   const latestUser = [...messages].reverse().find(message => message.role === 'user')
   const renderKey = (message: OptimisticUserMessageLike) => (message.renderId ?? message.id)
   return <>
-    <button onClick={() => setMessages([...history, prompt, answer])}>Start reply</button>
+    <button onClick={() => { setMessages([...history, prompt, answer]); setIsStreaming(true) }}>Start reply</button>
     <button onClick={() => setAnswerHeight(1200)}>Grow reply</button>
-    <button onClick={() => setMessages(current => mergeSnapshotMessagesWithOptimisticUsers([
+    <button onClick={() => {
+      setIsStreaming(false)
+      if (new URLSearchParams(location.search).has('collapse')) setAnswerHeight(80)
+      setMessages(current => mergeSnapshotMessagesWithOptimisticUsers([
       ...history, { ...prompt, id: 'saved-prompt', optimistic: false }, { ...answer, id: 'saved-answer' },
-    ], current))}>Finish reply</button>
-    <button onClick={() => setMessages(current => [...current, { ...prompt, id: 'next-prompt' }])}>Send again</button>
+    ], current))
+    }}>Finish reply</button>
+    <button onClick={() => { setIsStreaming(true); setMessages(current => [...current, { ...prompt, id: 'next-prompt' }]) }}>Send again</button>
     <div style={{ height: 400, display: 'flex' }}>
-      <Conversation className="h-full w-full" messageContents={messages.map(message => message.content)}
+      <Conversation mobile={new URLSearchParams(location.search).has('mobile')} isStreaming={isStreaming} className="h-full w-full" messageContents={messages.map(message => message.content)}
         messageEstimateInputs={messages} scrollToMessageId={latestUser && renderKey(latestUser)}>
         {messages.map(message => <div key={renderKey(message)} style={{ height: message.content === answer.content ? answerHeight : 160 }}>
           {message.content}

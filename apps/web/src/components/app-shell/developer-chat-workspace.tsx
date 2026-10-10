@@ -627,6 +627,7 @@ export function DeveloperChatWorkspace({
                 compact={showDesktopProject}
                 mobile={isMobile}
                 loading={isLoadingHistory}
+                isStreaming={isLoading}
                 loadingLabel="Loading chat"
                 messageContents={messageContents}
                 messageEstimateInputs={messages}
