@@ -44,17 +44,22 @@ async function fixture(page: Page) {
   })
   await page.goto('/agent-continuation.html', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('heading', { name: 'Agents', exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Resume Nova', exact: true })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Retry Nova', exact: true })).toBeEnabled()
   return { resumed, profiles }
 }
 
-test('play continues failed work and bulk play continues other interrupted agents', async ({ page }) => {
+test('individual error and pause controls resume only their own saved work', async ({ page }) => {
   const { resumed } = await fixture(page)
+  await expect(page.getByRole('button', { name: 'Resume interrupted agents', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Retry Nova', exact: true }).locator('svg')).toHaveClass(/lucide-circle-alert/)
+  await expect(page.getByRole('button', { name: 'Resume Atlas', exact: true }).locator('svg')).toHaveClass(/lucide-pause/)
   await page.getByRole('button', { name: 'List', exact: true }).click()
-  await expect(page.getByText('Usage limit reached · change provider/model, then Play', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Resume Nova', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Retry Nova', exact: true }).locator('svg')).toHaveClass(/lucide-circle-alert/)
+  await expect(page.getByRole('button', { name: 'Resume Atlas', exact: true }).locator('svg')).toHaveClass(/lucide-pause/)
+  await expect(page.getByText('Usage limit reached · change provider/model, then retry', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Retry Nova', exact: true }).click()
   await expect.poll(() => resumed).toEqual(['thread-0'])
-  await page.getByRole('button', { name: 'Resume interrupted agents', exact: true }).click()
+  await page.getByRole('button', { name: 'Resume Atlas', exact: true }).click()
   await expect.poll(() => resumed).toEqual(['thread-0', 'thread-1'])
   await expect(page.getByRole('button', { name: 'Resume interrupted agents', exact: true })).toHaveCount(0)
 })
@@ -77,7 +82,7 @@ test('graph has sparse reactive dots and supports dragging without opening detai
   await expect(page.getByRole('complementary', { name: 'Agent details' })).toHaveCount(0)
   const after = (await avatar.boundingBox())!
   expect(after.x - before.x).toBeGreaterThan(65)
-  await page.screenshot({ path: '../../.jait/agent-wave-continuation.png' })
+  await page.screenshot({ path: '../../.jait/shots/agent-wave-continuation.png' })
   await avatar.click()
   await expect(page.getByRole('complementary', { name: 'Agent details' })).toBeVisible()
 })
@@ -86,5 +91,5 @@ test('reduced motion keeps the graph usable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await fixture(page)
   await expect(page.getByTestId('agent-wave-background')).toBeVisible()
-  await page.getByRole('button', { name: 'Resume Nova', exact: true }).click()
+  await page.getByRole('button', { name: 'Retry Nova', exact: true }).click()
 })

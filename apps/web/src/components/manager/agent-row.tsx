@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { AgentRuntime } from '@jait/shared'
-import { Loader2, Play, Square } from 'lucide-react'
+import { CircleAlert, Loader2, Pause, Play, Square } from 'lucide-react'
 import { toast } from 'sonner'
 import { agentContinuation, agentContinuationLabel } from '@/lib/agent-continuation'
 import { Button } from '@/components/ui/button'
@@ -76,15 +76,20 @@ export function AgentRow({ agent, depth, threads, onOpen, onChooseTask, onRefres
     } catch (error) { toast.error(error instanceof Error ? error.message : 'Could not change agent activity') }
     finally { setBusy(false); setRefreshVersion((value) => value + 1); onRefresh() }
   }
-  const action = running ? 'Stop' : continuation ? 'Resume' : 'Choose task for'
+  const interrupted = continuation?.status === 'interrupted'
+  const failed = continuation?.status === 'error'
+  const action = running ? 'Stop' : failed ? 'Retry' : continuation ? 'Resume' : 'Choose task for'
+  const controlTitle = continuation && !running
+    ? `${failed ? 'Error' : 'Interrupted'} · ${action} ${agent.name}${continuation.error ? ': ' + continuation.error : ''}`
+    : `${action} ${agent.name}`
   if (compact) return <div data-testid="agent-graph-node" className="flex w-32 flex-col items-center gap-1">
     <button type="button" onClick={onOpen} aria-label={`Open ${agent.name}`} aria-pressed={selected} className={`rounded-full p-1 focus-visible:ring-2 focus-visible:ring-primary ${selected ? 'ring-2 ring-primary bg-background' : 'hover:bg-muted/50'}`}>
       <AgentAvatar avatar={agent.avatar} running={running} className="h-14 w-14" />
     </button>
     <div className="flex h-8 items-center gap-2">
       <AgentProviderEditor compact agent={agent} onSave={saveProvider} />
-      <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full bg-background/80" disabled={busy || resumeBusy || providerSaving || !available} title={`${action} ${agent.name}`} aria-label={`${action} ${agent.name}`} onClick={() => void toggle()}>
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : running ? <Square className="h-3 w-3" fill="currentColor" /> : <Play className="h-3.5 w-3.5" fill="currentColor" />}
+      <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full bg-background/80" disabled={busy || resumeBusy || providerSaving || !available} title={controlTitle} aria-label={`${action} ${agent.name}`} onClick={() => void toggle()}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : running ? <Square className="h-3 w-3" fill="currentColor" /> : failed ? <CircleAlert className="h-4 w-4 text-destructive" /> : interrupted ? <Pause className="h-3.5 w-3.5" fill="currentColor" /> : <Play className="h-3.5 w-3.5" fill="currentColor" />}
       </Button>
     </div>
     <div className="flex h-7 max-w-full items-center gap-1.5">
@@ -103,8 +108,8 @@ export function AgentRow({ agent, depth, threads, onOpen, onChooseTask, onRefres
     </button>
     <AgentProviderEditor agent={agent} onSave={saveProvider} />
     {running && <span title="Elapsed time for the earliest active run" aria-label="Running time" className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">{formatAgentElapsed(earliestAgentStart(active.map((source) => source.runtime)), now)}</span>}
-    <Button variant={running ? 'secondary' : 'ghost'} size="icon" className="h-9 w-9 shrink-0 rounded-full" disabled={busy || resumeBusy || providerSaving || !available} title={`${action} ${agent.name}`} aria-label={`${action} ${agent.name}`} onClick={() => void toggle()}>
-      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : running ? <Square className="h-3.5 w-3.5" fill="currentColor" /> : <Play className="h-4 w-4" fill="currentColor" />}
+    <Button variant={running ? 'secondary' : 'ghost'} size="icon" className="h-9 w-9 shrink-0 rounded-full" disabled={busy || resumeBusy || providerSaving || !available} title={controlTitle} aria-label={`${action} ${agent.name}`} onClick={() => void toggle()}>
+      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : running ? <Square className="h-3.5 w-3.5" fill="currentColor" /> : failed ? <CircleAlert className="h-4 w-4 text-destructive" /> : interrupted ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="h-4 w-4" fill="currentColor" />}
     </Button>
   </div>
 }

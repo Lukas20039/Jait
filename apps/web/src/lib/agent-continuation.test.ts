@@ -19,6 +19,7 @@ describe('agent continuation', () => {
   })
   it('explains usage failures and distinguishes a manual stop', () => {
     expect(agentContinuationLabel(thread('1', 'error', '1', { error: 'Usage limit reached' }))).toContain('change provider/model')
-    expect(agentContinuationLabel(thread('2', 'interrupted'))).toContain('press Play')
+    expect(agentContinuationLabel(thread('3', 'error'))).toBe('Error · click to retry')
+    expect(agentContinuationLabel(thread('2', 'interrupted'))).toContain('click to resume')
   })
 })
