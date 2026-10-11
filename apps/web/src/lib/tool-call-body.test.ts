@@ -464,7 +464,38 @@ describe('tool call body helpers', () => {
     ).toBe('imageView')
   })
 
-  it('does not render an image card for image.view without a data URI', () => {
+  it('renders image.view results that only carry a path as image cards', () => {
+    expect(
+      getToolCallBodyKind({
+        tool: 'image.view',
+        args: { path: 'logo.png' },
+        status: 'success',
+        displayOutput: 'Displaying image logo.png — 120000 bytes is too large to inline',
+        snapshotText: null,
+        screenshotPath: 'logo.png',
+        imageDataUri: null,
+      }),
+    ).toBe('imageView')
+  })
+
+  it('keeps image.view out of the browser-screenshot card', () => {
+    // Image paths used to fall through to the screenshot viewer, which showed
+    // "Screenshot unavailable. Capture a new screenshot to try again." instead
+    // of the image.
+    expect(
+      getToolCallBodyKind({
+        tool: 'image.view',
+        args: { path: '/home/user/project/shot.png' },
+        status: 'success',
+        displayOutput: '',
+        snapshotText: null,
+        screenshotPath: '/home/user/project/shot.png',
+        imageDataUri: null,
+      }),
+    ).not.toBe('browserScreenshot')
+  })
+
+  it('does not render an image card for image.view without a data URI or path', () => {
     expect(
       getToolCallBodyKind({
         tool: 'image.view',
@@ -476,6 +507,20 @@ describe('tool call body helpers', () => {
         imageDataUri: null,
       }),
     ).toBe('none')
+  })
+
+  it('still reports image.view failures as output rather than an image card', () => {
+    expect(
+      getToolCallBodyKind({
+        tool: 'image.view',
+        args: { path: 'missing.png' },
+        status: 'error',
+        displayOutput: 'ENOENT: no such file or directory',
+        snapshotText: null,
+        screenshotPath: null,
+        imageDataUri: null,
+      }),
+    ).toBe('output')
   })
 })
 

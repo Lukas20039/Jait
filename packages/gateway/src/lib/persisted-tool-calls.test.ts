@@ -84,6 +84,50 @@ describe("serializePersistedToolCalls", () => {
     }
   });
 
+  it("keeps image.view results usable by surviving on their path", () => {
+    // Inline base64 is not compaction-safe: the string passes are byte-limited,
+    // so an inlined data URI comes back truncated and the chat renders a broken
+    // image. `image.view` therefore only inlines small images and otherwise
+    // reports the path, which is tiny enough to survive every pass.
+    const base64 = "A".repeat(120_000);
+    const dataUri = `data:image/png;base64,${base64}`;
+    const filler = {
+      callId: "c2",
+      tool: "terminal",
+      ok: true,
+      args: {},
+      output: "x".repeat(200_000),
+    };
+
+    const inlineResult = serializePersistedToolCalls(JSON.stringify([
+      {
+        callId: "img",
+        tool: "image.view",
+        ok: true,
+        args: { path: "big.png" },
+        data: { path: "big.png", mimeType: "image/png", size: 90_000, dataUri, base64 },
+      },
+      filler,
+    ]), { maxBytes: 4_096 });
+    const inlineData = (JSON.parse(inlineResult) as Array<Record<string, unknown>>)[0]["data"] as Record<string, unknown>;
+    expect(inlineData["dataUri"]).not.toBe(dataUri);
+    expect((inlineData["dataUri"] as string).length).toBeLessThan(dataUri.length);
+
+    const pathResult = serializePersistedToolCalls(JSON.stringify([
+      {
+        callId: "img",
+        tool: "image.view",
+        ok: true,
+        args: { path: "big.png" },
+        data: { path: "big.png", mimeType: "image/png", size: 90_000, inline: false },
+      },
+      filler,
+    ]), { maxBytes: 4_096 });
+    expect(Buffer.byteLength(pathResult, "utf8")).toBeLessThanOrEqual(4_096);
+    const pathData = (JSON.parse(pathResult) as Array<Record<string, unknown>>)[0]["data"];
+    expect(pathData).toEqual({ path: "big.png", mimeType: "image/png", size: 90_000, inline: false });
+  });
+
   it("preserves numeric and string metadata fields", () => {
     const payload = JSON.stringify([
       {

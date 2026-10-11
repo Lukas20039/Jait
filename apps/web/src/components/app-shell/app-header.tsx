@@ -311,7 +311,7 @@ export function AppHeader(props: AppHeaderProps) {
                 ) : isAuthenticated ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button aria-label="Account menu" className="rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <button aria-label="Account menu" className="inline-flex items-center justify-center rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         <Avatar className="h-8 w-8">
                           <AvatarFallback className="text-sm font-medium">{userInitial}</AvatarFallback>
                         </Avatar>
@@ -389,7 +389,7 @@ export function AppHeader(props: AppHeaderProps) {
             ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button aria-label="Account menu" className={`rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isDesktop ? 'mr-4' : ''}`}>
+                  <button aria-label="Account menu" className={`inline-flex items-center justify-center rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isDesktop ? 'mr-4' : ''}`}>
                     <Avatar className="h-7 w-7">
                       <AvatarFallback className="text-xs">{userInitial}</AvatarFallback>
                     </Avatar>

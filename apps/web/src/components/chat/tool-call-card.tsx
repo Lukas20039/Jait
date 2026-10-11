@@ -2675,23 +2675,49 @@ function BrowserScreenshotView({ path }: { path: string | null | undefined }) {
   )
 }
 
-function ImageView({ src, alt, caption }: { src: string | null | undefined; alt: string; caption?: string }) {
+/**
+ * Renders an `image.view` result. Small images arrive as an inline data URI;
+ * larger ones only carry a path, which is served by the gateway's image
+ * endpoint. That route is authenticated, so those bytes go through
+ * `useGatewayImage` instead of a bare `<img src>`.
+ */
+function ImageView({ src, path, alt, caption }: { src?: string | null; path?: string | null; alt: string; caption?: string }) {
   const [loaded, setLoaded] = useState(false)
   const [expanded, setExpanded] = useState(false)
+  // An inline data URI can still arrive truncated when a very large chat forced
+  // the gateway's deeper compaction passes. Remember which one failed so those
+  // bytes get retried through the path route instead of showing a broken image.
+  const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
   const trimmedSrc = typeof src === 'string' ? src.trim() : ''
+  const trimmedPath = typeof path === 'string' ? path.trim() : ''
+  const pathSource = trimmedPath
+    ? resolveChatImageUrl(trimmedPath) ?? `${getApiUrl()}/api/browser/screenshot?path=${encodeURIComponent(trimmedPath)}`
+    : null
+  const useInline = Boolean(trimmedSrc) && brokenSrc !== trimmedSrc
+  const source = useInline ? trimmedSrc : pathSource
+  const fetched = useGatewayImage(source)
+  const failed = Boolean(source) && fetched.failed
+  const loading = Boolean(source) && !fetched.src && !failed
+  useEffect(() => {
+    setLoaded(false)
+    setExpanded(false)
+  }, [fetched.src])
   return (
     <div className="space-y-2 rounded-md bg-muted/30 p-3 text-xs">
       {caption && (
         <div className="text-xs text-muted-foreground">{caption}</div>
       )}
-      {trimmedSrc ? (
+      {fetched.src ? (
         <div className="group relative overflow-hidden rounded-md bg-background/90 ring-1 ring-inset ring-border/35">
           <img
-            src={trimmedSrc}
+            src={fetched.src}
             alt={alt}
             className="max-h-80 w-full cursor-pointer object-contain transition-opacity group-hover:opacity-80"
             onLoad={() => setLoaded(true)}
-            onError={() => setLoaded(false)}
+            onError={() => {
+              setLoaded(false)
+              if (useInline && pathSource) setBrokenSrc(trimmedSrc)
+            }}
             onClick={() => loaded && setExpanded(true)}
           />
           {loaded && (
@@ -2701,14 +2727,18 @@ function ImageView({ src, alt, caption }: { src: string | null | undefined; alt:
           )}
         </div>
       ) : null}
-      {!trimmedSrc || !loaded ? (
+      {!loading && (!fetched.src || !loaded) ? (
         <div className="rounded bg-background p-2 text-muted-foreground">
-          Image could not be displayed.
+          {failed
+            ? `Image unavailable. The gateway could not load ${trimmedPath || 'this image'}.`
+            : brokenSrc
+              ? 'Image could not be displayed. Its inline data was incomplete and no usable path was reported.'
+              : 'Image could not be displayed.'}
         </div>
       ) : null}
-      {trimmedSrc && expanded && (
+      {fetched.src && expanded && (
         <Dialog open onOpenChange={(open) => !open && setExpanded(false)}>
-          <ImageViewerContent src={trimmedSrc} alt={alt} />
+          <ImageViewerContent src={fetched.src} alt={alt} />
         </Dialog>
       )}
     </div>
@@ -4300,8 +4330,8 @@ function ToolCallCardInner({
     <BrowserSnapshotView snapshot={snapshotText} />
   ) : bodyKind === 'browserScreenshot' && screenshotPath ? (
     <BrowserScreenshotView path={screenshotPath} />
-  ) : bodyKind === 'imageView' && imageDataUri ? (
-    <ImageView src={imageDataUri} alt="Image" caption={typeof normalizedArgs.path === 'string' ? `Image: ${normalizedArgs.path}` : undefined} />
+  ) : bodyKind === 'imageView' ? (
+    <ImageView src={imageDataUri} path={screenshotPath} alt="Image" caption={typeof normalizedArgs.path === 'string' ? `Image: ${normalizedArgs.path}` : undefined} />
   ) : bodyKind === 'subagent' ? (
     childCalls && childCalls.length > 0 ? (
       <AgentSpecialistBlock

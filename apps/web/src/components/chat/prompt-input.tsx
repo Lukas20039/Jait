@@ -1,11 +1,19 @@
 import { AttachmentList } from './attachment-list'
 import { createPastedTextAttachment, isLongPaste } from '@/lib/pasted-text-attachment'
 import { useState, useRef, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef, type ReactNode } from 'react'
-import { ArrowUp, ListPlus, Mic, MicOff, Square, Loader2, Paperclip, Copy, Check, GitFork } from 'lucide-react'
+import { ArrowUp, ListPlus, Mic, MicOff, Square, Loader2, Paperclip, Copy, Check, GitFork, GitBranch, ChevronUp } from 'lucide-react'
 import { getIconForFile, getIconForFolder, DEFAULT_FILE, DEFAULT_FOLDER } from 'vscode-icons-js'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger , TooltipHint } from '@/components/ui/tooltip'
+import { TooltipProvider, TooltipHint } from '@/components/ui/tooltip'
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Kbd } from '@/components/ui/kbd'
 import { ModeSelector } from '@/components/chat/mode-selector'
 import type { ChatMode } from '@/components/chat/mode-selector'
 import { StyleSelector } from '@/components/chat/style-selector'
@@ -693,6 +701,130 @@ export function VoiceLevelMeter({ levels = [], compact = false }: { levels?: num
 }
 
 /* ------------------------------------------------------------------ */
+/* Send button (primary action + options)                              */
+/* ------------------------------------------------------------------ */
+
+/** Everything the composer can do with its content while a session streams. */
+type ComposerSendAction = 'steer' | 'queue' | 'thread' | 'ask-in-parallel'
+
+interface ComposerSendOption {
+  id: ComposerSendAction
+  /** Full sentence used as the primary button's aria-label and tooltip. */
+  tooltip: string
+  /** Short label shown inside the send-options menu. */
+  name: string
+  /** One-line explanation shown inside the send-options menu. */
+  description: string
+  /** Keycap hint rendered next to the menu entry. */
+  shortcut?: readonly string[]
+  icon: ReactNode
+}
+
+const COMPOSER_SEND_META: Record<ComposerSendAction, Omit<ComposerSendOption, 'id'>> = {
+  steer: {
+    tooltip: 'Steer the running agent',
+    name: 'Steer',
+    description: 'Send this into the response that is streaming right now',
+    icon: <ArrowUp className="h-4 w-4" />,
+  },
+  queue: {
+    tooltip: 'Add to queue',
+    name: 'Queue',
+    description: 'Send this as soon as the current response finishes',
+    icon: <ListPlus className="h-4 w-4" />,
+  },
+  thread: {
+    tooltip: 'Send as new thread',
+    name: 'New thread',
+    description: 'Move this message into its own thread',
+    icon: <GitBranch className="h-4 w-4" />,
+  },
+  'ask-in-parallel': {
+    tooltip: 'Ask in parallel',
+    name: 'Ask in parallel',
+    description: 'Fork the session and answer this as a side branch',
+    icon: <GitFork className="h-4 w-4" />,
+  },
+}
+
+/**
+ * Send button for a streaming session: the primary action (queue by default)
+ * plus a caret that opens the remaining send options, e.g. steer.
+ */
+function ComposerSendSplitButton({
+  primary,
+  options,
+  disabled,
+  loading = false,
+  onAction,
+}: {
+  primary: ComposerSendOption
+  options: ComposerSendOption[]
+  disabled?: boolean
+  /** Show a spinner instead of the icon while the chat is still starting. */
+  loading?: boolean
+  onAction: (action: ComposerSendAction) => void
+}) {
+  const blocked = Boolean(disabled) || loading
+  return (
+    <TooltipProvider>
+      <div className="flex shrink-0 items-stretch">
+        <TooltipHint side="bottom" content={`${primary.tooltip} (Enter)`}>
+          <Button
+            type="button"
+            size="icon"
+            className={cn('shrink-0 rounded-lg', options.length > 0 && 'rounded-r-none')}
+            disabled={blocked}
+            aria-label={`${primary.tooltip} (Enter)`}
+            onClick={() => onAction(primary.id)}
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : primary.icon}
+          </Button>
+        </TooltipHint>
+        {options.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <TooltipHint side="bottom" content="More send options">
+                <Button
+                  type="button"
+                  size="icon"
+                  className="-ml-px w-7 shrink-0 rounded-l-none rounded-r-lg px-0"
+                  disabled={disabled}
+                  aria-label="More send options"
+                >
+                  <ChevronUp className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipHint>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" sideOffset={8} className="w-72">
+                <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+                  While the agent is running
+                </DropdownMenuLabel>
+                {options.map((option) => (
+                  <DropdownMenuItem
+                    key={option.id}
+                    className="items-start gap-2.5"
+                    onSelect={() => onAction(option.id)}
+                  >
+                    <span className="mt-0.5 shrink-0 text-muted-foreground">{option.icon}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center justify-between gap-2 text-sm font-medium">
+                        <span className="truncate">{option.name}</span>
+                        {option.shortcut && <Kbd keys={option.shortcut} />}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">{option.description}</span>
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+        )}
+      </div>
+    </TooltipProvider>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
@@ -839,9 +971,28 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     hasThreadHandler: Boolean(onThreadSubmit),
     defaultAction: defaultStreamingAction,
   })
-  const canSteerWhileLoading = submitAction === 'steer' && Boolean(onSteer)
-  const canQueueWhileLoading = submitAction === 'queue' && Boolean(onQueue)
-  const canThreadWhileLoading = submitAction === 'thread' && Boolean(onThreadSubmit)
+  const hasStreamingSendAction = Boolean(onSteer || onQueue || onThreadSubmit || onAskInParallel)
+  const streamingSendPrimary = useMemo<ComposerSendOption>(() => {
+    const id: ComposerSendAction =
+      submitAction === 'steer' ? 'steer' : submitAction === 'thread' ? 'thread' : 'queue'
+    return { id, ...COMPOSER_SEND_META[id] }
+  }, [submitAction])
+  const streamingSendOptions = useMemo<ComposerSendOption[]>(() => {
+    const available: Record<ComposerSendAction, boolean> = {
+      steer: Boolean(onSteer),
+      queue: Boolean(onQueue),
+      thread: Boolean(onThreadSubmit),
+      'ask-in-parallel': Boolean(onAskInParallel),
+    }
+    const altAction = alternateStreamingAction(streamingSendPrimary.id === 'queue' ? 'queue' : 'steer')
+    return (['queue', 'steer', 'thread', 'ask-in-parallel'] as ComposerSendAction[])
+      .filter((id) => id !== streamingSendPrimary.id && available[id])
+      .map((id) => ({
+        id,
+        ...COMPOSER_SEND_META[id],
+        shortcut: id === altAction ? (['Alt', 'Enter'] as const) : undefined,
+      }))
+  }, [streamingSendPrimary.id, onSteer, onQueue, onThreadSubmit, onAskInParallel])
 
   useEffect(() => {
     const el = rootRef.current
@@ -1367,6 +1518,34 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     return () => el.removeEventListener('input', handleNativeInput)
   }, []) // stable — reads everything from refs
 
+  /**
+   * Run one composer send action with the payload the caller already collected.
+   * Returns false when no handler is wired for that action.
+   */
+  const runSendAction = useCallback((
+    action: ComposerSendAction,
+    payload: { chips: ReferencedFile[]; segments: UserMessageSegment[] },
+  ) => {
+    const handler =
+      action === 'steer' ? onSteer
+        : action === 'queue' ? onQueue
+          : action === 'thread' ? onThreadSubmit
+            : onAskInParallel
+    if (!handler) return false
+    handler(payload.chips, attachments, payload.segments)
+    setAttachments([])
+    resetComposer()
+    return true
+  }, [attachments, onQueue, onSteer, onThreadSubmit, onAskInParallel, resetComposer])
+
+  /** Send whatever is in the composer right now through one streaming action. */
+  const handleSendAction = useCallback((action: ComposerSendAction) => {
+    const el = editableRef.current
+    const chips = el ? getChipFiles(el) : []
+    const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
+    runSendAction(action, { chips, segments: nextSegments })
+  }, [runSendAction, segments])
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     // Intercept undo/redo to prevent browser native undo corruption
     if ((e.ctrlKey || e.metaKey) && !e.altKey) {
@@ -1504,47 +1683,22 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         defaultAction: defaultStreamingAction,
       })
       if (isLoading && e.altKey) {
-        // Alt+Enter is the secondary action: the opposite of the configured default.
-        const altAction = alternateStreamingAction(defaultStreamingAction ?? 'steer')
-        if (altAction === 'steer' && onSteer) {
-          onSteer(chips, attachments, nextSegments)
-          setAttachments([])
-          resetComposer()
-          return
-        }
-        if (altAction === 'queue' && onQueue) {
-          onQueue(chips, attachments, nextSegments)
-          setAttachments([])
-          resetComposer()
-          return
-        }
+        // Alt+Enter is the secondary action: the opposite of the resolved default.
+        const altAction = alternateStreamingAction(action === 'steer' ? 'steer' : 'queue')
+        if (runSendAction(altAction, { chips, segments: nextSegments })) return
         // No handler for the alternate action — fall through to the default.
       }
-      if (action === 'steer' && onSteer) {
-        onSteer(chips, attachments, nextSegments)
-        setAttachments([])
-        resetComposer()
+      if (action === 'submit') {
+        if (!isLoading || sendTarget === 'thread') {
+          onSubmit(chips, attachments, nextSegments)
+          setAttachments([])
+          resetComposer()
+        }
         return
       }
-      if (action === 'queue' && onQueue) {
-        onQueue(chips, attachments, nextSegments)
-        setAttachments([])
-        resetComposer()
-        return
-      }
-      if (action === 'thread' && onThreadSubmit) {
-        onThreadSubmit(chips, attachments, nextSegments)
-        setAttachments([])
-        resetComposer()
-        return
-      }
-      if (!isLoading || sendTarget === 'thread') {
-        onSubmit(chips, attachments, nextSegments)
-        setAttachments([])
-        resetComposer()
-      }
+      runSendAction(action, { chips, segments: nextSegments })
     }
-  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onSubmit, attachments, segments, resetComposer, restoreSnapshot])
+  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, restoreSnapshot, runSendAction])
 
   const readFileAsAttachment = useCallback((file: File): Promise<ChatAttachment> => {
     return new Promise((resolve, reject) => {
@@ -2162,197 +2316,27 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
             </Button>
             </TooltipHint>
           )}
-          {canSteerWhileLoading && onSteer ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    size="icon"
-                    className="shrink-0 rounded-lg"
-                    disabled={submitEmpty || composerDisabled}
-                    aria-label="Steer the running agent (Enter)"
-                    onClick={() => {
-                      const el = editableRef.current
-                      const chips = el ? getChipFiles(el) : []
-                      const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                      onSteer(chips, attachments, nextSegments)
-                      setAttachments([])
-                      resetComposer()
-                    }}
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">Steer instead</TooltipContent>
-              </Tooltip>
-              {onQueue && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="secondary"
-                      className="shrink-0 rounded-lg"
-                      disabled={submitEmpty || composerDisabled}
-                      aria-label="Add to queue (Alt+Enter)"
-                      onClick={() => {
-                        const el = editableRef.current
-                        const chips = el ? getChipFiles(el) : []
-                        const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                        onQueue(chips, attachments, nextSegments)
-                        setAttachments([])
-                        resetComposer()
-                      }}
-                    >
-                      <ListPlus className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">Add to queue</TooltipContent>
-                </Tooltip>
-              )}
-              {onAskInParallel && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="secondary"
-                      className="shrink-0 rounded-lg"
-                      disabled={submitEmpty || composerDisabled}
-                      aria-label="Ask in parallel"
-                      onClick={() => {
-                        const el = editableRef.current
-                        const chips = el ? getChipFiles(el) : []
-                        const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                        onAskInParallel(chips, attachments, nextSegments)
-                        setAttachments([])
-                        resetComposer()
-                      }}
-                    >
-                      <GitFork className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">Ask in parallel</TooltipContent>
-                </Tooltip>
-              )}
-            </TooltipProvider>
-          ) : canThreadWhileLoading ? (
-            <>
-              <TooltipHint side="bottom" content="Send as new thread (Enter)">
+          {isLoading && sendTarget !== 'thread' ? (
+            submitEmpty || !hasStreamingSendAction ? (
+              <TooltipHint side="bottom" content="Sending">
               <Button
                 type="button"
                 size="icon"
                 className="shrink-0 rounded-lg"
-                disabled={Boolean(submitLoading) || submitEmpty || composerDisabled}
-                onClick={() => {
-                  const el = editableRef.current
-                  const chips = el ? getChipFiles(el) : []
-                  const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                  onThreadSubmit?.(chips, attachments, nextSegments)
-                  setAttachments([])
-                  resetComposer()
-                }}
+                disabled aria-label="Sending"
               >
-                {submitLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+                <Loader2 className="h-4 w-4 animate-spin" />
               </Button>
               </TooltipHint>
-              {onSteer ? (
-                <TooltipHint side="bottom" content="Steer instead (Alt+Enter)">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="shrink-0 rounded-lg"
-                  disabled={submitEmpty || composerDisabled} aria-label="Steer instead (Alt+Enter)"
-                  onClick={() => {
-                    const el = editableRef.current
-                    const chips = el ? getChipFiles(el) : []
-                    const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                    onSteer(chips, attachments, nextSegments)
-                    setAttachments([])
-                    resetComposer()
-                  }}
-                >
-                  <ArrowUp className="h-4 w-4" />
-                </Button>
-                </TooltipHint>
-              ) : onQueue ? (
-                <TooltipHint side="bottom" content="Add to queue (Alt+Enter)">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="shrink-0 rounded-lg"
-                  disabled={submitEmpty || composerDisabled} aria-label="Add to queue (Alt+Enter)"
-                  onClick={() => {
-                    const el = editableRef.current
-                    const chips = el ? getChipFiles(el) : []
-                    const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                    onQueue(chips, attachments, nextSegments)
-                    setAttachments([])
-                    resetComposer()
-                  }}
-                >
-                  <ListPlus className="h-4 w-4" />
-                </Button>
-                </TooltipHint>
-              ) : null}
-            </>
-          ) : canQueueWhileLoading && submitEmpty ? (
-            <TooltipHint side="bottom" content="Sending">
-            <Button
-              type="button"
-              size="icon"
-              className="shrink-0 rounded-lg"
-              disabled aria-label="Sending"
-            >
-              <Loader2 className="h-4 w-4 animate-spin" />
-            </Button>
-            </TooltipHint>
-          ) : canQueueWhileLoading && onQueue ? (
-            <>
-              <TooltipHint side="bottom" content="Add to queue">
-              <Button
-                type="button"
-                size="icon"
-                variant="secondary"
-                className="shrink-0 rounded-lg"
-                disabled={submitEmpty || composerDisabled} aria-label="Add to queue"
-                onClick={() => {
-                  const el = editableRef.current
-                  const chips = el ? getChipFiles(el) : []
-                  const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                  onQueue(chips, attachments, nextSegments)
-                  setAttachments([])
-                  resetComposer()
-                }}
-              >
-                <ListPlus className="h-4 w-4" />
-              </Button>
-              </TooltipHint>
-              {onSteer && (
-                <TooltipHint side="bottom" content="Steer instead (Alt+Enter)">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="shrink-0 rounded-lg"
-                  disabled={submitEmpty || composerDisabled} aria-label="Steer instead (Alt+Enter)"
-                  onClick={() => {
-                    const el = editableRef.current
-                    const chips = el ? getChipFiles(el) : []
-                    const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                    onSteer(chips, attachments, nextSegments)
-                    setAttachments([])
-                    resetComposer()
-                  }}
-                >
-                  <ArrowUp className="h-4 w-4" />
-                </Button>
-                </TooltipHint>
-              )}
-            </>
+            ) : (
+              <ComposerSendSplitButton
+                primary={streamingSendPrimary}
+                options={streamingSendOptions}
+                disabled={composerDisabled}
+                loading={Boolean(submitLoading)}
+                onAction={handleSendAction}
+              />
+            )
           ) : !isLoading || sendTarget === 'thread' ? (
             <TooltipHint side="bottom" content={submitLoading ? 'Loading chat' : undefined}>
             <Button

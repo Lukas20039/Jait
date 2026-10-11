@@ -1706,4 +1706,18 @@ export const migrations: Migration[] = [
       db.exec("CREATE INDEX idx_team_room_root ON team_rooms(user_id, root_agent_id)");
     },
   },
+  {
+    id: 73, name: "chat_streaming_action_defaults_to_queue",
+    run(db) {
+      // The composer now defaults to Queue while a session is streaming; the
+      // small caret next to the send button still opens Steer / New thread
+      // (Settings → General → "While streaming").
+      //
+      // Rows still holding 'steer' never went through the settings control
+      // (the column was added with that value as its implicit default), so
+      // normalize them to the new default. Explicit 'queue' / 'thread'
+      // choices are left untouched, and anyone can switch back in Settings.
+      db.exec("UPDATE user_settings SET chat_streaming_action = 'queue' WHERE chat_streaming_action = 'steer'");
+    },
+  },
 ];

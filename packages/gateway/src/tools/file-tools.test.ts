@@ -1,6 +1,7 @@
 /**
- * image.view tool — reads a project image and returns a base64 data URI so the
- * web UI can render it inline instead of a fallback text card.
+ * image.view tool — reads a project image and inlines it as base64 for the web
+ * UI when it fits the payload budget, otherwise reports the path so the chat can
+ * load the bytes through the gateway's image endpoint.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
@@ -49,7 +50,7 @@ describe("image.view tool", () => {
     expect(read.data).toMatchObject({ content, size: 30 });
   });
 
-  it("returns a base64 data URI for a PNG image", async () => {
+  it("returns a single base64 copy for a small PNG image", async () => {
     const pngBytes = Buffer.from([
       0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, // PNG signature
       0x00, 0x01, 0x02, 0x03,
@@ -61,11 +62,32 @@ describe("image.view tool", () => {
     const result = await tool.execute({ path: imgPath }, toolContext);
 
     expect(result.ok).toBe(true);
-    const data = result.data as { dataUri: string; base64: string; mimeType: string; size: number };
+    const data = result.data as { base64: string; mimeType: string; size: number; inline: boolean };
     expect(data.mimeType).toBe("image/png");
     expect(data.size).toBe(pngBytes.length);
+    expect(data.inline).toBe(true);
     expect(data.base64).toBe(pngBytes.toString("base64"));
-    expect(data.dataUri).toBe(`data:image/png;base64,${data.base64}`);
+    // The bytes used to ship twice (`base64` plus a `dataUri` wrapper), which
+    // doubled the payload and pushed mid-sized screenshots past the transport.
+    expect(result.data).not.toHaveProperty("dataUri");
+  });
+
+  it("stops inlining image bytes above the payload budget", async () => {
+    // 9 KB inlines to ~12 KB of base64, past the budget; the chat then loads
+    // the file from its path instead of the truncated tool result.
+    const bigPng = Buffer.alloc(9_000, 0x7f);
+    writeFileSync(join(project, "big.png"), bigPng);
+
+    const tool = createImageViewTool(registry);
+    const result = await tool.execute({ path: "big.png" }, toolContext);
+
+    expect(result.ok).toBe(true);
+    const data = result.data as { base64?: string; inline: boolean; size: number; path: string };
+    expect(data.inline).toBe(false);
+    expect(data.size).toBe(bigPng.length);
+    expect(data.path).toBe("big.png");
+    expect(data.base64).toBeUndefined();
+    expect(result.message).toContain("too large to inline");
   });
 
   it("derives the correct mime type for jpeg, webp, and gif", async () => {

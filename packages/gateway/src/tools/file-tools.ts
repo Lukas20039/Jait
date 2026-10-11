@@ -39,6 +39,18 @@ interface ImageViewInput {
 
 const IMAGE_FILE_PATTERN = /\.(?:png|jpe?g|gif|webp)$/i;
 
+/**
+ * `image.view` results reach the chat as inline JSON, and oversized results get
+ * dropped by the transport, which rendered as a broken image card. Base64 text
+ * is already ~4/3 of the file size, and the bytes used to be sent twice
+ * (`base64` plus the `dataUri` wrapper on top of it), so a small screenshot
+ * turned into a payload far past the safe size. Anything above this budget is
+ * therefore served by path instead: the chat loads it from
+ * `/api/browser/screenshot`, which streams the bytes without inflating the
+ * tool result (or the model context) at all.
+ */
+const MAX_INLINE_IMAGE_BYTES = 8_000;
+
 export function createFileReadTool(registry: SurfaceRegistry): ToolDefinition<FileReadInput> {
   return {
     name: "file.read",
@@ -246,12 +258,21 @@ export function createImageViewTool(registry: SurfaceRegistry): ToolDefinition<I
         const bytes = await fs.readBinary(input.path);
         const extension = trimmedPath.match(/\.(png|jpe?g|gif|webp)$/i)?.[1]?.toLowerCase() ?? "png";
         const mimeType = extension === "png" ? "image/png" : extension === "webp" ? "image/webp" : extension === "gif" ? "image/gif" : "image/jpeg";
-        const base64 = Buffer.from(bytes).toString("base64");
-        const dataUri = `data:${mimeType};base64,${base64}`;
+        const inline = bytes.length <= MAX_INLINE_IMAGE_BYTES;
         return {
           ok: true,
-          message: `Displaying image ${basename(trimmedPath)}`,
-          data: { path: input.path, base64, dataUri, mimeType, size: bytes.length, modified: info.modified, isDirectory: info.isDirectory },
+          message: inline
+            ? `Displaying image ${basename(trimmedPath)}`
+            : `Displaying image ${basename(trimmedPath)} — ${bytes.length} bytes is too large to inline, so the chat loads it from its path`,
+          data: {
+            path: input.path,
+            mimeType,
+            size: bytes.length,
+            modified: info.modified,
+            isDirectory: info.isDirectory,
+            inline,
+            ...(inline ? { base64: Buffer.from(bytes).toString("base64") } : {}),
+          },
         };
       } catch (err) {
         return {

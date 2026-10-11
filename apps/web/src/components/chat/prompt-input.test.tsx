@@ -9,8 +9,8 @@ const baseProps = {
   onSubmit: () => {},
 }
 
-describe('PromptInput steering while loading', () => {
-  it('renders Steer, Queue, and Ask in parallel with fast tooltip labels while streaming', () => {
+describe('PromptInput send button while streaming', () => {
+  it('defaults to queue and hides the other actions behind the caret menu', () => {
     const markup = renderToStaticMarkup(
       <PromptInput
         {...baseProps}
@@ -21,15 +21,33 @@ describe('PromptInput steering while loading', () => {
       />,
     )
 
-    expect(markup).toContain('aria-label="Steer the running agent (Enter)"')
-    expect(markup).toContain('aria-label="Add to queue (Alt+Enter)"')
-    expect(markup).toContain('aria-label="Ask in parallel"')
-    expect(markup).not.toContain('title="Steer the running agent (Enter)"')
-    expect(markup).not.toContain('title="Add to queue (Alt+Enter)"')
-    expect(markup).not.toContain('title="Ask in parallel"')
+    // One primary button for the default action plus a caret for the rest.
+    expect(markup).toContain('aria-label="Add to queue (Enter)"')
+    expect(markup).toContain('aria-label="More send options"')
+    expect(markup).not.toContain('aria-label="Steer the running agent (Enter)"')
+    expect(markup).not.toContain('aria-label="Ask in parallel"')
+    // Labels come from tooltips, not native title attributes.
+    expect(markup).not.toContain('title="Add to queue (Enter)"')
+    expect(markup).not.toContain('title="More send options"')
   })
 
-  it('keeps the queue-only fallback when no steer handler is provided', () => {
+  it('promotes steer to the primary button when the configured default is steer', () => {
+    const markup = renderToStaticMarkup(
+      <PromptInput
+        {...baseProps}
+        isLoading
+        defaultStreamingAction="steer"
+        onQueue={() => {}}
+        onSteer={() => {}}
+      />,
+    )
+
+    expect(markup).toContain('aria-label="Steer the running agent (Enter)"')
+    expect(markup).toContain('aria-label="More send options"')
+    expect(markup).not.toContain('aria-label="Add to queue (Enter)"')
+  })
+
+  it('keeps the queue-only fallback without a caret when no steer handler is provided', () => {
     const markup = renderToStaticMarkup(
       <PromptInput
         {...baseProps}
@@ -38,8 +56,9 @@ describe('PromptInput steering while loading', () => {
       />,
     )
 
-    expect(markup).not.toContain('title="Steer the running agent (Enter)"')
-    expect(markup).toContain('aria-label="Add to queue"')
+    expect(markup).toContain('aria-label="Add to queue (Enter)"')
+    expect(markup).not.toContain('aria-label="More send options"')
+    expect(markup).not.toContain('aria-label="Steer the running agent (Enter)"')
   })
 
   it('renders the plain submit button when not loading', () => {
@@ -62,7 +81,9 @@ describe('PromptInput steering while loading', () => {
       />,
     )
 
-    expect(markup).not.toContain('title="Steer the running agent (Enter)"')
+    expect(markup).toContain('aria-label="Send message"')
+    expect(markup).not.toContain('aria-label="Steer the running agent (Enter)"')
+    expect(markup).not.toContain('aria-label="More send options"')
   })
 })
 

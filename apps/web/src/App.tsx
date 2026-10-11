@@ -5314,7 +5314,7 @@ function App() {
                   nodeSettingsTargetId={nodeSettingsTargetId}
                   repositories={automation.repositories}
                   jaitBackend={settings.jait_backend ?? 'openai'}
-                  chatStreamingAction={settings.chat_streaming_action ?? 'steer'}
+                  chatStreamingAction={settings.chat_streaming_action ?? 'queue'}
                   sttProvider={settings.stt_provider}
                   token={token}
                   updateApplying={updateApplying}
@@ -5562,7 +5562,7 @@ function App() {
                         cliModel={cliModel}
                         reasoningEffort={chatReasoningEffort}
                         contextUsage={contextUsage}
-                        defaultStreamingAction={settings.chat_streaming_action ?? 'steer'}
+                        defaultStreamingAction={settings.chat_streaming_action ?? 'queue'}
                         developerChatPanelStyle={developerChatPanelStyle}
                         developerChatSubmitLoading={developerChatSubmitLoading}
                         developerChatUiState={developerChatUiState}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { TeamRoom } from '@jait/shared'
-import { Check, MessagesSquare, Plus, Search } from 'lucide-react'
+import { Check, MessagesSquare, Plus, Search, X } from 'lucide-react'
 import { agentsApi } from '@/lib/agents-api'
 import { teamChatApi } from '@/lib/team-chat-api'
 import { teamMembers } from '@/lib/agent-organization'
@@ -11,7 +11,7 @@ import { AgentAvatar } from './agent-avatar'
 import { TeamAvatar } from './team-avatar'
 import { TeamRoomView } from './team-room'
 
-export function TeamChatsPanel({ showList = true, isMobile = false }: { showList?: boolean; isMobile?: boolean }) {
+export function TeamChatsPanel({ isMobile = false, onHide }: { isMobile?: boolean; onHide?: () => void }) {
   const [rooms, setRooms] = useState<TeamRoom[]>([])
   const [agents, setAgents] = useState<PersonaAgentDraft[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('teamRoom'))
@@ -38,7 +38,9 @@ export function TeamChatsPanel({ showList = true, isMobile = false }: { showList
     Promise.all([teamChatApi.list(), agentsApi.listPersonaAgents()]).then(([result, profiles]) => {
       if (!active) return
       setRooms(result.rooms); setAgents(profiles)
-      setSelectedId(id => result.rooms.some(room => room.id === id) ? id : result.rooms[0]?.id ?? null)
+      // Opening the panel must not open a chat on its own: only a room the user
+      // picked (or a deep link) becomes the selected conversation.
+      setSelectedId(id => id && result.rooms.some(room => room.id === id) ? id : null)
     }).catch(error => { if (active) setError(error instanceof Error ? error.message : 'Could not load team chats') })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
@@ -55,11 +57,14 @@ export function TeamChatsPanel({ showList = true, isMobile = false }: { showList
   const openCreate = () => { setName(''); setMemberIds([]); setAgentSearch(''); setCreateError(null); setCreating(true) }
   const selected = rooms.find(room => room.id === selectedId)
   const membersFor = (room: TeamRoom) => room.memberIds ? agents.filter(agent => room.memberIds!.includes(agent.id)) : teamMembers(room.rootAgentId, agents)
-  return <section className="flex min-h-0 min-w-0 flex-1" aria-label="Team chats">
-    {(isMobile ? mobileList : showList) && <aside aria-label="Team chats panel" className={`flex min-h-0 shrink-0 flex-col border-r bg-background ${isMobile ? 'w-full' : 'w-72'}`}>
+  return <section aria-label="Team chats" className={isMobile
+    ? 'flex min-h-0 min-w-0 flex-1'
+    : `absolute inset-y-0 right-0 z-30 flex min-h-0 border-l bg-background shadow-2xl transition-[width] duration-200 ${selected ? 'w-[min(56rem,100%)]' : 'w-80'}`}>
+    {(isMobile ? mobileList : true) && <aside aria-label="Team chats panel" className={`flex min-h-0 shrink-0 flex-col border-r bg-background ${isMobile ? 'w-full' : 'w-80'}`}>
       <header className="flex min-h-11 items-center gap-2 border-b px-3">
         <MessagesSquare className="h-4 w-4 text-muted-foreground" /><h1 className="flex-1 text-sm font-semibold">Team Chats</h1>
         <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="New team chat" onClick={openCreate}><Plus className="h-4 w-4" /></Button>
+        {onHide && <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Hide team chats panel" onClick={onHide}><X className="h-4 w-4" /></Button>}
       </header>
       <label className="relative m-3"><Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" /><input aria-label="Search team chats" placeholder="Search team chats" value={search} onChange={event => setSearch(event.target.value)} className="h-9 w-full rounded-md border bg-background pl-8 pr-2 text-sm" /></label>
       <nav aria-label="Team chat list" className="min-h-0 flex-1 space-y-1 overflow-y-auto px-2 pb-3">
@@ -72,8 +77,8 @@ export function TeamChatsPanel({ showList = true, isMobile = false }: { showList
         </button>)}
       </nav>
     </aside>}
-    {(!isMobile || !mobileList) && <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-      {selected ? <TeamRoomView key={selected.id} roomId={selected.id} onBack={() => setMobileList(true)} backLabel="Back to team chats" showBack={isMobile} initialInput={drafts.current.get(selected.id) ?? ''} onInputChange={text => drafts.current.set(selected.id, text)} onRuntimeChange={setRuntime} /> : <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center"><MessagesSquare className="h-8 w-8 text-muted-foreground" /><p className="text-sm text-muted-foreground">Choose a team chat or create one with your agents.</p><Button onClick={openCreate}><Plus className="mr-2 h-4 w-4" />New team chat</Button></div>}
+    {(!isMobile || !mobileList) && selected && <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <TeamRoomView key={selected.id} roomId={selected.id} onBack={() => setMobileList(true)} backLabel="Back to team chats" showBack={isMobile} initialInput={drafts.current.get(selected.id) ?? ''} onInputChange={text => drafts.current.set(selected.id, text)} onRuntimeChange={setRuntime} />
     </div>}
     <Dialog open={creating} onOpenChange={open => { if (!saving) setCreating(open) }}>
       <DialogContent className="max-w-lg">

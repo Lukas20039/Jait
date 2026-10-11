@@ -1140,6 +1140,23 @@ describe('isInlineToolCall', () => {
     })).toBe(true)
   })
 
+  it('treats path-only image.view results as inline-rendered tool calls', () => {
+    // Large images are not inlined, so the card has to work from the path alone.
+    expect(isInlineToolCall({
+      callId: '1',
+      tool: 'image.view',
+      args: { path: 'big.png' },
+      status: 'success',
+      startedAt: 1,
+      completedAt: 2,
+      result: {
+        ok: true,
+        message: 'Displaying image big.png — 120000 bytes is too large to inline, so the chat loads it from its path',
+        data: { path: 'big.png', mimeType: 'image/png', size: 120000, inline: false },
+      },
+    })).toBe(true)
+  })
+
   it('keeps image.view tool groups expanded so the image stays visible', () => {
     expect(shouldInitiallyCollapseToolCallGroup(
       [

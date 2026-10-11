@@ -577,8 +577,16 @@ export function getToolCallBodyKind(input: ToolCallBodyInput): ToolCallBodyKind 
   if (isSecurityToolName(normalizedTool) && input.displayOutput) return 'security'
   if (['browser.navigate', 'browser.snapshot', 'browser.inspect', 'browser.click', 'browser.type', 'browser.scroll', 'browser.select', 'browser.wait', 'browser.screenshot'].includes(normalizedTool)) return 'browserActivity'
   if (['preview.open', 'preview.status', 'preview.restart', 'preview.inspect'].includes(normalizedTool) || (normalizedTool === 'surfaces.start' && input.args.type === 'browser')) return 'browserActivity'
+  // `image.view` owns its card. `getToolImagePath` reports image paths too, so
+  // without this branch an image view was handed to the browser-screenshot
+  // viewer, which ignores the inline data URI and fails with a
+  // screenshot-specific error instead of showing the image.
+  if (
+    normalizedTool === 'image.view'
+    && input.status === 'success'
+    && (input.imageDataUri || input.screenshotPath)
+  ) return 'imageView'
   if (input.screenshotPath) return 'browserScreenshot'
-  if (normalizedTool === 'image.view' && input.imageDataUri) return 'imageView'
   if (isAgentToolName(normalizedTool)) return 'subagent'
   if (normalizedTool === 'thread.control' && (input.args.action === 'create_many' || input.args.action === 'create')) return 'threadList'
   if (
