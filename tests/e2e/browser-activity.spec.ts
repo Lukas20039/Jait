@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 test('browser actions remain visible with page context, safe details and keyboard screenshot expansion', async ({ page }) => {
   const capturedPage = await page.context().newPage()
@@ -41,9 +44,9 @@ test('browser actions remain visible with page context, safe details and keyboar
   await expect(activities.nth(0).getByText('Jait documentation')).toBeVisible()
 
   await navigation.getByText('Page details · 2 elements').click()
-  await page.screenshot({ path: '../../.jait/browser-activity-desktop.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'browser-activity-desktop.png'), fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(activities.nth(0)).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-  await page.screenshot({ path: '../../.jait/browser-activity-preview.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'browser-activity-preview.png'), fullPage: true })
 })

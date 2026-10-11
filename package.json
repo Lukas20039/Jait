@@ -37,7 +37,8 @@
     "lint:hooks": "bunx oxlint --react-plugin --allow all --deny react/rules-of-hooks apps/web/src",
     "typecheck": "bun run --filter '*' typecheck",
     "release:check": "node scripts/check-release-version-source.js",
-    "healthcheck": "bun run release:check && bun run typecheck && bun run build && bun run test && bun run lint",
+    "check:artifacts": "node scripts/check-artifact-paths.mjs",
+    "healthcheck": "bun run release:check && bun run check:artifacts && bun run typecheck && bun run build && bun run test && bun run lint",
     "clean": "rm -rf packages/*/dist apps/*/dist node_modules/.cache"
   },
   "devDependencies": {

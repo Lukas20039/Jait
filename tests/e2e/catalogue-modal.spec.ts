@@ -1,6 +1,8 @@
 import { registerTestUser } from './helpers/agent-user'
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
 const API_URL = process.env.API_URL || 'http://127.0.0.1:8100'
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 let token: string
 test.beforeAll(async ({ request }) => {
   const credentials = { username: 'catalogue-modal-e2e', password: 'catalogue-test-password' }
@@ -37,7 +39,7 @@ for (const mobile of [false, true]) {
     await modal.getByRole('button', { name: 'agent.profiles', exact: true }).click()
     await expect(modal.getByRole('heading', { name: 'agent.profiles', exact: true })).toBeVisible()
     await expect(modal.getByText('Manage persistent people and teams on Jait', { exact: false })).toBeVisible()
-    await page.screenshot({ path: `/tmp/jait-catalogue-${mobile ? 'mobile' : 'desktop'}.png`, animations: 'disabled' })
+    await page.screenshot({ path: path.join(shotsDir, `catalogue-${mobile ? 'mobile' : 'desktop'}.png`), animations: 'disabled' })
     await modal.getByLabel('Search catalogue').fill('unknown-catalogue-tool')
     await expect(modal.getByText('No matching pages or tools.')).toBeVisible()
     await modal.getByLabel('Search catalogue').fill('thread.control')

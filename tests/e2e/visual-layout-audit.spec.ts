@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 const api = process.env.API_URL || 'http://127.0.0.1:8100'
-const output = '/tmp/jait-visual-audit'
+const output = resolve(__dirname, '../../.jait/shots/visual-audit')
+const reportsDir = resolve(__dirname, '../../.jait/artifacts/visual-audit')
 const pages = ['/', '/agents', '/threads', '/pulls', '/todo', '/emails', '/calendar', '/memory', '/jobs', '/network', '/settings']
 const settings = ['General', 'API', 'Tools', 'Extensions', 'Skills', 'Mail & Calendar', 'Channels', 'Nodes', 'Shortcuts', 'Usage', 'Activity', 'Changelog']
 let token: string
@@ -24,6 +26,7 @@ test.beforeAll(async ({ request }) => {
   expect(response.ok()).toBeTruthy()
   token = (await response.json()).access_token
   await mkdir(output, { recursive: true })
+  await mkdir(reportsDir, { recursive: true })
 })
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
@@ -92,7 +95,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
         await capture(`${theme}-settings-${section.replace(/[^a-z]/gi,'-')}`)
       }
     }
-    await writeFile(`${output}/${viewport.width}-report.json`, JSON.stringify(reports, null, 2))
+    await writeFile(`${reportsDir}/${viewport.width}-report.json`, JSON.stringify(reports, null, 2))
     const failures = reports.filter(r => r.documentOverflow > 2 || r.overflow.length)
     console.log(JSON.stringify(failures))
     expect(failures).toEqual([])

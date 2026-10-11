@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 for (const width of [1280, 390]) {
   test(`Agents keeps one compact header and switchable group chats at ${width}px`, async ({ page }) => {
@@ -69,7 +72,7 @@ for (const width of [1280, 390]) {
     await expect(input).toHaveText('Security draft')
     await panel.getByRole('button', { name: 'Send message', exact: true }).click()
     await expect.poll(() => writes).toEqual(['/api/team-rooms/room-1/messages'])
-    await page.screenshot({ path: `/tmp/jait-agents-group-panel-${width}.png` })
+    await page.screenshot({ path: path.join(shotsDir, `agents-group-panel-${width}.png`) })
     if (width < 640) {
       await page.getByRole('button', { name: 'Graph', exact: true }).click()
       await expect(panel).toHaveCount(0)

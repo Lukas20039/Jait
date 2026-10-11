@@ -118,7 +118,7 @@ test('composer tooltips open below their trigger', async ({ page }) => {
 
     if (!shotPath) {
       // One screenshot of the first hovering tooltip proves the visual result.
-      const shotsDir = path.resolve(process.cwd(), '../../.jait/shots')
+      const shotsDir = path.resolve(__dirname, '../../.jait/shots')
       fs.mkdirSync(shotsDir, { recursive: true })
       shotPath = path.join(shotsDir, 'composer-tooltip-bottom.png')
       await page.screenshot({ path: shotPath })

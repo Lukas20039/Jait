@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 test('chat browser supports takeover, sign-in interaction, sharing, reload and expired sessions', async ({ page }) => {
   let shared = true
@@ -41,10 +44,10 @@ test('chat browser supports takeover, sign-in interaction, sharing, reload and e
   await page.getByRole('button', { name: 'Share with agent', exact: true }).click()
   await expect(frame).toHaveAttribute('src', /view_only=1/)
   expect(writes).toEqual([false, true])
-  await page.screenshot({ path: '../../.jait/chat-browser-desktop.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'chat-browser-desktop.png'), fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-  await page.screenshot({ path: '../../.jait/chat-browser-mobile.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'chat-browser-mobile.png'), fullPage: true })
   await page.getByRole('button', { name: 'Hide browser', exact: true }).click()
   await expect(frame).toHaveCount(0)
   expired = true

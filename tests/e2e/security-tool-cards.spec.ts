@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/security-tool-cards.html')
@@ -26,7 +29,7 @@ test('keeps the results visible when a running check completes', async ({ page }
   await expect(card.getByTestId('security-tool-result')).toBeVisible()
   await expect(card.getByText('Check completed', { exact: true })).toBeVisible()
   await expect(card.getByText('Content type protection header is missing', { exact: true })).toBeVisible()
-  await page.screenshot({ path: '../../.jait/security-tool-cards-preview.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'security-tool-cards-preview.png'), fullPage: true })
 })
 
 test('shows rollback planning and keeps verification outcomes distinct', async ({ page }) => {

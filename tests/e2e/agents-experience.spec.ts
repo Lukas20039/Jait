@@ -1,8 +1,10 @@
 import { test, expect, type Page, type APIRequestContext, type WebSocketRoute } from '@playwright/test'
 
 import { registerAgentTestUser } from './helpers/agent-user'
+import path from 'node:path'
 
 const API_URL = process.env.API_URL || 'http://127.0.0.1:8100'
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 async function openAgents(page: Page, request: APIRequestContext) {
   const token = await registerAgentTestUser(request, API_URL, `agents-ui-${Date.now()}-${Math.random().toString(36).slice(2)}`, 'agents-ui-test-password')
@@ -127,7 +129,7 @@ test('agent overview restores elapsed time on reload and flips stop to play', as
   await expect(row.getByRole('button', { name: 'Stop Researcher' })).toBeEnabled()
   await expect(row.getByLabel('Running time')).toHaveText(/^2:\d{2}$/)
   await expect(row.locator('svg.agent-creature')).toHaveClass(/agent-creature-working/)
-  await page.screenshot({ path: '../../.jait/agents-overview.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'agents-overview.png'), fullPage: true })
   await page.reload({ waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: 'List', exact: true }).click()
   await expect(row.getByLabel('Running time')).toHaveText(/^2:\d{2}$/)

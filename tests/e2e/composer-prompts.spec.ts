@@ -44,7 +44,7 @@ test('terminal passwords appear above the composer and remain private', async ({
   await expect(page.getByRole('button', { name: 'Submit', exact: true })).toBeDisabled()
   // Mobile arrival must not focus the input and raise the keyboard.
   await expect(page.getByRole('textbox', { name: 'Secret' })).not.toBeFocused()
-  await page.screenshot({ path: '/tmp/jait-secret-mobile.png' })
+  await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/secret-mobile.png') })
   await page.getByRole('textbox', { name: 'Secret' }).fill('test-secret')
   await page.getByRole('button', { name: 'Show password' }).click()
   await expect(page.getByRole('textbox', { name: 'Secret' })).toHaveAttribute('type', 'text')
@@ -62,7 +62,7 @@ test('compact questions preserve answers across steps and support custom text', 
   await expect(page.getByRole('textbox')).toHaveCount(0)
   await page.getByText('Focused change', { exact: true }).click()
   await expect(page.getByRole('radio').first()).toBeChecked()
-  await page.screenshot({ path: '/tmp/jait-question-mobile.png' })
+  await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/question-mobile.png') })
   await page.getByRole('button', { name: 'Write another answer' }).click()
   await page.getByRole('textbox', { name: 'Answer: Approach' }).fill('Include the related regression test.')
   await page.getByRole('button', { name: 'Next', exact: true }).click()

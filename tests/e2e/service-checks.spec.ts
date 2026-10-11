@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 test('explicit scope, evidence, repeat verification and cancellation', async ({ page }) => {
   const scope = {
@@ -60,7 +63,7 @@ test('explicit scope, evidence, repeat verification and cancellation', async ({ 
   await expect(page.getByRole('heading', { name: 'Assessment completed' })).toBeVisible()
   await expect(page.getByText('Previously reachable; now refused')).toBeVisible()
   await expect(page.getByText('Connection refused', { exact: true })).toBeVisible()
-  await page.screenshot({ path: '../../.jait/service-checks-preview.png', fullPage: true })
+  await page.screenshot({ path: path.join(shotsDir, 'service-checks-preview.png'), fullPage: true })
   await page.getByText('Inspect evidence and authorization').click()
   await expect(page.getByText('verification-evidence', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: 'Repeat same checks' }).click()

@@ -50,6 +50,14 @@ Run from repository root unless noted.
 - Add tests for new tools/routes/schemas and regression fixes.
 - Before opening a PR, run: `bun run typecheck && bun run test` (and E2E when UI behavior changes).
 
+## Generated Artifacts & Screenshots
+- Write every generated artifact (screenshots, reports, logs, exports, recordings) inside the project: screenshots in `.jait/shots/`, everything else in `.jait/artifacts/`. Create the directories when missing.
+- Never write artifacts to temp locations (`/tmp`, `os.tmpdir()`, system temp). If a tool can only output to temp, pass an explicit project path, or copy the result into `.jait/` and report the project path.
+- Browser/preview screenshot helpers default to a temp directory. Always pass a project-local output path; treat a temp path as a bug, not a default.
+- Anchor artifact paths on `__dirname`/`import.meta.dirname`, never on the process CWD. A CWD-relative path such as `../../.jait/shots` silently escapes the project when tests run from the repo root.
+- E2E specs must resolve shot paths as `path.resolve(__dirname, '../../.jait/shots')`.
+- Run `bun run check:artifacts` (also part of `bun run healthcheck`) after touching spec output paths. It fails on temp-directory outputs, CWD-anchored artifact paths, and screenshots written outside `.jait/shots/`.
+
 ## Commit & Pull Request Guidelines
 - Follow Conventional Commit style seen in history: `feat: ...`, `fix(gateway): ...`, `chore: ...`.
 - Keep commits focused and small; avoid mixing refactors with feature changes.

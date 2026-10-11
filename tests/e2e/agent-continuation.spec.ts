@@ -1,4 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
+import path from 'node:path'
+
+const shotsDir = path.resolve(__dirname, '../../.jait/shots')
 
 async function fixture(page: Page) {
   test.setTimeout(90_000)
@@ -82,7 +85,7 @@ test('graph has sparse reactive dots and supports dragging without opening detai
   await expect(page.getByRole('complementary', { name: 'Agent details' })).toHaveCount(0)
   const after = (await avatar.boundingBox())!
   expect(after.x - before.x).toBeGreaterThan(65)
-  await page.screenshot({ path: '../../.jait/shots/agent-wave-continuation.png' })
+  await page.screenshot({ path: path.join(shotsDir, 'agent-wave-continuation.png') })
   await avatar.click()
   await expect(page.getByRole('complementary', { name: 'Agent details' })).toBeVisible()
 })
