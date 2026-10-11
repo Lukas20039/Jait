@@ -13,6 +13,33 @@ function getJwtSecret(secret: string): Uint8Array {
 
 export const AUTH_COOKIE_NAME = "jait_token";
 
+/**
+ * API paths that an unauthenticated caller must be able to reach: login and
+ * registration, plus the endpoints an external provider calls on its own
+ * behalf (OAuth and GitHub App manifest callbacks, provider webhooks).
+ *
+ * Session auth is deliberately skipped for these, so each one must authorise
+ * itself: OAuth/manifest callbacks validate a signed `state` token and
+ * webhooks validate a provider signature.
+ */
+const PUBLIC_API_PATHS = new Set([
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/refresh",
+  "/api/mobile/discovery",
+  "/api/email/oauth/callback",
+  "/api/calendar/oauth/callback",
+  // GitHub redirects the browser here during App manifest setup, and posts
+  // every App webhook here. Neither request carries a Jait session.
+  "/api/github/apps/callback",
+  "/api/github/apps/webhook",
+]);
+
+/** True when `path` may be served without a Jait session. */
+export function isPublicApiPath(path: string): boolean {
+  return PUBLIC_API_PATHS.has(path);
+}
+
 export function extractBearerToken(headerValue: unknown): string | null {
   if (typeof headerValue !== "string") return null;
   const trimmed = headerValue.trim();

@@ -26,7 +26,7 @@ import { registerSessionRoutes } from "./routes/sessions.js";
 import { registerAuthRoutes } from "./routes/auth.js";
 import { signPreviewToken, verifyPreviewToken } from "./security/preview-token.js";
 import { ControlAccess } from "./security/control-access.js";
-import { requireAuth, extractBearerToken, resolveAuth } from "./security/http-auth.js";
+import { requireAuth, extractBearerToken, resolveAuth, isPublicApiPath } from "./security/http-auth.js";
 import { isAllowedRequestOrigin } from "./security/request-origin.js";
 import { registerTerminalRoutes } from "./routes/terminals.js";
 import { registerConsentRoutes } from "./routes/consent.js";
@@ -209,7 +209,10 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
     if (!isAllowedRequestOrigin(request.headers, config) && !extractBearerToken(request.headers.authorization)) {
       return reply.status(403).send({ error: "ORIGIN_FORBIDDEN" });
     }
-    if (!path.startsWith("/api/") || ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/mobile/discovery", "/api/email/oauth/callback", "/api/calendar/oauth/callback"].includes(path)) return;
+    // Paths reached by an external provider rather than a signed-in browser.
+    // Each verifies its own credential: OAuth callbacks carry signed state,
+    // the GitHub webhook carries an HMAC signature.
+    if (!path.startsWith("/api/") || isPublicApiPath(path)) return;
     const user = await requireAuth(request, reply, config.jwtSecret);
     if (!user) return;
     if (deps.userService && !deps.userService.findById(user.id)) return reply.status(401).send({ detail: "login_required" });
