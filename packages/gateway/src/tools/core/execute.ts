@@ -13,7 +13,7 @@
 
 import type { ToolDefinition, ToolResult, ToolContext } from "../contracts.js";
 import type { SurfaceRegistry } from "../../surfaces/registry.js";
-import { createTerminalRunTool } from "../terminal-tools.js";
+import { createTerminalRunTool, type AgentEnvResolver } from "../terminal-tools.js";
 import type { SecretInputService } from "../../services/secret-input.js";
 import type { WsControlPlane } from "../../ws.js";
 
@@ -46,9 +46,10 @@ export function createExecuteTool(
   registry: SurfaceRegistry,
   secretInput?: SecretInputService,
   ws?: WsControlPlane,
+  resolveAgentEnv?: AgentEnvResolver,
 ): ToolDefinition<ExecuteInput> {
   // Delegate to the existing terminal.run implementation
-  const inner = createTerminalRunTool(registry, undefined, ws, secretInput);
+  const inner = createTerminalRunTool(registry, undefined, ws, secretInput, resolveAgentEnv);
 
   return {
     name: "execute",

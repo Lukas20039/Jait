@@ -61,6 +61,7 @@ import { verifyAuthToken } from "./security/http-auth.js";
 import { ProjectWatcher } from "./services/project-watcher.js";
 import type { FileChangeEvent } from "./services/project-watcher.js";
 import { GitService } from "./services/git.js";
+import { getAgentGithubAppService } from "./services/agent-github-apps.js";
 import { MaintenanceService } from "./services/maintenance.js";
 import { NotificationService } from "./services/notifications.js";
 import {
@@ -211,6 +212,12 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   const repoProposalService = new RepoProposalService(db);
   const reminderService = new ReminderService(db);
   const userSecretService = new UserSecretService(db, config.jwtSecret);
+  // Per-agent GitHub App identities (shared singleton keyed by db).
+  const agentGithubAppService = getAgentGithubAppService({
+    db,
+    userSecretService,
+    stateSecret: config.jwtSecret,
+  });
   const emailService = new EmailService(db, userSecretService);
   const calendarService = new CalendarService(db, userSecretService);
   const maintenanceService = new MaintenanceService(db, planService, repoService);
@@ -483,6 +490,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     sessionSqlService,
     gitService,
     userSecretService,
+    agentGithubAppService,
     emailService,
     calendarService,
     maintenanceService,

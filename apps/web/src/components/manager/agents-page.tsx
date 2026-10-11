@@ -8,6 +8,7 @@ import { Conversation, Message, PromptInput } from '@/components/chat'
 import type { PromptSkill, ReferencedFile } from '@/components/chat'
 import { ProviderModelSelector } from '@/components/chat/provider-model-selector'
 import { AgentAvatar } from './agent-avatar'
+import { AgentGithubConnection } from './agent-github-connection'
 import { AgentRow } from './agent-row'
 import { AgentsGraph } from './agents-graph'
 import { Button } from '@/components/ui/button'
@@ -124,6 +125,24 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
   }, [selectedId, tab])
 
   useEffect(() => { if (token) onRefreshSkills() }, [token, onRefreshSkills])
+
+  // GitHub returns the browser to /agents?github=<status>&agentId=<id> after the
+  // App manifest flow or an installation redirect. Report it once and clean the URL.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const status = params.get('github')
+    if (!status) return
+    const returnedAgentId = params.get('agentId')
+    const reason = params.get('reason')
+    if (status === 'connected') toast.success('GitHub App connected for this agent')
+    else if (status === 'installed') toast.message('GitHub App created — install it on GitHub to finish')
+    else toast.error(reason ? `GitHub App setup failed: ${reason}` : 'GitHub App setup failed')
+    if (returnedAgentId) { setSelectedId(returnedAgentId); setTab('profile') }
+    for (const key of ['github', 'agentId', 'reason']) params.delete(key)
+    const query = params.toString()
+    window.history.replaceState({}, '', `${window.location.pathname}${query ? `?${query}` : ''}`)
+  }, [])
 
   useEffect(() => {
     if (!token) return
@@ -493,7 +512,7 @@ export function AgentsPage({ token, repositories, availableSkills, threads, onOp
             }}>
               <SelectTrigger className="h-9 min-w-0 mt-1 w-full"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="__jait_empty_selection__">No manager (top level)</SelectItem>{availableManagers(selected!.id, agents).map((agent) => <SelectItem key={agent.id} value={agent.id}>{agent.name}{agent.role ? ` · ${agent.role}` : ''}</SelectItem>)}</SelectContent>
-            </Select></label><div className="rounded-lg border p-3 text-sm"><strong>Direct reports</strong><p className="mt-1 text-muted-foreground">{agents.filter((agent) => agent.reportsToId === selected!.id).map((agent) => agent.name).join(', ') || 'None yet'}</p></div><label className="block text-sm font-medium">Role and responsibilities<textarea value={selected!.persona} onChange={(event) => change({ persona: event.target.value })} onBlur={() => syncSchedules(selected!)} className="mt-1 min-h-28 w-full rounded-md border bg-background px-3 py-2" /></label><div><span className="mb-2 block text-sm font-medium">Provider and model</span><ProviderModelSelector provider={selected!.providerId} model={selected!.model ?? null} onProviderChange={(providerId) => change({ providerId, model: null })} onModelChange={(model) => change({ model })} tooltipSide="bottom" /></div><fieldset><legend className="mb-2 text-sm font-medium">Avatar</legend><div className="flex flex-wrap gap-2">{PERSONA_AVATARS.map((avatar) => <button type="button" key={avatar} aria-label={`Choose ${avatar} avatar`} aria-pressed={selected!.avatar === avatar} onClick={() => change({ avatar })} className={`rounded-full p-1 ${selected!.avatar === avatar ? 'ring-2 ring-primary' : ''}`}><AgentAvatar avatar={avatar} className="h-11 w-11" /></button>)}</div></fieldset><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selected!.requiresApproval} onChange={(event) => change({ requiresApproval: event.target.checked })} />Require approval for actions</label><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!selected!.paused} disabled={busy} onChange={(event) => void setPaused(!event.target.checked)} />Enable scheduled tasks</label></div>}
+            </Select></label><div className="rounded-lg border p-3 text-sm"><strong>Direct reports</strong><p className="mt-1 text-muted-foreground">{agents.filter((agent) => agent.reportsToId === selected!.id).map((agent) => agent.name).join(', ') || 'None yet'}</p></div><label className="block text-sm font-medium">Role and responsibilities<textarea value={selected!.persona} onChange={(event) => change({ persona: event.target.value })} onBlur={() => syncSchedules(selected!)} className="mt-1 min-h-28 w-full rounded-md border bg-background px-3 py-2" /></label><div><span className="mb-2 block text-sm font-medium">Provider and model</span><ProviderModelSelector provider={selected!.providerId} model={selected!.model ?? null} onProviderChange={(providerId) => change({ providerId, model: null })} onModelChange={(model) => change({ model })} tooltipSide="bottom" /></div><fieldset><legend className="mb-2 text-sm font-medium">Avatar</legend><div className="flex flex-wrap gap-2">{PERSONA_AVATARS.map((avatar) => <button type="button" key={avatar} aria-label={`Choose ${avatar} avatar`} aria-pressed={selected!.avatar === avatar} onClick={() => change({ avatar })} className={`rounded-full p-1 ${selected!.avatar === avatar ? 'ring-2 ring-primary' : ''}`}><AgentAvatar avatar={avatar} className="h-11 w-11" /></button>)}</div></fieldset><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selected!.requiresApproval} onChange={(event) => change({ requiresApproval: event.target.checked })} />Require approval for actions</label><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!selected!.paused} disabled={busy} onChange={(event) => void setPaused(!event.target.checked)} />Enable scheduled tasks</label><AgentGithubConnection agentId={selected!.id} agentName={selected!.name} /></div>}
         </div></div>}
       </>}
     </aside>}

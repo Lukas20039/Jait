@@ -1720,4 +1720,14 @@ export const migrations: Migration[] = [
       db.exec("UPDATE user_settings SET chat_streaming_action = 'queue' WHERE chat_streaming_action = 'steer'");
     },
   },
+  {
+    id: 74, name: "agent_github_apps",
+    run(db) {
+      // Per-agent GitHub App connections (issue #246). Metadata only; the App
+      // private key is stored encrypted in user_secrets.
+      db.exec("CREATE TABLE IF NOT EXISTS agent_github_apps (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, agent_id TEXT NOT NULL, status TEXT NOT NULL, data TEXT NOT NULL, updated_at TEXT NOT NULL)");
+      db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_agent_github_app_agent ON agent_github_apps(user_id, agent_id)");
+      db.exec("CREATE INDEX IF NOT EXISTS idx_agent_github_app_status ON agent_github_apps(status)");
+    },
+  },
 ];

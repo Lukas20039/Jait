@@ -66,6 +66,7 @@ import { registerPluginRoutes } from "./routes/plugins.js";
 import { registerSkillRoutes } from "./routes/skills.js";
 import { registerStoreRoutes } from "./routes/store.js";
 import { registerChannelRoutes } from "./routes/channels.js";
+import { registerAgentGithubAppRoutes } from "./routes/agent-github-apps.js";
 import type { SessionService } from "./services/sessions.js";
 import type { AuditWriter } from "./services/audit.js";
 import type { SurfaceRegistry } from "./surfaces/index.js";
@@ -107,6 +108,7 @@ import {
   GITHUB_TOKEN_SECRET_TYPE,
   GitHubPullRequestService,
 } from "./services/github-pull-requests.js";
+import { getAgentGithubAppService } from "./services/agent-github-apps.js";
 
 export interface ServerDeps {
   db?: JaitDB;
@@ -487,6 +489,20 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
     });
   }
 
+  // Per-agent GitHub App identities (connect an App per persistent agent)
+  if (deps.db) {
+    const threadService = deps.threadService;
+    registerAgentGithubAppRoutes(app, config, {
+      service: getAgentGithubAppService({
+        db: deps.db,
+        userSecretService: deps.userSecretService,
+        stateSecret: config.jwtSecret,
+      }),
+      agentExists: threadService
+        ? (userId, agentId) => threadService.listPersonaAgents(userId).some((agent) => String(agent.id) === agentId)
+        : undefined,
+    });
+  }
   // Automation plan routes
   if (deps.planService && deps.repoService) {
     registerPlanRoutes(app, config, {

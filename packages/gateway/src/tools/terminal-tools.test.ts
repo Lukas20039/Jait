@@ -5,6 +5,7 @@ import {
   AGENT_TERMINAL_ENV_PWSH,
   AGENT_TERMINAL_ENV_POSIX,
   buildAgentCommand,
+  buildAgentEnvAssignments,
   buildRemoteTerminalInput,
   buildTerminalExitMarkerCommand,
   buildSingleLineTerminalInput,
@@ -276,6 +277,62 @@ describe("buildAgentCommand", () => {
   it("leaves empty commands untouched", () => {
     expect(buildAgentCommand("", "/bin/bash")).toBe("");
     expect(buildAgentCommand("   ", "/bin/bash")).toBe("   ");
+  });
+
+  it("adds per-agent identity env to the POSIX prefix", () => {
+    const result = buildAgentCommand("gh pr list", "/bin/bash", {
+      GH_TOKEN: "ghs_installation_token",
+      GIT_AUTHOR_NAME: "jait-agent",
+    });
+
+    expect(result).toContain("export ");
+    expect(result).toContain("GH_TOKEN='ghs_installation_token'");
+    expect(result).toContain("GIT_AUTHOR_NAME='jait-agent'");
+    expect(result).toContain("PAGER=cat");
+    expect(result.endsWith("gh pr list")).toBe(true);
+  });
+
+  it("quotes agent env values so metacharacters cannot break out", () => {
+    const assignments = buildAgentEnvAssignments({ GH_TOKEN: "a'b; rm -rf / ;echo 'c" }, "/bin/bash");
+
+    // The value stays a single shell word: every quote is closed, escaped and
+    // reopened, so the embedded `; rm -rf / ;echo` never runs as its own command.
+    expect(assignments).toEqual([`GH_TOKEN='a'\\''b; rm -rf / ;echo '\\''c'`]);
+    expect(buildAgentCommand("echo hi", "/bin/bash", { GH_TOKEN: "a'b" })).toContain(
+      `GH_TOKEN='a'\\''b'`,
+    );
+  });
+
+  it("uses $env: assignments for PowerShell agent env", () => {
+    const result = buildAgentCommand("gh pr list", "pwsh.exe", {
+      GH_TOKEN: "a'b",
+    });
+
+    expect(result).toContain("$env:GH_TOKEN = 'a''b'");
+    expect(result).toContain("$env:PAGER = 'cat'");
+    expect(result).not.toContain("export ");
+  });
+
+  it("drops agent env entries that are not shell identifiers or are empty", () => {
+    const assignments = buildAgentEnvAssignments(
+      {
+        GH_TOKEN: "ok",
+        "BAD NAME": "nope",
+        "9LEADING": "nope",
+        "INJECT;rm -rf /": "nope",
+        EMPTY: "",
+      },
+      "/bin/bash",
+    );
+
+    expect(assignments).toEqual(["GH_TOKEN='ok'"]);
+  });
+
+  it("adds no agent env for cmd.exe or empty input", () => {
+    expect(buildAgentEnvAssignments({ GH_TOKEN: "x" }, "cmd.exe")).toEqual([]);
+    expect(buildAgentEnvAssignments(null, "/bin/bash")).toEqual([]);
+    expect(buildAgentEnvAssignments({}, "pwsh.exe")).toEqual([]);
+    expect(buildAgentCommand("git log", "cmd.exe", { GH_TOKEN: "x" })).toBe("git log");
   });
 });
 

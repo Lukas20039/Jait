@@ -536,8 +536,41 @@ export const AGENT_TERMINAL_ENV_PWSH = AGENT_TERMINAL_ENV_POSIX.map((entry) => {
   return `$env:${entry.slice(0, eq)} = '${entry.slice(eq + 1)}'`;
 });
 
+/** Environment names must be plain shell identifiers before we export them. */
+const AGENT_ENV_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+function quotePosixEnvValue(value: string): string {
+  return `'${value.replace(/'/g, `'\\''`)}'`;
+}
+
+function quotePwshEnvValue(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
 /**
- * Prefix an agent command with pager/editor-disabling env assignments.
+ * Render extra identity env (e.g. a per-agent GitHub App installation token)
+ * as shell assignments for the given shell. Values are always quoted so
+ * tokens containing shell metacharacters survive intact; cmd.exe gets nothing
+ * (`export` does not exist there and `set` would leak across commands).
+ */
+export function buildAgentEnvAssignments(
+  env: Record<string, string> | null | undefined,
+  shell: string,
+): string[] {
+  if (!env || isCmdShell(shell)) return [];
+  const entries = Object.entries(env).filter(
+    ([name, value]) => AGENT_ENV_NAME_RE.test(name) && typeof value === "string" && value !== "",
+  );
+  if (entries.length === 0) return [];
+  if (isPowerShellShell(shell)) {
+    return entries.map(([name, value]) => `$env:${name} = ${quotePwshEnvValue(value)}`);
+  }
+  return entries.map(([name, value]) => `${name}=${quotePosixEnvValue(value)}`);
+}
+
+/**
+ * Prefix an agent command with pager/editor-disabling env assignments, plus any
+ * per-agent identity env (e.g. a GitHub App installation token).
  *
  * POSIX: `export …;` line — for multi-line commands it is prepended as its own
  * line so the command still goes through the temp-script path unchanged.
@@ -550,20 +583,44 @@ export const AGENT_TERMINAL_ENV_PWSH = AGENT_TERMINAL_ENV_POSIX.map((entry) => {
  * Only agent-invoked executions are prefixed. Human keystrokes into the same
  * terminal are untouched, so the user's own `git log` still pages normally.
  */
-export function buildAgentCommand(command: string, shell: string): string {
+export function buildAgentCommand(
+  command: string,
+  shell: string,
+  agentEnv?: Record<string, string> | null,
+): string {
   if (isCmdShell(shell)) return command;
   const trimmed = command.trim();
   if (!trimmed) return command;
 
+  const extra = buildAgentEnvAssignments(agentEnv, shell);
+
   if (isPowerShellShell(shell)) {
-    return `${AGENT_TERMINAL_ENV_PWSH.join("; ")}; ${trimmed}`;
+    const assignments = [...AGENT_TERMINAL_ENV_PWSH, ...extra];
+    return `${assignments.join("; ")}; ${trimmed}`;
   }
 
-  const exportPrefix = `export ${AGENT_TERMINAL_ENV_POSIX.join(" ")};`;
+  const exportPrefix = `export ${[...AGENT_TERMINAL_ENV_POSIX, ...extra].join(" ")};`;
   if (command.includes("\n")) {
     return `${exportPrefix}\n${command}`;
   }
   return `${exportPrefix} ${trimmed}`;
+}
+
+/**
+ * Resolve extra command env for one agent tool call. Failure is never fatal:
+ * an unreachable GitHub App (revoked installation, network error) must not
+ * break the agent's shell, it just runs without the App identity.
+ */
+async function resolveAgentCommandEnv(
+  resolver: AgentEnvResolver | undefined,
+  context: ToolContext,
+): Promise<Record<string, string> | undefined> {
+  if (!resolver) return undefined;
+  try {
+    return (await resolver(context)) ?? undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -1181,11 +1238,22 @@ interface TerminalStreamInput {
   rows?: number;
 }
 
+/**
+ * Resolves extra environment for an agent-invoked command from the tool
+ * context — used to give a persona agent its own GitHub App identity
+ * (installation token + bot git identity) instead of the operator's personal
+ * token. Returning null/undefined means "run with no extra identity".
+ */
+export type AgentEnvResolver = (
+  context: ToolContext,
+) => Promise<Record<string, string> | null | undefined> | Record<string, string> | null | undefined;
+
 export function createTerminalRunTool(
   registry: SurfaceRegistry,
   sandboxManager = new SandboxManager(),
   ws?: WsControlPlane,
   secretInput?: SecretInputService,
+  resolveAgentEnv?: AgentEnvResolver,
 ): ToolDefinition<TerminalRunInput> {
   return {
     name: "terminal.run",
@@ -1341,7 +1409,11 @@ export function createTerminalRunTool(
           const shell = String(surface.snapshot().metadata?.shell ?? "");
           // Same pager/editor hardening as foreground commands — background
           // commands must also never sit in a pager waiting on the PTY.
-          const agentCommand = buildAgentCommand(command, shell);
+          const agentCommand = buildAgentCommand(
+            command,
+            shell,
+            await resolveAgentCommandEnv(resolveAgentEnv, context),
+          );
           scriptFile = command.includes("\n") && !(surface instanceof RemoteTerminalSurface)
             ? writeCommandScript(agentCommand)
             : null;
@@ -1412,7 +1484,7 @@ export function createTerminalRunTool(
           const shell = String(surface.snapshot().metadata?.shell ?? "");
           const execPromise = executeInTerminal(
             surface,
-            buildAgentCommand(command, shell),
+            buildAgentCommand(command, shell, await resolveAgentCommandEnv(resolveAgentEnv, context)),
             timeout,
             shell,
             context.onOutputChunk,
@@ -1588,8 +1660,9 @@ export function createJaitTerminalTool(
   sandboxManager = new SandboxManager(),
   ws?: WsControlPlane,
   secretInput?: SecretInputService,
+  resolveAgentEnv?: AgentEnvResolver,
 ): ToolDefinition<TerminalRunInput> {
-  const base = createTerminalRunTool(registry, sandboxManager, ws, secretInput);
+  const base = createTerminalRunTool(registry, sandboxManager, ws, secretInput, resolveAgentEnv);
   return {
     ...base,
     name: "jait.terminal",

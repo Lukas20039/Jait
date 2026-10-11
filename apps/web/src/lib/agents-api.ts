@@ -154,6 +154,72 @@ export interface CreateThreadPrResponse {
   resumed?: boolean
 }
 
+// ── Agent GitHub Apps ────────────────────────────────────────────────
+//
+// Each persistent agent can own its own GitHub App so commits, pull requests
+// and reviews are authored by the agent bot instead of the operator account.
+
+export type AgentGithubAppStatus = 'awaiting_installation' | 'connected' | 'error' | 'revoked'
+
+export interface AgentGithubAppConnection {
+  agentId: string
+  appId: string | null
+  appSlug: string | null
+  appName: string | null
+  clientId: string | null
+  installationId: string | null
+  accountLogin: string | null
+  accountType: string | null
+  botLogin: string | null
+  repositorySelection: string | null
+  permissions: Record<string, string> | null
+  status: AgentGithubAppStatus
+  createdAt: string
+  updatedAt: string
+  installedAt: string | null
+  lastVerifiedAt: string | null
+  lastError: string | null
+  hasPrivateKey: boolean
+  manifestState?: string | null
+}
+
+export interface AgentGithubAppState {
+  connection: AgentGithubAppConnection | null
+  webhookSecretAvailable: boolean
+}
+
+export interface AgentGithubAppSetupStart {
+  agentId: string
+  state: string
+  postUrl: string
+  redirectUrl: string
+  manifest: Record<string, unknown>
+  hasCredentials: boolean
+}
+
+export interface AgentGithubAppVerifyResult {
+  connection: AgentGithubAppConnection
+  app: { id: string; slug: string; name: string; owner: string | null } | null
+}
+
+export interface AgentGithubAppTestResult {
+  ok: true
+  botLogin: string | null
+  accountLogin: string | null
+  repositoryCount: number
+  sampleRepositories: string[]
+  permissions: Record<string, string> | null
+  repositorySelection: string | null
+  tokenExpiresAt: string
+  tokenPrefix: string
+}
+
+export interface AgentGithubAppOverview {
+  connections: AgentGithubAppConnection[]
+  webhookUrl: string
+  configured: number
+}
+
 // ── API Client ───────────────────────────────────────────────────────
 
 export class AgentsApi {
@@ -410,6 +476,76 @@ export class AgentsApi {
       method: 'DELETE', headers: this.getHeaders(),
     })
     if (!res.ok) throw new Error(`Failed to delete agent: ${res.statusText}`)
+  }
+
+  // ── Agent GitHub Apps ──────────────────────────────────────────
+
+  private githubAppPath(agentId: string, suffix = ''): string {
+    return `${API_URL}/api/agents/${encodeURIComponent(agentId)}/github-app${suffix}`
+  }
+
+  /** Read the raw `detail` error body the GitHub App routes return. */
+  private async githubAppError(res: Response, fallback: string): Promise<Error> {
+    const data = await res.json().catch(() => null) as { detail?: string; error?: string } | null
+    return new Error(data?.detail ?? data?.error ?? fallback)
+  }
+
+  async listAgentGithubApps(): Promise<AgentGithubAppOverview> {
+    const res = await fetch(`${API_URL}/api/github-apps`, { headers: this.getHeaders() })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to list GitHub App connections: ${res.statusText}`)
+    return res.json() as Promise<AgentGithubAppOverview>
+  }
+
+  async getAgentGithubApp(agentId: string): Promise<AgentGithubAppState> {
+    const res = await fetch(this.githubAppPath(agentId), { headers: this.getHeaders() })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to read the GitHub App connection: ${res.statusText}`)
+    return res.json() as Promise<AgentGithubAppState>
+  }
+
+  /** Register a brand-new App through GitHub's manifest flow for this agent. */
+  async startAgentGithubAppSetup(agentId: string, params: { appName: string; organization?: string | null; description?: string; homepage?: string }): Promise<AgentGithubAppSetupStart> {
+    const res = await fetch(this.githubAppPath(agentId, '/setup'), {
+      method: 'POST', headers: this.getHeaders(true), body: JSON.stringify(params),
+    })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to start GitHub App setup: ${res.statusText}`)
+    return res.json() as Promise<AgentGithubAppSetupStart>
+  }
+
+  /** Bind an App the operator already created in GitHub (app id + private key). */
+  async saveAgentGithubAppManual(agentId: string, params: { appId: string; privateKey: string; appSlug?: string | null; appName?: string | null }): Promise<AgentGithubAppConnection> {
+    const res = await fetch(this.githubAppPath(agentId, '/manual'), {
+      method: 'POST', headers: this.getHeaders(true), body: JSON.stringify(params),
+    })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to save the GitHub App: ${res.statusText}`)
+    const data = await res.json() as { connection: AgentGithubAppConnection }
+    return data.connection
+  }
+
+  async attachAgentGithubAppInstallation(agentId: string, installationId: string): Promise<AgentGithubAppConnection> {
+    const res = await fetch(this.githubAppPath(agentId, '/installation'), {
+      method: 'POST', headers: this.getHeaders(true), body: JSON.stringify({ installationId }),
+    })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to bind the GitHub App installation: ${res.statusText}`)
+    const data = await res.json() as { connection: AgentGithubAppConnection }
+    return data.connection
+  }
+
+  async verifyAgentGithubApp(agentId: string): Promise<AgentGithubAppVerifyResult> {
+    const res = await fetch(this.githubAppPath(agentId, '/verify'), { method: 'POST', headers: this.getHeaders() })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to verify the GitHub App: ${res.statusText}`)
+    return res.json() as Promise<AgentGithubAppVerifyResult>
+  }
+
+  /** End-to-end proof: mint an installation token and list repositories with it. */
+  async testAgentGithubApp(agentId: string): Promise<AgentGithubAppTestResult> {
+    const res = await fetch(this.githubAppPath(agentId, '/test'), { method: 'POST', headers: this.getHeaders() })
+    if (!res.ok) throw await this.githubAppError(res, `GitHub App test failed: ${res.statusText}`)
+    return res.json() as Promise<AgentGithubAppTestResult>
+  }
+
+  async disconnectAgentGithubApp(agentId: string): Promise<void> {
+    const res = await fetch(this.githubAppPath(agentId), { method: 'DELETE', headers: this.getHeaders() })
+    if (!res.ok) throw await this.githubAppError(res, `Failed to disconnect the GitHub App: ${res.statusText}`)
   }
 
   async listThreads(sessionId?: string): Promise<AgentThread[]> {

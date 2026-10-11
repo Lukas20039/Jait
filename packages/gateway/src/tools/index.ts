@@ -8,7 +8,12 @@ export type {
 } from "./contracts.js";
 export { ToolRegistry } from "./registry.js";
 
-export { createTerminalRunTool, createJaitTerminalTool, createTerminalStreamTool } from "./terminal-tools.js";
+export {
+  createTerminalRunTool,
+  createJaitTerminalTool,
+  createTerminalStreamTool,
+  type AgentEnvResolver,
+} from "./terminal-tools.js";
 export {
   createFileReadTool,
   createFileWriteTool,
@@ -160,7 +165,12 @@ import type { MemoryService } from "../memory/contracts.js";
 import type { HookBus } from "../scheduler/hooks.js";
 import type { ScreenShareService } from "@jait/screen-share";
 import { ToolRegistry } from "./registry.js";
-import { createTerminalRunTool, createJaitTerminalTool, createTerminalStreamTool } from "./terminal-tools.js";
+import {
+  createTerminalRunTool,
+  createJaitTerminalTool,
+  createTerminalStreamTool,
+  type AgentEnvResolver,
+} from "./terminal-tools.js";
 import {
   createFileReadTool,
   createFileWriteTool,
@@ -224,6 +234,8 @@ import { createAgentSpawnTool } from "./agent-tools.js";
 import { createAgentMessageTool } from "./agent-message-tool.js";
 import { createThreadControlTool } from "./thread-tools.js";
 import { createPersonaAgentTool, createPersonaAgentInspectTool } from "./persona-agent-tools.js";
+import { createAgentGithubTools } from "./agent-github-tools.js";
+import type { AgentGithubAppService } from "../services/agent-github-apps.js";
 import { jaitLinkTool } from "./link-tools.js";
 import { createJaitCatalogTool } from "./catalog-tools.js";
 import { createSecurityWorkbenchTools } from "./security-workbench-tools.js";
@@ -330,6 +342,8 @@ export interface ToolRegistryDeps {
   secretInputService?: SecretInputService;
   userQuestionService?: UserQuestionService;
   userSecretService?: UserSecretService;
+  /** Per-agent GitHub App identities; enables agent.github and agent.github.token. */
+  agentGithubAppService?: AgentGithubAppService;
   emailService?: import("../services/email/index.js").EmailService;
   calendarService?: import("../services/calendar/index.js").CalendarService;
   skillRegistry?: import("../skills/index.js").SkillRegistry;
@@ -341,6 +355,24 @@ export interface ToolRegistryDeps {
   getApp?: () => import("fastify").FastifyInstance | undefined;
 }
 
+/**
+ * The persistent agent that owns a tool call. Only set when the call runs
+ * inside a thread linked to a saved persona agent belonging to the same user —
+ * a plain chat never borrows an agent identity.
+ */
+function personaAgentIdForContext(
+  deps: ToolRegistryDeps,
+  context: { userId?: string; threadId?: string },
+): string | undefined {
+  const { userId, threadId } = context;
+  if (!deps.threadService || !userId || !threadId) return undefined;
+  const thread = deps.threadService.getById(threadId);
+  if (!thread || thread.userId !== userId || !thread.personaAgentId) return undefined;
+  return deps.threadService.getPersonaAgent(thread.personaAgentId, userId)
+    ? thread.personaAgentId
+    : undefined;
+}
+
 /** Create a ToolRegistry with all gateway tools pre-registered. */
 export function createToolRegistry(
   surfaceRegistry: SurfaceRegistry,
@@ -348,12 +380,27 @@ export function createToolRegistry(
 ): ToolRegistry {
   const tools = new ToolRegistry();
 
+  /**
+   * Terminal commands run by an agent thread authorise as that agent's own
+   * GitHub App: a short-lived installation token plus the App's bot git
+   * identity are exported into the PTY, so `git clone`/`gh pr create` work
+   * without the operator's personal token. Non-agent chats and agents without
+   * a connection get nothing (the resolver returns undefined).
+   */
+  const agentGithubEnv: AgentEnvResolver | undefined = deps.agentGithubAppService
+    ? async (context) => {
+        const agentId = personaAgentIdForContext(deps, context);
+        if (!agentId || !context.userId) return undefined;
+        return deps.agentGithubAppService!.resolveAgentGithubEnv(context.userId, agentId);
+      }
+    : undefined;
+
   // ════════════════════════════════════════════════════════════════════
   // Core tools (8 simplified tools — always sent to LLM)
   // ════════════════════════════════════════════════════════════════════
   tools.register(createReadTool(surfaceRegistry));
   tools.register(createEditTool(surfaceRegistry));
-  tools.register(createExecuteTool(surfaceRegistry, deps.secretInputService, deps.ws));
+  tools.register(createExecuteTool(surfaceRegistry, deps.secretInputService, deps.ws, agentGithubEnv));
   tools.register(createSearchTool(surfaceRegistry));
   tools.register(createWebTool());
   tools.register(createTodoTool());
@@ -374,8 +421,8 @@ export function createToolRegistry(
   // ════════════════════════════════════════════════════════════════════
 
   // Terminal tools (underlying implementations for core "execute")
-  tools.register(createTerminalRunTool(surfaceRegistry, undefined, deps.ws, deps.secretInputService));
-  tools.register(createJaitTerminalTool(surfaceRegistry, undefined, deps.ws, deps.secretInputService));
+  tools.register(createTerminalRunTool(surfaceRegistry, undefined, deps.ws, deps.secretInputService, agentGithubEnv));
+  tools.register(createJaitTerminalTool(surfaceRegistry, undefined, deps.ws, deps.secretInputService, agentGithubEnv));
   tools.register(createTerminalStreamTool(surfaceRegistry));
 
   // File tools (underlying implementations for core "read"/"edit")
@@ -530,6 +577,17 @@ export function createToolRegistry(
         config: deps.config,
       }),
     );
+  }
+
+  if (deps.agentGithubAppService) {
+    const githubService = deps.agentGithubAppService;
+    for (const tool of createAgentGithubTools({
+      service: () => githubService,
+      // Inside an agent's own thread, default to that agent's identity.
+      currentAgentId: ({ userId, threadId }) => personaAgentIdForContext(deps, { userId, threadId }),
+    })) {
+      tools.register(tool);
+    }
   }
 
   if (deps.threadService && deps.providerRegistry && deps.projectService && deps.sessionService) {

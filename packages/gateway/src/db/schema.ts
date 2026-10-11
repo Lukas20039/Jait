@@ -838,6 +838,23 @@ export const teamMessages = sqliteTable("team_room_messages", {
   clientKey: text("client_key").notNull(),
   data: text("data").notNull(),
 }, table => [uniqueIndex("idx_team_message_key").on(table.roomId, table.clientKey)]);
+/**
+ * One GitHub App connection per persistent Jait agent (Agents page profile).
+ *
+ * The App private key never lives here: it is stored encrypted through
+ * UserSecretService under type `github-app`, key `agent:<agentId>`, so a
+ * connection is only usable with the owning user's secrets and a leaked
+ * database row exposes metadata only.
+ */
+export const agentGithubApps = sqliteTable("agent_github_apps", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  agentId: text("agent_id").notNull(),
+  status: text("status").notNull(),
+  data: text("data").notNull(),
+  updatedAt: text("updated_at").notNull(),
+}, table => [uniqueIndex("idx_agent_github_app_agent").on(table.userId, table.agentId)]);
+
 export const teamDeliveries = sqliteTable("team_room_deliveries", {
   id: text("id").primaryKey(),
   roomId: text("room_id").notNull(),
