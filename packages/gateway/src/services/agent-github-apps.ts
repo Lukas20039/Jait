@@ -171,9 +171,15 @@ export class AgentGithubAppService {
     this.now = deps.now ?? (() => Date.now());
   }
 
-  publicBaseUrl(): string {
+  /** The operator-configured public base URL, or null when none is set. */
+  configuredBaseUrl(): string | null {
     const configured = this.deps.publicBaseUrl ?? process.env["JAIT_PUBLIC_URL"];
-    return (configured?.trim() || "http://localhost:8787").replace(/\/+$/, "");
+    const trimmed = configured?.trim();
+    return trimmed ? trimmed.replace(/\/+$/, "") : null;
+  }
+
+  publicBaseUrl(): string {
+    return this.configuredBaseUrl() ?? "http://localhost:8787";
   }
 
   // ── Storage ────────────────────────────────────────────────────────────
@@ -301,11 +307,16 @@ export class AgentGithubAppService {
     organization?: string | null;
     description?: string;
     homepage?: string;
-    /** Overrides the configured public base URL (e.g. the request host). */
+    /** Fallback base URL used only when no public URL is configured. */
     baseUrl?: string;
   }): Promise<SetupStart> {
     const existing = this.read(userId, agentId) ?? this.blank(agentId);
-    const base = (options.baseUrl?.trim() || this.publicBaseUrl()).replace(/\/+$/, "");
+    // A configured public URL is authoritative. GitHub calls back to this host
+    // and posts every webhook here, so it must never be taken from a
+    // request-supplied Host header (which the caller can spoof) — otherwise the
+    // App's credentials and webhooks would be routed to whoever sent the request.
+    const requestBase = options.baseUrl?.trim().replace(/\/+$/, "");
+    const base = this.configuredBaseUrl() ?? (requestBase || this.publicBaseUrl());
     const state = this.signState(userId, agentId);
     const name = options.appName.trim().slice(0, 34) || `Jait agent ${agentId.slice(0, 6)}`;
     const manifest: Record<string, unknown> = {

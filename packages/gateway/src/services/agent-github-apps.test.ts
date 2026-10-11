@@ -83,7 +83,7 @@ describe("AgentGithubAppService", () => {
   let github: FakeGithub;
   let service: AgentGithubAppService;
 
-  function makeService(overrides: { now?: () => number } = {}): AgentGithubAppService {
+  function makeService(overrides: { now?: () => number; publicBaseUrl?: string } = {}): AgentGithubAppService {
     return new AgentGithubAppService({
       db,
       userSecretService: secrets,
@@ -122,6 +122,40 @@ describe("AgentGithubAppService", () => {
     expect(setup.manifest["default_permissions"]).toMatchObject({ contents: "write", pull_requests: "write" });
     expect(setup.manifest["redirect_url"]).toBe("https://jait.test/api/github/apps/callback");
     expect(service.readState(setup.state)).toEqual({ userId: USER_A, agentId: AGENT });
+  });
+
+  it("keeps the configured public URL when a caller spoofs the request host", async () => {
+    const setup = await service.beginSetup(USER_A, AGENT, {
+      appName: "Nova",
+      baseUrl: "http://127.0.0.1:8000/",
+    });
+
+    expect(setup.redirectUrl).toBe("https://jait.test/api/github/apps/callback");
+    expect(setup.manifest["redirect_url"]).toBe("https://jait.test/api/github/apps/callback");
+    expect(setup.manifest["callback_urls"]).toEqual(["https://jait.test/api/github/apps/callback"]);
+    expect(setup.manifest["setup_url"]).toBe("https://jait.test/api/github/apps/callback");
+    expect(setup.manifest["hook_attributes"]).toMatchObject({ url: "https://jait.test/api/github/apps/webhook" });
+    expect(JSON.stringify(setup.manifest)).not.toContain("127.0.0.1");
+  });
+
+  it("falls back to the request base only when no public URL is configured", async () => {
+    const previous = process.env["JAIT_PUBLIC_URL"];
+    delete process.env["JAIT_PUBLIC_URL"];
+    try {
+      const local = makeService({ publicBaseUrl: "" });
+      const setup = await local.beginSetup(USER_A, AGENT, {
+        appName: "Nova",
+        baseUrl: "http://127.0.0.1:8000/",
+      });
+
+      expect(setup.redirectUrl).toBe("http://127.0.0.1:8000/api/github/apps/callback");
+      expect(setup.manifest["hook_attributes"]).toMatchObject({
+        url: "http://127.0.0.1:8000/api/github/apps/webhook",
+      });
+    } finally {
+      if (previous === undefined) delete process.env["JAIT_PUBLIC_URL"];
+      else process.env["JAIT_PUBLIC_URL"] = previous;
+    }
   });
 
   it("rejects a tampered manifest state token", async () => {
