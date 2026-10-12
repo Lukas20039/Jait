@@ -200,6 +200,8 @@ async function main() {
   const context = browser.contexts()[0] || await browser.newContext({
     ignoreHTTPSErrors: process.env.BROWSER_IGNORE_HTTPS_ERRORS === "true",
   });
+  browser.on("disconnected", () => send({ event: "disconnected" }));
+  context.on("close", () => send({ event: "disconnected" }));
   let page = await selectInitialPage(context);
   // CDP attachment does not activate the app window on the live desktop.
   // Display the attached page so VNC shows it and keyboard input reaches it.

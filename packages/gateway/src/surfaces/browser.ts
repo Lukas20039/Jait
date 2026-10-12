@@ -138,6 +138,7 @@ export interface BrowserPerformanceMetrics {
 }
 
 export interface BrowserDriver {
+  isConnected?(): boolean;
   navigate(url: string, signal?: AbortSignal): Promise<void>;
   click(selector: string, signal?: AbortSignal): Promise<void>;
   typeText(selector: string, text: string, signal?: AbortSignal): Promise<void>;
@@ -176,12 +177,14 @@ type PlaywrightPage = {
 };
 
 type PlaywrightContext = {
+  on?: (event: string, handler: () => void) => void;
   newPage: () => Promise<PlaywrightPage>;
   pages?: () => PlaywrightPage[];
   close: () => Promise<void>;
 };
 
 type PlaywrightBrowser = {
+  on?: (event: string, handler: () => void) => void;
   contexts?: () => PlaywrightContext[];
   newContext: (opts: Record<string, unknown>) => Promise<PlaywrightContext>;
   close: () => Promise<void>;
@@ -205,7 +208,7 @@ interface NodeBridgeResponse {
 }
 
 interface NodeBridgeEvent {
-  event: "ready" | "fatal" | "runtime";
+  event: "ready" | "fatal" | "runtime" | "disconnected";
   strategy?: string;
   error?: string;
   payload?: BrowserRuntimeEvent;
@@ -369,6 +372,7 @@ export class BrowserSurface implements Surface {
   ) {}
 
   get state(): SurfaceState {
+    if (this._state === "running" && this.driver?.isConnected?.() === false) this._setState("error");
     return this._state;
   }
 
@@ -412,7 +416,7 @@ export class BrowserSurface implements Surface {
     return {
       id: this.id,
       type: this.type,
-      state: this._state,
+      state: this.state,
       sessionId: this._sessionId ?? "",
       startedAt: this._startedAt ?? undefined,
       metadata: {
@@ -549,7 +553,7 @@ export class BrowserSurface implements Surface {
   }
 
   private requireDriver(): BrowserDriver {
-    if (!this.driver || this._state !== "running") {
+    if (!this.driver || this.state !== "running") {
       throw new Error("Browser surface is not running");
     }
     return this.driver;
@@ -742,6 +746,9 @@ async function createInProcessPlaywrightDriver(
     throw new Error("Failed to create Playwright browser context.");
   }
   const activeContext = context;
+  let browserAvailable = true;
+  browser.on?.("disconnected", () => { browserAvailable = false; });
+  activeContext.on?.("close", () => { browserAvailable = false; });
   let activePage = page;
   const events: BrowserRuntimeEvent[] = [];
   const consoleGuard = createConsoleFloodGuard({
@@ -847,6 +854,7 @@ async function createInProcessPlaywrightDriver(
   }
 
   const driver: BrowserDriver = {
+    isConnected: () => browserAvailable,
     async navigate(url: string, signal?: AbortSignal) {
       const page = await ensureActivePage();
       await withSignal(
@@ -1357,6 +1365,7 @@ async function createNodeBridgePlaywrightDriver(
   });
   let nextId = 1;
   let stopped = false;
+  let browserAvailable = true;
 
   let startResolve: (() => void) | null = null;
   let startReject: ((reason?: unknown) => void) | null = null;
@@ -1389,6 +1398,10 @@ async function createNodeBridgePlaywrightDriver(
       return;
     }
     if ("event" in payload) {
+      if (payload.event === "disconnected") {
+        browserAvailable = false;
+        return;
+      }
       if (payload.event === "ready") {
         startResolve?.();
         return;
@@ -1522,6 +1535,7 @@ async function createNodeBridgePlaywrightDriver(
   };
 
   const driver: BrowserDriver = {
+    isConnected: () => !stopped && browserAvailable,
     async navigate(url: string, signal?: AbortSignal) {
       await sendCommand("navigate", { url: rewritePublicUrlForContainerBrowser(url, liveViewSession) }, signal);
     },

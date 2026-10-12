@@ -62,11 +62,29 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not change browser control.') }
     finally { setBusy(false) }
   }
+  const restartBrowser = async () => {
+    if (!id || busy) return
+    setBusy(true); setError('')
+    try {
+      const response = await apiFetch(`${getApiUrl()}/api/preview/restart`, {
+        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: id }),
+      })
+      if (!response.ok) throw new Error('Could not restart the browser. Try again.')
+      const { session } = await response.json()
+      setState(session?.status === 'ready' ? {
+        sessionId: id, browserId: session.browserId, url: liveViewUrl(session.url),
+        sharedWithAgent: session.sharedWithAgent === true, verified: true,
+      } : null)
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not restart the browser.') }
+    finally { setBusy(false) }
+  }
   if (!id) return null
   return (
     <div className="border-b border-border/40">
       <div className="flex flex-wrap items-center gap-2 px-3 py-2">
         <button type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)} className="font-medium text-cyan-600 hover:underline">{expanded ? 'Hide browser' : 'Show browser'}</button>
+        {expanded && <button type="button" disabled={busy} onClick={() => void restartBrowser()} className="rounded border px-2 py-1 disabled:opacity-50">Restart browser</button>}
         {state?.url && <>
           <span className="ml-auto text-muted-foreground">{state.sharedWithAgent ? 'Agent is controlling' : 'You are controlling'}</span>
           <button type="button" disabled={busy || !state.verified} onClick={() => void setShared()} className="rounded border px-2 py-1 disabled:opacity-50">{busy ? 'Changing control…' : state.sharedWithAgent ? 'Take control' : 'Share with agent'}</button>

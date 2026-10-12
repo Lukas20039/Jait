@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { useState } from 'react'
+import { ChatBrowserView } from '@/components/chat/chat-browser-view'
 import { NoVncSessionView } from '@/components/remote/no-vnc-session-view'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import '@/index.css'
@@ -7,6 +8,7 @@ import '@/index.css'
 function Harness() {
   const [viewOnly, setViewOnly] = useState(true)
   const [visible, setVisible] = useState(true)
+  if (window.location.search.includes('mode=chat')) return <TooltipProvider><ChatBrowserView sessionId="ended-chat" autoOpen /></TooltipProvider>
   return <TooltipProvider><main className="p-4">
     <button onClick={() => setViewOnly(false)}>Take control</button>
     <button onClick={() => setVisible(false)}>Hide browser</button>

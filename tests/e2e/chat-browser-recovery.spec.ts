@@ -75,3 +75,23 @@ test('outage retries are bounded and hiding the browser cancels recovery', async
   await page.waitForTimeout(1500)
   expect(accessRequests).toBe(5)
 })
+
+test('a stopped browser can be restarted from its chat while retaining user control', async ({ page }) => {
+  let restarts = 0
+  let session = { status: 'stopped', browserId: 'ended-browser', sharedWithAgent: false, url: null as string | null }
+  await page.route('**/api/preview/session/ended-chat', route => route.fulfill({ json: { session } }))
+  await page.route('**/api/preview/restart', async route => {
+    expect(route.request().postDataJSON()).toEqual({ sessionId: 'ended-chat' })
+    restarts++
+    session = { ...session, status: 'ready', url: '/noVNC/vnc_lite.html?path=api/live-view/6081/websockify' }
+    await route.fulfill({ json: { session } })
+  })
+  await page.route('**/api/preview/access', route => route.fulfill({ json: { url: '/noVNC/vnc_lite.html?path=preview/scoped/live/6081/websockify' } }))
+  await page.goto('/?mode=chat')
+  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await expect(page.getByText('No live browser is available for this chat.')).toBeVisible()
+  await page.getByRole('button', { name: 'Restart browser', exact: true }).click()
+  expect(restarts).toBe(1)
+  await expect(page.getByText('You are controlling', { exact: true })).toBeVisible()
+  await expect(page.locator('iframe[title="Agent browser"]')).toHaveAttribute('src', /6081/)
+})

@@ -128,6 +128,20 @@ describe("BrowserSurface idle tracking", () => {
   });
 });
 
+describe("closed browser readiness", () => {
+  it("reports an ended driver as unavailable in state and snapshots", async () => {
+    let connected = true;
+    const driver = { isConnected: () => connected, close: async () => {} } as BrowserDriver;
+    const surface = new BrowserSurface("ended-browser", { driverFactory: async () => driver });
+    await surface.start({ sessionId: "owned-chat", projectRoot: "/project" });
+    expect(surface.state).toBe("running");
+    connected = false;
+    expect(surface.state).toBe("error");
+    expect(surface.snapshot().state).toBe("error");
+    await surface.stop();
+  });
+});
+
 describe("console flood guard", () => {
   function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
     pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
