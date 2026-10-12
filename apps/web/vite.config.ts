@@ -30,6 +30,11 @@ export default defineConfig({
         target: gatewayTarget,
         changeOrigin: true,
       },
+      '/preview': {
+        target: gatewayTarget,
+        changeOrigin: true,
+        ws: true,
+      },
       '/health': {
         target: gatewayTarget,
         changeOrigin: true,

@@ -7,7 +7,8 @@ for (const width of [390, 1280]) {
     await page.evaluate(() => import('/src/e2e-fixtures/queued-attachments.tsx'))
     for (const surface of ['composer', 'queue', 'sent']) {
       const scope = page.getByTestId(surface)
-      await expect(scope.getByRole('button', { name: 'Expand image photo.png' })).toBeVisible()
+      if (surface === 'composer') await expect(scope.getByRole('textbox').getByRole('img', { name: 'photo.png' })).toBeVisible()
+      else await expect(scope.getByRole('button', { name: surface === 'sent' ? 'View image 1: photo.png' : 'Expand image photo.png' })).toBeVisible()
       await expect(scope.locator('[data-attachment-list]')).toHaveCount(1)
       await expect(scope.locator('[download]')).toHaveCount(1)
     }

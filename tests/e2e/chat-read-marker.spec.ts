@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
       : { ok: true }
     await route.fulfill({ json })
   })
-  await page.goto(`/@fs${path.resolve(process.cwd(), 'fixtures/chat-read-marker.html')}`)
+  await page.goto(`/@fs${path.resolve(__dirname, 'fixtures/chat-read-marker.html')}`)
   await expect(page.getByTestId('active')).toHaveText('personal-1')
 })
 
@@ -63,20 +63,22 @@ test('new visible replies stay read; hidden panels wait until revealed', async (
   await expect(page.getByTestId('unread')).toHaveText('false')
 })
 
-test('a reader scrolled up must reach the latest content before acknowledging it', async ({ page }) => {
-  await page.getByText('Long transcript', { exact: true }).click()
-  await page.getByText('Load transcript', { exact: true }).click()
-  await expect(page.getByTestId('viewed')).toHaveText(initial)
-  const scroll = page.locator('[data-conversation-scroll]')
-  await scroll.hover()
-  await page.mouse.wheel(0, -2500)
-  await expect.poll(() => scroll.evaluate(el => el.scrollTop)).toBe(0)
-  await page.getByText('Receive reply', { exact: true }).click()
-  await page.waitForTimeout(400)
-  await expect(page.getByTestId('viewed')).not.toHaveText(replyTime)
-  await scroll.evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event('scroll')) })
-  await expect(page.getByTestId('viewed')).toHaveText(replyTime)
-})
+for (const scope of ['personal', 'project']) {
+  test(`a completed ${scope} chat stays read while the reader is scrolled up`, async ({ page }) => {
+    if (scope === 'project') await page.getByText('Open project', { exact: true }).click()
+    await page.getByText('Long transcript', { exact: true }).click()
+    await page.getByText('Load transcript', { exact: true }).click()
+    await expect(page.getByTestId('viewed')).toHaveText(initial)
+    const scroll = page.locator('[data-conversation-scroll]')
+    await scroll.hover()
+    await page.mouse.wheel(0, -2500)
+    await expect.poll(() => scroll.evaluate(el => el.scrollTop)).toBe(0)
+    await page.getByText('Receive reply', { exact: true }).click()
+    await expect(page.getByTestId('viewed')).toHaveText(replyTime)
+    await expect(page.getByTestId('unread')).toHaveText('false')
+    await expect.poll(() => scroll.evaluate(el => el.scrollTop)).toBe(0)
+  })
+}
 
 test('stale index responses cannot undo acknowledged content', async ({ page }) => {
   await page.getByText('Load transcript', { exact: true }).click()
@@ -128,7 +130,7 @@ test('sidebar activity cannot acknowledge a reply before the transcript stream d
       { type: 'done', last_active_at: replyTime },
     ].map(event => `data: ${JSON.stringify(event)}\n\n`).join('') }).catch(() => {})
   })
-  await page.goto(`/@fs${path.resolve(process.cwd(), 'fixtures/chat-read-marker.html')}?real=1`)
+  await page.goto(`/@fs${path.resolve(__dirname, 'fixtures/chat-read-marker.html')}?real=1`)
   await page.getByText('Load transcript', { exact: true }).click()
   await expect(page.getByTestId('viewed')).toHaveText(initial)
   await page.getByText('Receive reply', { exact: true }).click()

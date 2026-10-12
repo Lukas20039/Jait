@@ -1,6 +1,5 @@
 import { spawn } from 'node:child_process'
-import { mkdtemp, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { mkdir, mkdtemp, rm } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { setTimeout as delay } from 'node:timers/promises'
@@ -123,13 +122,17 @@ try {
     throw new Error(`Refusing to reuse an existing E2E server at ${occupied}. Stop it or set FRONTEND_URL and API_URL to use an external stack explicitly.`)
   }
 
-  e2eStateDir = await mkdtemp(resolve(tmpdir(), 'jait-e2e-'))
+  const artifactsDir = resolve(repoRoot, '.jait/artifacts')
+  await mkdir(artifactsDir, { recursive: true })
+  e2eStateDir = await mkdtemp(resolve(artifactsDir, 'jait-e2e-'))
 
   spawnServer('gateway', 'bun', ['src/index.ts'], gatewayDir, {
     PORT: gatewayPort,
     CORS_ORIGIN: frontendUrl,
     NODE_ENV: 'test',
     JAIT_DB_PATH: resolve(e2eStateDir, 'jait.db'),
+    // The live viewer belongs to the gateway origin even while React uses Vite.
+    JAIT_WEB_DIR: resolve(webDir, 'public'),
   })
   await waitForUrl(gatewayHealthUrl, 'gateway health')
 

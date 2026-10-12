@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { resolve } from 'node:path'
 
 /**
  * Playwright configuration for Jait E2E tests
@@ -17,6 +18,7 @@ process.env.FRONTEND_URL = FRONTEND_URL
 
 export default defineConfig({
   testDir: '.',
+  outputDir: resolve(__dirname, '../../.jait/artifacts/playwright-results'),
 
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -32,7 +34,7 @@ export default defineConfig({
 
   /* Reporter to use */
   reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: resolve(__dirname, '../../.jait/artifacts/playwright-report'), open: 'never' }],
     ['list']
   ],
 

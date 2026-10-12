@@ -50,7 +50,18 @@ for (const mobile of [false, true]) {
     await dialog.getByRole('button', { name: 'Create team chat', exact: true }).click()
     await expect(page.getByRole('heading', { name: 'Implementation', exact: true })).toBeVisible()
     // The selected chat floats above the Agents page instead of replacing it.
-    if (!mobile) await expect(page.getByText('Agents graph')).toBeVisible()
+    if (!mobile) {
+      await expect(page.getByText('Agents graph')).toBeVisible()
+      // Keep the room list at the right edge as the conversation opens.
+      const roomList = page.getByRole('complementary', { name: 'Team chats panel' })
+      await expect.poll(async () => {
+        const bounds = await roomList.boundingBox()
+        return bounds ? Math.round(bounds.x + bounds.width) : null
+      }).toBe(1280)
+      const composerBounds = await page.getByTestId('chat-composer').boundingBox()
+      const listBounds = await roomList.boundingBox()
+      expect(composerBounds!.x + composerBounds!.width).toBeLessThanOrEqual(listBounds!.x)
+    }
     expect(rooms[0].memberIds).toEqual(['dev', 'qa'])
     await page.getByTestId('chat-composer').getByRole('textbox').fill('Unsent implementation draft')
     if (mobile) await page.getByRole('button', { name: 'Back to team chats' }).click()
