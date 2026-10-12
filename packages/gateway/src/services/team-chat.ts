@@ -318,6 +318,7 @@ export class TeamChatService {
       "Delegate to the member whose role fits the task. Escalate blockers, conflicts and decisions beyond your role to your manager; the coordinator resolves cross-team priorities. Use recipientIds with the listed IDs, and preserve existing authorization boundaries. Paused members cannot take work.",
       "Team room: " + room.id + ". Members: " + JSON.stringify(members),
       "Use team.chat action=send with recipientIds for assignments, questions and review requests. The harness executes assignments, questions and review requests in persona-linked Threads. Group chat is for coordination; Threads are the primary work surface.",
+      "Orchestrate independent work within the assigned scope and available provider/resource capacity. A saved identity may own concurrent persona-linked Threads. Claim each bounded task and use isolated worktrees for concurrent edits; coordinate dependencies and handoffs through team.chat. Distinct tasks may be addressed to yourself with kind=assignment. Follow-ups within one thread are queued in order. Preserve consent, pause state and independent review; avoid duplicate execution and self-review.",
       "Use targetSessionId with the threadId from action=get for follow-ups to existing work. Omit it only for a distinct new task. Legacy work chat IDs remain supported.",
       "Use kind=assignment, question or review only when the recipient must do new work. Discussion, result, verification and blocked updates are passive mentions. Use recipientIds=[] for routine updates; do not send acknowledgement-only handoffs.",
       "Do the assigned work in this thread; post one concise result with evidence or one actionable blocker. Ask one independent reviewer when needed. Do not repeat setup, tests or status requests without new evidence. Use kind=verification only after performing verification.",
@@ -353,14 +354,14 @@ export class TeamChatService {
   }
   async pump() {
     if (!this.dispatch || this.closed) return;
-    const pending = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.status, "queued")).all();
+    const pending = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.status, "queued")).orderBy(teamDeliveries.id).all();
     for (const delivery of pending) {
-      // Allow every team member to work; serialize deliveries per agent below.
+      // A saved identity can own independent threads; serialize turns within each thread.
       if (this.abandonedByStop(delivery.sessionId)) {
         this.cancelQueuedDeliveries(delivery.sessionId, "Thread was stopped before this delivery started.");
         continue;
       }
-      if (this.db.select().from(teamDeliveries).where(and(eq(teamDeliveries.status, "running"), eq(teamDeliveries.agentId, delivery.agentId))).all().some(other => other.sessionId !== delivery.sessionId)) continue;
+      if (this.db.select().from(teamDeliveries).where(and(eq(teamDeliveries.status, "running"), eq(teamDeliveries.sessionId, delivery.sessionId))).get()) continue;
       if (this.running.has(delivery.id)) continue;
       // Re-read before claiming: a concurrent stop must not be overwritten by this claim.
       if (this.db.select().from(teamDeliveries).where(eq(teamDeliveries.id, delivery.id)).get()?.status !== "queued") continue;
