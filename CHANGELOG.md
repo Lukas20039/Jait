@@ -4,6 +4,16 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.926](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.926) — 2026-10-12
+
+- test(e2e): stabilize combined chat and team validation — eb83989d
+- fix(agents): align tool execution and preserve blocked delivery work — ff56008a
+- feat(agents): display live activity from persistent threads — c7703ac6
+- feat(browser): add compact controls and scoped inspection — a2c05ff6
+- feat(chat): add stop and steer for queued messages — 22d7a713
+
+Ship the pending chat queue steering, compact browser controls and scoped inspection, persistent agent activity, dynamic tool registration, consent routing, and resumable team delivery fixes together.
+
 ## [v0.1.925](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.925) — 2026-10-12
 
 - fix(browser): preserve standard noVNC viewer connections — d772c991
