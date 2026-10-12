@@ -93,7 +93,7 @@ export function NoVncSessionView({
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const attempts = useRef(0)
   const tracksConnection = (() => {
-    if (!resolvedSource || !isNoVncViewerUrl(resolvedSource) || typeof window === 'undefined') return false
+    if (!resolvedSource || !/\/vnc_lite\.html(?:[?#]|$)/i.test(resolvedSource) || typeof window === 'undefined') return false
     const gateway = new URL(getApiUrl() || window.location.origin, window.location.href)
     const target = new URL(resolvedSource, gateway)
     return target.origin === gateway.origin && target.pathname.startsWith('/noVNC/')

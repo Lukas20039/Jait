@@ -95,3 +95,12 @@ test('a stopped browser can be restarted from its chat while retaining user cont
   await expect(page.getByText('You are controlling', { exact: true })).toBeVisible()
   await expect(page.locator('iframe[title="Agent browser"]')).toHaveAttribute('src', /6081/)
 })
+
+test('standard noVNC viewers retain their own connection UI', async ({ page }) => {
+  await page.route('**/api/preview/access', route => route.fulfill({ json: { url: '/noVNC/vnc.html?path=preview/scoped/live/6080/websockify' } }))
+  await page.route('**/noVNC/vnc.html**', route => route.fulfill({ contentType: 'text/html', body: '<html><body>Standard viewer controls</body></html>' }))
+  await page.goto('/?mode=full')
+  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await expect(page.frameLocator('iframe').getByText('Standard viewer controls')).toBeVisible()
+  await expect(page.getByText('Connecting to browser…', { exact: true })).toHaveCount(0)
+})
