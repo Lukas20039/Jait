@@ -1,6 +1,7 @@
 import { AgentAvatar } from '@/components/manager/agent-avatar'
 import type { ChatPersona } from '@/lib/chat-persona'
 import { AttachmentList, collectAttachments } from './attachment-list'
+import { MessageAgentActivity } from './message-agent-activity'
 import { UserMessageImages, UserMessageImageReference } from './user-message-images'
 import { memo, useMemo, useEffect, useRef, useState, useCallback, type ReactNode, type ReactElement, type ComponentProps, type MouseEvent as ReactMouseEvent } from 'react'
 import { ArrowRight, BookOpen, Brain, Check, Copy, Eye, Loader2, MessageSquare, MoreVertical, Pencil, RotateCcw, X } from 'lucide-react'
@@ -789,6 +790,7 @@ function MessageInner({
           <AgentAvatar avatar={persona.avatar} className="h-8 w-8" />
           <span className="font-medium text-foreground">{persona.name}</span>
           <span>{persona.providerId} · {persona.model ?? 'Default model'}</span>
+          <MessageAgentActivity agent={{ id: persona.id, name: persona.name, avatar: persona.avatar }} />
         </div>}
         {!isUser && thinking && !hasThinkingSegment && (
           <Reasoning
@@ -949,6 +951,7 @@ function MessageInner({
                         'min-w-0 rounded-lg bg-muted p-4 break-words [overflow-wrap:anywhere]',
                         canEdit && !isEditing && 'cursor-text transition-colors hover:bg-muted/80',
                         'leading-relaxed [font-size:0.9rem]',
+                        userImages.length > 0 && canEdit && 'pb-10',
                         steered && 'border border-dashed border-primary/40 bg-primary/5',
                       )}
                       onClick={handleUserBubbleClick}

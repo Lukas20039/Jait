@@ -1,3 +1,5 @@
+import type { AgentLiveState } from './agent-live-state'
+
 export type PersonaSchedule = { kind: 'adaptive'; rules: string } | { kind: 'cron'; cron: string }
 
 export interface PersonaTask {
@@ -32,7 +34,8 @@ export interface PersonaAgentDraft {
   notificationEvents: Array<'task_done' | 'blocked' | 'question'>
   paused: boolean
   activeTasks?: number | null
-  liveState?: "idle" | "running" | "waiting" | null
+  /** Frozen agent activity vocabulary; see `agent-live-state.ts`. */
+  liveState?: AgentLiveState | null
   updatedAt: string
 }
 
