@@ -38,7 +38,7 @@ export function UpdateButton({ appPlatform, updateInfo, releases, updateApplying
   }
 
   return (
-    <PatchNotesTooltip targetVersion={updateInfo.latestVersion} notes={releases} align="right">
+    <PatchNotesTooltip targetVersion={updateInfo.latestVersion} notes={releases} side="right">
       <Button
         onClick={() => { void apply() }}
         variant="outline"

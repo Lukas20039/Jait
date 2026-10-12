@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test'
+import path from 'node:path'
 import { registerAgentTestUser } from './helpers/agent-user'
 
 const API_URL = process.env.API_URL || 'http://127.0.0.1:8100'
 
-test('opening a running thread shows its actual provider and model', async ({ page, request }) => {
+test('opening a running thread shows its actual provider and model', async ({ page, request, isMobile }) => {
   const token = await registerAgentTestUser(request, API_URL, `thread-provider-${Date.now()}`, 'thread-provider-test-password')
   const headers = { Authorization: `Bearer ${token}` }
   const created = await request.post(`${API_URL}/api/threads`, {
@@ -51,5 +52,12 @@ test('opening a running thread shows its actual provider and model', async ({ pa
   await expect(selector).toBeDisabled()
   await expect(page.getByRole('button', { name: /^Provider Jait.*model/ })).toHaveCount(0)
   await expect(page.locator('[contenteditable="true"]').first()).toBeEditable()
-  await page.screenshot({ path: 'test-results/thread-provider-selection.png', fullPage: true })
+  const transcript = page.locator('[data-conversation-scroll]').locator('..')
+  await expect(transcript).toHaveCSS('border-bottom-width', '0px')
+  await expect(transcript.locator('..')).toHaveCSS('border-bottom-width', '0px')
+  const minimap = page.getByRole('slider', { name: 'Conversation minimap' })
+  if (isMobile) await expect(minimap).toHaveCount(0)
+  else await expect(minimap).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Retry devices' })).toHaveCount(0)
+  await page.screenshot({ path: path.resolve(__dirname, `../../.jait/shots/thread-provider-selection${isMobile ? '-mobile' : ''}.png`), fullPage: true })
 })
