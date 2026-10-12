@@ -4,6 +4,12 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.929](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.929) — 2026-10-12
+
+- fix(gateway): cancel queued team deliveries when stopping threads — e851ace4
+
+Stopping a thread now cancels the team deliveries still queued against it inside the same transaction that marks the thread interrupted, so a stopped thread can no longer leave followers waiting on a delivery that will never start. Sibling threads keep running.
+
 ## [v0.1.928](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.928) — 2026-10-12
 
 - fix(web): place team chats panel beside the navigation rail — 0afd3c07
