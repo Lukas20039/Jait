@@ -136,8 +136,8 @@ describe('PromptInput edit attachments', () => {
         { name: 'notes.txt', mimeType: 'text/plain', data: 'aGVsbG8=' },
       ]} />,
     )
-    expect(markup).toContain('alt="screen.png"')
-    expect(markup).toContain('Remove screen.png')
+    // Images hydrate as inline DOM nodes; file attachments retain the separate bar.
+    expect(markup).not.toContain('Remove screen.png')
     expect(markup).toContain('Remove notes.txt')
   })
 })

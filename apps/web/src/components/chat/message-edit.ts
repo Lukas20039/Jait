@@ -5,6 +5,7 @@ import {
   userMessageTextFromSegments,
 } from '@/lib/user-message-segments'
 import type { ChatAttachment } from '@/hooks/useChat'
+import { mergeAttachmentsIntoSegments } from '@/lib/message-segment-builders'
 
 export interface UserMessageEditSubmission {
   text: string
@@ -19,27 +20,25 @@ export function createUserMessageEditSubmission(
   currentAttachments?: ChatAttachment[],
 ): UserMessageEditSubmission | null {
   const trimmed = text.trim()
-  if (!trimmed) return null
-
   const sourceSegments = normalizeUserMessageSegments(editedSegments ?? preservedSegments)
   const sourceText = userMessageTextFromSegments(sourceSegments).trim()
-  const editableSegments = sourceText === trimmed
-    ? sourceSegments.filter((segment) => segment.type !== 'image' && segment.type !== 'attachment')
-    : [
-        { type: 'text' as const, text: trimmed },
-        ...sourceSegments.filter((segment) => segment.type !== 'text' && segment.type !== 'image' && segment.type !== 'attachment'),
-      ]
   const attachments = currentAttachments === undefined
     ? normalizeUserMessageSegments(preservedSegments ?? editedSegments).filter(
         (segment) => segment.type === 'image' || segment.type === 'attachment',
       )
-    : currentAttachments.map((attachment) => ({
-        type: attachment.mimeType.startsWith('image/') ? 'image' as const : 'attachment' as const,
-        name: attachment.name,
-        mimeType: attachment.mimeType,
-        data: attachment.data,
-      }))
-  const displaySegments = [...editableSegments, ...attachments]
+    : currentAttachments
+  const keptSegments = sourceSegments.filter(segment => {
+    if (segment.type !== 'image' && segment.type !== 'attachment') return true
+    return attachments.some(item => item.name === segment.name && item.mimeType === segment.mimeType && item.data === segment.data)
+  })
+  const editableSegments = sourceText === trimmed
+    ? keptSegments
+    : [
+        ...(trimmed ? [{ type: 'text' as const, text: trimmed }] : []),
+        ...keptSegments.filter((segment) => segment.type !== 'text'),
+      ]
+  const displaySegments = mergeAttachmentsIntoSegments(editableSegments, attachments) ?? []
+  if (!trimmed && !displaySegments.some(segment => segment.type !== 'text')) return null
   return {
     text: trimmed,
     referencedFiles: userReferencedFilesFromSegments(displaySegments),

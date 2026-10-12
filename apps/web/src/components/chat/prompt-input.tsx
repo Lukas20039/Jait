@@ -1,4 +1,6 @@
-import { AttachmentList } from './attachment-list'
+import { AttachmentList, collectAttachments } from './attachment-list'
+import { createInlineImageNode, createInlineNodeRef, readInlineImageNode } from './prompt-input-image'
+import { mergeAttachmentsIntoSegments } from '@/lib/message-segment-builders'
 import { createPastedTextAttachment, isLongPaste } from '@/lib/pasted-text-attachment'
 import { useState, useRef, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef, type ReactNode } from 'react'
 import { ArrowUp, ListPlus, Mic, MicOff, Square, Loader2, Paperclip, Copy, Check, GitFork, GitBranch, ChevronUp } from 'lucide-react'
@@ -43,6 +45,7 @@ import {
   type UserProjectReference,
   type UserSkillReference,
   type UserChatReference,
+  type UserImageAttachment,
 } from '@/lib/user-message-segments'
 import { getPromptDraftSignature, shouldSyncComposerDraft } from '@/lib/prompt-input-draft'
 import { getRootCaretOffsetAfterChipRemoval, shouldRemovePreviousChipOnBackspace } from './prompt-input-selection'
@@ -192,7 +195,8 @@ function hashString(value: string): string {
   return (hash >>> 0).toString(36)
 }
 
-function createChipNode(file: PromptChipReference, onRemove?: (refKey: string) => void): HTMLSpanElement {
+function createChipNode(file: PromptChipReference | ({ type: 'image' } & UserImageAttachment), onRemove?: (refKey: string) => void): HTMLSpanElement {
+  if ('type' in file && file.type === 'image') return createInlineImageNode(file, onRemove ?? (() => {}))
   const chip = document.createElement('span')
   chip.contentEditable = 'false'
   const refKey = getChipRefKey(file)
@@ -270,8 +274,8 @@ function createChipNode(file: PromptChipReference, onRemove?: (refKey: string) =
   btn.addEventListener('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
-    chip.remove()
-    onRemove?.(refKey)
+    if (onRemove) onRemove(refKey)
+    else chip.remove()
   })
   chip.appendChild(btn)
 
@@ -360,6 +364,11 @@ function getComposerSegments(el: HTMLElement): UserMessageSegment[] {
 
     if (node.hasAttribute('data-chip-ref')) {
       const segmentType = node.getAttribute('data-segment-type')
+      if (segmentType === 'image') {
+        const image = readInlineImageNode(node)
+        if (image) segments.push(image)
+        return
+      }
       if (segmentType === 'project') {
         const path = node.getAttribute('data-project-path')
         if (!path) return
@@ -493,7 +502,7 @@ function appendSegmentNode(
     parent.appendChild(document.createTextNode(segment.text))
     return
   }
-  if (segment.type === 'file' || segment.type === 'project' || segment.type === 'terminal' || segment.type === 'skill' || segment.type === 'chat') {
+  if (segment.type === 'file' || segment.type === 'project' || segment.type === 'terminal' || segment.type === 'skill' || segment.type === 'chat' || segment.type === 'image') {
     parent.appendChild(createChipNode(segment, onRemove))
     return
   }
@@ -505,7 +514,7 @@ function insertSegmentsAtCursor(
   onRemove: (refKey: string) => void,
 ) {
   const selection = window.getSelection()
-  if (!selection || selection.rangeCount === 0) {
+  if (!selection || selection.rangeCount === 0 || !el.contains(selection.getRangeAt(0).commonAncestorContainer)) {
     for (const segment of segments) {
       appendSegmentNode(el, segment, onRemove)
     }
@@ -647,8 +656,8 @@ function appendSegmentNodes(
       if (segment.text) el.appendChild(document.createTextNode(segment.text))
       continue
     }
-    if (segment.type === 'image' || segment.type === 'attachment') continue
-    if (el.querySelector(`[data-chip-ref="${CSS.escape(getChipRefKey(segment))}"]`)) continue
+    if (segment.type === 'attachment') continue
+    if (segment.type !== 'image' && el.querySelector(`[data-chip-ref="${CSS.escape(getChipRefKey(segment))}"]`)) continue
     el.appendChild(createChipNode(segment, onRemoveChip))
     el.appendChild(document.createTextNode(' '))
   }
@@ -894,6 +903,8 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   const dragCounter = useRef(0)
   const [chatIdCopied, setChatIdCopied] = useState(false)
   const [isEmpty, setIsEmpty] = useState(isTextEmpty(value))
+  const [attachmentError, setAttachmentError] = useState<string | null>(null)
+  const [readingAttachments, setReadingAttachments] = useState(0)
   const [attachments, setAttachments] = useState<ChatAttachment[]>(
     () => initialAttachments ?? (draftStateKey ? attachmentDraftStore.get(draftStateKey) ?? [] : []),
   )
@@ -962,7 +973,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   const projectDisplayName = projectName?.trim() || projectPath?.trim() || null
   const hasFooterControls = shouldShowSendTargetSelector || showProviderModelSelector || showResponseStyleSelector || showProviderRuntimeSelector || showModeSelector || Boolean(footerLeadingContent)
   const hasFooterLeftContent = hasFooterControls
-  const submitEmpty = isEmpty && attachments.length === 0
+  const submitEmpty = (isEmpty && attachments.length === 0) || readingAttachments > 0
   const submitAction = resolvePromptSubmitAction({
     isLoading,
     sendTarget,
@@ -1028,7 +1039,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       currentAttachments: attachmentsRef.current,
     })
     skipNextAttachmentPersistRef.current = true
+    attachmentsRef.current = nextAttachments
     setAttachments(nextAttachments)
+    lastAppliedDraftSignatureRef.current = null
     persistAttachmentDraft(attachmentDraftStore, draftStateKey, nextAttachments)
   }, [draftStateKey])
 
@@ -1040,18 +1053,29 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     persistAttachmentDraft(attachmentDraftStore, draftStateKey, attachments)
   }, [draftStateKey, attachments])
 
+  const syncComposerSegments = useCallback((el: HTMLElement) => {
+    const nextSegments = getComposerSegments(el)
+    const nextAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), nextSegments.filter(segment => segment.type === 'image'))
+    const previous = attachmentsRef.current
+    if (previous.length !== nextAttachments.length || previous.some((item, index) => item.name !== nextAttachments[index]?.name || item.data !== nextAttachments[index]?.data || item.mimeType !== nextAttachments[index]?.mimeType)) {
+      attachmentsRef.current = nextAttachments
+      setAttachments(nextAttachments)
+    }
+    return nextSegments
+  }, [])
+
   /** Remove a chip from the editable DOM and update isEmpty. */
   const handleRemoveChip = useCallback((refKey: string) => {
     const el = editableRef.current
     if (!el) return
     pushUndoRef.current(true)
     el.querySelector(`[data-chip-ref="${CSS.escape(refKey)}"]`)?.remove()
-    draftSegmentsRef.current = getComposerSegments(el)
+    draftSegmentsRef.current = syncComposerSegments(el)
     isSyncing.current = true
     onChangeRef.current(getTextFromEditable(el))
     isSyncing.current = false
     setIsEmpty(isTextEmpty(getTextFromEditable(el)) && !hasChipRefs(el))
-  }, [])
+  }, [syncComposerSegments])
 
   const resetComposer = useCallback(() => {
     const el = editableRef.current
@@ -1095,13 +1119,13 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     if (!el) return
     isSyncing.current = true
     buildEditableContent(el, snap, '', handleRemoveChip)
-    draftSegmentsRef.current = getComposerSegments(el)
+    draftSegmentsRef.current = syncComposerSegments(el)
     const text = getTextFromEditable(el)
     onChangeRef.current(text)
     setIsEmpty(isTextEmpty(text) && !hasChipRefs(el))
     isSyncing.current = false
     moveCursorToEnd(el)
-  }, [handleRemoveChip])
+  }, [handleRemoveChip, syncComposerSegments])
 
   /** Expose imperative methods for parent components. */
   useImperativeHandle(ref, () => ({
@@ -1115,7 +1139,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       const chip = createChipNode(file, handleRemoveChip)
       el.appendChild(chip)
       el.appendChild(document.createTextNode(' '))
-      draftSegmentsRef.current = getComposerSegments(el)
+      draftSegmentsRef.current = syncComposerSegments(el)
       moveCursorToEnd(el)
       isSyncing.current = true
       onChangeRef.current(getTextFromEditable(el))
@@ -1129,7 +1153,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       if (!normalized.length) return
       pushUndoRef.current(true)
       appendSegmentNodes(el, normalized, handleRemoveChip)
-      draftSegmentsRef.current = getComposerSegments(el)
+      draftSegmentsRef.current = syncComposerSegments(el)
       moveCursorToEnd(el)
       isSyncing.current = true
       onChangeRef.current(getTextFromEditable(el))
@@ -1147,10 +1171,20 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       moveCursorToEnd(el)
     },
     addAttachment: (attachment) => {
-      setAttachments(prev => [...prev, attachment])
+      const el = editableRef.current
+      if (el && attachment.mimeType.startsWith('image/')) {
+        pushUndoRef.current(true)
+        el.appendChild(createInlineImageNode(attachment, handleRemoveChip))
+        draftSegmentsRef.current = syncComposerSegments(el)
+        isSyncing.current = true
+        onChangeRef.current(getTextFromEditable(el))
+        isSyncing.current = false
+      } else {
+        setAttachments(prev => [...prev, attachment])
+      }
       setIsEmpty(false)
     },
-  }), [handleRemoveChip, segments])
+  }), [handleRemoveChip, segments, syncComposerSegments])
 
   // Debounced search when mention query changes
   useEffect(() => {
@@ -1249,12 +1283,15 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     }
 
     isSyncing.current = true
-    buildEditableContent(el, segments, value, handleRemoveChip)
-    draftSegmentsRef.current = getComposerSegments(el)
+    const restoredSegments = lastAppliedDraftSignatureRef.current === null
+      ? mergeAttachmentsIntoSegments(segments?.length ? segments : [{ type: 'text', text: value }], attachmentsRef.current.filter(item => item.mimeType.startsWith('image/')))
+      : segments
+    buildEditableContent(el, restoredSegments, value, handleRemoveChip)
+    draftSegmentsRef.current = syncComposerSegments(el)
     setIsEmpty(isTextEmpty(value) && !hasChipRefs(editableRef.current))
     isSyncing.current = false
     lastAppliedDraftSignatureRef.current = getPromptDraftSignature(value, segments)
-  }, [value, segments, handleRemoveChip, syncKey])
+  }, [value, segments, handleRemoveChip, syncKey, draftStateKey, syncComposerSegments])
 
   // Close menu on outside click
   useEffect(() => {
@@ -1365,11 +1402,11 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     setMentionQuery('')
 
     // Sync text value
-    draftSegmentsRef.current = getComposerSegments(el)
+    draftSegmentsRef.current = syncComposerSegments(el)
     isSyncing.current = true
     onChange(getTextFromEditable(el))
     isSyncing.current = false
-  }, [onChange, pushUndoSnapshot])
+  }, [onChange, pushUndoSnapshot, syncComposerSegments])
 
   /** Replace the typed `/query` with a removable skill chip. */
   const insertSkill = useCallback((skill: PromptSkill) => {
@@ -1409,14 +1446,14 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       moveCursorToEnd(el)
     }
 
-    draftSegmentsRef.current = getComposerSegments(el)
+    draftSegmentsRef.current = syncComposerSegments(el)
     isSyncing.current = true
     onChange(getTextFromEditable(el))
     isSyncing.current = false
     setIsEmpty(isTextEmpty(getTextFromEditable(el)) && !hasChipRefs(el))
     setSlashOpen(false)
     setSlashQuery('')
-  }, [handleRemoveChip, onChange, pushUndoSnapshot])
+  }, [handleRemoveChip, onChange, pushUndoSnapshot, syncComposerSegments])
 
   /** Handle input events on the contentEditable — uses a native listener
    *  because React's synthetic onInput doesn't fire reliably for contentEditable. */
@@ -1428,7 +1465,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       isSyncing.current = true
       sanitizeEditableContent(el)
       const text = getTextFromEditable(el)
-      draftSegmentsRef.current = getComposerSegments(el)
+      draftSegmentsRef.current = syncComposerSegments(el)
       onChangeRef.current(text)
       setIsEmpty(isTextEmpty(text) && !hasChipRefs(el))
       isSyncing.current = false
@@ -1516,7 +1553,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
 
     el.addEventListener('input', handleNativeInput)
     return () => el.removeEventListener('input', handleNativeInput)
-  }, []) // stable — reads everything from refs
+  }, [syncComposerSegments]) // other dependencies are read from refs
 
   /**
    * Run one composer send action with the payload the caller already collected.
@@ -1531,12 +1568,12 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         : action === 'queue' ? onQueue
           : action === 'thread' ? onThreadSubmit
             : onAskInParallel
-    if (!handler) return false
-    handler(payload.chips, attachments, payload.segments)
+    if (!handler || readingAttachments > 0) return false
+    handler(payload.chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), payload.segments), payload.segments)
     setAttachments([])
     resetComposer()
     return true
-  }, [attachments, onQueue, onSteer, onThreadSubmit, onAskInParallel, resetComposer])
+  }, [attachments, onQueue, onSteer, onThreadSubmit, onAskInParallel, resetComposer, readingAttachments])
 
   /** Send whatever is in the composer right now through one streaming action. */
   const handleSendAction = useCallback((action: ComposerSendAction) => {
@@ -1637,9 +1674,10 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           if (prev instanceof HTMLElement && prev.hasAttribute('data-chip-ref')) {
             e.preventDefault()
             const nextSibling = prev.nextSibling
+            pushUndoSnapshot(true)
             prev.remove()
             restoreCaretAfterChipRemovalStable(el, nextSibling, childIndex)
-            draftSegmentsRef.current = getComposerSegments(el)
+            draftSegmentsRef.current = syncComposerSegments(el)
             isSyncing.current = true
             onChangeRef.current(getTextFromEditable(el))
             isSyncing.current = false
@@ -1655,9 +1693,10 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         if (prev instanceof HTMLElement && prev.hasAttribute('data-chip-ref')) {
           e.preventDefault()
           const nextSibling = prev.nextSibling
+          pushUndoSnapshot(true)
           prev.remove()
           restoreCaretAfterChipRemovalStable(el, nextSibling, Array.from(el.childNodes).indexOf(startContainer as ChildNode) + 1)
-          draftSegmentsRef.current = getComposerSegments(el)
+          draftSegmentsRef.current = syncComposerSegments(el)
           isSyncing.current = true
           onChangeRef.current(getTextFromEditable(el))
           isSyncing.current = false
@@ -1667,6 +1706,10 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
     }
     if (e.key === 'Enter' && !e.shiftKey) {
+      if (readingAttachments > 0) {
+        e.preventDefault()
+        return
+      }
       e.preventDefault()
       const el = editableRef.current
       const text = el ? getTextFromEditable(el).trim() : value.trim()
@@ -1690,7 +1733,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
       if (action === 'submit') {
         if (!isLoading || sendTarget === 'thread') {
-          onSubmit(chips, attachments, nextSegments)
+          onSubmit(chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), nextSegments), nextSegments)
           setAttachments([])
           resetComposer()
         }
@@ -1698,7 +1741,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
       runSendAction(action, { chips, segments: nextSegments })
     }
-  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, restoreSnapshot, runSendAction])
+  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
 
   const readFileAsAttachment = useCallback((file: File): Promise<ChatAttachment> => {
     return new Promise((resolve, reject) => {
@@ -1720,9 +1763,34 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   }, [])
 
   const addFilesAsAttachments = useCallback(async (files: FileList | File[]) => {
-    const results = await Promise.all(Array.from(files).map(readFileAsAttachment))
-    setAttachments((prev) => {
-      const names = new Set(prev.map((attachment) => attachment.name))
+    const el = editableRef.current
+    if (!el) return
+    pushUndoSnapshot(true)
+    setAttachmentError(null)
+    // Reserve the paste position before FileReader yields, even if the user keeps typing.
+    const marker = document.createElement('span')
+    marker.contentEditable = 'false'
+    marker.dataset.chipRef = createInlineNodeRef('pending')
+    marker.className = 'mx-1 inline-flex rounded border border-border px-2 text-xs text-muted-foreground'
+    marker.textContent = 'Loading attachment…'
+    const selection = window.getSelection()
+    const range = selection?.rangeCount ? selection.getRangeAt(0) : null
+    if (range && el.contains(range.commonAncestorContainer)) {
+      range.deleteContents()
+      range.insertNode(marker)
+      range.setStartAfter(marker)
+      range.collapse(true)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    } else {
+      el.appendChild(marker)
+    }
+    setReadingAttachments(count => count + 1)
+    setIsEmpty(false)
+    try {
+      const results = await Promise.all(Array.from(files).map(readFileAsAttachment))
+      if (!el.contains(marker)) return // Draft changed or placeholder was deleted.
+      const names = new Set(collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), getComposerSegments(el)).map(item => item.name))
       const added = results.map((attachment) => {
         const original = attachment.name || 'attachment'
         const dot = original.lastIndexOf('.')
@@ -1734,10 +1802,28 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         names.add(name)
         return { ...attachment, name }
       })
-      return [...prev, ...added]
-    })
-    setIsEmpty(false)
-  }, [readFileAsAttachment])
+      for (const image of added.filter(item => item.mimeType.startsWith('image/'))) {
+        marker.before(createInlineImageNode(image, handleRemoveChip))
+      }
+      marker.remove()
+      const next = [...attachmentsRef.current, ...added.filter(item => !item.mimeType.startsWith('image/'))]
+      attachmentsRef.current = next
+      setAttachments(next)
+      draftSegmentsRef.current = syncComposerSegments(el)
+      isSyncing.current = true
+      onChangeRef.current(getTextFromEditable(el))
+      isSyncing.current = false
+      scrollCaretIntoView(el)
+    } catch {
+      if (el.contains(marker)) {
+        marker.remove()
+        setAttachmentError('Could not read the attachment. Please try pasting it again.')
+      }
+    } finally {
+      setReadingAttachments(count => count - 1)
+      if (el.isConnected) setIsEmpty(isTextEmpty(getTextFromEditable(el)) && !hasChipRefs(el))
+    }
+  }, [readFileAsAttachment, handleRemoveChip, pushUndoSnapshot, syncComposerSegments])
 
   const removeAttachment = useCallback((name: string) => {
     setAttachments((prev) => {
@@ -1762,60 +1848,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     const tempDiv = document.createElement('div')
     tempDiv.appendChild(fragment)
 
-    // Serialize selected content: chips become @path, text stays as text
-    const segments: UserMessageSegment[] = []
-    const visit = (node: Node) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent ?? ''
-        if (text) segments.push({ type: 'text', text })
-        return
-      }
-      if (!(node instanceof HTMLElement)) return
-      if (node.hasAttribute('data-chip-ref')) {
-        const segmentType = node.getAttribute('data-segment-type')
-        if (segmentType === 'project') {
-          const path = node.getAttribute('data-project-path')!
-          segments.push({ type: 'project', path, name: node.getAttribute('data-chip-name') || path.split('/').pop() || path })
-          return
-        }
-        if (segmentType === 'terminal') {
-          const terminalId = node.getAttribute('data-terminal-id')!
-          const projectRoot = node.getAttribute('data-project-root')
-          segments.push({
-            type: 'terminal',
-            terminalId,
-            name: node.getAttribute('data-chip-name') || terminalId,
-            ...(projectRoot ? { projectRoot } : {}),
-            ...readChipLineRange(node),
-            ...(node.getAttribute('data-selected-text') ? { selectedText: node.getAttribute('data-selected-text')! } : {}),
-          })
-          return
-        }
-        if (segmentType === 'chat') {
-          const sessionId = node.getAttribute('data-chat-id')!
-          segments.push({ type: 'chat', sessionId, name: node.getAttribute('data-chip-name') || sessionId })
-          return
-        }
-        const path = node.getAttribute('data-file-path')!
-        const kind = node.getAttribute('data-kind')
-        segments.push({
-          type: 'file',
-          path,
-          name: node.getAttribute('data-chip-name') || path.split(/[\\/]/).pop() || path,
-          ...(kind === 'file' || kind === 'dir' ? { kind } : {}),
-          ...readChipLineRange(node),
-        })
-        return
-      }
-      if (node.tagName === 'BR') {
-        segments.push({ type: 'text', text: '\n' })
-        return
-      }
-      for (const child of node.childNodes) visit(child)
-    }
-    for (const child of tempDiv.childNodes) visit(child)
+    const segments = getComposerSegments(tempDiv)
 
-    if (segments.some(s => s.type === 'file' || s.type === 'project' || s.type === 'terminal' || s.type === 'chat')) {
+    if (segments.some(segment => segment.type !== 'text')) {
       e.preventDefault()
       e.clipboardData.setData('text/plain', serializeUserMessageSegmentsToMarkdown(segments))
       const structured = serializeUserMessageSegmentsForClipboard(segments)
@@ -1849,8 +1884,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     const markdownSegments = structured.length > 0 ? structured : parseUserMessageMarkdown(e.clipboardData.getData('text/plain'))
     if (markdownSegments.length > 0) {
       e.preventDefault()
+      pushUndoSnapshot(true)
       insertSegmentsAtCursor(el, markdownSegments, handleRemoveChip)
-      draftSegmentsRef.current = getComposerSegments(el)
+      draftSegmentsRef.current = syncComposerSegments(el)
       isSyncing.current = true
       onChange(getTextFromEditable(el))
       isSyncing.current = false
@@ -1863,14 +1899,14 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     if (!text) return
     pushUndoSnapshot(true)
     insertTextAtCursor(el, text)
-    draftSegmentsRef.current = getComposerSegments(el)
+    draftSegmentsRef.current = syncComposerSegments(el)
     const nextValue = getTextFromEditable(el)
     isSyncing.current = true
     onChange(nextValue)
     isSyncing.current = false
     setIsEmpty(isTextEmpty(nextValue) && !hasChipRefs(el))
     scrollCaretIntoView(el)
-  }, [addFilesAsAttachments, handleRemoveChip, onChange, pushUndoSnapshot])
+  }, [addFilesAsAttachments, handleRemoveChip, onChange, pushUndoSnapshot, syncComposerSegments])
 
   // Drag-and-drop handlers
   const onDragEnter = useCallback((e: React.DragEvent) => {
@@ -1908,7 +1944,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         ? ref
         : { type: 'file', path: ref.path, name: ref.name, ...(ref.kind ? { kind: ref.kind } : {}) }
       appendSegmentNodes(el, [segment], handleRemoveChip)
-      draftSegmentsRef.current = getComposerSegments(el)
+      draftSegmentsRef.current = syncComposerSegments(el)
       moveCursorToEnd(el)
       isSyncing.current = true
       onChange(getTextFromEditable(el))
@@ -1986,7 +2022,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         void addFilesAsAttachments(uploadable)
       }
     }
-  }, [onChange, handleRemoveChip, addFilesAsAttachments])
+  }, [onChange, handleRemoveChip, addFilesAsAttachments, syncComposerSegments])
 
   return (
     <div
@@ -2042,7 +2078,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         </div>
         </TooltipHint>
       )}
-      {attachments.length > 0 && <AttachmentList attachments={attachments} onRemove={removeAttachment} className="border-b border-border px-3 py-2" />}
+      {attachments.some(item => !item.mimeType.startsWith('image/')) && <AttachmentList attachments={attachments.filter(item => !item.mimeType.startsWith('image/'))} onRemove={removeAttachment} className="border-b border-border px-3 py-2" />}
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -2057,7 +2093,8 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           }
         }}
       />
-      {/* Editable area with inline file chips */}
+      {attachmentError && <p role="alert" className="px-3 pt-2 text-xs text-destructive">{attachmentError}</p>}
+      {/* Editable area with inline references and images */}
       <div className="relative px-3 pt-3 pb-1.5">
         {isEmpty && (
           <div className="absolute top-5 left-5 pointer-events-none text-muted-foreground leading-relaxed select-none [font-size:0.9rem]">
@@ -2349,7 +2386,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
                 const el = editableRef.current
                 const chips = el ? getChipFiles(el) : []
                 const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                onSubmit(chips, attachments, nextSegments)
+                onSubmit(chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), nextSegments), nextSegments)
                 setAttachments([])
                 resetComposer()
               }}

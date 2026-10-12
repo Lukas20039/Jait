@@ -51,6 +51,25 @@ describe('message edit submission', () => {
       .toEqual([{ type: 'text', text: 'Changed' }])
   })
 
+  it('preserves inline images between edited text segments without duplication', () => {
+    const image = { type: 'image' as const, name: 'screen.png', mimeType: 'image/png', data: 'abc123' }
+    const segments: UserMessageSegment[] = [
+      { type: 'text', text: 'Compare ' }, image,
+      { type: 'text', text: ' with this' },
+    ]
+    expect(createUserMessageEditSubmission('Compare  with this', segments, segments, [image])?.displaySegments).toEqual(segments)
+  })
+
+  it('keeps remaining images in place after deleting an earlier image', () => {
+    const image = { type: 'image' as const, name: 'second.png', mimeType: 'image/png', data: 'def456' }
+    const segments: UserMessageSegment[] = [
+      { type: 'text', text: 'Before ' }, image, { type: 'text', text: ' after' },
+    ]
+    expect(createUserMessageEditSubmission('Before  after', segments, [
+      { type: 'image', name: 'first.png', mimeType: 'image/png', data: 'abc123' }, ...segments,
+    ], [image])?.displaySegments).toEqual(segments)
+  })
+
   it('rejects blank edits', () => {
     expect(createUserMessageEditSubmission('   ')).toBeNull()
   })

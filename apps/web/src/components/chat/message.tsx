@@ -1,6 +1,7 @@
 import { AgentAvatar } from '@/components/manager/agent-avatar'
 import type { ChatPersona } from '@/lib/chat-persona'
 import { AttachmentList, collectAttachments } from './attachment-list'
+import { UserMessageImages, UserMessageImageReference } from './user-message-images'
 import { memo, useMemo, useEffect, useRef, useState, useCallback, type ReactNode, type ReactElement, type ComponentProps, type MouseEvent as ReactMouseEvent } from 'react'
 import { ArrowRight, BookOpen, Brain, Check, Copy, Eye, Loader2, MessageSquare, MoreVertical, Pencil, RotateCcw, X } from 'lucide-react'
 import { AssistantMarkdown } from './assistant-markdown'
@@ -289,8 +290,14 @@ function MessageInner({
   const [optimisticUserDisplaySegments, setOptimisticUserDisplaySegments] = useState<UserMessageSegment[] | null>(null)
   const userAttachments = useMemo(() => {
     if (!isUser) return []
-    return collectAttachments(attachmentsProp, optimisticUserDisplaySegments ?? userDisplaySegments)
+    return optimisticUserDisplaySegments
+      ? collectAttachments(undefined, optimisticUserDisplaySegments)
+      : collectAttachments(attachmentsProp, userDisplaySegments)
   }, [attachmentsProp, isUser, optimisticUserDisplaySegments, userDisplaySegments])
+  const userImages = useMemo(() => {
+    const ordered = collectAttachments(undefined, optimisticUserDisplaySegments ?? userDisplaySegments).filter(item => item.mimeType.startsWith('image/'))
+    return collectAttachments(ordered, userAttachments.filter(item => item.mimeType.startsWith('image/')).map(item => ({ ...item, type: 'image' as const })))
+  }, [optimisticUserDisplaySegments, userDisplaySegments, userAttachments])
   const hasUserRenderableContent = isUser && hasRenderableUserMessageContent({
     content,
     userDisplayText: optimisticUserDisplayText ?? userDisplayText,
@@ -947,12 +954,15 @@ function MessageInner({
                       onClick={handleUserBubbleClick}
                     >
                       <div className="min-w-0 space-y-3">
-                        <AttachmentList attachments={userAttachments} />
+                        <AttachmentList attachments={userAttachments.filter(item => !item.mimeType.startsWith('image/'))} />
+                        <UserMessageImages images={userImages} excluded={(optimisticUserDisplaySegments ?? userDisplaySegments).filter(segment => segment.type === 'image')} />
                         <div className="min-w-0 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                           {(optimisticUserDisplaySegments ?? userDisplaySegments).length > 0
                             ? (optimisticUserDisplaySegments ?? userDisplaySegments).map((segment, index) =>
                                 segment.type === 'text' ? (
                                   <span key={`text-${index}`}>{segment.text}</span>
+                                ) : segment.type === 'image' ? (
+                                  <UserMessageImageReference key={`image-${index}`} image={segment} number={userImages.findIndex(image => image.name === segment.name && image.mimeType === segment.mimeType && image.data === segment.data) + 1} />
                                 ) : segment.type === 'file' ? (
                                   <TooltipHint key={`${segment.path}-${index}`} content={segment.path}>
                                   <span
