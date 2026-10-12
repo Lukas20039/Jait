@@ -11,7 +11,7 @@ import { join, resolve, sep } from "node:path";
  * We probe for `docker` first then fall back to `podman`.
  */
 let _containerBinary: string | null = null;
-const SANDBOX_BROWSER_IMAGE = "jait/sandbox-browser:app-window-v1";
+const SANDBOX_BROWSER_IMAGE = "jait/sandbox-browser:recovery-v2";
 const BROWSER_SANDBOX_NAME_PREFIX = "jait-browser-sb-";
 const BROWSER_SANDBOX_HEALTH_TIMEOUT_MS = 3_000;
 const DEFAULT_MAX_BROWSER_SANDBOXES = 2;
@@ -1425,8 +1425,12 @@ chromium --no-sandbox --disable-gpu --disable-software-rasterizer --no-first-run
     # x11vnc has been observed to segfault after client disconnects when XDamage
     # is enabled. Disable that path and auto-restart so the live-view endpoint
     # survives transient x11vnc crashes instead of breaking the preview session.
-    x11vnc -display :99 -nopw -listen 0.0.0.0 -xkb -forever -shared -noxdamage -rfbport 5900
-    echo "x11vnc exited with status $?; restarting in 1s" >&2
+    if x11vnc -display :99 -nopw -listen 0.0.0.0 -xkb -forever -shared -noxdamage -rfbport 5900; then
+      vnc_status=0
+    else
+      vnc_status=$?
+    fi
+    echo "x11vnc exited with status $vnc_status; restarting in 1s" >&2
     sleep 1
   done
 ) &
@@ -1572,8 +1576,12 @@ chromium --no-sandbox --disable-gpu --disable-software-rasterizer \\
 # live view survives transient crashes)
 (
   while true; do
-    x11vnc -display :99 -nopw -listen 0.0.0.0 -xkb -forever -shared -noxdamage -rfbport 5900
-    echo "x11vnc exited with status $?; restarting in 1s" >&2
+    if x11vnc -display :99 -nopw -listen 0.0.0.0 -xkb -forever -shared -noxdamage -rfbport 5900; then
+      vnc_status=0
+    else
+      vnc_status=$?
+    fi
+    echo "x11vnc exited with status $vnc_status; restarting in 1s" >&2
     sleep 1
   done
 ) &

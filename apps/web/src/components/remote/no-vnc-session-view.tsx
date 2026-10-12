@@ -88,9 +88,73 @@ export function NoVncSessionView({
     bell,
   })
 
-  const src = usePreviewAccess(resolvedSource)
+  const [revision, setRevision] = useState(0)
+  const [connection, setConnection] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const attempts = useRef(0)
+  const tracksConnection = (() => {
+    if (!resolvedSource || !isNoVncViewerUrl(resolvedSource) || typeof window === 'undefined') return false
+    const gateway = new URL(getApiUrl() || window.location.origin, window.location.href)
+    const target = new URL(resolvedSource, gateway)
+    return target.origin === gateway.origin && target.pathname.startsWith('/noVNC/')
+  })()
+  const src = usePreviewAccess(resolvedSource, revision)
+  const retry = useCallback(() => {
+    attempts.current = 0
+    setConnection('connecting')
+    setRevision(value => value + 1)
+  }, [])
 
-  if (!src) {
+  useEffect(() => {
+    attempts.current = 0
+    setConnection('connecting')
+  }, [resolvedSource])
+
+  useEffect(() => {
+    if (!src || !tracksConnection) return
+    const receive = (event: MessageEvent) => {
+      if (event.source !== iframeRef.current?.contentWindow ||
+          event.origin !== new URL(src, window.location.href).origin ||
+          event.data?.type !== 'jait-vnc-status') return
+      if (event.data.status === 'connected') {
+        attempts.current = 0
+        setConnection('connected')
+      } else if (event.data.status === 'disconnected') setConnection('disconnected')
+    }
+    window.addEventListener('message', receive)
+    return () => window.removeEventListener('message', receive)
+  }, [src, tracksConnection])
+
+  useEffect(() => {
+    if (!resolvedSource || !tracksConnection || connection === 'connected') return
+    if (connection === 'connecting') {
+      const deadline = setTimeout(() => setConnection('disconnected'), 10000)
+      return () => clearTimeout(deadline)
+    }
+    if (reconnect === false || attempts.current >= 3 || !navigator.onLine || document.visibilityState === 'hidden') return
+    const timer = setTimeout(() => {
+      attempts.current += 1
+      setConnection('connecting')
+      setRevision(value => value + 1)
+    }, reconnectDelayMs ?? Math.min(1000 * 2 ** attempts.current, 8000))
+    return () => clearTimeout(timer)
+  }, [connection, resolvedSource, revision, tracksConnection, reconnect, reconnectDelayMs])
+
+  useEffect(() => {
+    const resume = () => {
+      if (tracksConnection && connection === 'disconnected' && navigator.onLine && document.visibilityState !== 'hidden') retry()
+    }
+    window.addEventListener('online', resume)
+    window.addEventListener('pageshow', resume)
+    document.addEventListener('visibilitychange', resume)
+    return () => {
+      window.removeEventListener('online', resume)
+      window.removeEventListener('pageshow', resume)
+      document.removeEventListener('visibilitychange', resume)
+    }
+  }, [connection, retry, tracksConnection])
+
+  if (!resolvedSource) {
     return (
       <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
         No remote session source available.
@@ -99,15 +163,19 @@ export function NoVncSessionView({
   }
 
   return (
-    <ZoomPanWrapper overlay={overlay}>
-      <iframe
-        key={src}
+    <ZoomPanWrapper overlay={overlay} controls={tracksConnection ? <button type="button" onClick={retry} className="rounded bg-background/90 px-2 py-1 text-xs shadow hover:bg-muted">Reconnect browser</button> : undefined}>
+      {src && <iframe
+        ref={iframeRef}
+        key={`${src}:${revision}`}
         src={src}
         title={title}
         className={className}
         sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
-        onLoad={onLoad}
-      />
+        onLoad={() => { if (!tracksConnection) setConnection('connected'); onLoad?.() }}
+      />}
+      {tracksConnection && connection !== 'connected' && <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-background/95 p-4 text-center text-sm">
+        <p role="status">{connection === 'connecting' ? 'Connecting to browser…' : 'Browser connection interrupted.'}</p>
+      </div>}
     </ZoomPanWrapper>
   )
 }

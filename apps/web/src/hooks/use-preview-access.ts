@@ -3,8 +3,8 @@ import { apiFetch } from '@/lib/api-fetch'
 import { getApiUrl } from '@/lib/gateway-url'
 
 /** Iframe/WebSocket links carry a narrow preview grant, never an account token. */
-export function usePreviewAccess(source: string | null): string | null {
-  const [resolved, setResolved] = useState<{ source: string; url: string } | null>(null)
+export function usePreviewAccess(source: string | null, revision = 0): string | null {
+  const [resolved, setResolved] = useState<{ source: string; url: string; revision: number } | null>(null)
   let managed = false
   if (source) {
     try {
@@ -27,11 +27,11 @@ export function usePreviewAccess(source: string | null): string | null {
         })
         if (!response.ok) return
         const data = await response.json() as { url: string }
-        if (!cancelled) setResolved({ source, url: data.url })
+        if (!cancelled) setResolved({ source, url: data.url, revision })
       } catch { /* unmounted or preview no longer available */ }
     }
     void load()
     return () => { cancelled = true; controller.abort() }
-  }, [source, managed])
-  return managed ? (resolved?.source === source ? resolved.url : null) : source
+  }, [source, managed, revision])
+  return managed ? (resolved?.source === source && resolved.revision === revision ? resolved.url : null) : source
 }

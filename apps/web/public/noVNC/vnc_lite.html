@@ -102,10 +102,13 @@
         // successfully connected to a server
         function connectedToServer(e) {
             status("Connected to " + desktopName);
+            window.parent.postMessage({ type: 'jait-vnc-status', status: 'connected' }, '*');
         }
 
         // This function is called when we are disconnected
         function disconnectedFromServer(e) {
+            window.parent.postMessage({ type: 'jait-vnc-status', status: 'disconnected' }, '*');
+            document.getElementById('top_bar').style.display = 'block';
             if (e.detail.clean) {
                 status("Disconnected");
             } else {
