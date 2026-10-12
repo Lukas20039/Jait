@@ -4,6 +4,12 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.927](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.927) — 2026-10-12
+
+- fix(terminal): wait for PowerShell output before completing commands — 9b3e024e
+
+Prevent echoed PowerShell commands from being mistaken for completed prompts, preserving terminal output and native failure exit codes in the packaged Windows gateway.
+
 ## [v0.1.926](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.926) — 2026-10-12
 
 - test(e2e): stabilize combined chat and team validation — eb83989d
