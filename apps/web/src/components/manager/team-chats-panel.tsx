@@ -59,8 +59,8 @@ export function TeamChatsPanel({ isMobile = false, onHide }: { isMobile?: boolea
   const membersFor = (room: TeamRoom) => room.memberIds ? agents.filter(agent => room.memberIds!.includes(agent.id)) : teamMembers(room.rootAgentId, agents)
   return <section aria-label="Team chats" className={isMobile
     ? 'flex min-h-0 min-w-0 flex-1'
-    : `absolute inset-y-0 right-0 z-30 flex min-h-0 flex-row-reverse border-l bg-background shadow-2xl transition-[width] duration-200 ${selected ? 'w-[min(56rem,100%)]' : 'w-80'}`}>
-    {(isMobile ? mobileList : true) && <aside aria-label="Team chats panel" className={`flex min-h-0 shrink-0 flex-col bg-background ${isMobile ? 'w-full' : `w-80 ${selected ? 'border-l' : ''}`}`}>
+    : `absolute inset-y-0 left-0 z-30 flex min-h-0 border-r bg-background shadow-2xl transition-[width] duration-200 ${selected ? 'w-[min(56rem,100%)]' : 'w-80'}`}>
+    {(isMobile ? mobileList : true) && <aside aria-label="Team chats panel" className={`flex min-h-0 shrink-0 flex-col bg-background ${isMobile ? 'w-full' : `w-80 ${selected ? 'border-r' : ''}`}`}>
       <header className="flex min-h-11 items-center gap-2 border-b px-3">
         <MessagesSquare className="h-4 w-4 text-muted-foreground" /><h1 className="flex-1 text-sm font-semibold">Team Chats</h1>
         <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="New team chat" onClick={openCreate}><Plus className="h-4 w-4" /></Button>

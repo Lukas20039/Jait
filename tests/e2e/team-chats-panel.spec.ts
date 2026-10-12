@@ -32,7 +32,13 @@ for (const mobile of [false, true]) {
     await page.getByRole('button', { name: 'Team Chats', exact: true }).click()
     await expect(page.getByRole('complementary', { name: 'Team chats panel' })).toBeVisible()
     // Opening the panel leaves the Agents page in place and opens no chat on its own.
-    if (!mobile) await expect(page.getByText('Agents graph')).toBeVisible()
+    if (!mobile) {
+      await expect(page.getByText('Agents graph')).toBeVisible()
+      const roomList = page.getByRole('complementary', { name: 'Team chats panel' })
+      const listBounds = await roomList.boundingBox()
+      const pageBounds = await page.getByText('Agents graph').locator('..').boundingBox()
+      expect(listBounds!.x).toBe(pageBounds!.x)
+    }
     await expect(page.getByTestId('chat-composer')).toHaveCount(0)
     await page.getByRole('complementary', { name: 'Team chats panel' }).getByRole('button', { name: 'New team chat', exact: true }).click()
     const dialog = page.getByRole('dialog')
@@ -52,15 +58,19 @@ for (const mobile of [false, true]) {
     // The selected chat floats above the Agents page instead of replacing it.
     if (!mobile) {
       await expect(page.getByText('Agents graph')).toBeVisible()
-      // Keep the room list at the right edge as the conversation opens.
+      // Keep the room list beside the navigation rail, with the conversation to its right.
       const roomList = page.getByRole('complementary', { name: 'Team chats panel' })
+      const panel = page.getByRole('region', { name: 'Team chats', exact: true })
       await expect.poll(async () => {
         const bounds = await roomList.boundingBox()
-        return bounds ? Math.round(bounds.x + bounds.width) : null
-      }).toBe(1280)
+        const pageBounds = await page.getByText('Agents graph').locator('..').boundingBox()
+        return bounds && pageBounds ? Math.round(bounds.x - pageBounds.x) : null
+      }).toBe(0)
       const composerBounds = await page.getByTestId('chat-composer').boundingBox()
       const listBounds = await roomList.boundingBox()
-      expect(composerBounds!.x + composerBounds!.width).toBeLessThanOrEqual(listBounds!.x)
+      expect(composerBounds!.x).toBeGreaterThanOrEqual(listBounds!.x + listBounds!.width)
+      const panelBounds = await panel.boundingBox()
+      expect(panelBounds!.x + panelBounds!.width).toBeLessThan(1280)
     }
     expect(rooms[0].memberIds).toEqual(['dev', 'qa'])
     await page.getByTestId('chat-composer').getByRole('textbox').fill('Unsent implementation draft')
