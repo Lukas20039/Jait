@@ -140,7 +140,7 @@ interface ThreadCreateSpec {
   timeoutMinutes?: number;
 }
 
-const THREAD_TERMINAL_STATUSES = new Set(["completed", "error", "interrupted"]);
+const THREAD_TERMINAL_STATUSES = new Set(["completed", "error", "blocked", "interrupted"]);
 const THREAD_WAIT_POLL_MS = 100;
 const THREAD_RESULT_ACTIVITY_LIMIT = 25;
 const THREAD_RESULT_TEXT_LIMIT = 4_000;
@@ -171,6 +171,7 @@ export interface ThreadControlToolDeps {
   mcpConfig?: { host: string; port: number };
   config?: AppConfig;
   gitService?: ThreadControlGit;
+  agentGithubAppService?: Pick<import("../services/agent-github-apps.js").AgentGithubAppService, "mintInstallationToken">;
 }
 
 interface StartThreadResult {
@@ -278,7 +279,7 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
 
   const broadcastThreadStatus = (
     threadId: string,
-    status: "running" | "completed" | "error" | "interrupted",
+    status: "running" | "completed" | "error" | "blocked" | "interrupted",
     data: Record<string, unknown> = {},
   ): void => {
     const thread = deps.threadService.getById(threadId);
@@ -657,8 +658,8 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
           closeNestedCard(true, "Completed");
           cleanup();
         } else if (event.type === "session.error") {
-          deps.threadService.markError(effectiveThread.id, event.error);
-          broadcastThreadStatus(effectiveThread.id, "error", { error: event.error });
+          const failed = deps.threadService.markError(effectiveThread.id, event.error);
+          broadcastThreadStatus(effectiveThread.id, failed?.status === "blocked" ? "blocked" : "error", { error: event.error });
           closeNestedCard(false, event.error);
           cleanup();
         } else if (event.type === "turn.started") {
@@ -1333,7 +1334,11 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
             if (input.threadId && !thread) {
               return { ok: false, message: "Thread not found." };
             }
-            if (thread && !thread.completedAt) {
+            // The active delivery itself is the writer and may publish before ending
+            // its turn. Other callers must wait until the writer completes.
+            const ownRunningDelivery = thread?.kind === "delivery" && thread.status === "running"
+              && context.threadId === thread.id;
+            if (thread && !thread.completedAt && !ownRunningDelivery) {
               return {
                 ok: false,
                 message: "Thread must be completed before creating a pull request.",
@@ -1350,12 +1355,21 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
             if (!cwd) return { ok: false, message: "create_pr requires `cwd` or a thread with `workingDirectory`." };
 
             const action = input.gitAction ?? "commit_push_pr";
+            let githubToken: string | undefined;
+            if (thread?.personaAgentId) {
+              if (!deps.agentGithubAppService) return { ok: false, message: "Agent GitHub App service unavailable; personal credentials cannot substitute." };
+              if (input.cwd && input.cwd !== thread.workingDirectory) return { ok: false, message: "Agent publishing must use its assigned thread working directory." };
+              if (caller?.personaAgentId && caller.personaAgentId !== thread.personaAgentId) return { ok: false, message: "Agents must publish through their own GitHub App identity." };
+              githubToken = (await deps.agentGithubAppService.mintInstallationToken(userId, thread.personaAgentId)).token;
+              if (!githubToken) return { ok: false, message: "Agent GitHub App token unavailable; personal credentials cannot substitute." };
+            }
             const result = await gitService.runStackedAction(
               cwd,
               action,
               input.commitMessage?.trim() || undefined,
               input.featureBranch === true,
               input.baseBranch,
+              githubToken,
             );
 
             const prUrl = result.pr.url ?? result.push.createPrUrl;

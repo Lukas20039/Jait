@@ -24,6 +24,7 @@ import { registerChatRoutes, getPersonaChatRuntime } from "./routes/chat.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerSessionRoutes } from "./routes/sessions.js";
 import { registerAuthRoutes } from "./routes/auth.js";
+import { registerBrowserDevToolsRoutes } from "./routes/browser-devtools.js";
 import { signPreviewToken, verifyPreviewToken } from "./security/preview-token.js";
 import { ControlAccess } from "./security/control-access.js";
 import { requireAuth, extractBearerToken, resolveAuth, isPublicApiPath } from "./security/http-auth.js";
@@ -202,7 +203,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
 
-  const access = new ControlAccess(deps.sessionService, deps.surfaceRegistry, deps.consentManager);
+  const access = new ControlAccess(deps.sessionService, deps.surfaceRegistry, deps.consentManager, deps.threadService);
   app.addHook("onRequest", async (request, reply) => {
     const path = request.url.split("?")[0] ?? "";
     if (path.startsWith("/preview/")) return; // Dedicated handlers verify a resource-scoped grant.
@@ -365,6 +366,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
       deviceRegistry: deps.deviceRegistry,
       consentManager: deps.consentManager,
       sessionService: deps.sessionService,
+      threadService: deps.threadService,
       config,
       mobilePush: deps.mobilePush,
       scheduler: deps.scheduler,
@@ -418,6 +420,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
   registerDevProxyRoutes(app, config, deps, access);
   registerLiveViewProxyRoutes(app, config, deps, access);
   if (deps.previewService) {
+    registerBrowserDevToolsRoutes(app, config, { previewService: deps.previewService, sessionService: deps.sessionService });
     registerPreviewRoutes(app, config, {
       previewService: deps.previewService,
       sessionService: deps.sessionService,

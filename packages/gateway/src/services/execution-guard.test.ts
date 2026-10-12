@@ -2,6 +2,27 @@ import { describe, expect, it } from "vitest";
 import { ExecutionGuard } from "./execution-guard.js";
 
 describe("bounded execution", () => {
+  it("does not pool unrelated missing files into a project failure", () => {
+    const guard = new ExecutionGuard();
+    for (const path of ["design.md", "review.json", "optional.log"]) {
+      guard.beforeCall();
+      guard.record("file.read", { ok: false, message: `ENOENT: no such file or directory, open '/project/${path}'` });
+    }
+    expect(guard.stopReason).toBeUndefined();
+    expect(guard.snapshot().infrastructureFailures ?? 0).toBe(0);
+  });
+
+  it("clears a recovered failure so unrelated later failures do not exhaust recovery", () => {
+    const guard = new ExecutionGuard();
+    for (let i = 0; i < 6; i++) {
+      guard.beforeCall();
+      guard.record("execute", { ok: false, message: "bash: bun: command not found" });
+      guard.beforeCall();
+      guard.record("execute", { ok: true, message: "Command completed", data: { output: `bun works: ${i}`, exitCode: 0 } });
+    }
+    expect(guard.stopReason).toBeUndefined();
+  });
+
   it("stops the same infrastructure failure across aliases and arguments after two retries", () => {
     const guard = new ExecutionGuard();
     for (const tool of ["execute", "terminal.run", "jait.terminal"]) {
@@ -66,7 +87,7 @@ describe("bounded execution", () => {
   it("bounds recovery across different environment failures and persists its budget", () => {
     let guard = new ExecutionGuard();
     const outputs = ["bun: command not found", "Cannot find module better-sqlite3", "Permission denied",
-      "ENOENT: project", "Consent request timed out", "No test files found"];
+      "Source chat not found", "Consent request timed out", "No test files found"];
     for (const output of outputs) {
       guard.beforeCall();
       guard.record("terminal.run", { ok: false, message: output });
@@ -92,6 +113,16 @@ describe("bounded execution", () => {
         output: "src/guard.ts: if (/command not found|permission denied/.test(message)) return;" } });
     }
     expect(guard.stopReason).toBeUndefined();
+  });
+
+  it("allows progressing threads beyond 120 calls, including after checkpoint restore", () => {
+    let guard = new ExecutionGuard(undefined, Number.POSITIVE_INFINITY);
+    for (let i = 0; i < 300; i++) {
+      expect(guard.beforeCall()).toBeUndefined();
+      expect(guard.record("file.read", { ok: true, message: `fact ${i}` })).toBeUndefined();
+      if (i === 119) guard = new ExecutionGuard(guard.snapshot(), Number.POSITIVE_INFINITY);
+    }
+    expect(guard.snapshot().calls).toBe(300);
   });
 
   it("enforces a hard limit despite new observations on every call", () => {

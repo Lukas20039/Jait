@@ -57,7 +57,7 @@ export interface TeamDelivery {
   sessionId: string;
   threadId?: string;
   threadStatus?: string;
-  status: "queued" | "running" | "completed" | "delivered" | "failed" | "interrupted";
+  status: "queued" | "running" | "completed" | "delivered" | "failed" | "blocked" | "interrupted" | "cancelled";
   error: string | null;
 }
 export interface TeamWorkContext {

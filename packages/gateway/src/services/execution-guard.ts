@@ -8,6 +8,7 @@ export interface ExecutionCheckpoint {
   windowProgress?: boolean;
   failures: Record<string, number>;
   infrastructureFailures?: number;
+  failureByTool?: Record<string, string>;
   lastAction?: string;
   stopReason?: string;
 }
@@ -19,7 +20,7 @@ export class ExecutionGuard {
   private windowProgress = false;
 
   constructor(checkpoint?: ExecutionCheckpoint, private readonly maxCalls = 120, private readonly windowSize = 20) {
-    this.state = checkpoint ? { ...checkpoint, failures: { ...checkpoint.failures }, evidence: [...checkpoint.evidence] }
+    this.state = checkpoint ? { ...checkpoint, failures: { ...checkpoint.failures }, failureByTool: { ...checkpoint.failureByTool }, evidence: [...checkpoint.evidence] }
       : { calls: 0, windowCalls: 0, evidence: [], failures: {} };
     this.seen = new Set(this.state.evidence);
     this.windowProgress = this.state.windowProgress ?? false;
@@ -41,7 +42,12 @@ export class ExecutionGuard {
     const output = `${result.message}\n${typeof data?.output === "string" ? data.output : ""}`;
     const canonicalTool = tool.replace(/^(?:functions\.)?mcp__.+?__/, "").replace(/_/g, ".");
     const commandTool = /^(?:execute|terminal\.run|jait\.terminal)$/.test(canonicalTool);
-    const family = failureFamily(output);
+    // Missing optional files and guessed artifact paths do not mean that the
+    // project is unavailable. Keep their individual failures bounded, but never
+    // pool unrelated paths into the shared environment budget.
+    const family = /ENOENT|no such file or directory/i.test(output) && !/not a git repository|invalid gitfile/i.test(output)
+      ? undefined : failureFamily(output);
+    const recoveryTool = commandTool ? "command" : canonicalTool;
     // A pipeline can hide an infrastructure error behind tail's successful exit.
     const hiddenFailure = commandTool && /^(?:(?:bash|sh|zsh|fish|bwrap|\/[^\s:]+): .*?(?:command not found|permission denied|operation not permitted)|Command '[^']+' not found|Error(?: \[ERR_MODULE_NOT_FOUND\])?: Cannot find (?:module|package)|fatal: not a git repository|No test files found)/im.test(output);
     const failed = !result.ok || (typeof data?.exitCode === "number" && data.exitCode !== 0) || (hiddenFailure && !!family);
@@ -51,11 +57,20 @@ export class ExecutionGuard {
       const key = family ?? createHash("sha256").update(output.slice(0, 4000).replace(/call_[\w-]+|\b\d+\b/g, "#")).digest("hex");
       this.state.failures[key] = (this.state.failures[key] ?? 0) + 1;
       if (family) {
+        (this.state.failureByTool ??= {})[recoveryTool] = family;
         this.state.infrastructureFailures = (this.state.infrastructureFailures ?? 0) + 1;
         if (this.state.infrastructureFailures >= 6) return this.stop("Execution blocked: environment recovery exhausted six failed attempts. Escalate with the checkpoint before resuming.");
       }
       if (this.state.failures[key] >= 3) return this.stop(`Execution blocked: ${family ?? "the same tool failure"} persisted after two retries. Fix the underlying cause before resuming.`);
-    } else if (!/^(?:todo|jait\.todos|memory\.|team\.chat|thread\.control|agent\.|tools\.|jait\.catalog)/.test(canonicalTool)) {
+    } else {
+      const recovered = this.state.failureByTool?.[recoveryTool];
+      if (recovered) {
+        this.state.infrastructureFailures = Math.max(0, (this.state.infrastructureFailures ?? 0) - (this.state.failures[recovered] ?? 0));
+        delete this.state.failures[recovered];
+        delete this.state.failureByTool![recoveryTool];
+      }
+    }
+    if (!failed && !/^(?:todo|jait\.todos|memory\.|team\.chat|thread\.control|agent\.|tools\.|jait\.catalog)/.test(canonicalTool)) {
       // A new observation, successful edit, or command result is evidence. Repeated
       // reads with different labels/ranges but identical content are not progress.
       const evidence = typeof data?.content === "string" ? data.content : typeof data?.output === "string" ? data.output : JSON.stringify(data ?? result.message);
@@ -75,7 +90,7 @@ export class ExecutionGuard {
   }
 
   snapshot(): ExecutionCheckpoint {
-    return { ...this.state, windowProgress: this.windowProgress, failures: { ...this.state.failures }, evidence: [...this.seen].slice(-120) };
+    return { ...this.state, windowProgress: this.windowProgress, failures: { ...this.state.failures }, failureByTool: { ...this.state.failureByTool }, evidence: [...this.seen].slice(-120) };
   }
 
   private stop(reason: string): string { this.state.stopReason = reason; return reason; }

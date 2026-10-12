@@ -1,8 +1,8 @@
 /** Full gateway → native loop → tools → SQLite → room/status path; no model calls. */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mkdtempSync, rmSync } from "node:fs";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createServer } from "../server.js";
 import { loadConfig } from "../config.js";
 import { migrateDatabase, openDatabase } from "../db/index.js";
@@ -57,7 +57,9 @@ describe("deterministic team execution end to end", () => {
     payload: { content: "Developer, implement the fixture and post the result using team.chat.", kind: "assignment", recipientIds: ["Developer"], clientKey: key } });
 
   beforeEach(async () => {
-    root = mkdtempSync(join(tmpdir(), "jait-execution-e2e-"));
+    const artifacts = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../.jait/artifacts");
+    mkdirSync(artifacts, { recursive: true });
+    root = mkdtempSync(join(artifacts, "jait-execution-e2e-"));
     scripted = []; requests = []; executed = [];
     originalFetch = globalThis.fetch;
     vi.stubGlobal("fetch", vi.fn(async (url: unknown, options: RequestInit) => {
@@ -136,27 +138,48 @@ describe("deterministic team execution end to end", () => {
       fixtureTool(`fixture.${name}`, { ok: false, message: "fatal: not a git repository: /host/.git" });
       scripted.push(stream(toolReply(`fixture_${name}`, { attempt: i }, `failure-${i}`)));
     }
-    scripted.push(stream(finalReply)); // One manager review, not another worker retry.
+    // An unresolved dependency parks the worker; it cannot be repaired by a duplicate manager turn.
     await post("bounded-failure");
-    await eventually(async () => (await snapshot()).deliveries[0]?.status === "failed", "execution guard");
+    await eventually(async () => (await snapshot()).deliveries[0]?.status === "blocked", "execution guard");
     const state = await snapshot(); const thread = threads.getById(state.deliveries[0].sessionId)!;
-    await eventually(async () => (await snapshot()).deliveries[1]?.status === "completed", "manager recovery review");
-    expect(executed).toHaveLength(3); expect(requests).toHaveLength(4);
-    expect(JSON.stringify(requests[3])).toContain("Review this failed handoff");
-    expect(thread.status).toBe("error"); expect(thread.error).toContain("two retries");
+    expect(state.deliveries).toHaveLength(1);
+    expect(executed).toHaveLength(3); expect(requests).toHaveLength(3);
+    expect(thread.status).toBe("blocked"); expect(thread.error).toContain("two retries");
     expect(threads.getExecutionCheckpoint(thread.id)?.calls).toBe(3);
+  });
+
+  it("resumes the same blocked task and completes after its dependency is repaired", async () => {
+    const dependency: ToolResult = { ok: false, message: "fatal: not a git repository: /fixture/.git" };
+    fixtureTool("fixture.dependency", dependency);
+    for (let i = 0; i < 3; i++) scripted.push(stream(toolReply("fixture_dependency", { attempt: i }, `blocked-${i}`)));
+    await post("repairable-task");
+    await eventually(async () => (await snapshot()).deliveries[0]?.status === "blocked", "parked task");
+    const first = await snapshot();
+    const id = first.deliveries[0].sessionId;
+    expect(threads.getById(id)?.providerSessionId).toBeTruthy();
+
+    dependency.ok = true;
+    dependency.message = "Dependency repaired; original task succeeded.";
+    scripted.push(stream(toolReply("fixture_dependency", { attempt: 4 }, "repaired")), stream(finalReply));
+    const resumed = await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
+      payload: { content: "Dependency repaired. Resume the original task and finish it.", kind: "assignment",
+        recipientIds: ["Developer"], targetSessionId: id, clientKey: "resume-repaired-task" } });
+    expect(resumed.statusCode).toBe(201);
+    await eventually(() => threads.getById(id)?.status === "completed", "same task completed");
+    expect(opened.sqlite.prepare("SELECT count(*) AS n FROM agent_threads").get()).toMatchObject({ n: 1 });
+    expect(executed).toHaveLength(4);
+    expect(requests).toHaveLength(5);
   });
 
   it("halts repetitive successful reads when a full window produces no new evidence", async () => {
     fixtureTool("fixture.read", { ok: true, message: "Read complete", data: { content: "Unchanged fixture content" } });
     for (let i = 0; i < 40; i++) scripted.push(stream(toolReply("fixture_read", { attempt: i }, `read-${i}`)));
-    scripted.push(stream(finalReply)); // The coordinator decides what to do next.
+    // No-progress work is parked without spending another model turn on the same loop.
     await post("no-progress");
-    await eventually(async () => (await snapshot()).deliveries[0]?.status === "failed", "no-progress cutoff");
+    await eventually(async () => (await snapshot()).deliveries[0]?.status === "blocked", "no-progress cutoff");
     const state = await snapshot(); const thread = threads.getById(state.deliveries[0].sessionId)!;
-    await eventually(async () => (await snapshot()).deliveries[1]?.status === "completed", "manager no-progress review");
-    expect(executed).toHaveLength(40); expect(requests).toHaveLength(41);
-    expect(JSON.stringify(requests[40])).toContain("Review this failed handoff");
+    expect(state.deliveries).toHaveLength(1);
+    expect(executed).toHaveLength(40); expect(requests).toHaveLength(40);
     expect(thread.error).toContain("no new evidence");
     expect(state.messages.filter((message: any) => message.kind === "blocked")).toHaveLength(1);
   });
@@ -181,7 +204,7 @@ describe("deterministic team execution end to end", () => {
     fixtureTool("fixture.verify", { ok: false, message: "fatal: not a git repository: /host/.git" });
     scripted.push(stream(toolReply("fixture_verify", { attempt: 3 }, "recovery-failure")));
     await (app as any).recoverInterruptedThreadTurns();
-    await eventually(() => threads.getById(thread.id)?.status === "error", "recovered failure limit");
+    await eventually(() => threads.getById(thread.id)?.status === "blocked", "recovered failure limit");
     expect(threads.list(userId)).toHaveLength(1); expect(executed).toHaveLength(1); expect(requests).toHaveLength(1);
     const outbound = JSON.stringify(requests[0]);
     expect(outbound).toContain("Original task: Implement parser recovery.");

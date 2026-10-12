@@ -33,7 +33,7 @@ describe("database path resolution", () => {
       fileURLToPath(new URL("../../../../tests/e2e/scripts/start-dev-stack.mjs", import.meta.url)),
       "utf8",
     );
-    expect(source).toContain("mkdtemp(resolve(tmpdir(), 'jait-e2e-'))");
+    expect(source).toContain("mkdtemp(resolve(artifactsDir, 'jait-e2e-'))");
     expect(source).toContain("JAIT_DB_PATH: resolve(e2eStateDir, 'jait.db')");
     expect(source).toContain("rm(e2eStateDir, { recursive: true, force: true })");
   });

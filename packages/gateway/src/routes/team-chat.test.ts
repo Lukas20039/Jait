@@ -213,19 +213,21 @@ describe("team room routes and work chat integration", () => {
     expect((await snapshot()).messages.filter((message: { kind: string }) => message.kind === "result")).toHaveLength(2);
   });
 
-  it("releases a delivery slot on interrupt so queued work can start", async () => {
+  it("runs every member and releases a busy agent on interrupt", async () => {
     provider.sendTurn.mockImplementation(async () => {});
     await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
       payload: { content: "Bounded task", recipientIds: ["Developer", "QA", "Scrum"], clientKey: "queue-interrupt" } });
-    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(3));
+    await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
+      payload: { content: "Next task", recipientIds: ["Developer"], clientKey: "agent-queue" } });
     const initial = await snapshot();
     const queued = initial.deliveries.find((item: { status: string }) => item.status === "queued");
     expect(queued).toBeDefined();
-    const active = initial.deliveries.find((item: { agentId: string; status: string }) => item.agentId === "Scrum" && item.status === "running")
+    const active = initial.deliveries.find((item: { agentId: string; status: string }) => item.agentId === "Developer" && item.status === "running")
       ?? initial.deliveries.find((item: { status: string }) => item.status === "running");
     const result = await app.inject({ method: "POST", url: `/api/threads/${active.sessionId}/interrupt`, headers });
     expect(result.statusCode).toBe(200);
-    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(3), { timeout: 1000 });
+    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(4), { timeout: 1000 });
     expect((await snapshot()).deliveries.find((item: { id: string }) => item.id === queued.id)?.status).toBe("running");
   });
 

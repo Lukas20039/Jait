@@ -349,8 +349,9 @@ export class ThreadService {
   markError(id: string, error: string): ThreadRow | undefined {
     this.clearRecovery(id);
     return this.update(id, {
-      status: "error",
-      providerSessionId: null,
+      status: error.startsWith("Execution blocked:") ? "blocked" : "error",
+      // Keep a live session for explicitly resumed dependency-blocked work.
+      ...(error.startsWith("Execution blocked:") ? {} : { providerSessionId: null }),
       error,
     });
   }

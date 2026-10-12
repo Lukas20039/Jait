@@ -575,6 +575,7 @@ export function createToolRegistry(
         ws: deps.ws,
         mcpConfig: deps.threadMcpConfig,
         config: deps.config,
+        agentGithubAppService: deps.agentGithubAppService,
       }),
     );
   }

@@ -54,7 +54,7 @@ export function registerTeamChatRoutes(app: FastifyInstance, config: AppConfig, 
         while (!service.isClosed()) {
           const current = service.threadById(user.id, thread.id);
           if (!current) throw new Error("Work thread was deleted.");
-          if (current.status === "error" || current.status === "interrupted") throw new Error(current.error ?? "Thread interrupted.");
+          if (current.status === "error" || current.status === "blocked" || current.status === "interrupted") throw new Error(current.error ?? "Thread interrupted.");
           if (current.status === "completed") {
             // Activities are newest first. Ignore partial checkpoints and earlier turns.
             const answer = service.threadActivities(user.id, thread.id)

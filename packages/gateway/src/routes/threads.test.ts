@@ -127,7 +127,7 @@ describe("CLI execution safeguards", () => {
       }
       provider.emit({ type: "turn.completed", sessionId });
       provider.emit({ type: "session.completed", sessionId });
-      expect(threadService.getById(thread.id)?.status).toBe("error");
+      expect(threadService.getById(thread.id)?.status).toBe(failure === "environment" ? "blocked" : "error");
       if (failure === "environment") {
         expect(interrupt).toHaveBeenCalledTimes(1);
         expect(threadService.getExecutionCheckpoint(thread.id)?.calls).toBe(3);

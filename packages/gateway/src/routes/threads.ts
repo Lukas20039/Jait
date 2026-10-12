@@ -378,7 +378,7 @@ export function registerThreadRoutes(
 
   function broadcastThreadStatus(
     threadId: string,
-    status: "running" | "completed" | "error" | "interrupted",
+    status: "running" | "completed" | "error" | "blocked" | "interrupted",
     error?: string,
   ): void {
     const thread = threadService.getById(threadId);
@@ -590,12 +590,12 @@ export function registerThreadRoutes(
     const stopExecution = (reason: string): void => {
       terminalFailure = true;
       flushPendingAssistantContent();
-      threadService.markError(threadId, reason);
-      threadService.addActivity(threadId, "error", reason);
-      broadcastThreadStatus(threadId, "error", reason);
+      const failed = threadService.markError(threadId, reason);
+      threadService.addActivity(threadId, failed?.status === "blocked" ? "blocked" : "error", reason);
+      broadcastThreadStatus(threadId, failed?.status === "blocked" ? "blocked" : "error", reason);
       const adapter = remoteProviders.get(threadId) ?? providerRegistry.get(providerId);
       void adapter?.interruptTurn?.(providerSessionId)
-        .then(() => adapter.stopSession(providerSessionId))
+        .then(() => failed?.status === "blocked" ? undefined : adapter.stopSession(providerSessionId))
         .catch(error => app.log.warn({ error, threadId }, "Could not stop bounded execution"));
       remoteProviders.delete(threadId);
       threadUnsubs.get(threadId)?.();
@@ -714,15 +714,15 @@ export function registerThreadRoutes(
         }
         unregisterThreadResume(threadId);
       } else if (event.type === "session.error") {
-        threadService.markError(threadId, event.error);
-        broadcastThreadStatus(threadId, "error", event.error);
+        const failed = threadService.markError(threadId, event.error);
+        broadcastThreadStatus(threadId, failed?.status === "blocked" ? "blocked" : "error", event.error);
         const unsubscribe = threadUnsubs.get(threadId);
         if (unsubscribe) {
           unsubscribe();
           threadUnsubs.delete(threadId);
         }
         const adapter = remoteProviders.get(threadId) ?? providerRegistry.get(providerId);
-        void adapter?.stopSession(providerSessionId).catch(error => app.log.warn({ error, threadId }, "Could not clean up failed session"));
+        if (failed?.status !== "blocked") void adapter?.stopSession(providerSessionId).catch(error => app.log.warn({ error, threadId }, "Could not clean up failed session"));
         remoteProviders.delete(threadId);
         unregisterThreadResume(threadId);
       } else if (event.type === "turn.started") {
@@ -1832,6 +1832,12 @@ export function registerThreadRoutes(
     const provider = remoteProviders.get(id) ?? providerRegistry.get(thread.providerId as ProviderId);
     if (!provider) return reply.status(400).send({ error: `Provider '${thread.providerId}' not found` });
 
+    // A parked turn unsubscribes its terminal event handler. Reattach before
+    // resuming so the repaired task can record progress and completion.
+    if (!threadUnsubs.has(id)) {
+      threadUnsubs.set(id, provider.onEvent(buildThreadEventHandler(id, thread.providerSessionId, thread.providerId as ProviderId)));
+    }
+
     // Persist user message BEFORE sendTurn so it survives provider errors
     const userActivity = threadService.addActivity(id, "message", (displayContent ?? message).slice(0, 500), {
       role: "user",
@@ -1868,7 +1874,14 @@ export function registerThreadRoutes(
       }
     }
 
-    await provider.sendTurn(thread.providerSessionId, fullMessage, attachments);
+    try {
+      await provider.sendTurn(thread.providerSessionId, fullMessage, attachments);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      const failed = threadService.markError(id, reason);
+      broadcastThreadStatus(id, failed?.status === "blocked" ? "blocked" : "error", reason);
+      return reply.status(502).send({ error: reason });
+    }
     return reply.status(200).send({ ok: true });
   });
 

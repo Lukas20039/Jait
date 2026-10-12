@@ -37,6 +37,45 @@ describe("persistent team coordination", () => {
   afterEach(() => { service.close(); if (!databaseClosed) opened.sqlite.close(); });
   const post = (content: string, key: string, recipientIds?: string[]) => service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
 
+  it("runs all seven members concurrently while queuing another task for a busy agent", async () => {
+    const members = Array.from({ length: 7 }, (_, i) => "Worker" + i);
+    for (const id of members) profiles.savePersonaAgent(owner, profile(id));
+    const selected = service.createRoom(owner, { name: "All workers", memberIds: members });
+    const releases: Array<() => void> = [];
+    const dispatch = vi.fn(() => new Promise<{ content: string }>(resolve => {
+      releases.push(() => resolve({ content: "Done" }));
+    }));
+    service.setDispatcher(dispatch);
+    try {
+      service.post(owner, selected.id, { content: "Work", clientKey: "all", sender: human, recipientIds: members });
+      service.post(owner, selected.id, { content: "Follow up", clientKey: "next", sender: human, recipientIds: [members[0]!] });
+      expect(dispatch).toHaveBeenCalledTimes(7);
+      expect(service.deliveries(owner, selected.id).filter(d => d.status === "running")).toHaveLength(7);
+      expect(service.deliveries(owner, selected.id).filter(d => d.status === "queued")).toHaveLength(1);
+      releases[0]!();
+      await vi.waitFor(() => expect(dispatch).toHaveBeenCalledTimes(8));
+      expect(service.deliveries(owner, selected.id).filter(d => d.status === "queued")).toHaveLength(0);
+    } finally {
+      service.close();
+      for (const release of releases) release();
+      await Promise.resolve();
+    }
+  });
+
+  it("parks infrastructure blockers without sending the same broken environment to a manager", async () => {
+    const dispatch = vi.fn(async () => { throw new Error("Execution blocked: Required executable unavailable persisted after two retries."); });
+    service.setDispatcher(dispatch);
+    post("Implement fix", "blocked-env", ["Developer"]);
+    await vi.waitFor(() => expect(service.deliveries(owner, room.id)[0]?.status).toBe("blocked"));
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(service.history(owner, room.id).filter(message => message.kind === "review")).toHaveLength(0);
+    expect(service.history(owner, room.id).some(message => message.kind === "blocked")).toBe(true);
+    service.close();
+    const reopened = new TeamChatService(opened.db, sessions, profiles);
+    expect(reopened.deliveries(owner, room.id)[0]?.status).toBe("blocked");
+    reopened.close();
+  });
+
   it("persists multiple chats with independent selected membership and histories", () => {
     const first = service.createRoom(owner, { name: "Implementation", memberIds: ["Developer", "Research"] });
     const second = service.createRoom(owner, { name: "Review", memberIds: ["Developer", "QA"] });

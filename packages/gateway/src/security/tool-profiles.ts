@@ -26,7 +26,10 @@ function perm(
 // Read-only. No terminal, no installs, no writes.
 
 const MINIMAL: ToolPermission[] = [
+  perm("todo", "none", "low", "Update the current execution task list without running work."),
   perm("jait.catalog", "none", "low", "Inspect Jait pages and available capabilities."),
+  perm("tools.search", "none", "low", "Search available tool schemas without executing tools."),
+  perm("tools.list", "none", "low", "List registered tool capabilities without executing tools."),
   perm("agent.profiles.inspect", "none", "low", "Inspect saved agent profiles owned by the user."),
   perm("agent.profiles", "dangerous", "medium", "Create, update, or delete persistent Jait agents."),
   perm("file.read", "none", "low", "Read a file from the project."),
@@ -47,6 +50,7 @@ const MINIMAL: ToolPermission[] = [
   perm("surfaces.stop", "always", "medium", "Stop a running surface instance."),
   perm("network.scan", "none", "low", "Scan the local network for reachable devices."),
   perm("session.search", "none", "low", "Search prior chat messages and agent activity."),
+  perm("chat.traces", "none", "low", "Inspect persisted chat traces owned by the current user."),
   perm("security.results.show", "none", "low", "Display saved assessment evidence owned by the current operator without running checks."),
   perm("channel.send", "always", "medium", "Send a message into a paired messaging chat."),
   perm("channel.remind", "always", "medium", "Schedule a reminder delivered to a paired messaging chat."),
@@ -61,7 +65,10 @@ const MINIMAL: ToolPermission[] = [
 // File read/write/patch auto, terminal requires consent.
 
 const CODING: ToolPermission[] = [
+  perm("todo", "none", "low", "Update the current execution task list without running work."),
   perm("jait.catalog", "none", "low", "Inspect Jait pages and available capabilities."),
+  perm("tools.search", "none", "low", "Search available tool schemas without executing tools."),
+  perm("tools.list", "none", "low", "List registered tool capabilities without executing tools."),
   perm("agent.profiles.inspect", "none", "low", "Inspect saved agent profiles owned by the user."),
   perm("agent.profiles", "once", "medium", "Create, update, or delete persistent Jait agents."),
   perm("file.read", "none", "low", "Read a file from the project."),
@@ -94,6 +101,7 @@ const CODING: ToolPermission[] = [
   perm("surfaces.stop", "once", "low", "Stop a running surface instance."),
   perm("network.scan", "none", "low", "Scan the local network for reachable devices."),
   perm("session.search", "none", "low", "Search prior chat messages and agent activity."),
+  perm("chat.traces", "none", "low", "Inspect persisted chat traces owned by the current user."),
   perm("security.results.show", "none", "low", "Display saved assessment evidence owned by the current operator without running checks."),
   perm("channel.send", "once", "low", "Send a message into a paired messaging chat."),
   perm("channel.remind", "once", "low", "Schedule a reminder delivered to a paired messaging chat."),
@@ -108,7 +116,10 @@ const CODING: ToolPermission[] = [
 // Maximum capability. Dangerous ops still require consent.
 
 const FULL: ToolPermission[] = [
+  perm("todo", "none", "low", "Update the current execution task list without running work."),
   perm("jait.catalog", "none", "low", "Inspect Jait pages and available capabilities."),
+  perm("tools.search", "none", "low", "Search available tool schemas without executing tools."),
+  perm("tools.list", "none", "low", "List registered tool capabilities without executing tools."),
   perm("agent.profiles.inspect", "none", "low", "Inspect saved agent profiles owned by the user."),
   perm("agent.profiles", "once", "medium", "Create, update, or delete persistent Jait agents."),
   perm("file.read", "none", "low", "Read a file from the project."),
@@ -140,6 +151,7 @@ const FULL: ToolPermission[] = [
   perm("surfaces.stop", "none", "low", "Stop a running surface instance."),
   perm("network.scan", "none", "low", "Scan the local network for reachable devices."),
   perm("session.search", "none", "low", "Search prior chat messages and agent activity."),
+  perm("chat.traces", "none", "low", "Inspect persisted chat traces owned by the current user."),
   perm("security.results.show", "none", "low", "Display saved assessment evidence owned by the current operator without running checks."),
   perm("channel.send", "none", "low", "Send a message into a paired messaging chat."),
   perm("channel.remind", "none", "low", "Schedule a reminder delivered to a paired messaging chat."),

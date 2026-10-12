@@ -231,6 +231,7 @@ export type ThreadStatus =
   | "running"
   | "completed"
   | "error"
+  | "blocked"
   | "interrupted";
 
 // ── Thread info (DB row shape) ───────────────────────────────────────

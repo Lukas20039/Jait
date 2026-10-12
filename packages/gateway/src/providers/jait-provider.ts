@@ -92,9 +92,9 @@ function buildJaitThreadSandboxPrompt(): string {
     "Jait native provider threads follow a Sandcastle-style local sandbox flow.",
     "File operations target the thread working directory, which may be a managed git worktree.",
     "Shell-command tools (`execute`, `terminal.run`, `jait.terminal`) are forced through a long-lived Jait Docker sandbox with the working directory mounted at /project.",
-    "Use relative paths or /project paths inside shell commands; host absolute project paths are remapped for shell commands.",
+    "Use relative paths or /project paths inside shell commands; only your own worktree is mounted. Host paths, the main checkout, and peer worktrees are not shell paths. Read peer artifacts with gateway file.read at their explicit host path, then write a copy inside your own worktree to test it.",
     "Git metadata is mounted read-only for status/diff. Use host-side thread.control create_pr with gitAction=commit for authorized commits; do not repair or rewrite Git metadata in the sandbox.",
-    "Stop and report an actionable blocker after repeated environment failures. Execution enforces two retries per failure, progress every 20 calls, and a 120-call turn limit.",
+    "Stop and report an actionable blocker after repeated environment failures. Delivery threads have no fixed tool-call ceiling. Execution enforces two retries per failure and progress every 20 calls; continue until completion or an actionable blocker.",
     "</jaitThreadSandbox>",
   ].join("\n");
 }
@@ -128,6 +128,19 @@ export interface JaitProviderDeps {
   threadService: ThreadService;
   userService?: UserService;
   toolRegistry?: ToolRegistry;
+  /**
+   * Late-bound resolver for the *executing* tool registry.
+   *
+   * The gateway builds the registry twice (early, for the provider + HTTP routes,
+   * then late once the scheduler and the remaining services exist) and reassigns
+   * its `toolRegistry` variable. Advertising schemas from the early instance while
+   * executing against the late one offers the model tools that cannot run
+   * (`Unknown tool: agent.github`) and hides every tool registered after the late
+   * build (`channel.send`, `skills.manage`, ...). When provided, this resolver is
+   * the single source for advertised schemas, the agent-loop registry, and
+   * fallback execution.
+   */
+  getToolRegistry?: () => ToolRegistry | undefined;
   toolExecutor?: (
     toolName: string,
     input: unknown,
@@ -208,7 +221,8 @@ export class JaitProvider implements CliProviderAdapter {
       history: [{ role: "system", content: prompt }],
       activatedToolNames: new Set(),
       executionGuard: new ExecutionGuard(this.deps.threadService.getRecovery?.(options.threadId)
-        ? this.deps.threadService.getExecutionCheckpoint?.(options.threadId) : undefined),
+        ? this.deps.threadService.getExecutionCheckpoint?.(options.threadId) : undefined,
+        thread?.kind === "delivery" ? Number.POSITIVE_INFINITY : 120),
     });
     this.emit({ type: "session.started", sessionId: session.id });
     return session;
@@ -227,7 +241,9 @@ export class JaitProvider implements CliProviderAdapter {
     state.currentTurnAbort = abort;
     state.contextRounds = [];
     state.turnError = undefined;
-    state.executionGuard ??= new ExecutionGuard();
+    // An explicit new turn may resume after the recorded dependency was fixed.
+    if (!state.executionGuard || state.executionGuard.stopReason) state.executionGuard = new ExecutionGuard(undefined,
+      this.deps.threadService.getById(state.threadId)?.kind === "delivery" ? Number.POSITIVE_INFINITY : 120);
     state.history.push({ role: "user", content: message });
     this.emit({ type: "turn.started", sessionId });
 
@@ -242,16 +258,17 @@ export class JaitProvider implements CliProviderAdapter {
       };
 
       try {
+        const registry = this.resolveToolRegistry();
         const userSettings = state.userId ? this.deps.userService?.getSettings(state.userId) : undefined;
         const disabledTools = userSettings?.disabledTools?.length
           ? new Set(userSettings.disabledTools)
           : undefined;
-        if (this.deps.toolRegistry) {
-          const selected = (await this.deps.toolRegistry.rankSearchWithSystemOne(message, { disabledTools, limit: 10, candidates: this.deps.toolRegistry.list().filter(tool => (tool.tier ?? "standard") !== "core") }, userSettings?.apiKeys)).map(match => match.tool);
+        if (registry) {
+          const selected = (await registry.rankSearchWithSystemOne(message, { disabledTools, limit: 10, candidates: registry.list().filter(tool => (tool.tier ?? "standard") !== "core") }, userSettings?.apiKeys)).map(match => match.tool);
           rememberActivatedToolNames(state.activatedToolNames, selected.map((tool) => tool.name));
         }
-        const toolSchemas = this.deps.toolRegistry
-          ? await buildSystemOneToolSchemas(this.deps.toolRegistry, disabledTools, {
+        const toolSchemas = registry
+          ? await buildSystemOneToolSchemas(registry, disabledTools, {
               activatedToolNames: state.activatedToolNames,
             }, userSettings?.apiKeys)
           : [];
@@ -276,7 +293,7 @@ export class JaitProvider implements CliProviderAdapter {
             maxRounds: this.resolveMaxRounds(userSettings?.apiKeys),
             continuous: true,
             parallel: true,
-            toolRegistry: this.deps.toolRegistry,
+            toolRegistry: registry,
             disabledTools,
             mode: "agent",
             onEvent: (event) => {
@@ -437,6 +454,15 @@ export class JaitProvider implements CliProviderAdapter {
     return this.deps.config.agentMaxRounds;
   }
 
+  /**
+   * The registry used for both schema advertising and execution. Prefers the
+   * late-bound accessor so the advertised set can never diverge from the registry
+   * that actually executes tools (see `JaitProviderDeps.getToolRegistry`).
+   */
+  private resolveToolRegistry(): ToolRegistry | undefined {
+    return this.deps.getToolRegistry?.() ?? this.deps.toolRegistry;
+  }
+
   private async executeTool(
     toolName: string,
     input: unknown,
@@ -446,7 +472,8 @@ export class JaitProvider implements CliProviderAdapter {
     signal: AbortSignal | undefined,
     projectRoot: string,
   ): Promise<ToolResult> {
-    if (!this.deps.toolRegistry) {
+    const registry = this.resolveToolRegistry();
+    if (!registry) {
       return { ok: false, message: "Tool registry not available" };
     }
     const state = this.sessions.get(sessionId);
@@ -496,7 +523,7 @@ export class JaitProvider implements CliProviderAdapter {
     try {
       const result = this.deps.toolExecutor
         ? await this.deps.toolExecutor(toolName, toolInput, context)
-        : await this.deps.toolRegistry.execute(toolName, toolInput, context);
+        : await registry.execute(toolName, toolInput, context);
       return recordResult(result);
     } catch (error) {
       return recordResult({ ok: false, message: error instanceof Error ? error.message : String(error) });

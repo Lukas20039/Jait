@@ -1510,6 +1510,55 @@ describe("thread.control tool", () => {
     }
   });
 
+  it.each(["commit", "commit_push", "commit_push_pr"] as const)("allows a running delivery to publish its own work: %s", async (gitAction) => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const threadService = new ThreadService(db);
+      const thread = threadService.create({ userId: "user-1", title: "Deliver fix", providerId: "jait", workingDirectory: process.cwd() });
+      threadService.markRunning(thread.id, "provider-session");
+      const runStackedAction = vi.fn(async (): Promise<GitStepResult> => ({
+        commit: { status: "created", commitSha: "abc123", subject: "fix: deliver" },
+        push: { status: "pushed", branch: "fix/deliver" },
+        branch: { status: "skipped_not_requested" },
+        pr: { status: "skipped_not_requested" },
+      }));
+      const tool = createThreadControlTool({ threadService, providerRegistry: new ProviderRegistry(), gitService: { runStackedAction } });
+      const result = await tool.execute({ action: "create_pr", threadId: thread.id, gitAction }, { ...makeContext(), threadId: thread.id, sessionId: thread.id });
+      expect(result.ok).toBe(true);
+      expect(runStackedAction).toHaveBeenCalledTimes(1);
+      expect(threadService.getById(thread.id)?.status).toBe("running");
+      expect(threadService.getById(thread.id)?.completedAt).toBeNull();
+    } finally { sqlite.close(); }
+  });
+
+  it.each([true, false])("uses the saved agent App for publication and refuses personal fallback: connected=%s", async connected => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const threadService = new ThreadService(db);
+      const thread = threadService.create({ userId: "user-1", personaAgentId: "agent-1", title: "Deliver fix", providerId: "jait", workingDirectory: process.cwd() });
+      threadService.markRunning(thread.id, "provider-session");
+      const runStackedAction = vi.fn(async (): Promise<GitStepResult> => ({
+        commit: { status: "created", commitSha: "abc123", subject: "fix: deliver" },
+        push: { status: "pushed", branch: "fix/deliver" },
+        branch: { status: "skipped_not_requested" }, pr: { status: "skipped_not_requested" },
+      }));
+      const mintInstallationToken = vi.fn(async () => ({ token: "fixture-app-token", expiresAt: "", permissions: null, repositorySelection: null }));
+      const tool = createThreadControlTool({
+        threadService, providerRegistry: new ProviderRegistry(), gitService: { runStackedAction },
+        ...(connected ? { agentGithubAppService: { mintInstallationToken } } : {}),
+      });
+      const result = await tool.execute({ action: "create_pr", threadId: thread.id, gitAction: "commit_push" }, { ...makeContext(), threadId: thread.id, sessionId: thread.id });
+      expect(result.ok).toBe(connected);
+      if (connected) {
+        expect(mintInstallationToken).toHaveBeenCalledWith("user-1", "agent-1");
+        expect(runStackedAction).toHaveBeenCalledWith(process.cwd(), "commit_push", undefined, false, undefined, "fixture-app-token");
+        expect(JSON.stringify(result)).not.toContain("fixture-app-token");
+      } else expect(runStackedAction).not.toHaveBeenCalled();
+    } finally { sqlite.close(); }
+  });
+
   it("rejects PR creation until the thread is completed", async () => {
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);

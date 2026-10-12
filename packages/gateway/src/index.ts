@@ -16,7 +16,7 @@ import { AuditWriter } from "./services/audit.js";
 import { SurfaceRegistry, TerminalSurfaceFactory, FileSystemSurfaceFactory, RemoteFileSystemSurfaceFactory, BrowserSurfaceFactory, BrowserSurface, RemoteTerminalSurface } from "./surfaces/index.js";
 import { mergeSavedProjectLayout, resolveProjectPanelOpen, type SurfaceRegistrySnapshot } from "@jait/shared";
 import { shouldSyncProjectSurfaceUi } from "./surfaces/project-ui-sync.js";
-import { createToolRegistry } from "./tools/index.js";
+import { createToolRegistry, type ToolRegistryDeps } from "./tools/index.js";
 import { notifySessionsOfGatewayRestart } from "./routes/chat.js";
 import { createRemoteToolExecutor, resolveRemoteNodeForSession } from "./tools/remote-executor.js";
 import { SchedulerService } from "./scheduler/service.js";
@@ -470,7 +470,13 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   // Late-bound Fastify app: the registry is built before createServer() runs,
   // so tools that inject into their own HTTP API resolve it lazily.
   let httpAppRef: import("fastify").FastifyInstance | undefined;
-  let toolRegistry = createToolRegistry(surfaceRegistry, {
+  // One dependency object for both registry builds. The registry is constructed
+  // twice (here, then again below once the scheduler and late services exist) and
+  // the second build is the one that executes tools. Sharing this object makes it
+  // structurally impossible for a dependency of the first build to go missing from
+  // the executing registry — that drift is what left `agent.github` advertised but
+  // unexecutable (Unknown tool) and agent terminals without an App identity.
+  const toolDeps: ToolRegistryDeps = {
     memoryService: memory,
     hooks,
     voiceService,
@@ -499,13 +505,17 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     architectureDiagramService,
     codeGraphService,
     getApp: () => httpAppRef,
-  });
+  };
+  let toolRegistry = createToolRegistry(surfaceRegistry, toolDeps);
   providerRegistry.register(new JaitProvider({
     config,
     threadService,
     userService,
     toolRegistry,
-    toolExecutor: (toolName, input, context) => toolRegistry.execute(toolName, input, context, audit),
+    // Advertised schemas must come from the registry that executes the tools, not
+    // from the early build this provider is constructed with (see toolDeps above).
+    getToolRegistry: () => toolRegistry,
+    toolExecutor: (toolName, input, context) => toolExecutor(toolName, input, context),
   }));
   console.log(`Providers registered: ${providerRegistry.list().map(p => p.id).join(", ")}`);
   console.log(`Tools registered: ${toolRegistry.listNames().join(", ")}`);
@@ -666,7 +676,9 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   ) => {
     if (context.userId) {
       const work = readTeamWork(sessionService.getById(context.sessionId, context.userId)?.metadata);
-      const profile = work ? threadService.getPersonaAgent(work.agentId, context.userId) : threadService.listPersonaAgents(context.userId).find(agent => agent.chatSessionId === context.sessionId);
+      const callerThread = threadService.getById(context.threadId ?? context.sessionId);
+      const agentId = callerThread?.userId === context.userId ? callerThread.personaAgentId : work?.agentId;
+      const profile = agentId ? threadService.getPersonaAgent(agentId, context.userId) : threadService.listPersonaAgents(context.userId).find(agent => agent.chatSessionId === context.sessionId);
       if (profile) {
         if (profile.requiresApproval) context = { ...context, runtimeMode: "supervised" };
         const allowed = Array.isArray(profile.allowedTools) ? profile.allowedTools as string[] : [];
@@ -722,30 +734,15 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   let shutdownFn: (() => Promise<void>) | undefined;
   const shutdownRef = async () => { if (shutdownFn) await shutdownFn(); else process.exit(0); };
 
-  toolRegistry = createToolRegistry(surfaceRegistry, {
-    sessionState,
+  // Late services only — merge into the shared deps object created with the first
+  // build so stage-1 dependencies (agentGithubAppService, previewService, …) stay
+  // present in the registry that actually executes tools. Tools registered only
+  // here (channel.send, skills.manage, …) become advertised to the model as well,
+  // because the provider now reads the registry through a late-bound accessor.
+  const lateToolDeps: ToolRegistryDeps = {
     scheduler,
     sessionService,
-    ws,
     startedAt: Date.now(),
-    memoryService: memory,
-    hooks,
-    voiceService,
-    screenShare,
-    threadMcpConfig: { host: config.host, port: config.port },
-    threadService,
-    providerRegistry,
-    userService,
-    projectService,
-    repoService,
-    repoProposalService,
-    reminderService,
-    sessionSearchService,
-    chatTracesService,
-    sessionSqlService,
-    gitService,
-    maintenanceService,
-    notifications,
     config,
     shutdown: shutdownRef,
     notifyGatewayRestart: (info) =>
@@ -753,16 +750,11 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         oldVersion: info.oldVersion,
         newVersion: info.newVersion,
       }),
-    previewService,
-    architectureDiagramService,
-    codeGraphService,
     secretInputService,
     userQuestionService,
-    userSecretService,
-    emailService,
-    calendarService,
-    getApp: () => httpAppRef,
-  });
+  };
+  Object.assign(toolDeps, lateToolDeps);
+  toolRegistry = createToolRegistry(surfaceRegistry, toolDeps);
   console.log(`Tools registered: ${toolRegistry.listNames().join(", ")}`);
 
   try {

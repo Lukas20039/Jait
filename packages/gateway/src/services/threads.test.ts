@@ -25,6 +25,19 @@ describe("ThreadService activity persistence", () => {
     sqlite.close();
   });
 
+  it("preserves a blocked delivery session and history for resumption", () => {
+    service.markRunning(threadId, "live-provider");
+    service.addActivity(threadId, "message", "Work preserved", { content: "Patch prepared" });
+    const blocked = service.markError(threadId, "Execution blocked: Required executable unavailable persisted after two retries.");
+    expect(blocked?.status).toBe("blocked");
+    expect(blocked?.providerSessionId).toBe("live-provider");
+    expect(blocked?.completedAt).toBeNull();
+    expect(service.getActivities(threadId)).toHaveLength(1);
+    service.markRunning(threadId, "live-provider");
+    expect(service.getById(threadId)?.error).toBeNull();
+    expect(service.getActivities(threadId)).toHaveLength(1);
+  });
+
   it("bounds persisted summaries and payloads", () => {
     const activity = service.addActivity(
       threadId,
