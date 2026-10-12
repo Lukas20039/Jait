@@ -3,16 +3,17 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { hasExited, terminateChild } from './smoke-process.mjs';
-import { mkdtempSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 const bundle = join(root, 'apps/desktop/src-tauri/gateway');
 const runtime = join(bundle, 'runtime', process.platform === 'win32' ? 'node.exe' : 'node');
 const entry = join(bundle, 'node_modules/@jait/gateway/bin/desktop-host.mjs');
-const temporary = mkdtempSync(join(tmpdir(), 'jait-desktop-smoke-'));
+const artifacts = join(root, '.jait/artifacts');
+mkdirSync(artifacts, { recursive: true });
+const temporary = mkdtempSync(join(artifacts, 'jait-desktop-smoke-'));
 const socket = createServer();
 socket.listen(0, '127.0.0.1');
 await once(socket, 'listening');
@@ -136,7 +137,8 @@ const watcher = requireGateway('@parcel/watcher');
       const result = await response.json();
       assert.equal(result.timedOut, false, command);
       assert.equal(result.exitCode, exitCode, command);
-      if (expectedOutput) assert.ok(result.output.includes(expectedOutput), command);
+      if (expectedOutput) assert.ok(result.output.includes(expectedOutput),
+        `${command}: ${JSON.stringify({ output: result.output, exitCode: result.exitCode, timedOut: result.timedOut })}`);
     }
   } finally {
     const deleted = await fetch(`${base}/api/terminals/${terminal.id}`, { method: 'DELETE', headers: { Authorization: headers.Authorization } });

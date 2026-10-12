@@ -43,7 +43,9 @@ function isPowerShellShell(shell: string): boolean {
 function isShellPromptLine(line: string, shell: string): boolean {
   const trimmed = line.trim();
   if (!trimmed) return false;
-  if (isPowerShellShell(shell)) return /^PS .+?>/.test(trimmed);
+  // An echoed command starts with the prompt too. Only a bare prompt means
+  // the shell is ready; otherwise ConPTY can settle before command output.
+  if (isPowerShellShell(shell)) return /^PS .+?>$/.test(trimmed);
   if (/^[^@\n]+@[^:]+:.*[$#]$/.test(trimmed)) return true;
   if (/^(?:~|\/|\.{1,2}(?:\/|$)|[A-Za-z]:[\\/]).*[$#%]$/.test(trimmed)) return true;
   return /^[A-Za-z][A-Za-z0-9_.-]*\s*[%$#]$/.test(trimmed);
