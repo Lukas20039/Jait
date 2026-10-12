@@ -6,6 +6,10 @@ export function getChatComposerBoundaryClassName(isMobile: boolean, showDesktopP
   return `relative z-30 isolate shrink-0 bg-background ${isMobile ? 'px-2 py-2' : `py-3 ${showDesktopProject ? 'px-3' : 'px-4'}`}`
 }
 
+export function getMessageEditPromptClassName(): string {
+  return "rounded-lg border-primary/20 bg-primary/[0.08] dark:!bg-primary/[0.08] shadow-none [&_.text-muted-foreground]:text-muted-foreground [&>div]:!bg-transparent [&_[contenteditable='true']]:!bg-transparent"
+}
+
 export function getUserMessageEditComposerShellClassName(): string {
   return [
     'fixed left-1/2 top-1/2 z-50',

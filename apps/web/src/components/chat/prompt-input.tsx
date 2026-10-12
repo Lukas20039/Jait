@@ -1077,7 +1077,16 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     setIsEmpty(isTextEmpty(getTextFromEditable(el)) && !hasChipRefs(el))
   }, [syncComposerSegments])
 
+  const clearSubmittedAttachments = useCallback(() => {
+    // Sending can remount this composer before its persistence effect runs.
+    attachmentsRef.current = []
+    setAttachments([])
+    persistAttachmentDraft(attachmentDraftStore, draftStateKey, [])
+  }, [draftStateKey])
+
   const resetComposer = useCallback(() => {
+    clearSubmittedAttachments()
+    if (undoTimerRef.current) { clearTimeout(undoTimerRef.current); undoTimerRef.current = null }
     const el = editableRef.current
     if (!el) return
     buildEditableContent(el, [], '', handleRemoveChip)
@@ -1089,7 +1098,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     setIsEmpty(true)
     undoStackRef.current = []
     redoStackRef.current = []
-  }, [handleRemoveChip])
+  }, [handleRemoveChip, clearSubmittedAttachments])
 
   /** Push a snapshot onto the undo stack (debounced for typing). */
   const pushUndoSnapshot = useCallback((immediate?: boolean) => {
@@ -1569,11 +1578,12 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           : action === 'thread' ? onThreadSubmit
             : onAskInParallel
     if (!handler || readingAttachments > 0) return false
-    handler(payload.chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), payload.segments), payload.segments)
-    setAttachments([])
+    const submittedAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), payload.segments)
+    clearSubmittedAttachments()
+    handler(payload.chips, submittedAttachments, payload.segments)
     resetComposer()
     return true
-  }, [attachments, onQueue, onSteer, onThreadSubmit, onAskInParallel, resetComposer, readingAttachments])
+  }, [attachments, onQueue, onSteer, onThreadSubmit, onAskInParallel, resetComposer, clearSubmittedAttachments, readingAttachments])
 
   /** Send whatever is in the composer right now through one streaming action. */
   const handleSendAction = useCallback((action: ComposerSendAction) => {
@@ -1733,15 +1743,16 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
       if (action === 'submit') {
         if (!isLoading || sendTarget === 'thread') {
-          onSubmit(chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), nextSegments), nextSegments)
-          setAttachments([])
+          const submittedAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), nextSegments)
+          clearSubmittedAttachments()
+          onSubmit(chips, submittedAttachments, nextSegments)
           resetComposer()
         }
         return
       }
       runSendAction(action, { chips, segments: nextSegments })
     }
-  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
+  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, clearSubmittedAttachments, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
 
   const readFileAsAttachment = useCallback((file: File): Promise<ChatAttachment> => {
     return new Promise((resolve, reject) => {
@@ -2386,8 +2397,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
                 const el = editableRef.current
                 const chips = el ? getChipFiles(el) : []
                 const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
-                onSubmit(chips, collectAttachments(attachments.filter(item => !item.mimeType.startsWith('image/')), nextSegments), nextSegments)
-                setAttachments([])
+                const submittedAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), nextSegments)
+                clearSubmittedAttachments()
+                onSubmit(chips, submittedAttachments, nextSegments)
                 resetComposer()
               }}
             >

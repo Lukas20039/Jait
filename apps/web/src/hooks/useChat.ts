@@ -218,11 +218,14 @@ function safeTrim(value: unknown): string {
   return typeof value === 'string' ? value.trim() : ''
 }
 
-export function editQueuedChatMessage(item: QueuedChatMessage, content: string): QueuedChatMessage {
+export function editQueuedChatMessage<T extends QueuedMessage & { referencedFiles?: { path: string; name: string }[] }>(item: T, content: string, currentAttachments?: ChatAttachment[], editedSegments?: UserMessageSegment[]) {
   const trimmed = safeTrim(content)
-  const attachments = mergeChatAttachments(item.attachments, attachmentsFromSegments(item.displaySegments))
-  if (!trimmed && !attachments?.length) return item
-  const edited = createUserMessageEditSubmission(trimmed, undefined, item.displaySegments, attachments)
+  const attachments = currentAttachments ?? mergeChatAttachments(
+    item.attachments?.filter((item): item is ChatAttachment => typeof item !== 'string'),
+    attachmentsFromSegments(item.displaySegments),
+  )
+  const edited = createUserMessageEditSubmission(trimmed, editedSegments, item.displaySegments, attachments)
+  if (!edited) return item
   return {
     ...item,
     content: trimmed,
@@ -1880,10 +1883,12 @@ export function useChat(
   }, [])
 
   /** Update the content of a queued message (inline edit). */
-  const updateQueueItem = useCallback((id: string, content: string) => {
-    // Guard: a stale queue entry or malformed edit payload could hold a
-    // non-string at runtime; safeTrim never throws.
-    updateQueue(prev => prev.map(q => q.id === id ? editQueuedChatMessage(q, content) : q))
+  const updateQueueItem = useCallback((id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[], promptContent?: string) => {
+    updateQueue(prev => prev.map(q => {
+      if (q.id !== id) return q
+      const edited = editQueuedChatMessage(q, content, attachments, displaySegments)
+      return edited === q ? q : { ...q, ...edited, content: promptContent ?? edited.content }
+    }))
   }, [updateQueue])
 
   const reorderQueueItem = useCallback((sourceId: string, targetId: string | null, placement: 'before' | 'after') => {

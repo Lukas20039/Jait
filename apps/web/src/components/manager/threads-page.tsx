@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/button'
 import { inferThreadRepositoryName } from '@/lib/automation-repositories'
 import type { ProviderId, RuntimeMode } from '@/lib/agents-api'
 import type { SessionReasoningEffort } from '@/lib/session-chat-selection'
+import type { ChatAttachment } from '@/hooks/useChat'
+import type { UserMessageSegment } from '@/lib/user-message-segments'
 import type { ResponseStyle } from '@jait/shared'
 
 interface ThreadsPageProps {
@@ -77,7 +79,7 @@ interface ThreadsPageProps {
   onStopRecording: () => void
   onStopThread: (threadId: string) => void
   onSubmit: () => void
-  onUpdateManagerQueueItem: (threadId: string, itemId: string, content: string) => void
+  onUpdateManagerQueueItem: (threadId: string, itemId: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => void | Promise<void>
   onVoiceInput: () => void
   renderInlineSecretPrompt?: (call: ToolCallInfo) => React.ReactNode
   inlinePrompts?: ReactNode
@@ -284,7 +286,7 @@ export function ThreadsPage({
                   <MessageQueue
                     items={selectedManagerQueue}
                     onRemove={(id) => onDequeueManagerMessage(automation.selectedThread.id, id)}
-                    onEdit={(id, content) => onUpdateManagerQueueItem(automation.selectedThread.id, id, content)}
+                    onEdit={(id, content, attachments, displaySegments) => onUpdateManagerQueueItem(automation.selectedThread.id, id, content, attachments, displaySegments)}
                     onReorder={(sourceId, targetId, placement) => onReorderManagerQueueItem(automation.selectedThread.id, sourceId, targetId, placement)}
                     onSteer={automation.selectedThread.status === 'running' ? onSteerManagerQueueItem : undefined}
                     onSendToParallelThread={onSendManagerQueueItemToParallelThread}

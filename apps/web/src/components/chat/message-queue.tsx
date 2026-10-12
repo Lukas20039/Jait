@@ -1,8 +1,14 @@
 import { AttachmentList, collectAttachments } from './attachment-list'
 import type { ChatAttachment } from '@/hooks/useChat'
-import type { UserMessageSegment } from '@/lib/user-message-segments'
+import { userMessageTextFromSegments, type UserMessageSegment } from '@/lib/user-message-segments'
+import { PromptInput, type PromptInputHandle } from './prompt-input'
+import { createUserMessageEditSubmission } from './message-edit'
+import { getMessageEditPromptClassName, getUserMessageEditComposerShellClassName, getMobileUserMessageEditTop } from './message-edit-layout'
+import { useIsMobile } from '@/hooks/useIsMobile'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { ArrowRight, Check, ChevronDown, ChevronRight, GitBranch, GripVertical, ListPlus, Lock, LockOpen, Pencil, Square, X } from 'lucide-react'
+import { ArrowRight, ChevronDown, ChevronRight, GitBranch, GripVertical, ListPlus, Lock, LockOpen, Pencil, Square, X } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { TooltipHint } from '@/components/ui/tooltip'
@@ -23,7 +29,7 @@ export interface QueuedMessage {
 interface MessageQueueProps {
   items: QueuedMessage[]
   onRemove?: (id: string) => void
-  onEdit?: (id: string, newContent: string) => void
+  onEdit?: (id: string, newContent: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => void | Promise<void>
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
   onSteer?: (id: string) => void
   onStopAndSteer?: (id: string) => void
@@ -125,7 +131,7 @@ function QueueItem({
   item: QueuedMessage
   index: number
   onRemove?: (id: string) => void
-  onEdit?: (id: string, content: string) => void
+  onEdit?: (id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => void | Promise<void>
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
   onSteer?: (id: string) => void
   onStopAndSteer?: (id: string) => void
@@ -141,7 +147,11 @@ function QueueItem({
   const [editing, setEditing] = useState(false)
   const [collapsed, setCollapsed] = useState(true)
   const [draft, setDraft] = useState(item.displayContent ?? item.content)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [draftSegments, setDraftSegments] = useState<UserMessageSegment[]>(item.displaySegments ?? [{ type: 'text', text: item.displayContent ?? item.content }])
+  const [saving, setSaving] = useState(false)
+  const inputRef = useRef<PromptInputHandle>(null)
+  const isMobile = useIsMobile()
+  const [mobileEditTop, setMobileEditTop] = useState<number | null>(null)
   const showActions = editing || !dragActive
   const { cardRef, anchorToggle } = useToolCardToggleAnchor('top')
   const toggleCollapsed = () => {
@@ -149,44 +159,47 @@ function QueueItem({
     setCollapsed(prev => !prev)
   }
 
-  // Focus the textarea when entering edit mode
   useEffect(() => {
-    if (editing) {
-      const el = inputRef.current
-      if (el) {
-        el.focus()
-        el.setSelectionRange(el.value.length, el.value.length)
-      }
+    if (!editing) return
+    inputRef.current?.focus()
+    if (!isMobile) return
+    const updateTop = () => setMobileEditTop(getMobileUserMessageEditTop(window.visualViewport, window.innerHeight))
+    updateTop()
+    window.visualViewport?.addEventListener('resize', updateTop)
+    window.visualViewport?.addEventListener('scroll', updateTop)
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateTop)
+      window.visualViewport?.removeEventListener('scroll', updateTop)
     }
-  }, [editing])
+  }, [editing, isMobile])
 
   // Keep draft in sync if the item changes externally
   useEffect(() => {
-    if (!editing) setDraft(item.displayContent ?? item.content)
-  }, [item.content, item.displayContent, editing])
+    if (editing) return
+    setDraft(item.displayContent ?? item.content)
+    setDraftSegments(item.displaySegments ?? [{ type: 'text', text: item.displayContent ?? item.content }])
+  }, [item.content, item.displayContent, item.displaySegments, editing])
 
-  const commitEdit = useCallback(() => {
-    const trimmed = draft.trim()
-    const displayed = item.displayContent ?? item.content
-    if ((trimmed || collectAttachments(item.attachments, item.displaySegments).length) && trimmed !== displayed) {
-      onEdit?.(item.id, trimmed)
+  const commitEdit = useCallback(async (attachments?: ChatAttachment[], segments?: UserMessageSegment[]) => {
+    if (saving) return
+    const currentSegments = segments ?? inputRef.current?.getSegments() ?? draftSegments
+    const submission = createUserMessageEditSubmission(userMessageTextFromSegments(currentSegments), currentSegments, item.displaySegments, attachments)
+    if (!submission) return
+    setSaving(true)
+    try {
+      await onEdit?.(item.id, submission.text, collectAttachments(undefined, submission.displaySegments), submission.displaySegments)
+      setEditing(false)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not save queued message')
+    } finally {
+      setSaving(false)
     }
-    setEditing(false)
-  }, [draft, item, onEdit])
+  }, [saving, draftSegments, item, onEdit])
 
   const cancelEdit = useCallback(() => {
     setDraft(item.displayContent ?? item.content)
     setEditing(false)
   }, [item.content, item.displayContent])
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      commitEdit()
-    } else if (e.key === 'Escape') {
-      cancelEdit()
-    }
-  }, [commitEdit, cancelEdit])
 
   return (
     <>
@@ -258,17 +271,24 @@ function QueueItem({
             )}
           </span>
         )}
-        <AttachmentList attachments={collectAttachments(item.attachments, item.displaySegments)} className="mb-1.5" />
+        {!editing && <AttachmentList attachments={collectAttachments(item.attachments, item.displaySegments)} className="mb-1.5" />}
         {editing ? (
-          <textarea
-            ref={inputRef}
-            value={draft}
-            onChange={e => setDraft(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={commitEdit}
-            rows={Math.min(draft.split('\n').length, 5)}
-            className="w-full resize-none rounded border border-primary/30 bg-background px-2 py-1 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
-          />
+          <div data-no-drag="true" data-queue-editor className={getUserMessageEditComposerShellClassName()}
+            style={isMobile && mobileEditTop != null ? { top: mobileEditTop } : undefined}
+            onKeyDown={event => {
+              if (event.key === 'Escape' && !saving) { event.stopPropagation(); cancelEdit() }
+            }}>
+            <PromptInput ref={inputRef} draftStateKey={`queue-edit:${item.id}`} value={draft}
+              segments={draftSegments}
+              initialAttachments={collectAttachments(item.attachments, item.displaySegments)}
+              onChange={value => { setDraft(value); setDraftSegments(inputRef.current?.getSegments() ?? []) }}
+              onSubmit={(_files, attachments, segments) => { void commitEdit(attachments, segments) }}
+              disabled={saving} controlsDisabled={saving} placeholder="Edit message..."
+              availableFiles={[]}
+              footerTrailingContent={<Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-lg"
+                disabled={saving} onClick={cancelEdit} aria-label="Cancel editing message"><X className="h-3.5 w-3.5" /></Button>}
+              className={getMessageEditPromptClassName()} />
+          </div>
         ) : collapsed ? (
           <button type="button" onClick={toggleCollapsed} aria-expanded={!collapsed} className="block w-full min-w-0 text-left text-foreground"><span className={cn('block', iconOnly ? 'line-clamp-2 break-words' : 'truncate')}>{item.displayContent ?? item.content}</span></button>
         ) : (
@@ -282,30 +302,7 @@ function QueueItem({
         iconOnly && 'absolute right-1 top-1.5 mt-0 gap-0',
         iconOnly || onSteer ? 'opacity-100' : showActions ? 'opacity-0 group-hover:opacity-100' : 'opacity-0',
       )}>
-        {editing ? (
-          <>
-            <TooltipHint content="Save">
-            <button
-              type="button"
-              data-no-drag="true"
-              className="p-1 rounded hover:bg-primary/10 text-primary transition-colors"
-              onClick={commitEdit} aria-label="Save"
-            >
-              <Check className="h-3.5 w-3.5" />
-            </button>
-            </TooltipHint>
-            <TooltipHint content="Cancel">
-            <button
-              type="button"
-              data-no-drag="true"
-              className="p-1 rounded hover:bg-foreground/10 text-muted-foreground transition-colors"
-              onClick={cancelEdit} aria-label="Cancel"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-            </TooltipHint>
-          </>
-        ) : (
+        {editing ? null : (
           <>
             {onEdit && (
               <TooltipHint content="Edit message">

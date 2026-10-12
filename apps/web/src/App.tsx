@@ -145,6 +145,8 @@ import {
   getMemoryFeedbackSuccessMessage,
   type MemoryFeedbackKind
 } from '@/lib/memory-feedback'
+import { createUserMessageEditSubmission } from '@/components/chat/message-edit'
+import { collectAttachments } from '@/components/chat/attachment-list'
 import { appendUploadedAttachmentPromptBlock, getUploadedAttachmentDisplayLabel } from '@/lib/uploaded-attachment-prompt'
 import { mergeHydratedTodoState, normalizeTodoStateValue } from '@/lib/todo-state'
 import {
@@ -4289,11 +4291,19 @@ function App() {
     })
   }, [])
 
-  const updateManagerQueueItem = useCallback((threadId: string, id: string, content: string) => {
-    // content is typed as string, but guard anyway: a malformed queue entry
-    // restored from persisted state could hold a non-string at runtime.
-    const trimmed = typeof content === 'string' ? content.trim() : ''
-    if (!trimmed) return
+  const handleUpdateQueueItem = useCallback(async (id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => {
+    const submission = createUserMessageEditSubmission(content, displaySegments, displaySegments, attachments)
+    if (!submission) return
+    const prepared = await preparePromptSubmission(submission.text, submission.referencedFiles, submission.displaySegments)
+    updateQueueItem(id, submission.text, attachments, submission.displaySegments, prepared?.promptWithReferences ?? submission.text)
+  }, [preparePromptSubmission, updateQueueItem])
+
+  const updateManagerQueueItem = useCallback(async (threadId: string, id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => {
+    const submission = createUserMessageEditSubmission(content, displaySegments, displaySegments, attachments)
+    if (!submission) return
+    const prepared = await preparePromptSubmission(submission.text, submission.referencedFiles, submission.displaySegments)
+    const uploaded = collectAttachments(attachments, submission.displaySegments)
+    const fullContent = appendUploadedAttachmentPromptBlock(prepared?.promptWithReferences ?? submission.text, uploaded)
     setManagerMessageQueues((prev) => {
       const existing = prev[threadId] ?? []
       if (existing.length === 0) return prev
@@ -4303,18 +4313,18 @@ function App() {
           item.id === id
             ? {
                 ...item,
-                content: trimmed,
-                displayContent: trimmed,
-                fullContent: trimmed,
-                referencedFiles: undefined,
-                displaySegments: undefined,
-                attachments: undefined,
+                content: submission.text,
+                displayContent: submission.text,
+                fullContent,
+                referencedFiles: prepared?.referencedFiles ?? submission.referencedFiles,
+                displaySegments: submission.displaySegments,
+                attachments: prepared?.attachments,
               }
             : item,
         ),
       }
     })
-  }, [])
+  }, [preparePromptSubmission])
 
   const reorderManagerQueueItem = useCallback((threadId: string, sourceId: string, targetId: string | null, placement: 'before' | 'after') => {
     setManagerMessageQueues((prev) => {
@@ -5686,7 +5696,7 @@ function App() {
                         }}
                         onSubmit={handleSubmit}
                         onToggleHoldQueueItem={toggleHoldQueueItem}
-                        onUpdateQueueItem={updateQueueItem}
+                        onUpdateQueueItem={handleUpdateQueueItem}
                         onVoiceInput={handleVoiceInput}
                       />
                       {parallelChats.map((parallelChat, panelIndex) => {

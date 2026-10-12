@@ -42,6 +42,7 @@ import type { ResponseStyle } from '@jait/shared'
 import { hasRenderableUserMessageContent } from './message-render-state'
 import {
   getMobileUserMessageEditTop,
+  getMessageEditPromptClassName,
   getUserMessageEditComposerShellClassName,
   getUserMessageEditComposerTransitionClassName,
 } from './message-edit-layout'
@@ -931,12 +932,13 @@ function MessageInner({
                             </Button>
                             </TooltipHint>
                           )}
-                          className="rounded-lg border-primary/20 bg-primary/[0.08] dark:!bg-primary/[0.08] shadow-none [&_.text-muted-foreground]:text-muted-foreground [&>div]:!bg-transparent [&_[contenteditable='true']]:!bg-transparent"
+                          className={getMessageEditPromptClassName()}
                         />
                     </div>
                   </div>
                 ) : (
-                  <div className="relative w-fit max-w-full">
+                  <div className="relative w-fit max-w-full space-y-2">
+                    <UserMessageImages images={userImages} />
                     {steered && (
                       <span className="mb-1 inline-flex items-center gap-1 text-2xs font-medium uppercase tracking-wider text-primary/70">
                         <ArrowRight className="h-3 w-3" />
@@ -951,14 +953,12 @@ function MessageInner({
                         'min-w-0 rounded-lg bg-muted p-4 break-words [overflow-wrap:anywhere]',
                         canEdit && !isEditing && 'cursor-text transition-colors hover:bg-muted/80',
                         'leading-relaxed [font-size:0.9rem]',
-                        userImages.length > 0 && canEdit && 'pb-10',
                         steered && 'border border-dashed border-primary/40 bg-primary/5',
                       )}
                       onClick={handleUserBubbleClick}
                     >
                       <div className="min-w-0 space-y-3">
                         <AttachmentList attachments={userAttachments.filter(item => !item.mimeType.startsWith('image/'))} />
-                        <UserMessageImages images={userImages} excluded={(optimisticUserDisplaySegments ?? userDisplaySegments).filter(segment => segment.type === 'image')} />
                         <div className="min-w-0 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                           {(optimisticUserDisplaySegments ?? userDisplaySegments).length > 0
                             ? (optimisticUserDisplaySegments ?? userDisplaySegments).map((segment, index) =>
@@ -1019,7 +1019,7 @@ function MessageInner({
                     </AIMessageContent>
                     </TooltipHint>
 
-                    {renderActions()}
+                    {renderActions(true)}
                   </div>
                 )
               ) : (

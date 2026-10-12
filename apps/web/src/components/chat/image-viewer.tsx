@@ -115,7 +115,7 @@ function ImageViewer({ src, alt }: { src: string; alt: string }) {
 }
 
 export function ImageViewerContent(props: { src: string; alt: string }) {
-  return <DialogContent className="flex h-[92dvh] w-[96vw] max-w-none flex-col gap-2 overflow-hidden p-2" showCloseButton>
+  return <DialogContent data-no-message-edit onClick={event => event.stopPropagation()} className="flex h-[92dvh] w-[96vw] max-w-none flex-col gap-2 overflow-hidden p-2" showCloseButton>
     <ImageViewer {...props} />
   </DialogContent>
 }

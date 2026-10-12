@@ -15,9 +15,19 @@ for (const width of [390, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
     const queue = page.getByTestId('queue')
     await queue.getByRole('button', { name: 'Edit message', exact: true }).click()
-    await queue.locator('textarea').fill('Edited queue text')
+    const editor = queue.locator('[contenteditable="true"]')
+    await editor.evaluate(element => {
+      const text = Array.from(element.childNodes).find(node => node.nodeType === Node.TEXT_NODE)!
+      const range = document.createRange()
+      range.selectNodeContents(text)
+      const selection = window.getSelection()!
+      selection.removeAllRanges()
+      selection.addRange(range)
+      ;(element as HTMLElement).focus()
+    })
+    await page.keyboard.type('Edited queue text')
     await expect(queue.locator('[data-attachment-list]')).toBeVisible()
-    await queue.getByRole('button', { name: 'Save', exact: true }).click()
+    await queue.getByRole('button', { name: 'Send message', exact: true }).click()
     await expect(queue.getByText('Edited queue text', { exact: true })).toBeVisible()
     await queue.getByRole('button', { name: 'Expand image photo.png' }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
