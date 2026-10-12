@@ -74,6 +74,99 @@ describe("persistent team coordination", () => {
     expect(service.context(owner, delivery.sessionId)).toContain(selected.id);
   });
 
+  it("requires root coordinators and intermediate managers to verify completion", () => {
+    profiles.savePersonaAgent(owner, profile("Junior", "Developer"));
+    const rootContext = service.context(owner, "", profile("Scrum"))!;
+    const managerContext = service.context(owner, "", profile("Developer", "Scrum"))!;
+    const juniorContext = service.context(owner, "", profile("Junior", "Developer"))!;
+    expect(rootContext).toContain("Leadership completion check:");
+    expect(managerContext).toContain("Leadership completion check:");
+    expect(managerContext).toContain("met, not-yet-met or blocked");
+    expect(managerContext).toContain("Only the room coordinator");
+    expect(juniorContext).not.toContain("Leadership completion check:");
+  });
+
+  it("derives leadership from current reporting lines rather than names or personas", () => {
+    expect(service.context(owner, "", profile("Developer", "Scrum"))).not.toContain("Leadership completion check:");
+    profiles.savePersonaAgent(owner, profile("Junior", "Developer"));
+    expect(service.context(owner, "", profile("Developer", "Scrum"))).toContain("Leadership completion check:");
+    profiles.savePersonaAgent(owner, profile("Junior", "QA"));
+    expect(service.context(owner, "", profile("Developer", "Scrum"))).not.toContain("Leadership completion check:");
+    expect(service.context(owner, "", profile("QA", "Scrum"))).toContain("Leadership completion check:");
+  });
+
+  it("queues one completion review for a worker outcome and reuses the manager thread", () => {
+    service.setGoal(owner, room.id, "Ship", ["Acceptance passes"], human);
+    post("Coordinate delivery", "manager-start", ["Scrum"]);
+    const managerThread = service.deliveries(owner, room.id)[0]!.sessionId;
+    post("Implement", "worker-start", ["Developer"]);
+    const worker = service.deliveries(owner, room.id)[1]!;
+    const outcome = { sender: { ...sender("Developer"), sourceSessionId: worker.sessionId },
+      kind: "result" as const, content: "Local tests pass; PR still missing.", recipientIds: [],
+      clientKey: "worker-outcome", workSessionId: worker.sessionId };
+    service.post(owner, room.id, outcome);
+    service.post(owner, room.id, outcome);
+    const checks = service.history(owner, room.id).filter(message => message.content.startsWith("Leadership completion check:"));
+    expect(checks).toHaveLength(1);
+    expect(checks[0]!.recipientIds).toEqual(["Scrum"]);
+    expect(checks[0]!.targetSessionId).toBe(managerThread);
+    expect(service.deliveries(owner, room.id)).toHaveLength(3);
+    expect(service.get(owner, room.id).goal?.status).toBe("active");
+  });
+
+  it("routes outcome verification to an intermediate manager before the root coordinator", () => {
+    profiles.savePersonaAgent(owner, profile("Junior", "Developer"));
+    service.setGoal(owner, room.id, "Ship", ["Acceptance passes"], human);
+    post("Implement", "junior-start", ["Junior"]);
+    const worker = service.deliveries(owner, room.id)[0]!;
+    service.post(owner, room.id, { sender: { ...sender("Junior"), sourceSessionId: worker.sessionId },
+      kind: "verification", content: "Acceptance evidence", recipientIds: [], clientKey: "junior-outcome" });
+    expect(service.deliveries(owner, room.id).at(-1)?.agentId).toBe("Developer");
+    expect(service.history(owner, room.id).at(-1)?.content).toContain("Leadership completion check:");
+  });
+
+  it("checks final dispatcher results even when the worker does not explicitly post", async () => {
+    service.setGoal(owner, room.id, "Ship", ["PR merged"], human);
+    const dispatcher = vi.fn(async (_delivery, agent) => ({ content: agent.id === "Developer" ?
+      "Tests pass; PR not merged." : "Not yet complete: PR and independent review remain." }));
+    service.setDispatcher(dispatcher);
+    post("Implement", "dispatcher-worker", ["Developer"]);
+    await vi.waitFor(() => expect(dispatcher).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(service.deliveries(owner, room.id).every(delivery => delivery.status === "completed")).toBe(true));
+    expect(service.get(owner, room.id).goal?.status).toBe("active");
+    expect(service.history(owner, room.id).filter(message => message.content.startsWith("Leadership completion check:"))).toHaveLength(1);
+  });
+
+  it("does not route outcome checks outside selected room membership", () => {
+    const selected = service.createRoom(owner, { name: "Worker only", memberIds: ["Developer", "QA"] });
+    service.setGoal(owner, selected.id, "Ship", ["Tests pass"], human);
+    service.post(owner, selected.id, { sender: human, kind: "assignment", content: "Implement",
+      recipientIds: ["Developer"], clientKey: "selected-worker" });
+    const worker = service.deliveries(owner, selected.id)[0]!;
+    service.post(owner, selected.id, { sender: { ...sender("Developer"), sourceSessionId: worker.sessionId },
+      kind: "result", content: "Outcome", recipientIds: [], clientKey: "selected-result" });
+    expect(service.deliveries(owner, selected.id)).toHaveLength(1);
+    expect(service.deliveries(owner, room.id)).toHaveLength(0);
+  });
+
+  it("does not wake leaders for untracked claims, paused managers or completed goals", () => {
+    service.setGoal(owner, room.id, "Ship", ["Acceptance passes"], human);
+    service.post(owner, room.id, { sender: sender("Developer"), kind: "result",
+      content: "Claim", recipientIds: [], clientKey: "untracked" });
+    expect(service.deliveries(owner, room.id)).toHaveLength(0);
+    post("Implement", "worker-start", ["Developer"]);
+    const worker = service.deliveries(owner, room.id)[0]!;
+    profiles.savePersonaAgent(owner, { ...profile("Scrum"), paused: true });
+    const outcome = { sender: { ...sender("Developer"), sourceSessionId: worker.sessionId },
+      kind: "result" as const, content: "Outcome", recipientIds: [] };
+    service.post(owner, room.id, { ...outcome, clientKey: "paused" });
+    expect(service.deliveries(owner, room.id)).toHaveLength(1);
+    profiles.savePersonaAgent(owner, profile("Scrum"));
+    service.completeGoal(owner, room.id, ["User accepted"], human);
+    service.post(owner, room.id, { ...outcome, clientKey: "completed" });
+    expect(service.deliveries(owner, room.id)).toHaveLength(1);
+  });
+
   it("runs assignments in persona threads without creating ordinary chats", () => {
     post("Implement ticket", "thread-first", ["Developer"]);
     const delivery = service.deliveries(owner, room.id)[0]!;

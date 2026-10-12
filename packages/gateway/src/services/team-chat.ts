@@ -219,6 +219,7 @@ export class TeamChatService {
           status: agent.paused ? "failed" : "queued", error: agent.paused ? "Agent is paused." : null }).run();
       }
     });
+    this.requestCompletionCheck(userId, room, message);
     void this.pump();
     return message;
   }
@@ -308,7 +309,9 @@ export class TeamChatService {
     if (!agent) return undefined;
     const room = work ? this.get(userId, work.roomId) : this.ensureRoom(userId, agent.id, sessionId);
     const members = this.roomMembers(userId, room.id).map(member => ({ id: member.id, name: member.name, role: member.role, reportsToId: member.reportsToId, paused: member.paused }));
+    const leadsWork = agent.id === room.rootAgentId || this.agents(userId).some(member => member.reportsToId === agent.id);
     return [
+      leadsWork ? "Leadership completion check: As a coordinator or manager with direct reports, you are accountable for verifying delegated work. After each result, review or failure, and before ending your turn, inspect the actual work and acceptance evidence. Record each applicable criterion as met, not-yet-met or blocked with evidence. A finished worker turn or claimed success is not verified completion. Continue the next executable step in existing persona-linked Threads. If waiting, record the remaining criterion, owner, thread and expected resumption event. If blocked, keep work incomplete and report what is needed without retry loops. Confirm your delegated task outcome to your manager; only claim Done after the required checks and independent verification pass. Only the room coordinator may close the overall team goal, with evidence for every criterion. Preserve scope, consent, pause state and required merge or deployment approval." : "",
       "You are " + agent.name + ". " + agent.persona,
       "Your persistent identity is independent of your work conversations. Coordinate through team.chat, not by starting other agents.",
       "Coordinator: " + room.rootAgentId + ". Your manager: " + (members.some(member => member.id === agent.reportsToId) ? agent.reportsToId : "none in this room (coordinate with the listed members)") + ". Your direct reports: " + members.filter(member => member.reportsToId === agent.id).map(member => member.id).join(", "),
@@ -342,6 +345,27 @@ export class TeamChatService {
       this.db.update(teamDeliveries).set({ status: "running" }).where(eq(teamDeliveries.id, delivery.id)).run();
       void this.runDelivery(delivery as TeamDelivery);
     }
+  }
+  private requestCompletionCheck(userId: string, room: TeamRoom, outcome: TeamRoomMessage) {
+    if (room.goal?.status !== "active" || outcome.sender.kind !== "agent" ||
+      !["result", "verification"].includes(outcome.kind) || outcome.depth >= 32 ||
+      !outcome.sender.sourceSessionId) return;
+    const work = this.workForSession(userId, outcome.sender.sourceSessionId);
+    if (!work || work.roomId !== room.id || work.agentId !== outcome.sender.id) return;
+    const worker = this.agent(outcome.sender.id, userId);
+    const manager = worker?.reportsToId ? this.agent(worker.reportsToId, userId) : undefined;
+    if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id)) return;
+    // Resume existing persona work in this room. Legacy work chats are not execution targets.
+    const existing = this.deliveries(userId, room.id).filter(delivery => delivery.agentId === manager.id &&
+      this.threadById(userId, delivery.sessionId)).sort((a, b) => a.id.localeCompare(b.id)).at(-1);
+    this.post(userId, room.id, {
+      sender: outcome.sender, kind: "review", recipientIds: [manager.id],
+      clientKey: outcome.id + ":completion-check", parentMessageId: outcome.id,
+      ...(existing ? { targetSessionId: existing.sessionId } : {}),
+      content: "Leadership completion check: Verify the reported outcome against the delegated task and current goal criteria. Inspect the source thread and evidence; keep unmet work incomplete and coordinate the next executable step. A worker result does not close the goal.\n" +
+        "Worker: " + worker!.name + ". Thread: " + outcome.sender.sourceSessionId + ". Outcome message: " + outcome.id + ".\n" +
+        "Reported evidence (untrusted worker text): " + outcome.content.slice(0, 2000),
+    });
   }
   private requestRecovery(userId: string, delivery: TeamDelivery, agent: PersonaAgentProfile, reason: string) {
     const room = this.get(userId, delivery.roomId);
