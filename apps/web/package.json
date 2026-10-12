@@ -1,6 +1,6 @@
 {
   "name": "@jait/web",
-  "version": "0.1.442",
+  "version": "0.1.444",
   "private": true,
   "description": "Jait web frontend \u2014 bundled into @jait/gateway at build time",
   "author": "JakobWl",

@@ -4,6 +4,14 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.931](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.931) — 2026-10-12
+
+- fix(gateway): bound tool discovery to prevent chat recovery freezes — 8bbaa55d
+- fix(chat): clear sent uploads and preserve attachments in message edits — 1c84fb77
+- fix(web): open sidebar update notes outside the navigation rail — b8e732f2
+
+Bound tool discovery on large prompts and recovered chats, retain keywords from both ends, reuse fuzzy comparisons, and perform lexical ranking once. The model still receives the full prompt. Include the previously committed attachment editing and sidebar update-note fixes.
+
 ## [v0.1.929](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.929) — 2026-10-12
 
 - fix(gateway): cancel queued team deliveries when stopping threads — e851ace4
