@@ -9,7 +9,7 @@
 import { and, eq, desc, gt, sql } from "drizzle-orm";
 import type { ExecutionCheckpoint } from "./execution-guard.js";
 import type { JaitDB } from "../db/connection.js";
-import { agentThreads, agentThreadActivities, personaAgents, threadRecovery } from "../db/schema.js";
+import { agentThreads, agentThreadActivities, personaAgents, threadRecovery, teamDeliveries } from "../db/schema.js";
 import { uuidv7 } from "../db/uuidv7.js";
 import { limitUtf8, serializeBoundedJson } from "../lib/bounded-json.js";
 import type { ProviderEvent } from "../providers/contracts.js";
@@ -357,10 +357,18 @@ export class ThreadService {
   }
 
   markInterrupted(id: string): ThreadRow | undefined {
-    this.clearRecovery(id);
-    return this.update(id, {
-      status: "interrupted",
-      providerSessionId: null,
+    return this.db.transaction(() => {
+      this.clearRecovery(id);
+      const thread = this.update(id, {
+        status: "interrupted",
+        providerSessionId: null,
+      });
+      // Cancel followers at the authoritative stop, even if the active dispatch
+      // never settles and no later pump runs. Sibling threads remain untouched.
+      this.db.update(teamDeliveries).set({
+        status: "cancelled", error: "Thread was stopped before this delivery started.",
+      }).where(and(eq(teamDeliveries.sessionId, id), eq(teamDeliveries.status, "queued"))).run();
+      return thread;
     });
   }
 

@@ -4,6 +4,8 @@ import { ThreadService } from "./threads.js";
 import { SessionService } from "./sessions.js";
 import { TeamChatService } from "./team-chat.js";
 import { personaAgentProfileSchema, type TeamSender, type TeamRoom } from "@jait/shared";
+import { teamDeliveries } from "../db/schema.js";
+import { uuidv7 } from "../db/uuidv7.js";
 
 /**
  * D3 (ticket 4) cancel semantics — reproduction harness, failing-first on 08211a67.
@@ -65,6 +67,66 @@ describe("team chat cancel semantics for a stopped thread", () => {
     if (!found) throw new Error("No delivery for: " + content);
     return found;
   };
+
+  it("immediately cancels queued followers on authoritative stop while dispatch remains unsettled", async () => {
+    const dispatch = vi.fn(() => new Promise<{ content: string }>(() => {}));
+    service.setDispatcher(dispatch);
+    post("Unsettled active turn", "w3-active", ["Developer"]);
+    const active = deliveryFor(service, "Unsettled active turn");
+    profiles.markRunning(active.sessionId, "active-provider");
+    expect(active.status).toBe("running");
+
+    // Persist FIFO followers directly so this regression is independent of the
+    // separate per-agent/per-thread dispatch serialization change.
+    const followerIds = [uuidv7(), uuidv7()];
+    for (const id of followerIds) {
+      opened.db.insert(teamDeliveries).values({
+        ...active, id, status: "queued", error: null,
+      }).run();
+    }
+    const sibling = profiles.create({
+      userId: owner, personaAgentId: "Developer", providerId: "codex", title: "Sibling work",
+    });
+    profiles.markRunning(sibling.id, "sibling-provider");
+    const siblingDeliveryId = uuidv7();
+    opened.db.insert(teamDeliveries).values({
+      ...active, id: siblingDeliveryId, sessionId: sibling.id, status: "running",
+    }).run();
+    const siblingFollowerId = uuidv7();
+    opened.db.insert(teamDeliveries).values({
+      ...active, id: siblingFollowerId, sessionId: sibling.id, status: "queued",
+    }).run();
+
+    profiles.markInterrupted(active.sessionId);
+    const statuses = new Map(service.deliveries(owner, room.id).map(row => [row.id, row.status]));
+    // No pump, new post, or promise settlement after the stop.
+    for (const id of followerIds) expect(statuses.get(id)).toBe("cancelled");
+    expect(statuses.get(active.id)).toBe("running");
+    expect(statuses.get(siblingDeliveryId)).toBe("running");
+    expect(statuses.get(siblingFollowerId)).toBe("queued");
+    expect(profiles.getById(sibling.id)?.status).toBe("running");
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    profiles.markInterrupted(active.sessionId);
+    expect(service.deliveries(owner, room.id).filter(row => followerIds.includes(row.id))
+      .every(row => row.status === "cancelled")).toBe(true);
+    const restored = new TeamChatService(opened.db, sessions, profiles);
+    expect(restored.deliveries(owner, room.id).filter(row => followerIds.includes(row.id))
+      .every(row => row.status === "cancelled")).toBe(true);
+    restored.close();
+  });
+
+  it("preserves queued followers during automatic restart recovery", () => {
+    post("Restart recovery work", "w3-recovery", ["Developer"]);
+    const delivery = deliveryFor(service, "Restart recovery work");
+    profiles.markRunning(delivery.sessionId, "recovery-provider");
+    profiles.queueRestartRecovery();
+    expect(profiles.getById(delivery.sessionId)?.status).toBe("interrupted");
+    expect(profiles.getRecovery(delivery.sessionId)?.pending).toBe(true);
+    expect(deliveryFor(service, "Restart recovery work").status).toBe("queued");
+    profiles.markInterrupted(delivery.sessionId);
+    expect(profiles.getRecovery(delivery.sessionId)).toBeUndefined();
+    expect(deliveryFor(service, "Restart recovery work").status).toBe("cancelled");
+  });
 
   it("never starts stopped work when dispatching a queued backlog", async () => {
     const started: string[] = [];
@@ -152,5 +214,39 @@ describe("team chat cancel semantics for a stopped thread", () => {
     await vi.waitFor(() => expect(dispatched.length, "pump() must still run live work").toBe(1));
     expect(dispatched).toEqual([live.id]);
     await vi.waitFor(() => expect(deliveryFor(service, "Queued work nobody stopped").status).toBe("completed"));
+  });
+  it("keeps a real sibling dispatch running when stopping queued same-thread follow-ups", async () => {
+    const releases = new Map<string, (value: { content: string }) => void>();
+    const dispatch = vi.fn((delivery: { id: string }) => new Promise<{ content: string }>(resolve => {
+      releases.set(delivery.id, resolve);
+    }));
+    service.setDispatcher(dispatch);
+    try {
+      post("Real active", "real-active", ["Developer"]);
+      const active = deliveryFor(service, "Real active");
+      profiles.markRunning(active.sessionId, "active-provider");
+      post("Real sibling", "real-sibling", ["Developer"]);
+      const sibling = deliveryFor(service, "Real sibling");
+      profiles.markRunning(sibling.sessionId, "sibling-provider");
+      service.post(owner, room.id, {
+        content: "Real follower", clientKey: "real-follower", sender: human,
+        recipientIds: ["Developer"], targetSessionId: active.sessionId,
+      });
+      const follower = deliveryFor(service, "Real follower");
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(follower.status).toBe("queued");
+      profiles.markInterrupted(active.sessionId);
+      expect(deliveryFor(service, "Real follower").status).toBe("cancelled");
+      expect(deliveryFor(service, "Real sibling").status).toBe("running");
+      expect(profiles.getById(sibling.sessionId)?.status).toBe("running");
+      releases.get(sibling.id)!({ content: "" });
+      await vi.waitFor(() => expect(deliveryFor(service, "Real sibling").status).toBe("completed"));
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(deliveryFor(service, "Real follower").status).toBe("cancelled");
+    } finally {
+      service.close();
+      for (const release of releases.values()) release({ content: "" });
+      await Promise.resolve();
+    }
   });
 });
