@@ -82,6 +82,27 @@ const SEARCH_SYNONYMS: Record<string, string[]> = {
   site: ["web", "browser", "preview", "application"],
 };
 
+// Discovery is synchronous on the HTTP event loop. Prompts include skills and
+// recovered context, so neither input size nor fuzzy work may grow unbounded.
+const MAX_SEARCH_CHARS = 8192;
+const MAX_SEARCH_TERMS = 64;
+const MAX_CORPUS_CHARS = 16384;
+const MAX_CORPUS_TERMS = 256;
+const MAX_FUZZY_TOKEN_CHARS = 32;
+
+function boundedSearchText(value: string, limit: number): string {
+  if (value.length <= limit) return value;
+  const half = Math.floor(limit / 2);
+  return `${value.slice(0, half)} ${value.slice(-half)}`;
+}
+
+function boundedSearchTerms(value: string, limit: number): string[] {
+  const terms = [...new Set(tokenizeSearchText(value))];
+  if (terms.length <= limit) return terms;
+  const half = Math.floor(limit / 2);
+  return [...terms.slice(0, half), ...terms.slice(-half)];
+}
+
 function normalizeSearchText(value: string): string {
   return value
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
@@ -100,6 +121,9 @@ function tokenizeSearchText(value: string): string[] {
 function diceCoefficient(left: string, right: string): number {
   if (left === right) return 1;
   if (left.length < 3 || right.length < 3) return 0;
+  if (left.length > MAX_FUZZY_TOKEN_CHARS || right.length > MAX_FUZZY_TOKEN_CHARS) return 0;
+  // Even perfect bigram overlap cannot reach the matching threshold here.
+  if (2 * (Math.min(left.length, right.length) - 1) / (left.length + right.length - 2) < 0.72) return 0;
   const leftPairs = new Map<string, number>();
   for (let index = 0; index < left.length - 1; index++) {
     const pair = left.slice(index, index + 2);
@@ -117,9 +141,18 @@ function diceCoefficient(left: string, right: string): number {
   return (2 * overlap) / (left.length + right.length - 2);
 }
 
-function bestFuzzyScore(term: string, tokens: Set<string>): number {
+function bestFuzzyScore(term: string, tokens: Set<string>, cache: Map<string, number>): number {
   let best = 0;
-  for (const token of tokens) best = Math.max(best, diceCoefficient(term, token));
+  for (const token of tokens) {
+    const key = `${term}\0${token}`;
+    let score = cache.get(key);
+    if (score === undefined) {
+      score = diceCoefficient(term, token);
+      // Reuse repeated vocabulary across tools without an unbounded cache.
+      if (cache.size < 8192) cache.set(key, score);
+    }
+    best = Math.max(best, score);
+  }
   return best;
 }
 
@@ -293,11 +326,14 @@ export class ToolRegistry {
 
   /** Rank tools using weighted lexical, synonym, and fuzzy matching. */
   rankSearch(query: string, options: ToolSearchOptions = {}): RankedToolMatch[] {
-    const originalTerms = [...new Set(tokenizeSearchText(query))];
+    const searchText = boundedSearchText(query, MAX_SEARCH_CHARS);
+    const originalTerms = boundedSearchTerms(searchText, MAX_SEARCH_TERMS);
+    const normalizedQuery = normalizeSearchText(searchText);
     if (originalTerms.length === 0) return [];
 
     const candidates = options.candidates ?? this.list();
     const matches: RankedToolMatch[] = [];
+    const fuzzyScores = new Map<string, number>();
     for (const tool of candidates) {
       if (options.disabledTools?.has(tool.name)) continue;
 
@@ -310,10 +346,10 @@ export class ToolRegistry {
         ...(tool.discovery?.aliases ?? []),
         ...(tool.discovery?.capabilities ?? []),
       ].filter((value): value is string => Boolean(value)).join(" ");
-      const metadataTokens = new Set(tokenizeSearchText(metadataText));
-      const descriptionText = [tool.description, ...(tool.discovery?.examples ?? [])].join(" ");
-      const descriptionTokens = new Set(tokenizeSearchText(descriptionText));
-      const normalizedCorpus = normalizeSearchText(`${tool.name} ${metadataText} ${descriptionText}`);
+      const metadataTokens = new Set(boundedSearchTerms(boundedSearchText(metadataText, MAX_CORPUS_CHARS), MAX_CORPUS_TERMS));
+      const descriptionText = boundedSearchText([tool.description, ...(tool.discovery?.examples ?? [])].join(" "), MAX_CORPUS_CHARS);
+      const descriptionTokens = new Set(boundedSearchTerms(descriptionText, MAX_CORPUS_TERMS));
+      const normalizedCorpus = normalizeSearchText(boundedSearchText(`${tool.name} ${metadataText} ${descriptionText}`, MAX_CORPUS_CHARS));
       const matchedTerms: string[] = [];
       let score = tool.discovery?.priority ?? 0;
 
@@ -329,9 +365,9 @@ export class ToolRegistry {
           else if (normalizedCorpus.includes(term)) termScore = Math.max(termScore, 4 * weight);
           else {
             const fuzzy = Math.max(
-              bestFuzzyScore(term, nameTokens),
-              bestFuzzyScore(term, metadataTokens),
-              bestFuzzyScore(term, descriptionTokens),
+              bestFuzzyScore(term, nameTokens, fuzzyScores),
+              bestFuzzyScore(term, metadataTokens, fuzzyScores),
+              bestFuzzyScore(term, descriptionTokens, fuzzyScores),
             );
             if (fuzzy >= 0.72) termScore = Math.max(termScore, fuzzy * 3 * weight);
           }
@@ -344,7 +380,6 @@ export class ToolRegistry {
 
       if (matchedTerms.length === 0) continue;
       score += (matchedTerms.length / originalTerms.length) * 12;
-      const normalizedQuery = normalizeSearchText(query);
       if (normalizedQuery.length > 2 && normalizedCorpus.includes(normalizedQuery)) score += 30;
       matches.push({ tool, score, matchedTerms });
     }
@@ -354,15 +389,16 @@ export class ToolRegistry {
   }
 
   async rankSearchWithSystemOne(query: string, options: ToolSearchOptions = {}, apiKeys?: Record<string, string>): Promise<RankedToolMatch[]> {
-    const fallback = this.rankSearch(query, options);
-    if (!systemOneEnabled(apiKeys)) return fallback;
-    const lexical = this.rankSearch(query, { ...options, limit: 48 });
+    const fallback = this.rankSearch(query, { ...options, limit: undefined });
+    const limitedFallback = options.limit ? fallback.slice(0, options.limit) : fallback;
+    if (!systemOneEnabled(apiKeys)) return limitedFallback;
+    const lexical = fallback.slice(0, 48);
     const known = new Set(lexical.map(match => match.tool.name));
     const extras = (options.candidates ?? this.list()).filter(tool => !known.has(tool.name) && !options.disabledTools?.has(tool.name));
     const candidates = [...lexical, ...extras.map(tool => ({ tool, score: 0, matchedTerms: [] as string[] }))].slice(0, 48);
-    const ranked = await rankSystemOne(apiKeys, query, candidates, match => `${match.tool.name}: ${match.tool.description}`, "tool", undefined, (match, score) => { match.score = score; });
+    const ranked = await rankSystemOne(apiKeys, boundedSearchText(query, MAX_SEARCH_CHARS), candidates, match => `${match.tool.name}: ${match.tool.description}`, "tool", undefined, (match, score) => { match.score = score; });
     // Identity signals no model result: preserve lexical filtering, including no matches.
-    return ranked === candidates ? fallback : ranked.slice(0, options.limit ?? ranked.length);
+    return ranked === candidates ? limitedFallback : ranked.slice(0, options.limit ?? ranked.length);
   }
 
   /** Search tools in ranked relevance order. */

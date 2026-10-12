@@ -274,3 +274,54 @@ it("ranks a query containing constructor without reading inherited synonyms", ()
   expect(() => registry.rankSearch("inspect constructor source")).not.toThrow();
   expect(registry.search("constructor")[0]?.name).toBe("file.read");
 });
+
+
+describe("bounded tool discovery", () => {
+  it("handles recovered prompts and large tool descriptions within a bounded CPU budget", () => {
+    const registry = new ToolRegistry();
+    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
+    for (let index = 0; index < 300; index++) {
+      registerDiscoveryTool(registry, `tool${index}.inspect`, context);
+    }
+    registerDiscoveryTool(registry, "network.scan", "Discover reachable network hosts");
+    const started = performance.now();
+    const matches = registry.search(`scan network ${context} scan network`, { limit: 10 });
+    expect(matches).toHaveLength(10);
+    // A generous budget catches the multi-minute freeze without relying on
+    // small timing differences between CI machines.
+    expect(performance.now() - started).toBeLessThan(2000);
+  });
+
+  it("keeps discovery keywords at both ends of a long prompt", () => {
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "network.scan", "Discover network hosts");
+    registerDiscoveryTool(registry, "preview.open", "Open an application preview");
+    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
+    const names = registry.search(`scan network ${context} open preview`).map(tool => tool.name);
+    expect(names).toContain("network.scan");
+    expect(names).toContain("preview.open");
+  });
+
+  it("does not fuzzy-match giant tokens and still finds a trailing typo", () => {
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "preview.open", "Open the application preview");
+    expect(registry.search(`${"x".repeat(500000)} prevew`)[0]?.name).toBe("preview.open");
+  });
+
+  it("does lexical ranking once and preserves limits during semantic fallback", async () => {
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "file.read", "Read files");
+    registerDiscoveryTool(registry, "file.list", "List files");
+    const rank = vi.spyOn(registry, "rankSearch");
+    const fetcher = vi.fn().mockResolvedValue(new Response("unavailable", { status: 503 }));
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      const matches = await registry.rankSearchWithSystemOne("files", { limit: 1 }, { JEV_API_KEY: "bounded-search-regression" });
+      expect(rank).toHaveBeenCalledTimes(1);
+      expect(matches).toHaveLength(1);
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});
