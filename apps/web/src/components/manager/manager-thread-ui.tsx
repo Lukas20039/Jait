@@ -59,6 +59,7 @@ export function ManagerStatusDot({ status, kind }: { status: string; kind?: Agen
     ...(kind === 'delegation' ? { idle: { icon: SpinnerIcon, color: 'text-blue-500 animate-spin' } } : {}),
     paused: { icon: Pause, color: 'text-yellow-500' },
     interrupted: { icon: Pause, color: 'text-yellow-500' },
+    blocked: { icon: Pause, color: 'text-yellow-500' },
     done: { icon: CheckCircle2, color: 'text-green-500' },
     completed: { icon: CheckCircle2, color: 'text-green-500' },
     error: { icon: XCircle, color: 'text-red-500' },

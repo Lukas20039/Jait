@@ -89,6 +89,59 @@ describe("server-side queued chat processing", () => {
     await new Promise<void>((resolve) => mockOllama.close(() => resolve()));
   });
 
+  it("stops the active turn and runs the selected queued message first, preserving attachments", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const config = {
+      ...loadConfig(), port: 0, wsPort: 0, logLevel: "silent" as const,
+      nodeEnv: "test", llmProvider: "ollama" as const, ollamaUrl,
+      jwtSecret: "test-jwt-secret",
+    };
+    const sessionService = new SessionService(db);
+    const sessionState = new SessionStateService(db);
+    const userService = new UserService(db);
+    const user = userService.createUser("stop-steer-user", "password123");
+    const session = sessionService.create({ userId: user.id, name: "Stop and steer" });
+    app = await createServer(config, { db, sqlite, sessionService, sessionState, userService });
+    const token = await signAuthToken({ id: user.id, username: user.username }, config.jwtSecret);
+    const headers = { authorization: `Bearer ${token}` };
+    const started = new Promise<void>(resolve => { slowOllamaStarted = resolve; });
+    const active = app.inject({ method: "POST", url: "/api/chat", headers,
+      payload: { sessionId: session.id, content: "slow first" } });
+    await started;
+    const selected = {
+      id: "q-selected", content: "selected next", held: true,
+      attachments: [{ name: "note.txt", mimeType: "text/plain", data: "bm90ZQ==" }],
+    };
+    const remaining = { id: "q-first", content: "keep waiting", held: true, model: null };
+    sessionState.set(session.id, { queued_messages: [remaining, selected] });
+    const cancel = (payload: unknown, requestHeaders = headers) => app!.inject({
+      method: "POST", url: `/api/sessions/${session.id}/cancel`, headers: requestHeaders, payload,
+    });
+    expect((await cancel({ queuedMessageId: 12 })).statusCode).toBe(400);
+    expect((await cancel({ queuedMessageId: "missing" })).statusCode).toBe(404);
+    const otherUser = userService.createUser("stop-steer-other", "password123");
+    const otherToken = await signAuthToken({ id: otherUser.id, username: otherUser.username }, config.jwtSecret);
+    expect((await cancel({ queuedMessageId: selected.id }, { authorization: `Bearer ${otherToken}` })).statusCode).toBe(404);
+    expect(sessionState.get(session.id, ["queued_messages"]).queued_messages).toEqual([remaining, selected]);
+
+    const result = await cancel({ queuedMessageId: selected.id });
+    expect(result.statusCode).toBe(200);
+    expect(result.json()).toMatchObject({ cancelled: true });
+    await active;
+    await vi.waitFor(async () => {
+      const response = await app!.inject({ method: "GET",
+        url: `/api/sessions/${session.id}/messages?limit=100`, headers });
+      const users = response.json().messages.filter((entry: { role: string }) => entry.role === "user");
+      expect(users.map((entry: { content: string }) => entry.content)).toEqual(["slow first", "selected next [attached: note.txt]"]);
+      expect(JSON.stringify(users[1].segments)).toContain('note.txt');
+      expect(JSON.stringify(users[1].segments)).toContain('bm90ZQ==');
+    });
+    await vi.waitFor(() => expect(sessionState.get(session.id, ["queued_messages"]).queued_messages).toEqual([remaining]));
+    expect((await cancel({ queuedMessageId: remaining.id })).statusCode).toBe(409);
+    expect(sessionState.get(session.id, ["queued_messages"]).queued_messages).toEqual([remaining]);
+  });
+
   it("does not re-send a queued message re-introduced by a stale client push after it was already drained", async () => {
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);

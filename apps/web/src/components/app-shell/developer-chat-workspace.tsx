@@ -150,6 +150,7 @@ interface DeveloperChatWorkspaceProps {
   onSendQueuedAfterInterruptedExit: () => void
   onSetApproveAllInSession: (enabled: boolean) => void
   onSteerQueuedMessage?: (id: string) => void
+  onStopAndSteerQueuedMessage?: (id: string) => void
   onStopRecording: () => void
   onSubmit: () => void
   onToggleHoldQueueItem: (id: string) => void
@@ -265,6 +266,7 @@ export function DeveloperChatWorkspace({
   onSendQueuedAfterInterruptedExit,
   onSetApproveAllInSession,
   onSteerQueuedMessage,
+  onStopAndSteerQueuedMessage,
   onStopRecording,
   onSubmit,
   onToggleHoldQueueItem,
@@ -646,6 +648,7 @@ export function DeveloperChatWorkspace({
                     onEdit={onUpdateQueueItem}
                     onReorder={onReorderQueueItem}
                     onSteer={isLoading && activeSessionId ? onSteerQueuedMessage : undefined}
+                    onStopAndSteer={isLoading && activeSessionId ? onStopAndSteerQueuedMessage : undefined}
                     onSendToParallelThread={onAskQueuedMessageInParallel}
                     parallelActionLabel="Ask in parallel"
                     onToggleHold={onToggleHoldQueueItem}

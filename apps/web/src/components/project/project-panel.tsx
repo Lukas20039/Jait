@@ -17,6 +17,7 @@ import { useResolvedTheme } from '@/hooks/use-resolved-theme'
 import { useEditorThemeName } from '@/hooks/use-editor-theme'
 import { DiffView } from './diff-view'
 import { ReadOnlyDiffView } from '@/components/diff/read-only-diff-view'
+import { BrowserViewLayout } from '@/components/remote/browser-view-layout'
 import { NoVncSessionView } from '@/components/remote/no-vnc-session-view'
 import { ReviewableEditor } from './reviewable-editor'
 import { ProjectImageViewer, isProjectImage } from './project-image-viewer'
@@ -2747,6 +2748,10 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
         </div>
       )}
       {activePreviewSrc ? (
+        <BrowserViewLayout addressBar={managedPreviewSession?.status === 'ready' && managedPreviewSession.browserId && activePreviewSessionId ? {
+          sessionId: activePreviewSessionId, authToken: previewToken, currentUrl: managedPreviewSession.metrics?.url ?? managedPreviewSession.target,
+          sharedWithAgent: managedPreviewSession.sharedWithAgent,
+        } : undefined}>
         <NoVncSessionView
           key={`${activePreviewSrc}:${activeTab?.version ?? 0}`}
           source={activePreviewSrc}
@@ -2754,6 +2759,7 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
           className="h-full w-full bg-white"
           onLoad={() => setPreviewFrameLoading(false)}
         />
+        </BrowserViewLayout>
       ) : managedPreviewSession?.status === 'starting' ? (
         <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
           Starting preview session…

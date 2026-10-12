@@ -2,7 +2,8 @@ import { AttachmentList, collectAttachments } from './attachment-list'
 import type { ChatAttachment } from '@/hooks/useChat'
 import type { UserMessageSegment } from '@/lib/user-message-segments'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { ArrowRight, Check, ChevronDown, ChevronRight, GitBranch, GripVertical, ListPlus, Lock, LockOpen, Pencil, X } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, ChevronRight, GitBranch, GripVertical, ListPlus, Lock, LockOpen, Pencil, Square, X } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { TooltipHint } from '@/components/ui/tooltip'
 import { useToolCardToggleAnchor } from './tool-card-anchor'
@@ -25,6 +26,7 @@ interface MessageQueueProps {
   onEdit?: (id: string, newContent: string) => void
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
   onSteer?: (id: string) => void
+  onStopAndSteer?: (id: string) => void
   onSendToParallelThread?: (id: string) => void
   parallelActionLabel?: string
   onToggleHold?: (id: string) => void
@@ -110,6 +112,7 @@ function QueueItem({
   onEdit,
   onReorder,
   onSteer,
+  onStopAndSteer,
   onSendToParallelThread,
   parallelActionLabel,
   onToggleHold,
@@ -125,6 +128,7 @@ function QueueItem({
   onEdit?: (id: string, content: string) => void
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
   onSteer?: (id: string) => void
+  onStopAndSteer?: (id: string) => void
   onSendToParallelThread?: (id: string) => void
   parallelActionLabel?: string
   onToggleHold?: (id: string) => void
@@ -316,6 +320,7 @@ function QueueItem({
               </TooltipHint>
             )}
             {onSteer && (
+              <div className="inline-flex items-center" data-no-drag="true">
               <TooltipHint content="Steer with message">
               <button
                 type="button"
@@ -333,6 +338,36 @@ function QueueItem({
                 <ArrowRight className="h-3 w-3" />
               </button>
               </TooltipHint>
+              {onStopAndSteer && (
+                <DropdownMenu>
+                  <TooltipHint content="Steering options">
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        data-no-drag="true"
+                        aria-label="Steering options"
+                        className={cn(
+                          'rounded p-1 text-primary transition-colors hover:bg-primary/10',
+                          !iconOnly && 'ml-0.5 h-6 border border-primary/25 bg-primary/5',
+                        )}
+                      >
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                  </TooltipHint>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => onSteer(item.id)}>
+                      <ArrowRight className="mr-2 h-3.5 w-3.5" />
+                      Steer
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => onStopAndSteer(item.id)}>
+                      <Square className="mr-2 h-3.5 w-3.5" />
+                      Stop and steer
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              </div>
             )}
             {onSendToParallelThread && (
               <TooltipHint content={parallelActionLabel ?? 'Send to parallel thread'}>
@@ -396,7 +431,7 @@ function QueueItem({
 
 /* ── Queue container ────────────────────────────────────────────────── */
 
-export function MessageQueue({ items, onRemove, onEdit, onReorder, onSteer, onSendToParallelThread, parallelActionLabel, onToggleHold, iconOnly, className }: MessageQueueProps) {
+export function MessageQueue({ items, onRemove, onEdit, onReorder, onSteer, onStopAndSteer, onSendToParallelThread, parallelActionLabel, onToggleHold, iconOnly, className }: MessageQueueProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const dragCaptureElementRef = useRef<HTMLElement | null>(null)
   const [dragSourceId, setDragSourceId] = useState<string | null>(null)
@@ -548,6 +583,7 @@ export function MessageQueue({ items, onRemove, onEdit, onReorder, onSteer, onSe
           onEdit={onEdit}
           onReorder={items.length > 1 ? onReorder : undefined}
           onSteer={onSteer}
+          onStopAndSteer={onStopAndSteer}
           onSendToParallelThread={onSendToParallelThread}
           parallelActionLabel={parallelActionLabel}
           onToggleHold={onToggleHold}

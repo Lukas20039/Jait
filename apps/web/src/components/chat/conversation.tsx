@@ -481,8 +481,8 @@ export function Conversation({ children, className, mobile = false, loading, isS
   const [pendingEditJumpIndex, setPendingEditJumpIndex] = useState<number | null>(null)
   const [stickToBottom, setStickToBottom] = useState(true)
   const [initialScrollReady, setInitialScrollReady] = useState(false)
-  // A selected chat is not necessarily visible: it may be loading, hidden by
-  // another panel, in a background tab, or scrolled to older messages.
+  // A visible chat counts as read even while the user is reading older messages.
+  // Loading transcripts, hidden panels, and background tabs wait until visible.
   useEffect(() => {
     if (!onLatestContentViewed || loading || !initialScrollReady || !scrollElement) return
     let frame = 0
@@ -492,7 +492,6 @@ export function Conversation({ children, className, mobile = false, loading, isS
         const rect = scrollElement.getBoundingClientRect()
         if (document.visibilityState !== 'visible' || !document.hasFocus()) return
         if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 || rect.top >= window.innerHeight) return
-        if (scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight > STICKY_BOTTOM_THRESHOLD_PX) return
         onLatestContentViewed()
       })
     }

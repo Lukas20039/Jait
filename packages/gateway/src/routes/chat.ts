@@ -5353,7 +5353,29 @@ export function registerChatRoutes(
         return reply.status(404).send({ error: "NOT_FOUND", details: "Session not found" });
       }
     }
+    const body = (request.body as Record<string, unknown>) ?? {};
+    const queuedMessageId = body["queuedMessageId"];
     const controller = sessionAbortControllers.get(sessionId);
+    if (queuedMessageId !== undefined) {
+      if (typeof queuedMessageId !== "string" || !queuedMessageId.trim()) {
+        return reply.status(400).send({ error: "VALIDATION_ERROR", details: "queuedMessageId must be a non-empty string" });
+      }
+      if (!controller || !activeStreams.has(sessionId) || controller.signal.aborted) {
+        return reply.status(409).send({ error: "CONFLICT", details: "No active turn to stop" });
+      }
+      const state = sessionStateService?.get(sessionId, ["queued_messages"]);
+      const queue = parseQueuedChatMessages(state?.queued_messages);
+      const selected = queue.find(item => item.id === queuedMessageId);
+      if (!selected || getConsumedQueueIds(sessionId).has(queuedMessageId)) {
+        return reply.status(404).send({ error: "NOT_FOUND", details: "Queued message not found" });
+      }
+      // Commit the selected message before aborting. The existing end-of-turn
+      // drain runs only after partial history and tool results are persisted.
+      // Explicit selection also releases this message's hold.
+      const reordered = [{ ...selected, held: false }, ...queue.filter(item => item.id !== queuedMessageId)];
+      sessionStateService!.set(sessionId, { queued_messages: reordered });
+      broadcastQueuedMessagesState(sessionId, reordered);
+    }
     if (controller) {
       if (activeCliTurns.has(sessionId)) {
         stopAndDeleteActiveCliSession(sessionId);

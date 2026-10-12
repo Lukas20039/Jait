@@ -4208,6 +4208,35 @@ function App() {
     [activeSessionId, dequeueMessage, isLoading, messageQueue, recordSteeredMessage, token],
   )
 
+  const stopAndSteerQueuedChatMessage = useCallback((id: string) => {
+    if (!activeSessionId || !isLoading || chatQueueProcessingRef.current) return
+    if (!messageQueue.some(item => item.id === id)) return
+    chatQueueProcessingRef.current = true
+    suppressNextChatNotificationRef.current = true
+    void (async () => {
+      const response = await fetch(`${API_URL}/api/sessions/${encodeURIComponent(activeSessionId)}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ queuedMessageId: id }),
+      })
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({})) as Record<string, unknown>
+        throw new Error(typeof error.details === 'string' ? error.details : 'Failed to stop and steer')
+      }
+      // The gateway broadcasts the reordered queue and starts the selected
+      // message after the interrupted turn has finished persisting.
+      toast.success('Stopped; selected message will run next')
+    })().catch(err => {
+      suppressNextChatNotificationRef.current = false
+      toast.error(getNonEmptyMessage(err instanceof Error ? err.message : null, 'Failed to stop and steer'))
+    }).finally(() => {
+      chatQueueProcessingRef.current = false
+    })
+  }, [activeSessionId, isLoading, messageQueue, token])
+
   const askQueuedChatMessageInParallel = useCallback(
     (id: string) => {
       const item = messageQueue.find((queued) => queued.id === id)
@@ -5651,6 +5680,7 @@ function App() {
                         onSendQueuedAfterInterruptedExit={handleSendQueuedAfterInterruptedExit}
                         onSetApproveAllInSession={setApproveAllInSession}
                         onSteerQueuedMessage={isLoading && activeSessionId ? steerQueuedChatMessage : undefined}
+                        onStopAndSteerQueuedMessage={isLoading && activeSessionId ? stopAndSteerQueuedChatMessage : undefined}
                         onStopRecording={() => {
                           void stopRecordingAndTranscribe()
                         }}
