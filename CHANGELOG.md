@@ -4,6 +4,22 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.925](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.925) — 2026-10-12
+
+- fix(browser): preserve standard noVNC viewer connections — d772c991
+- fix(browser): expose recovery when the browser driver closes — becf3e5e
+- test(browser): expect the rebuilt recovery sandbox image — c1747ca5
+- fix(chat): show compact named images without draft numbering — bd0157a1
+- fix(browser): recover interrupted chat browser connections — 05631f9e
+- fix(agents): verify delegated outcomes throughout the hierarchy — 92b23350
+- fix(gateway): let GitHub reach the App callback and webhook — 08211a67
+- fix(gateway): never derive GitHub App URLs from a spoofable Host header — 9e964d80
+- feat(agents): give each agent its own GitHub App identity (#246) — efe069c5
+- fix(web): default to Queue while a session is streaming — 08c37e0f
+- chore(artifacts): keep generated artifacts inside the project — 2c3e4283
+
+Restore interrupted chat browser connections with renewed scoped access and a usable reconnect control. Report closed browser drivers truthfully and provide an explicit restart action. Keep pasted images inline with compact thumbnails and filenames, and reserve numbering for sent messages. Apply delegated-work verification to root and intermediate leaders.
+
 ## [v0.1.924](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.924) — 2026-10-10
 
 - test(e2e): give team chat specs an explicit navigation budget — 21e09215
