@@ -4,6 +4,13 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.928](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.928) — 2026-10-12
+
+- fix(web): place team chats panel beside the navigation rail — 0afd3c07
+- fix(gateway): allow concurrent work for saved agents — c80e0b92
+
+Let a saved agent own concurrent persona-linked threads: independent tasks now start side by side instead of waiting for the one active delivery, while follow-ups addressed to the same thread stay queued in order.
+
 ## [v0.1.927](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.927) — 2026-10-12
 
 - fix(terminal): wait for PowerShell output before completing commands — 9b3e024e
