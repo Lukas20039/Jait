@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Activity, AlertCircle, Camera, ExternalLink, Globe, Bot, MessageSquare, Play, RefreshCw, Square, TerminalSquare, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { BrowserViewLayout } from '@/components/remote/browser-view-layout'
 import { NoVncSessionView } from '@/components/remote/no-vnc-session-view'
 import { isNoVncViewerUrl, isWebSocketUrl } from '@/lib/no-vnc'
 import { PreviewMetricsPanel, type PreviewPerformanceMetrics } from '@/components/project/project-preview-inspect-panel'
@@ -616,7 +617,10 @@ export function DevPreviewPanel({
               </Button>
             </div>
           ) : livePreviewFrameSrc ? (
-            <div className="relative h-full">
+            <BrowserViewLayout addressBar={managedSession?.status === 'ready' && managedSession.browserId && managedPreviewSessionId ? {
+              sessionId: managedPreviewSessionId, authToken: token, currentUrl: managedSession.metrics?.url ?? managedSession.target,
+              sharedWithAgent: managedSession.sharedWithAgent, disabled: isBusy,
+            } : undefined}>
               {showLoadingBar ? (
                 <div className="absolute inset-x-0 top-0 z-10 h-1 overflow-hidden bg-transparent">
                   <div className="h-full w-full animate-pulse bg-primary/80" />
@@ -628,7 +632,7 @@ export function DevPreviewPanel({
                 className="h-full w-full bg-white"
                 onLoad={() => setIsFrameLoading(false)}
               />
-            </div>
+            </BrowserViewLayout>
           ) : managedSession?.status === 'starting' ? (
             <div className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground">
               Starting preview session…

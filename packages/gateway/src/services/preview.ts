@@ -135,6 +135,7 @@ export class PreviewService {
   private nextLogId = 1;
   private readonly runner: PreviewRunner;
   private readonly startingSessions = new Map<string, Promise<PreviewSession>>();
+  private devToolsRevisions = new Map<string, number>();
   private _onSessionChanged: ((session: PreviewSession) => void) | null = null;
 
   constructor(private readonly surfaceRegistry: SurfaceRegistry) {
@@ -331,6 +332,7 @@ export class PreviewService {
     if (!session) return false;
 
     session.terminating = true;
+    this.devToolsRevisions.set(sessionId, (this.devToolsRevisions.get(sessionId) ?? 0) + 1);
 
     if (session.runnerResult) {
       await this.runner.stop(session.runnerResult).catch(() => {});
@@ -390,6 +392,7 @@ export class PreviewService {
     if (!session) return null;
     if (session.sharedWithAgent !== shared) {
       session.sharedWithAgent = shared;
+      this.devToolsRevisions.set(sessionId, (this.devToolsRevisions.get(sessionId) ?? 0) + 1);
       session.updatedAt = nowIso();
       this.notifyChanged(session);
     }
@@ -422,6 +425,69 @@ export class PreviewService {
     if (session && !session.sharedWithAgent) {
       throw new Error("This preview is not shared with the agent. Use Share with agent in the chat browser card or preview tab to allow browser tools.");
     }
+  }
+
+  /** Owner navigation keeps the live browser, cookies and sharing state. */
+  async navigate(sessionId: string, target: string): Promise<PreviewSession | null> {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.status !== "ready" || session.terminating || !session.browserId) return null;
+    if (session.sharedWithAgent) throw new Error("Take control before navigating.");
+    const url = new URL(target);
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) {
+      throw new Error("Enter an HTTP or HTTPS URL without credentials.");
+    }
+    // Managed previews keep their existing host restriction; agent browsers
+    // retain the same web navigation capabilities as their native URL bar.
+    if (session.origin !== "agent" && !normalizeTargetUrl(url.href)) {
+      throw new Error("This preview only supports local or private-network targets.");
+    }
+    const surface = this.surfaceRegistry.getSurface(session.browserId);
+    if (!surface || surface.type !== "browser" || surface.state !== "running") return null;
+    const snapshot = await (surface as BrowserSurface).navigate(url.href);
+    if (this.sessions.get(sessionId) !== session || session.terminating) return null;
+    session.browserUrl = snapshot.url;
+    session.updatedAt = nowIso();
+    await this.refreshSessionCapture(sessionId);
+    this.notifyChanged(session);
+    return this.toPublicSession(session);
+  }
+
+  isDevToolsConnectionActive(sessionId: string, browserId: string, revision?: number): boolean {
+    const session = this.sessions.get(sessionId);
+    const surface = this.surfaceRegistry.getSurface(browserId);
+    return !!session && session.status === "ready" && !session.terminating
+      && !session.sharedWithAgent && session.browserId === browserId
+      && (revision === undefined || revision === (this.devToolsRevisions.get(sessionId) ?? 0))
+      && surface?.type === "browser" && surface.state === "running";
+  }
+
+  async getDevToolsConnection(sessionId: string): Promise<{ endpoint: string; targetId: string; browserId: string; revision: number } | null> {
+    const session = this.sessions.get(sessionId);
+    if (!session?.browserId || !this.isDevToolsConnectionActive(sessionId, session.browserId)) {
+      throw new Error("Take control of a live browser to open Chrome DevTools.");
+    }
+    const browserId = session.browserId;
+    const revision = this.devToolsRevisions.get(sessionId) ?? 0;
+    const surface = this.surfaceRegistry.getSurface(browserId) as BrowserSurface;
+    const connection = await surface.getDevToolsConnection();
+    if (!connection || !this.isDevToolsConnectionActive(sessionId, browserId, revision)) return null;
+    return { ...connection, browserId, revision };
+  }
+
+  /** Refresh the current page, preserving the browser and its cookies. */
+  async reload(sessionId: string): Promise<PreviewSession | null> {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.status !== "ready" || session.terminating || !session.browserId) return null;
+    if (session.sharedWithAgent) throw new Error("Take control before refreshing.");
+    const surface = this.surfaceRegistry.getSurface(session.browserId);
+    if (!surface || surface.type !== "browser" || surface.state !== "running") return null;
+    const snapshot = await (surface as BrowserSurface).reload();
+    if (this.sessions.get(sessionId) !== session || session.terminating) return null;
+    session.browserUrl = snapshot.url;
+    session.updatedAt = nowIso();
+    await this.refreshSessionCapture(sessionId);
+    this.notifyChanged(session);
+    return this.toPublicSession(session);
   }
 
   async refreshSessionCapture(sessionId: string): Promise<PreviewSession | null> {

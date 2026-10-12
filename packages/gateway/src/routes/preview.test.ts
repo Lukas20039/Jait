@@ -10,6 +10,43 @@ async function authHeader(jwtSecret: string, userId: string) {
 }
 
 describe("preview routes", () => {
+  it("authenticates and authorizes refresh and reports control errors", async () => {
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = { reload: vi.fn().mockResolvedValue({ browserId: "browser-1" }) };
+    const sessionService = { getById: vi.fn((id: string, userId: string) => id === "session-1" && userId === "user-1" ? { id } : null) };
+    registerPreviewRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+    const payload = { sessionId: "session-1" };
+    expect((await app.inject({ method: "POST", url: "/api/preview/reload", payload })).statusCode).toBe(401);
+    expect((await app.inject({ method: "POST", url: "/api/preview/reload", headers: await authHeader(config.jwtSecret, "user-2"), payload })).statusCode).toBe(404);
+    expect(previewService.reload).not.toHaveBeenCalled();
+    const headers = await authHeader(config.jwtSecret, "user-1");
+    expect((await app.inject({ method: "POST", url: "/api/preview/reload", headers, payload })).statusCode).toBe(200);
+    expect(previewService.reload).toHaveBeenCalledWith("session-1");
+    previewService.reload.mockRejectedValueOnce(new Error("Take control before refreshing."));
+    const blocked = await app.inject({ method: "POST", url: "/api/preview/reload", headers, payload });
+    expect(blocked.statusCode).toBe(400);
+    expect(blocked.json().error).toContain("Take control");
+    await app.close();
+  });
+
+  it("restricts URL navigation to the authenticated session owner", async () => {
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = { navigate: vi.fn().mockResolvedValue({ sessionId: "session-1" }) };
+    const sessionService = { getById: vi.fn((id: string, userId: string) => id === "session-1" && userId === "user-1" ? { id } : null) };
+    registerPreviewRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+    const payload = { sessionId: "session-1", url: "https://example.com/" };
+    expect((await app.inject({ method: "POST", url: "/api/preview/navigate", payload })).statusCode).toBe(401);
+    expect((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-2"), payload })).statusCode).toBe(404);
+    expect(previewService.navigate).not.toHaveBeenCalled();
+    expect((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-1"), payload })).statusCode).toBe(200);
+    expect(previewService.navigate).toHaveBeenCalledWith("session-1", payload.url);
+    previewService.navigate.mockRejectedValueOnce(new Error("Take control before navigating."));
+    expect((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-1"), payload })).statusCode).toBe(400);
+    await app.close();
+  });
+
   it("lets only the owning user change preview sharing", async () => {
     const app = Fastify();
     const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };

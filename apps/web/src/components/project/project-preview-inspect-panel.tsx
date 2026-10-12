@@ -114,7 +114,7 @@ function formatMetricValue(value: number | null | undefined, unit = 'ms'): strin
   return String(value)
 }
 
-export function PreviewMetricsPanel({ metrics }: { metrics?: PreviewPerformanceMetrics | null }) {
+export function PreviewMetricsPanel({ metrics, compact = false }: { metrics?: PreviewPerformanceMetrics | null; compact?: boolean }) {
   if (!metrics) {
     return <div className="text-muted-foreground">No preview metrics available yet.</div>
   }
@@ -128,7 +128,7 @@ export function PreviewMetricsPanel({ metrics }: { metrics?: PreviewPerformanceM
         </div>
         <div className="mt-1 text-xs text-muted-foreground">Sampled {new Date(metrics.sampledAt).toLocaleTimeString()}</div>
       </div>
-      <div className="grid gap-2 md:grid-cols-3">
+      <div className={compact ? "grid gap-2" : "grid gap-2 md:grid-cols-3"}>
         <div className="rounded border p-2">
           <div className="font-medium text-foreground">Web Vitals</div>
           <div className="mt-1 space-y-1 text-muted-foreground">
@@ -156,7 +156,7 @@ export function PreviewMetricsPanel({ metrics }: { metrics?: PreviewPerformanceM
       </div>
       <div className="rounded border p-2">
         <div className="font-medium text-foreground">Resources</div>
-        <div className="mt-1 grid gap-1 text-muted-foreground md:grid-cols-3">
+        <div className={compact ? "mt-1 grid gap-1 text-muted-foreground" : "mt-1 grid gap-1 text-muted-foreground md:grid-cols-3"}>
           <div>Total: {formatMetricValue(metrics.resources?.total, 'count')}</div>
           <div>Scripts: {formatMetricValue(metrics.resources?.scripts, 'count')}</div>
           <div>Stylesheets: {formatMetricValue(metrics.resources?.stylesheets, 'count')}</div>
@@ -174,6 +174,7 @@ interface ProjectPreviewInspectPanelProps {
   loading?: boolean
   error?: string | null
   onInsertElementReference?: (element: PreviewInspectInteractiveElement) => void
+  compactMetrics?: boolean
 }
 
 export function ProjectPreviewInspectPanel({
@@ -181,6 +182,7 @@ export function ProjectPreviewInspectPanel({
   loading = false,
   error = null,
   onInsertElementReference,
+  compactMetrics = false,
 }: ProjectPreviewInspectPanelProps) {
   if (error) {
     return (
@@ -337,7 +339,7 @@ export function ProjectPreviewInspectPanel({
       <div className="rounded border p-2">
         <div className="font-medium text-foreground">Metrics</div>
         <div className="mt-2">
-          <PreviewMetricsPanel metrics={inspectState.metrics} />
+          <PreviewMetricsPanel metrics={inspectState.metrics} compact={compactMetrics} />
         </div>
       </div>
     </>

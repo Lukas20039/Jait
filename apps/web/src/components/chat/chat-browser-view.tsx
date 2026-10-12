@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { BrowserViewLayout } from '@/components/remote/browser-view-layout'
 import { NoVncSessionView } from '@/components/remote/no-vnc-session-view'
 import { apiFetch } from '@/lib/api-fetch'
 import { getApiUrl } from '@/lib/gateway-url'
 
-interface BrowserState { sessionId: string; browserId?: string; url: string | null; sharedWithAgent: boolean; verified: boolean }
+interface BrowserState { sessionId: string; browserId?: string; url: string | null; sharedWithAgent: boolean; verified: boolean; currentUrl?: string | null }
 
 // Only gateway live views can be embedded. Page URLs remain ordinary links.
 function liveViewUrl(value: unknown): string | null {
@@ -39,7 +40,7 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
         if (!response.ok) { if (!cancelled) setState(null); return }
         const { session } = await response.json()
         if (!cancelled) setState(session?.status === 'ready' && (!browserId || session.browserId === browserId) ? {
-          sessionId: id, browserId: session.browserId, url: liveViewUrl(session.url), sharedWithAgent: session.sharedWithAgent === true, verified: true,
+          sessionId: id, browserId: session.browserId, url: liveViewUrl(session.url), sharedWithAgent: session.sharedWithAgent === true, verified: true, currentUrl: session.metrics?.url ?? session.target,
         } : null)
       } catch { /* Leave the last live view available during a temporary disconnect. */ }
       finally { if (!cancelled) timer = setTimeout(load, 3000) }
@@ -91,8 +92,10 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
         </>}
       </div>
       {error && <p role="alert" className="px-3 pb-2 text-destructive">{error}</p>}
-      {expanded && (state?.url ? <div className="h-[420px] min-h-64 max-h-[65vh] w-full">
-        <NoVncSessionView source={state.url} title="Agent browser" viewOnly={state.sharedWithAgent || busy || !state.verified} className="h-full w-full border-0 bg-white" />
+      {expanded && (state?.url ? <div className="flex h-[420px] min-h-64 max-h-[65vh] w-full flex-col">
+        <BrowserViewLayout addressBar={{ sessionId: state.sessionId, authToken, currentUrl: state.currentUrl, sharedWithAgent: state.sharedWithAgent, disabled: busy || !state.verified }}>
+          <NoVncSessionView source={state.url} title="Agent browser" viewOnly={state.sharedWithAgent || busy || !state.verified} className="h-full w-full border-0 bg-white" />
+        </BrowserViewLayout>
       </div> : <p className="px-3 pb-3 text-muted-foreground">No live browser is available for this chat.</p>)}
     </div>
   )

@@ -205,7 +205,23 @@ async function main() {
   let page = await selectInitialPage(context);
   // CDP attachment does not activate the app window on the live desktop.
   // Display the attached page so VNC shows it and keyboard input reaches it.
-  if (cdpUrl) await page.bringToFront();
+  const presentPage = async (targetPage) => {
+    if (process.env.BROWSER_COMPACT_VIEW !== "true") {
+      if (cdpUrl) await targetPage.bringToFront();
+      return;
+    }
+    // Hide Chromium's tabs and window buttons without cropping the VNC canvas
+    // (cropping would change pointer coordinates).
+    const session = await context.newCDPSession(targetPage);
+    try {
+      const { windowId } = await session.send("Browser.getWindowForTarget");
+      await session.send("Browser.setWindowBounds", { windowId, bounds: { windowState: "fullscreen" } });
+    } finally {
+      await session.detach();
+    }
+    await targetPage.bringToFront();
+  };
+  await presentPage(page);
 
   const events = [];
   const consoleGuard = createConsoleFloodGuard(process.env);
@@ -237,11 +253,11 @@ async function main() {
     });
     targetPage.on?.("response", (response) => {
       const status = typeof response?.status === "function" ? response.status() : undefined;
-      if (typeof status !== "number" || status < 400) return;
+      if (typeof status !== "number") return;
       const request = response.request?.();
       pushRuntimeEvent(events, {
         type: "response",
-        level: status >= 500 ? "error" : "warn",
+        level: status >= 500 ? "error" : status >= 400 ? "warn" : "info",
         text: `HTTP ${status}`,
         url: response.url?.(),
         method: request?.method?.(),
@@ -255,13 +271,14 @@ async function main() {
         : [];
       if (openPages.length > 0) {
         page = openPages[0];
+        void presentPage(page).catch(() => {});
         attachPageEvents(page);
         return;
       }
       context.newPage()
         .then((nextPage) => {
           page = nextPage;
-          attachPageEvents(nextPage);
+          return presentPage(nextPage).then(() => attachPageEvents(nextPage));
         })
         .catch((err) => {
           pushRuntimeEvent(events, {
@@ -278,6 +295,7 @@ async function main() {
       return page;
     }
     page = await selectInitialPage(context);
+    await presentPage(page);
     attachPageEvents(page);
     return page;
   };
@@ -288,6 +306,17 @@ async function main() {
   const handlers = {
     navigate: async (params) => {
       await (await ensurePage()).goto(String(params.url || ""), { waitUntil: "domcontentloaded", timeout: 30000 });
+      return null;
+    },
+    devToolsTarget: async () => {
+      const session = await context.newCDPSession(await ensurePage());
+      try {
+        const { targetInfo } = await session.send("Target.getTargetInfo");
+        return { targetId: targetInfo.targetId };
+      } finally { await session.detach(); }
+    },
+    reload: async () => {
+      await (await ensurePage()).reload({ waitUntil: "domcontentloaded", timeout: 30000 });
       return null;
     },
     click: async (params) => {

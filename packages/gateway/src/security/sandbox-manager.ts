@@ -11,7 +11,7 @@ import { join, resolve, sep } from "node:path";
  * We probe for `docker` first then fall back to `podman`.
  */
 let _containerBinary: string | null = null;
-const SANDBOX_BROWSER_IMAGE = "jait/sandbox-browser:recovery-v2";
+const SANDBOX_BROWSER_IMAGE = "jait/sandbox-browser:recovery-v3";
 const BROWSER_SANDBOX_NAME_PREFIX = "jait-browser-sb-";
 const BROWSER_SANDBOX_HEALTH_TIMEOUT_MS = 3_000;
 const DEFAULT_MAX_BROWSER_SANDBOXES = 2;
@@ -1383,6 +1383,7 @@ const SANDBOX_BROWSER_DOCKERFILE = `FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \\
   chromium \\
+  openbox \\
   x11vnc \\
   xvfb \\
   websockify \\
@@ -1411,7 +1412,10 @@ for _ in $(seq 1 50); do
   sleep 0.1
 done
 
-chromium --no-sandbox --disable-gpu --disable-software-rasterizer --no-first-run --no-default-browser-check --window-size=1280,720 --window-position=0,0 --remote-debugging-port=9222 --app=about:blank &
+# A window manager is required for CDP fullscreen transitions on Xvfb.
+openbox &
+
+chromium --no-sandbox --kiosk --disable-gpu --disable-software-rasterizer --no-first-run --no-default-browser-check --window-size=1280,720 --window-position=0,0 --remote-debugging-port=9222 --app=about:blank &
 
 (
   while true; do

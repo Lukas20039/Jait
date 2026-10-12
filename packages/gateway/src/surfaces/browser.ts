@@ -140,6 +140,8 @@ export interface BrowserPerformanceMetrics {
 export interface BrowserDriver {
   isConnected?(): boolean;
   navigate(url: string, signal?: AbortSignal): Promise<void>;
+  reload?(signal?: AbortSignal): Promise<void>;
+  getDevToolsConnection?(): Promise<{ endpoint: string; targetId: string } | null>;
   click(selector: string, signal?: AbortSignal): Promise<void>;
   typeText(selector: string, text: string, signal?: AbortSignal): Promise<void>;
   scroll(x: number, y: number, signal?: AbortSignal): Promise<void>;
@@ -166,6 +168,7 @@ export interface BrowserSurfaceOptions {
 
 type PlaywrightPage = {
   goto: (url: string, opts?: Record<string, unknown>) => Promise<unknown>;
+  reload: (opts?: Record<string, unknown>) => Promise<unknown>;
   click: (selector: string) => Promise<void>;
   fill: (selector: string, text: string) => Promise<void>;
   evaluate: <T>(fn: (...args: any[]) => T, ...args: any[]) => Promise<T>;
@@ -438,6 +441,23 @@ export class BrowserSurface implements Surface {
     this.captureSnapshotMeta(snap);
     this.touch();
     this.onOutput?.(`navigate ${snap.url}`);
+    return snap;
+  }
+
+  async getDevToolsConnection(): Promise<{ endpoint: string; targetId: string } | null> {
+    return this.requireDriver().getDevToolsConnection?.() ?? null;
+  }
+
+  async reload(signal?: AbortSignal): Promise<BrowserPageSnapshot> {
+    this.touch();
+    const driver = this.requireDriver();
+    if (!driver.reload) throw new Error("This browser does not support refresh.");
+    await driver.reload(signal);
+    this._actionCount++;
+    const snap = await driver.snapshot(signal);
+    this.captureSnapshotMeta(snap);
+    this.touch();
+    this.onOutput?.(`reload ${snap.url}`);
     return snap;
   }
 
@@ -861,6 +881,10 @@ async function createInProcessPlaywrightDriver(
         page.goto(rewritePublicUrlForContainerBrowser(url, liveViewSession), { waitUntil: "domcontentloaded", timeout: 30_000 }),
         signal,
       );
+    },
+    async reload(signal?: AbortSignal) {
+      const page = await ensureActivePage();
+      await withSignal(page.reload({ waitUntil: "domcontentloaded", timeout: 30_000 }), signal);
     },
     async click(selector: string, signal?: AbortSignal) {
       const page = await ensureActivePage();
@@ -1327,6 +1351,7 @@ async function createNodeBridgePlaywrightDriver(
     cwd: process.cwd(),
     env: {
       ...process.env,
+      BROWSER_COMPACT_VIEW: liveViewSession?.kind === "container" ? "true" : "false",
       ...(liveViewSession?.kind === "container" && liveViewSession.cdpUrl
         ? { BROWSER_CDP_URL: liveViewSession.cdpUrl }
         : {}),
@@ -1538,6 +1563,14 @@ async function createNodeBridgePlaywrightDriver(
     isConnected: () => !stopped && browserAvailable,
     async navigate(url: string, signal?: AbortSignal) {
       await sendCommand("navigate", { url: rewritePublicUrlForContainerBrowser(url, liveViewSession) }, signal);
+    },
+    async getDevToolsConnection() {
+      if (!liveViewSession?.cdpUrl) return null;
+      const { targetId } = await sendCommand("devToolsTarget", {}) as { targetId: string };
+      return { endpoint: liveViewSession.cdpUrl, targetId };
+    },
+    async reload(signal?: AbortSignal) {
+      await sendCommand("reload", {}, signal);
     },
     async click(selector: string, signal?: AbortSignal) {
       await sendCommand("click", { selector }, signal);

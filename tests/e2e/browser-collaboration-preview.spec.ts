@@ -1,10 +1,12 @@
 import { registerTestUser } from './helpers/agent-user'
 import { createServer } from 'node:http'
 import { resolve } from 'node:path'
+import { mkdir } from 'node:fs/promises'
 import { test, expect, type APIRequestContext } from '@playwright/test'
 
 const API_URL = process.env.API_URL || 'http://localhost:8000'
-const PROJECT_ROOT = process.env.PROJECT_ROOT || resolve(process.cwd(), '../..')
+const PROJECT_ROOT = process.env.PROJECT_ROOT || resolve(__dirname, '../..')
+const SHOTS_DIR = resolve(__dirname, '../../.jait/shots')
 
 async function createSession(request: APIRequestContext) {
   const username = `e2e-browser-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
@@ -28,6 +30,7 @@ async function createSession(request: APIRequestContext) {
 test.describe('browser and preview integration', () => {
   test('browser tools automatically target the visible preview browser', async ({ request, page, context }) => {
     test.setTimeout(90000)
+    page.setDefaultTimeout(15000)
     const { id: sessionId, token } = await createSession(request)
 
     const approveAll = await request.post(`${API_URL}/api/consent/pending/${sessionId}/approve-all`, {
@@ -37,9 +40,11 @@ test.describe('browser and preview integration', () => {
 
     // Use a small page so this browser collaboration test does not also compile
     // the entire Jait web app inside Playwright's memory-limited dev stack.
+    let pageLoads = 0
     const pageServer = createServer((_request, response) => {
+      if (_request.url !== '/favicon.ico') pageLoads++
       response.writeHead(200, { 'content-type': 'text/html' })
-      response.end(`<title>Preview collaboration</title><h1>Shared preview</h1><input aria-label="Collaboration note" autofocus oninput="document.getElementById('typed').textContent=this.value"><output id="typed"></output>`)
+      response.end(`<style>html { background: rgb(226,245,245); }</style><title>Preview collaboration</title><h1>Shared preview</h1><input aria-label="Collaboration note" autofocus oninput="document.getElementById('typed').textContent=this.value"><output id="typed"></output><script>console.log('Browser tools ready')</script>`)
     })
     await new Promise<void>((resolveListen) => pageServer.listen(0, '0.0.0.0', resolveListen))
     const address = pageServer.address()
@@ -116,6 +121,15 @@ test.describe('browser and preview integration', () => {
         return !!pixels?.some((value, index) => index % 4 !== 3 && value > 20)
       })
       await expect.poll(hasDesktopPixels).toBe(true)
+      // The page reaches the top-left corner of the actual desktop stream.
+      // A native title bar or Chrome toolbar would occupy this pixel.
+      await expect.poll(() => canvas.evaluate(element => {
+        const pixel = (element as HTMLCanvasElement).getContext('2d')?.getImageData(2, 2, 1, 1).data
+        return !!pixel && Math.abs(pixel[0] - 226) < 5 && Math.abs(pixel[1] - 245) < 5 && Math.abs(pixel[2] - 245) < 5
+      })).toBe(true)
+      await expect(page.getByRole('textbox', { name: 'Browser URL' })).toHaveValue(previewTarget)
+      await expect(page.getByRole('textbox', { name: 'Browser URL' })).toHaveAttribute('readonly', '')
+      await expect(page.getByRole('button', { name: 'Refresh page', exact: true })).toBeDisabled()
       await expect(viewer).toHaveAttribute('src', /view_only=1/)
       await page.getByRole('button', { name: 'Take control', exact: true }).click()
       await expect(page.getByRole('button', { name: 'Share with agent', exact: true })).toBeEnabled()
@@ -130,7 +144,8 @@ test.describe('browser and preview integration', () => {
       await expect(page.getByRole('button', { name: 'Share with agent', exact: true })).toBeEnabled()
       await expect(viewer).not.toHaveAttribute('src', /view_only=1/)
       await expect.poll(hasDesktopPixels).toBe(true)
-      await page.screenshot({ path: 'test-results/live-browser-takeover.png' })
+      await mkdir(SHOTS_DIR, { recursive: true })
+      await page.screenshot({ path: resolve(SHOTS_DIR, 'compact-browser-takeover.png') })
       await page.getByRole('button', { name: 'Share with agent', exact: true }).click()
       await expect(page.getByRole('button', { name: 'Take control', exact: true })).toBeEnabled()
       const typedResponse = await request.post(`${API_URL}/api/tools/execute`, {
@@ -143,20 +158,70 @@ test.describe('browser and preview integration', () => {
         data: { sessionId, sharedWithAgent: false },
       })
       expect(unshareResponse.ok()).toBeTruthy()
+      const addressBar = page.getByRole('textbox', { name: 'Browser URL' })
+      await expect(addressBar).not.toHaveAttribute('readonly', '')
+      const nextUrl = `${previewTarget}?navigated=1`
+      await addressBar.fill(nextUrl)
+      await page.getByRole('button', { name: 'Go to URL', exact: true }).click()
+      await expect(addressBar).toHaveValue(nextUrl)
+      await expect(addressBar).toHaveAttribute('aria-busy', 'false')
+      const afterNavigation = await request.get(`${API_URL}/api/preview/session/${sessionId}`, { headers: { Authorization: `Bearer ${token}` } })
+      const { session: navigated } = await afterNavigation.json()
+      expect(navigated.browserId).toBe(preview.data?.browserId)
+      expect(navigated.sharedWithAgent).toBe(false)
+      expect(navigated.metrics.url).toBe(nextUrl)
+      // Refresh uses the actual current page, ignoring an unsubmitted draft.
+      const loadsBefore = pageLoads
+      await addressBar.fill('https://unsubmitted.invalid/')
+      await page.getByRole('button', { name: 'Refresh page', exact: true }).click()
+      await expect(addressBar).toHaveAttribute('aria-busy', 'false')
+      await expect.poll(() => pageLoads).toBeGreaterThan(loadsBefore)
+      await expect(addressBar).toHaveValue(nextUrl)
+      await page.getByRole('button', { name: 'Browser tools', exact: true }).click()
+      const tools = page.getByRole('region', { name: 'Browser tools', exact: true })
+      const devtools = page.frameLocator('iframe[title="Chrome DevTools"]')
+      await expect(devtools.getByRole('tab', { name: 'Elements', exact: true })).toBeVisible()
+      await expect(devtools.locator('body')).toContainText('Shared preview')
+      await devtools.getByRole('tab', { name: 'Console', exact: true }).click()
+      await expect(devtools.locator('body')).toContainText('Browser tools ready')
+      await devtools.getByRole('navigation', { name: 'Main toolbar' }).getByRole('button', { name: 'More tabs' }).click()
+      await devtools.getByRole('menuitem', { name: 'Network', exact: true }).click()
+      await page.getByRole('button', { name: 'Refresh page', exact: true }).click()
+      await expect(devtools.locator('body')).toContainText('200')
+      const viewerBox = await viewer.boundingBox()
+      const toolsBox = await tools.boundingBox()
+      expect(viewerBox).not.toBeNull()
+      expect(toolsBox).not.toBeNull()
+      expect(toolsBox!.x).toBeGreaterThanOrEqual(viewerBox!.x + viewerBox!.width - 1)
+      expect(Math.abs(toolsBox!.y - viewerBox!.y)).toBeLessThan(2)
+      expect(Math.abs(toolsBox!.height - viewerBox!.height)).toBeLessThan(2)
+      await page.screenshot({ path: resolve(SHOTS_DIR, 'chrome-devtools-right.png') })
+      await page.getByRole('button', { name: 'Share with agent', exact: true }).click()
+      await expect(page.locator('iframe[title="Chrome DevTools"]')).toHaveCount(0)
+      await page.getByRole('button', { name: 'Take control', exact: true }).click()
+      await expect(devtools.getByRole('tab', { name: 'Network', exact: true })).toBeVisible()
+      await page.getByRole('button', { name: 'Browser tools', exact: true }).click()
+      await page.screenshot({ path: resolve(SHOTS_DIR, 'compact-browser-controls.png') })
       const blockedAgain = await request.post(`${API_URL}/api/tools/execute`, {
         data: { tool: 'browser.inspect', input: {}, sessionId, projectRoot: PROJECT_ROOT },
       })
       expect((await blockedAgain.json() as { ok: boolean }).ok).toBe(false)
     } finally {
-      await request.post(`${API_URL}/api/tools/execute`, {
-        data: {
-          tool: 'preview.stop',
-          input: {},
-          sessionId,
-          projectRoot: PROJECT_ROOT,
-        },
-      })
-      await new Promise<void>((resolveClose) => pageServer.close(() => resolveClose()))
+      await page.close()
+      try {
+        await request.post(`${API_URL}/api/tools/execute`, {
+          timeout: 10000,
+          data: {
+            tool: 'preview.stop',
+            input: {},
+            sessionId,
+            projectRoot: PROJECT_ROOT,
+          },
+        })
+      } finally {
+        pageServer.closeAllConnections()
+        await new Promise<void>((resolveClose) => pageServer.close(() => resolveClose()))
+      }
     }
   })
 })

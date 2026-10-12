@@ -1,10 +1,84 @@
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
+import { mkdir, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+
+const screenshotDir = resolve(import.meta.dirname, "../../../../.jait/shots");
 import { describe, expect, it, vi } from "vitest";
 import { PreviewService } from "./preview.js";
 
 describe("PreviewService", () => {
+  it("revokes DevTools grants across handoff, restart and pending attachment", async () => {
+    const browser = {
+      id: "browser-1", sessionId: "owner", type: "browser", state: "running",
+      getDevToolsConnection: vi.fn().mockResolvedValue({ endpoint: "http://127.0.0.1:9222", targetId: "page-1" }),
+      getLiveViewInfo: vi.fn().mockReturnValue(null),
+    };
+    const registry = { getSurface: vi.fn().mockReturnValue(browser), stopSurface: vi.fn().mockResolvedValue(undefined) };
+    const service = new PreviewService(registry as any);
+    service.attachAgentBrowser("owner", browser as any, undefined, false);
+    const grant = await service.getDevToolsConnection("owner");
+    expect(grant).not.toBeNull();
+    service.setSharedWithAgent("owner", true);
+    expect(service.isDevToolsConnectionActive("owner", "browser-1", grant!.revision)).toBe(false);
+    service.setSharedWithAgent("owner", false);
+    expect(service.isDevToolsConnectionActive("owner", "browser-1", grant!.revision)).toBe(false);
+    const second = await service.getDevToolsConnection("owner");
+    await service.stop("owner");
+    service.attachAgentBrowser("owner", browser as any, undefined, false);
+    expect(service.isDevToolsConnectionActive("owner", "browser-1", second!.revision)).toBe(false);
+    let resolveConnection!: (value: { endpoint: string; targetId: string }) => void;
+    browser.getDevToolsConnection.mockImplementationOnce(() => new Promise(resolve => { resolveConnection = resolve; }));
+    const pending = service.getDevToolsConnection("owner");
+    service.setSharedWithAgent("owner", true);
+    service.setSharedWithAgent("owner", false);
+    resolveConnection({ endpoint: "http://127.0.0.1:9222", targetId: "page-1" });
+    expect(await pending).toBeNull();
+  });
+
+  it("reloads the current page without recreating the browser or granting control", async () => {
+    const browser = {
+      id: "browser-1", sessionId: "owner", type: "browser", state: "running",
+      reload: vi.fn().mockResolvedValue({ url: "https://example.com/#details" }),
+      getEvents: vi.fn().mockReturnValue([]), getMetrics: vi.fn().mockResolvedValue(null),
+      getLiveViewInfo: vi.fn().mockReturnValue(null),
+    };
+    const registry = { getSurface: vi.fn().mockReturnValue(browser), startSurface: vi.fn() };
+    const service = new PreviewService(registry as any);
+    service.attachAgentBrowser("owner", browser as any, undefined, false);
+    expect(await service.reload("missing")).toBeNull();
+    const result = await service.reload("owner");
+    expect(browser.reload).toHaveBeenCalledOnce();
+    expect(result?.browserId).toBe("browser-1");
+    expect(result?.sharedWithAgent).toBe(false);
+    expect(registry.startSurface).not.toHaveBeenCalled();
+    service.setSharedWithAgent("owner", true);
+    await expect(service.reload("owner")).rejects.toThrow("Take control");
+    expect(browser.reload).toHaveBeenCalledOnce();
+  });
+
+  it("navigates the owner's browser without recreating it or granting agent control", async () => {
+    const browser = {
+      id: "browser-1", sessionId: "owner", type: "browser", state: "running",
+      navigate: vi.fn().mockResolvedValue({ url: "https://example.com/redirected" }),
+      getEvents: vi.fn().mockReturnValue([]), getMetrics: vi.fn().mockResolvedValue(null),
+      getLiveViewInfo: vi.fn().mockReturnValue(null),
+    };
+    const registry = { getSurface: vi.fn().mockReturnValue(browser), startSurface: vi.fn() };
+    const service = new PreviewService(registry as any);
+    service.attachAgentBrowser("owner", browser as any, undefined, false);
+    await expect(service.navigate("owner", "file:///etc/passwd")).rejects.toThrow("HTTP");
+    await expect(service.navigate("owner", "javascript:alert(1)")).rejects.toThrow("HTTP");
+    await expect(service.navigate("owner", "https://user:password@example.com/")).rejects.toThrow("credentials");
+    expect(browser.navigate).not.toHaveBeenCalled();
+    expect(await service.navigate("missing", "https://example.com/")).toBeNull();
+    const result = await service.navigate("owner", "https://example.com/");
+    expect(browser.navigate).toHaveBeenCalledWith("https://example.com/");
+    expect(result?.browserId).toBe("browser-1");
+    expect(result?.sharedWithAgent).toBe(false);
+    expect(registry.startSurface).not.toHaveBeenCalled();
+    service.setSharedWithAgent("owner", true);
+    await expect(service.navigate("owner", "https://example.com/")).rejects.toThrow("Take control");
+  });
+
   it("cleans up a managed server when the preview browser fails", async () => {
     const registry = {
       stopSurface: vi.fn().mockResolvedValue(undefined),
@@ -206,7 +280,8 @@ describe("PreviewService", () => {
   });
 
   it("returns the browser page snapshot in preview inspection results", async () => {
-    const screenshotPath = join(tmpdir(), `preview-${Date.now()}.png`);
+    await mkdir(screenshotDir, { recursive: true });
+    const screenshotPath = join(screenshotDir, `preview-${Date.now()}.png`);
     await writeFile(screenshotPath, Buffer.from("preview-image"));
     const browser = {
       type: "browser",
@@ -290,7 +365,8 @@ describe("PreviewService", () => {
   });
 
   it("passes selector diagnostics through preview inspection results", async () => {
-    const screenshotPath = join(tmpdir(), `preview-${Date.now()}-selector.png`);
+    await mkdir(screenshotDir, { recursive: true });
+    const screenshotPath = join(screenshotDir, `preview-${Date.now()}-selector.png`);
     await writeFile(screenshotPath, Buffer.from("selector-preview-image"));
     const browser = {
       type: "browser",

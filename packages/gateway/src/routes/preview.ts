@@ -100,6 +100,52 @@ export function registerPreviewRoutes(
     return { session };
   });
 
+  app.post("/api/preview/navigate", {
+    schema: {
+      body: {
+        type: "object", additionalProperties: false, required: ["sessionId", "url"],
+        properties: { sessionId: { type: "string", minLength: 1 }, url: { type: "string", minLength: 1, maxLength: 8192 } },
+      },
+    },
+  }, async (request, reply) => {
+    const authUser = await requireAuth(request, reply, config.jwtSecret);
+    if (!authUser) return;
+    const body = request.body as { sessionId: string; url: string };
+    if (!deps.sessionService?.getById(body.sessionId, authUser.id)) {
+      return reply.status(404).send({ error: "Session not found" });
+    }
+    try {
+      const session = await deps.previewService.navigate(body.sessionId, body.url);
+      if (!session) return reply.status(404).send({ error: "Live browser not found" });
+      return { session };
+    } catch (cause) {
+      return reply.status(400).send({ error: cause instanceof Error ? cause.message : "Could not navigate." });
+    }
+  });
+
+  app.post("/api/preview/reload", {
+    schema: {
+      body: {
+        type: "object", additionalProperties: false, required: ["sessionId"],
+        properties: { sessionId: { type: "string", minLength: 1 } },
+      },
+    },
+  }, async (request, reply) => {
+    const authUser = await requireAuth(request, reply, config.jwtSecret);
+    if (!authUser) return;
+    const { sessionId } = request.body as { sessionId: string };
+    if (!deps.sessionService?.getById(sessionId, authUser.id)) {
+      return reply.status(404).send({ error: "Session not found" });
+    }
+    try {
+      const session = await deps.previewService.reload(sessionId);
+      if (!session) return reply.status(404).send({ error: "Live browser not found" });
+      return { session };
+    } catch (cause) {
+      return reply.status(400).send({ error: cause instanceof Error ? cause.message : "Could not refresh." });
+    }
+  });
+
   app.post("/api/preview/share", async (request, reply) => {
     const authUser = await requireAuth(request, reply, config.jwtSecret);
     if (!authUser) return;
