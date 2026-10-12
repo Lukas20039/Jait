@@ -213,22 +213,31 @@ describe("team room routes and work chat integration", () => {
     expect((await snapshot()).messages.filter((message: { kind: string }) => message.kind === "result")).toHaveLength(2);
   });
 
-  it("runs every member and releases a busy agent on interrupt", async () => {
+  it("runs independent tasks for a busy member and stops only the selected thread's queued work", async () => {
     provider.sendTurn.mockImplementation(async () => {});
     await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
       payload: { content: "Bounded task", recipientIds: ["Developer", "QA", "Scrum"], clientKey: "queue-interrupt" } });
     await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(3));
+    const first = await snapshot();
+    const active = first.deliveries.find((item: { agentId: string }) => item.agentId === "Developer");
     await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
-      payload: { content: "Next task", recipientIds: ["Developer"], clientKey: "agent-queue" } });
+      payload: { content: "Independent task", recipientIds: ["Developer"], clientKey: "independent" } });
+    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(4));
+    await app.inject({ method: "POST", url: `/api/team-rooms/${roomId}/messages`, headers,
+      payload: { content: "Continue first task", recipientIds: ["Developer"], targetSessionId: active.sessionId,
+        clientKey: "thread-queue" } });
     const initial = await snapshot();
     const queued = initial.deliveries.find((item: { status: string }) => item.status === "queued");
     expect(queued).toBeDefined();
-    const active = initial.deliveries.find((item: { agentId: string; status: string }) => item.agentId === "Developer" && item.status === "running")
-      ?? initial.deliveries.find((item: { status: string }) => item.status === "running");
+    expect(queued.sessionId).toBe(active.sessionId);
+    const independent = initial.deliveries.find((item: { agentId: string; sessionId: string; status: string }) =>
+      item.agentId === "Developer" && item.sessionId !== active.sessionId && item.status === "running");
+    expect(independent).toBeDefined();
+    expect(provider.sendTurn).toHaveBeenCalledTimes(4);
     const result = await app.inject({ method: "POST", url: `/api/threads/${active.sessionId}/interrupt`, headers });
     expect(result.statusCode).toBe(200);
-    await vi.waitFor(() => expect(provider.sendTurn).toHaveBeenCalledTimes(4), { timeout: 1000 });
-    expect((await snapshot()).deliveries.find((item: { id: string }) => item.id === queued.id)?.status).toBe("running");
+    await vi.waitFor(async () => expect((await snapshot()).deliveries.find((item: { id: string }) => item.id === queued.id)?.status).toBe("cancelled"));
+    expect((await snapshot()).deliveries.find((item: { id: string }) => item.id === independent.id)?.status).toBe("running");
   });
 
   it("reports the latest answer after opening progress and fails empty completions", async () => {

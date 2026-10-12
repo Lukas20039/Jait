@@ -37,23 +37,36 @@ describe("persistent team coordination", () => {
   afterEach(() => { service.close(); if (!databaseClosed) opened.sqlite.close(); });
   const post = (content: string, key: string, recipientIds?: string[]) => service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
 
-  it("runs all seven members concurrently while queuing another task for a busy agent", async () => {
+  it("runs independent tasks for the same agent concurrently while queuing same-thread follow-ups", async () => {
     const members = Array.from({ length: 7 }, (_, i) => "Worker" + i);
     for (const id of members) profiles.savePersonaAgent(owner, profile(id));
     const selected = service.createRoom(owner, { name: "All workers", memberIds: members });
     const releases: Array<() => void> = [];
-    const dispatch = vi.fn(() => new Promise<{ content: string }>(resolve => {
+    const dispatch = vi.fn((_delivery: unknown, _agent: unknown, _prompt: string) => new Promise<{ content: string }>(resolve => {
       releases.push(() => resolve({ content: "Done" }));
     }));
     service.setDispatcher(dispatch);
     try {
       service.post(owner, selected.id, { content: "Work", clientKey: "all", sender: human, recipientIds: members });
-      service.post(owner, selected.id, { content: "Follow up", clientKey: "next", sender: human, recipientIds: [members[0]!] });
-      expect(dispatch).toHaveBeenCalledTimes(7);
-      expect(service.deliveries(owner, selected.id).filter(d => d.status === "running")).toHaveLength(7);
+      const firstThread = service.deliveries(owner, selected.id).find(d => d.agentId === members[0])!.sessionId;
+      service.post(owner, selected.id, { content: "Independent task", clientKey: "independent", sender: human, recipientIds: [members[0]!] });
+      expect(dispatch).toHaveBeenCalledTimes(8);
+      service.post(owner, selected.id, { content: "Follow up", clientKey: "follow-up", sender: human,
+        recipientIds: [members[0]!], targetSessionId: firstThread });
+      expect(dispatch).toHaveBeenCalledTimes(8);
+      expect(service.deliveries(owner, selected.id).filter(d => d.status === "running")).toHaveLength(8);
       expect(service.deliveries(owner, selected.id).filter(d => d.status === "queued")).toHaveLength(1);
+      // Multiple continuations stay in FIFO order without blocking the independent task.
+      service.post(owner, selected.id, { content: "Second follow up", clientKey: "follow-up-2", sender: human,
+        recipientIds: [members[0]!], targetSessionId: firstThread });
+      expect(dispatch).toHaveBeenCalledTimes(8);
       releases[0]!();
-      await vi.waitFor(() => expect(dispatch).toHaveBeenCalledTimes(8));
+      await vi.waitFor(() => expect(dispatch).toHaveBeenCalledTimes(9));
+      expect(dispatch.mock.calls.at(-1)?.[2]).toBe("Follow up");
+      expect(service.deliveries(owner, selected.id).filter(d => d.status === "queued")).toHaveLength(1);
+      releases[8]!();
+      await vi.waitFor(() => expect(dispatch).toHaveBeenCalledTimes(10));
+      expect(dispatch.mock.calls.at(-1)?.[2]).toBe("Second follow up");
       expect(service.deliveries(owner, selected.id).filter(d => d.status === "queued")).toHaveLength(0);
     } finally {
       service.close();
@@ -328,14 +341,14 @@ describe("persistent team coordination", () => {
       sender: { kind: "chat", name: "Long source chat title", sourceSessionId: source.id } });
   });
 
-  it("queues independent threads for the same agent without simultaneous duplicate execution", async () => {
+  it("runs independent threads for the same agent without duplicate execution", async () => {
     let finish!: () => void;
     const wait = new Promise<void>(resolve => { finish = resolve; });
     const dispatcher = vi.fn(async () => { await wait; return { content: "Implemented and ready for review." }; });
     service.setDispatcher(dispatcher);
     post("Ticket one", "one", ["Developer"]);
     post("Ticket two", "two", ["Developer"]);
-    expect(dispatcher).toHaveBeenCalledTimes(1);
+    expect(dispatcher).toHaveBeenCalledTimes(2);
     const deliveries = service.deliveries(owner, room.id);
     expect(new Set(deliveries.map(delivery => delivery.sessionId)).size).toBe(2);
     for (const delivery of deliveries) expect(service.workForSession(owner, delivery.sessionId)).toMatchObject({ roomId: room.id, agentId: "Developer" });
