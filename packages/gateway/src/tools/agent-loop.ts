@@ -549,32 +549,64 @@ const EXPLICIT_OPENAI_ALIASES: Record<string, string> = {
 const openAINameToInternalName = new Map<string, string>();
 
 /**
+ * Provider aliases claimed by more than one internal name, kept for diagnostics.
+ * A collision is not fatal: the registry deliberately exposes some tools under
+ * both a dotted name and a legacy underscored name (for example `os.tool` and
+ * `os_tool`), and both resolve to the same behaviour.
+ */
+const ambiguousOpenAINames = new Map<string, Set<string>>();
+
+/** Report provider aliases with more than one internal claimant. */
+export function listAmbiguousOpenAINames(): Array<{ providerName: string; internalNames: string[] }> {
+  return [...ambiguousOpenAINames]
+    .map(([providerName, internalNames]) => ({ providerName, internalNames: [...internalNames].sort() }))
+    .sort((a, b) => a.providerName.localeCompare(b.providerName));
+}
+
+function recordAmbiguousOpenAIName(providerName: string, claimants: Iterable<string>): void {
+  const names = ambiguousOpenAINames.get(providerName) ?? new Set<string>();
+  for (const claimant of claimants) if (claimant) names.add(claimant);
+  ambiguousOpenAINames.set(providerName, names);
+}
+
+/**
  * Record the exact inverse of {@link toOpenAIName} for names about to be
  * advertised. Idempotent; call it from any path that can put a schema in front
  * of a model, including dynamic `tools.search` injection.
  *
- * Two internal names can produce the same OpenAI-safe name. Collisions resolve
- * to a single deterministic winner so an ambiguous pair cannot poison the
- * mapping for unrelated tools; a genuine collision is a registry defect and is
- * asserted against in the registry tests.
+ * Two internal names can produce the same provider alias. A collision never
+ * throws and is never resolved by guessing: an exact (identity) mapping always
+ * wins, so a call to a provider alias can only reach the tool whose registered
+ * name the provider was actually shown.
  */
 export function registerOpenAINameMappings(names: Iterable<string>): void {
   for (const name of names) {
     const openAIName = toOpenAIName(name);
     const existing = openAINameToInternalName.get(openAIName);
-    if (existing === undefined || name < existing) openAINameToInternalName.set(openAIName, name);
+    if (existing === undefined) {
+      openAINameToInternalName.set(openAIName, name);
+      continue;
+    }
+    if (existing === name) continue;
+    if (openAIName === name) {
+      // The registered name is already provider-safe, so this identity mapping is
+      // unambiguous and must win over a dotted name that only normalizes to it.
+      openAINameToInternalName.set(openAIName, name);
+      recordAmbiguousOpenAIName(openAIName, [existing, name]);
+      continue;
+    }
+    recordAmbiguousOpenAIName(openAIName, [existing, name]);
   }
 }
 
-/** Reverse of {@link toOpenAIName}, preferring the advertised-name mapping over guessing. */
+/** Resolve only registered names and explicit legacy aliases; never guess. */
 export function fromOpenAIName(name: string): string {
   const registered = openAINameToInternalName.get(name);
   if (registered) return registered;
   const alias = EXPLICIT_OPENAI_ALIASES[name];
   if (alias) return alias;
-  const idx = name.indexOf("_");
-  if (idx === -1) return name;
-  return name.slice(0, idx) + "." + name.slice(idx + 1);
+  // Unknown names must remain unknown; underscores can belong to the leaf name.
+  return name;
 }
 
 // ── Tools that must run sequentially ─────────────────────────────────
@@ -1237,6 +1269,37 @@ export async function parseOllamaStream(
 
 // ── Build OpenAI tool schemas ────────────────────────────────────────
 
+/**
+ * Convert tools to provider schemas, keeping exactly one schema per provider name.
+ *
+ * Provider names cannot contain dots, so a dotted tool and its legacy
+ * underscored twin (for example `os.tool` and `os_tool`) collide on a single
+ * name. Sending one function name twice is rejected by some providers, and the
+ * losing twin could not resolve back from that name anyway, so only the schema
+ * whose provider name resolves to its own tool is advertised.
+ */
+function toToolSchemas(
+  tools: Array<{ name: string; description: string; parameters: unknown }>,
+): OpenAIToolSchema[] {
+  const schemas: OpenAIToolSchema[] = [];
+  const seen = new Set<string>();
+  for (const tool of tools) {
+    const providerName = toOpenAIName(tool.name);
+    if (seen.has(providerName)) continue;
+    if (fromOpenAIName(providerName) !== tool.name) continue;
+    seen.add(providerName);
+    schemas.push({
+      type: "function" as const,
+      function: {
+        name: providerName,
+        description: tool.description,
+        parameters: tool.parameters,
+      },
+    });
+  }
+  return schemas;
+}
+
 export function buildToolSchemas(
   registry: ToolRegistry,
   allowedTools?: Set<string>,
@@ -1246,14 +1309,7 @@ export function buildToolSchemas(
     tools = tools.filter((t) => allowedTools.has(t.name));
   }
   registerOpenAINameMappings(tools.map((t) => t.name));
-  return tools.map((t) => ({
-    type: "function" as const,
-    function: {
-      name: toOpenAIName(t.name),
-      description: t.description,
-      parameters: t.parameters,
-    },
-  }));
+  return toToolSchemas(tools);
 }
 
 /**
@@ -1293,14 +1349,7 @@ export function buildTieredToolSchemas(
   }
 
   registerOpenAINameMappings(tools.map((t) => t.name));
-  return tools.map((t) => ({
-    type: "function" as const,
-    function: {
-      name: toOpenAIName(t.name),
-      description: t.description,
-      parameters: t.parameters,
-    },
-  }));
+  return toToolSchemas(tools);
 }
 
 /** Optional semantic selection; the synchronous builder remains the no-key path. */
@@ -1325,14 +1374,7 @@ export async function buildSystemOneToolSchemas(
  */
 export function toolDefsToSchemas(defs: Array<{ name: string; description: string; parameters: unknown }>): OpenAIToolSchema[] {
   registerOpenAINameMappings(defs.map((d) => d.name));
-  return defs.map((t) => ({
-    type: "function" as const,
-    function: {
-      name: toOpenAIName(t.name),
-      description: t.description,
-      parameters: t.parameters,
-    },
-  }));
+  return toToolSchemas(defs);
 }
 
 // ── Inline-thinking extraction helper ────────────────────────────────
@@ -1669,6 +1711,7 @@ interface ExecuteOneOptions {
   maxRetries: number;
   onEvent?: (event: AgentLoopEvent) => void;
   executeTool: ToolExecutor;
+  previousFailures?: Map<string, { message: string; count: number }>;
   /** When set, this call is one of several agent-spawn calls in the same parallel batch. */
   swarmRoundId?: string;
 }
@@ -1685,6 +1728,13 @@ async function executeOneToolCall(opts: ExecuteOneOptions): Promise<{
   try { args = JSON.parse(tc.function.arguments); } catch { args = {}; }
 
   const internalName = fromOpenAIName(tc.function.name);
+  const previousFailure = opts.previousFailures?.get(toolCallSignature(tc));
+  if (previousFailure && isInvalidToolFailure(previousFailure.message)) {
+    const message = `Repeated invalid call blocked: ${previousFailure.message}. Change the tool name or arguments before retrying.`;
+    const failed = failedToolCallOutcome(tc, message);
+    onEvent?.({ type: "tool_result", call_id: tc.id, tool: internalName, ok: false, message: failed.executed.message });
+    return { ...failed, result: { ok: false, message: failed.executed.message } };
+  }
 
   // Thread the shared swarm mailbox down to agent.spawn's own execute() via a
   // hidden arg — cheaper than widening ToolExecutor's signature across every
@@ -1905,6 +1955,11 @@ const TRANSIENT_FAILURE_PATTERNS: RegExp[] = [
   /\bgateway time-?out\b/,
   /\boverloaded\b/,
 ];
+
+/** Invalid names and arguments require a changed call, not an execution retry. */
+function isInvalidToolFailure(message: string): boolean {
+  return /^(?:Unknown tool:|INPUT VALIDATION ERROR:|Input validation failed:)/i.test(message);
+}
 
 /** Heuristic: is this error transient and worth retrying? */
 function isTransientFailure(message: string | undefined): boolean {
@@ -2186,6 +2241,10 @@ function recordToolCallOutcome(
   }
   const message = executed.message ?? "";
   const previous = failures.get(signature);
+  if (previous && executed.message?.startsWith("TOOL ERROR: Repeated invalid call blocked:")) {
+    failures.set(signature, { message: previous.message, count: previous.count + 1 });
+    return;
+  }
   failures.set(
     signature,
     previous && previous.message === message
@@ -4044,16 +4103,18 @@ export async function runAgentLoop(
               loopSignatures.has(toolCallSignature(toolCall))
             );
             const quarantinedNames = new Set(
-              quarantinedCalls.map((toolCall) => fromOpenAIName(toolCall.function.name)),
+              quarantinedCalls
+                .filter((call) => !isInvalidToolFailure(repeatedFailureCounts.get(toolCallSignature(call))?.message ?? ""))
+                .map((toolCall) => fromOpenAIName(toolCall.function.name)),
             );
             quarantinedToolNames = quarantinedNames;
             duplicateInterventionSignatures = new Set(loopSignatures);
             duplicateCallStreak = 0;
             for (const signature of loopSignatures) toolCallOccurrences.set(signature, 0);
 
-            const message =
-              `Skipped repeated tool call (${names}); ` +
-              `temporarily quarantining ${[...quarantinedNames].join(", ")} for the next model round`;
+            const message = quarantinedNames.size
+              ? `Skipped repeated tool call (${names}); temporarily quarantining ${[...quarantinedNames].join(", ")} for the next model round`
+              : `Skipped unchanged invalid call (${names}). Change the tool name or arguments before retrying; corrected calls remain available.`;
             discardLatestContentText(contentText);
             log.warn(`${message} for session ${sessionId}`);
             onEvent?.({ type: "steering", message });
@@ -4069,7 +4130,7 @@ export async function runAgentLoop(
               const tool = fromOpenAIName(toolCall.function.name);
               let args: unknown;
               try { args = JSON.parse(toolCall.function.arguments); } catch { args = {}; }
-              const resultData = { quarantined: true, reason: "duplicate_call" };
+              const resultData = { quarantined: quarantinedNames.has(tool), reason: "duplicate_call" };
               const now = Date.now();
               callIds.push(toolCall.id);
               executedToolCalls.push({
@@ -4118,7 +4179,9 @@ export async function runAgentLoop(
               role: "system",
               content: stuckError
                 ? `That call kept failing with the same error and was skipped: "${stuckError.message}". `
-                  + `Retrying it will produce the same failure, so ${[...quarantinedNames].join(", ")} is unavailable for your next response. `
+                  + (quarantinedNames.size
+                    ? `Retrying it will produce the same failure, so ${[...quarantinedNames].join(", ")} is unavailable for your next response. `
+                    : `The unchanged invalid call is blocked. Corrected tool names or arguments remain available. `)
                   + `Fix the cause if the error tells you how (a wrong path or argument), otherwise reach the goal a different way — another tool, a terminal command, or an answer from what you already have.`
                 : `The exact repeated call was skipped because its result is already in the conversation. `
                   + `The tool(s) ${[...quarantinedNames].join(", ")} are unavailable for your next response only. `
@@ -4348,6 +4411,7 @@ export async function runAgentLoop(
             auth,
             signal: abort.signal,
             toolRegistry,
+            previousFailures: repeatedFailureCounts,
             maxRetries,
             onEvent,
             executeTool,
@@ -4380,6 +4444,7 @@ export async function runAgentLoop(
                   auth,
                   signal: abort.signal,
                   toolRegistry,
+                  previousFailures: repeatedFailureCounts,
                   maxRetries,
                   onEvent,
                   executeTool,
@@ -4430,15 +4495,14 @@ export async function runAgentLoop(
                 const oaiName = toOpenAIName(match.name);
                 // In ask mode, only add read-only tools
                 if (mode === "ask" && !ASK_MODE_TOOLS.has(match.name)) continue;
-                if (!activeSchemaNames.has(oaiName) && !disabledTools?.has(match.name)) {
-                  activeSchemas.push({
-                    type: "function",
-                    function: {
-                      name: oaiName,
-                      description: match.description,
-                      parameters: match.parameters,
-                    },
-                  });
+                if (disabledTools?.has(match.name)) continue;
+                const discoveredSchemas = toolDefsToSchemas([{
+                  name: match.name,
+                  description: match.description,
+                  parameters: match.parameters,
+                }]);
+                if (!activeSchemaNames.has(oaiName)) {
+                  activeSchemas.push(...discoveredSchemas);
                   activeSchemaNames.add(oaiName);
                   log.info(`Dynamic schema expansion: added ${match.name}`);
                 }

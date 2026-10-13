@@ -64,6 +64,11 @@ export interface ToolParametersSchema {
   type: "object";
   properties: Record<string, ToolPropertySchema>;
   required?: string[];
+  /** Conditional requirements for action-based tools. */
+  allOf?: Array<{
+    if: { properties: Record<string, ToolPropertySchema>; required?: string[] };
+    then: { properties?: Record<string, ToolPropertySchema>; required?: string[] };
+  }>;
 }
 
 /** JSON Schema for a single tool parameter property */
@@ -71,6 +76,11 @@ export interface ToolPropertySchema {
   type: string | string[];
   description?: string;
   enum?: string[];
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  minItems?: number;
+  maxItems?: number;
   /** For type: "array" — describes the shape of each array element */
   items?: ToolPropertySchema & { properties?: Record<string, ToolPropertySchema>; required?: string[] };
   /** For type: "object" — nested properties */

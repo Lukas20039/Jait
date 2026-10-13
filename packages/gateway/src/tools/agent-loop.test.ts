@@ -25,6 +25,13 @@ import {
 import { ToolRegistry } from "./registry.js";
 import { getReminderInstructions } from "./prompts/index.js";
 
+// Test scaffolding: the provider→internal inverse is derived from the names that
+// were actually advertised, never guessed. These handwritten fixtures bypass the
+// production schema builders, so they must declare their canonical names here.
+toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
+  name, description: name, parameters: { type: "object", properties: {} },
+})));
+
 afterEach(() => {
   vi.restoreAllMocks();
 });
@@ -330,7 +337,8 @@ describe("OpenAI tool name conversion", () => {
       parameters: { type: "object", properties: {}, required: [] },
       execute: async () => ({ ok: true, message: "ok" }),
     });
-    // Both collapse to the same OpenAI-safe name; the mapping must stay unambiguous for everyone else.
+    // Both collapse to the same provider-safe name. Registration must never fail:
+    // the registry legitimately exposes legacy alias pairs such as os.tool/os_tool.
     register("a.b_c");
     register("a_b.c");
     register("preview.open");
@@ -338,10 +346,27 @@ describe("OpenAI tool name conversion", () => {
     const advertised = buildTieredToolSchemas(registry, undefined, {
       activatedToolNames: ["a.b_c", "a_b.c", "preview.open"],
     }).map((schema) => schema.function.name);
-    expect(advertised).toContain("a_b_c");
 
+    // One schema per provider name, so a provider never receives a duplicate function.
+    expect(advertised.filter((name) => name === "a_b_c")).toHaveLength(1);
+    // Unambiguous neighbours keep round-tripping.
+    expect(advertised).toContain("preview_open");
     expect(fromOpenAIName("preview_open")).toBe("preview.open");
-    expect(["a.b_c", "a_b.c"]).toContain(fromOpenAIName("a_b_c"));
+
+    // The advertised alias resolves to a registered, executable tool — never to an
+    // invented name — and stays deterministic across repeated resolution.
+    const winner = fromOpenAIName("a_b_c");
+    expect(["a.b_c", "a_b.c"]).toContain(winner);
+    expect(registry.isExecutable(winner)).toBe(true);
+    expect(fromOpenAIName("a_b_c")).toBe(winner);
+  });
+
+  it("never invents a dotted name for an unadvertised alias", () => {
+    // The inverse is derived only from names that were actually advertised. An
+    // alias nobody advertised stays unresolved, so the agent gets an actionable
+    // "Unknown tool" error instead of silently executing a different tool.
+    expect(fromOpenAIName("never_advertised_tool")).toBe("never_advertised_tool");
+    expect(fromOpenAIName("totally_unknown_tool")).toBe("totally_unknown_tool");
   });
 });
 

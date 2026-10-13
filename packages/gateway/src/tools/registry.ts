@@ -277,6 +277,9 @@ export class ToolRegistry {
   private readonly tools = new Map<string, ToolDefinition>();
 
   register(tool: ToolDefinition): void {
+    // Names are registered verbatim. Provider alias collisions (for example the
+    // deliberate `os.tool` / `os_tool` legacy pair) are legitimate here and are
+    // resolved at call time by {@link fromOpenAIName}, never by throwing.
     this.tools.set(tool.name, normalizeToolDefinition(tool));
   }
 
