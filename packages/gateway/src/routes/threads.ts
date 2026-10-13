@@ -1,4 +1,5 @@
 import { ExecutionGuard } from "../services/execution-guard.js";
+import { agentHaltedBody, type AgentStopResult, type AgentControlService } from "../services/agent-control.js";
 import { personaAgentProfileSchema } from "@jait/shared";
 
 /**
@@ -105,6 +106,8 @@ function resolveThreadProviderId(
 
 export interface ThreadRouteDeps {
   personaChatRuntime?: (userId: string, personaId: string, chatSessionId?: string) => { count: number; state: "running" | "waiting" | "idle" };
+  /** When present, refuses new autonomous work while the user is halted. */
+  agentControl?: AgentControlService;
   threadService: ThreadService;
   providerRegistry: ProviderRegistry;
   userService?: UserService;
@@ -209,6 +212,22 @@ export function registerThreadRoutes(
   const { threadService, providerRegistry, ws } = deps;
   const gitService = deps.gitService ?? new GitService();
   const repoService = deps.repoService;
+
+  /**
+   * A halt stops autonomous execution, not the user's ability to observe or
+   * stop work. Every route that would start or continue a model turn checks
+   * here; reading routes, stop, interrupt, approve and resume-halt bypass it.
+   */
+  const refuseWhenHalted = (
+    reply: { status: (code: number) => { send: (payload: unknown) => unknown } },
+    userId: string,
+    action: string,
+  ): boolean => {
+    const control = deps.agentControl ?? threadService.agentControl;
+    if (!control || !control.isHalted(userId)) return false;
+    reply.status(409).send(agentHaltedBody(control.getState(userId), action));
+    return true;
+  };
 
   const recoveryToken = randomUUID();
   let recoveryRunning = false;
@@ -397,6 +416,50 @@ export function registerThreadRoutes(
     }
     pendingInterventionMessages.delete(threadId);
   }
+
+  /**
+   * Owner-wide stop used as `AgentControlService`'s `stopRunning` hook.
+   *
+   * The halt row is already persisted by the time this runs, so every failure
+   * is contained per thread: one runner that refuses to die must not leave the
+   * others spinning, and must not throw back into `halt()` and make the user
+   * believe the stop failed. Returns how many threads were actually stopped.
+   */
+  const stopUserThreads = async (userId: string): Promise<AgentStopResult> => {
+    if (!userId) return { stopped: 0, errors: [] };
+    const running = threadService
+      .list(userId)
+      .filter((thread) => thread.status === "running" || thread.status === "blocked");
+    let stopped = 0;
+    const errors: string[] = [];
+    await Promise.all(running.map(async (thread) => {
+      try {
+        const sessionId = thread.providerSessionId;
+        if (sessionId) {
+          const provider = resolveThreadStopProvider(thread, userId);
+          if (provider) await provider.stopSession(sessionId);
+        }
+        remoteProviders.delete(thread.id);
+        threadUnsubs.get(thread.id)?.();
+        threadUnsubs.delete(thread.id);
+        unregisterThreadResume(thread.id);
+        if (sessionId) {
+          threadService.markInterrupted(thread.id);
+          broadcastThreadStatus(thread.id, "interrupted");
+        } else {
+          // Nothing to stop at the provider, but the row still claims to run.
+          threadService.markError(thread.id, "Stopped by user (all agents halted).");
+          broadcastThreadStatus(thread.id, "error", "Stopped by user (all agents halted).");
+        }
+        stopped++;
+      } catch (error) {
+        errors.push(`${thread.id}: ${error instanceof Error ? error.message : String(error)}`);
+        app.log.warn({ error, threadId: thread.id }, "Failed to stop thread during owner halt");
+      }
+    }));
+    return { stopped, errors };
+  };
+  app.decorate("stopUserThreads", stopUserThreads);
 
   function broadcastQueuedThreadMessagesState(sessionId: string, value: QueuedThreadMessagesState | null): void {
     if (!ws) return;
@@ -976,6 +1039,7 @@ export function registerThreadRoutes(
   app.post("/api/threads", async (request, reply) => {
     const authUser = await requireAuth(request, reply, config.jwtSecret);
     if (!authUser) return;
+    if (refuseWhenHalted(reply, authUser.id, "create-thread")) return;
     const body = request.body as Record<string, unknown>;
     if (body["personaAgentId"] !== undefined &&
         (typeof body["personaAgentId"] !== "string" || !threadService.getPersonaAgent(body["personaAgentId"], authUser.id))) {
@@ -1191,6 +1255,9 @@ export function registerThreadRoutes(
       || thread.prState === "merged" || thread.prState === "closed") {
       return reply.status(409).send({ error: "Only stopped or failed work can be resumed" });
     }
+    // Check the halt before mutating: resuming rewrites the session id and
+    // would otherwise mark the thread as errored when the injected /start refuses.
+    if (refuseWhenHalted(reply, authUser.id, "resume-thread")) return;
     const agent = thread.personaAgentId ? threadService.getPersonaAgent(thread.personaAgentId, authUser.id) : undefined;
     if (thread.personaAgentId && !agent) return reply.status(404).send({ error: "Agent profile not found" });
     if (thread.personaAgentId && (resumingAgents.has(thread.personaAgentId)
@@ -1250,6 +1317,7 @@ export function registerThreadRoutes(
     if (thread.providerSessionId && thread.status === "running") {
       return reply.status(409).send({ error: "Thread already has an active session" });
     }
+    if (refuseWhenHalted(reply, authUser.id, "start-thread")) return;
 
     const recovering = request.headers["x-jait-thread-recovery"] === recoveryToken;
     const providerId = thread.providerId as ProviderId;
@@ -1366,6 +1434,9 @@ export function registerThreadRoutes(
       }
     }
 
+    // A halt can arrive while availability or worktree preparation is awaited.
+    if (refuseWhenHalted(reply, authUser.id, "start-thread")) return;
+
     // Recovery can be cancelled while provider/node availability is being checked.
     if (recovering) {
       const current = threadService.getById(id);
@@ -1397,6 +1468,16 @@ export function registerThreadRoutes(
         reasoningEffort: thread.reasoningEffort ?? undefined,
         mcpServers,
       });
+
+      // Startup is asynchronous: a just-created session must be stopped if
+      // the owner halted while it was being created, before any model turn.
+      if ((deps.agentControl ?? threadService.agentControl).isHalted(authUser.id)) {
+        try { await provider.stopSession(session.id); }
+        catch (error) { app.log.warn({ error, threadId: id }, "Failed to stop halted startup session"); }
+        if (isRemote) remoteProviders.delete(id);
+        refuseWhenHalted(reply, authUser.id, "start-thread");
+        return;
+      }
 
       if (recovering && (recoveryClosed || threadService.getById(id)?.status !== "interrupted" || !threadService.getRecovery(id))) {
         await provider.stopSession(session.id);
@@ -1739,6 +1820,7 @@ export function registerThreadRoutes(
   app.post("/api/threads/:id/send", async (request, reply) => {
     const authUser = await requireAuth(request, reply, config.jwtSecret);
     if (!authUser) return;
+    if (refuseWhenHalted(reply, authUser.id, "send-message")) return;
     const { id } = request.params as { id: string };
     const body = request.body as Record<string, unknown>;
     const message = typeof body["message"] === "string" ? body["message"] : "";
@@ -1889,6 +1971,7 @@ export function registerThreadRoutes(
   app.post("/api/threads/:id/steer", async (request, reply) => {
     const authUser = await requireAuth(request, reply, config.jwtSecret);
     if (!authUser) return;
+    if (refuseWhenHalted(reply, authUser.id, "steer-thread")) return;
     const { id } = request.params as { id: string };
     const body = (request.body as Record<string, unknown>) ?? {};
     const message = typeof body["message"] === "string" ? body["message"] : "";

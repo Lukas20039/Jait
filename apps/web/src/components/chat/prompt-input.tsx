@@ -20,6 +20,8 @@ import { ModeSelector } from '@/components/chat/mode-selector'
 import type { ChatMode } from '@/components/chat/mode-selector'
 import { StyleSelector } from '@/components/chat/style-selector'
 import { SendTargetSelector, type SendTarget } from '@/components/chat/send-target-selector'
+import { ChatNodeSelector } from '@/components/chat/chat-node-selector'
+import { usePersonalChatNode } from '@/hooks/usePersonalChatNode'
 import { ProviderModelSelector } from '@/components/chat/provider-model-selector'
 import { ProviderRuntimeSelector } from '@/components/chat/provider-runtime-selector'
 import type { ProviderId, RuntimeMode } from '@/lib/agents-api'
@@ -97,6 +99,8 @@ interface PromptInputProps {
   submitLoading?: boolean
   disabled?: boolean
   controlsDisabled?: boolean
+  /** Threads use their repository execution device rather than personal session settings. */
+  allowPersonalChatNode?: boolean
   placeholder?: string
   className?: string
   footerLeadingContent?: ReactNode
@@ -850,6 +854,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   submitLoading,
   disabled,
   controlsDisabled,
+  allowPersonalChatNode = true,
   placeholder = 'Ask anything...',
   className,
   footerLeadingContent,
@@ -962,9 +967,11 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   const [searchResults, setSearchResults] = useState<ReferencedFile[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const searchAbort = useRef<AbortController | null>(null)
-  const composerDisabled = Boolean(disabled)
+  const personalChat = Boolean(allowPersonalChatNode && provider && onProviderChange && onCliModelChange && chatId && !projectId && !projectPath && !repoRuntime)
+  const personalNode = usePersonalChatNode(chatId, personalChat)
+  const composerDisabled = Boolean(disabled) || personalNode.busy
   const controlsLocked = Boolean(controlsDisabled ?? disabled ?? false)
-  const selectorsDisabled = controlsLocked
+  const selectorsDisabled = controlsLocked || personalNode.busy
   const showProviderModelSelector = Boolean(provider && onProviderChange && onCliModelChange)
   const showResponseStyleSelector = Boolean(responseStyle && onResponseStyleChange)
   const showProviderRuntimeSelector = Boolean(provider && providerRuntimeMode && onProviderRuntimeModeChange)
@@ -2254,6 +2261,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
                         compact={compactFooterControls}
                       />
                     )}
+                    {showProviderModelSelector && personalChat && (
+                      <ChatNodeSelector nodeId={personalNode.nodeId} onChange={personalNode.selectNode} disabled={selectorsDisabled || isLoading} compact={compactFooterControls} error={personalNode.error} onRetry={personalNode.retry} />
+                    )}
                     {showProviderModelSelector && (
                       <ProviderModelSelector
                         provider={provider!}
@@ -2265,7 +2275,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
                         repoRuntime={repoRuntime}
                         onMoveToGateway={onMoveToGateway}
                         sessionInfo={sessionInfo}
-                        projectNodeId={projectNodeId}
+                        projectNodeId={personalChat ? personalNode.nodeId : projectNodeId}
                         projectId={projectId}
                         reasoningEffort={reasoningEffort}
                         onReasoningEffortChange={onReasoningEffortChange}

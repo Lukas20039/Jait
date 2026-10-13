@@ -198,6 +198,9 @@ export class WsControlPlane {
   }>();
   getThreadSnapshot?: (userId: string) => { serverTime: string; threads: unknown[]; hasMore?: boolean };
   getPendingConsents?: () => Array<{ id: string; sessionId: string }>;
+  /** Pending `user.ask` questions, so a reconnecting client can badge chats that still need an answer. */
+  getPendingQuestions?: () => Array<{ id: string; sessionId: string }>;
+  getAgentControlState?: (userId: string) => import("./services/agent-control.js").AgentControlState;
   getStreamingSessionIds?: (userId: string) => string[];
   getSurfaceSnapshot?: (userId?: string | null) => { serverTime: string; surfaces: unknown[] };
   getBrowserSnapshot?: (userId?: string | null) => { serverTime: string; sessions: unknown[]; interventions: unknown[] };
@@ -514,6 +517,26 @@ export class WsControlPlane {
           );
           this.send(client.ws, {
             type: "consent.pending-snapshot",
+            sessionId: "",
+            timestamp: new Date().toISOString(),
+            payload: { requests },
+          });
+          return;
+        }
+        if (resource === "root:/agent-control") {
+          if (!client.userId || !this.getAgentControlState) return;
+          this.send(client.ws, {
+            type: "agent.halted", sessionId: "", timestamp: new Date().toISOString(),
+            payload: this.getAgentControlState(client.userId),
+          });
+          return;
+        }
+        if (resource === "root:/pending-questions") {
+          const requests = (this.getPendingQuestions?.() ?? []).filter((request) =>
+            !this.canAccessSession || this.canAccessSession(request.sessionId, client.userId),
+          );
+          this.send(client.ws, {
+            type: "user-question.pending-snapshot",
             sessionId: "",
             timestamp: new Date().toISOString(),
             payload: { requests },

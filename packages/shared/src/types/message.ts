@@ -62,6 +62,7 @@ export type WsEventType =
   | "secret.resolved"
   | "user-question.requested"
   | "user-question.resolved"
+  | "user-question.pending-snapshot"
   // Cross-device attention layer: one item per "a chat needs the user", with a
   // stable key every platform reuses as its native notification identity so a
   // single "cleared" event revokes the toast on phone, watch, desktop and web.
@@ -105,6 +106,10 @@ export type WsEventType =
   | "chat.moved"
   | "notification"
   | "fs.changes"
+  // Owner-wide autonomous-execution kill switch. Broadcast after every
+  // halt/resume so every surface can render the banner from server state
+  // rather than optimistically flipping a local flag.
+  | "agent.halted"
   | "error";
 
 export interface WsEvent<T = unknown> {

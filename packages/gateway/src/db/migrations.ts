@@ -1730,4 +1730,12 @@ export const migrations: Migration[] = [
       db.exec("CREATE INDEX IF NOT EXISTS idx_agent_github_app_status ON agent_github_apps(status)");
     },
   },
+  {
+    id: 75, name: "agent_control_hard_stop",
+    run(db) {
+      // Owner-wide emergency halt. A row only exists for users who have used
+      // the stop; absence means "running normally", so no backfill is needed.
+      db.exec("CREATE TABLE IF NOT EXISTS agent_control (user_id TEXT PRIMARY KEY, halted INTEGER NOT NULL DEFAULT 0, reason TEXT, halted_at TEXT, updated_at TEXT NOT NULL)");
+    },
+  },
 ];

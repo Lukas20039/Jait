@@ -90,6 +90,9 @@ interface ProviderModelSelectorProps {
   disabled?: boolean
   className?: string
   compact?: boolean
+  triggerLabel?: string
+  /** Saved agent profiles change only through explicit selections. */
+  reconcileSelection?: boolean
   repoRuntime?: RepositoryRuntimeInfo | null
   onMoveToGateway?: () => void
   sessionInfo?: { isRemote: boolean; remoteNode?: { nodeName: string; platform: string } } | null
@@ -278,6 +281,8 @@ export function ProviderModelSelector({
   disabled,
   className,
   compact = false,
+  triggerLabel,
+  reconcileSelection = true,
   repoRuntime,
   onMoveToGateway,
   sessionInfo,
@@ -555,6 +560,7 @@ export function ProviderModelSelector({
   }, [activeModelScopeKey, provider, activeProviderNodeId, activeProviderAuthenticated, providerScopeResolved, modelReloadVersion])
 
   useEffect(() => {
+    if (!reconcileSelection) return
     const nextModel = resolveProviderModelReconciliation({
       provider,
       activeScopeKey: activeModelScopeKey,
@@ -564,7 +570,7 @@ export function ProviderModelSelector({
       models,
     })
     if (nextModel !== undefined && nextModel !== model) onModelChange(nextModel)
-  }, [activeModelScopeKey, loadedModelScopeKey, provider, loadingModels, model, models, onModelChange])
+  }, [activeModelScopeKey, loadedModelScopeKey, provider, loadingModels, model, models, onModelChange, reconcileSelection])
 
   // Drop a selection the current scope cannot run — e.g. the project moved to a
   // device that does not host the selected provider. Only done once the
@@ -582,6 +588,7 @@ export function ProviderModelSelector({
   useEffect(() => {
     if (!providersLoaded) return
     if (repoRuntime?.loading) return
+    if (!reconcileSelection) return
     const entry = providerEntries.find((item) => item.value === provider)
     // Merely signed out is not a reason to switch: on the gateway the entry
     // stays selected so the user can log in from right here. A provider this
@@ -600,7 +607,7 @@ export function ProviderModelSelector({
     if (nextProvider !== provider) {
       onProviderChange(nextProvider)
     }
-  }, [onProviderChange, provider, providerEntries, providersLoaded, refreshProviders, repoRuntime?.loading, scopeNodeId])
+  }, [onProviderChange, provider, providerEntries, providersLoaded, refreshProviders, repoRuntime?.loading, scopeNodeId, reconcileSelection])
 
   const currentProvider = providerEntries.find((item) => item.value === provider) ?? providerEntries[0]!
   const CurrentIcon = currentProvider.icon
@@ -944,7 +951,7 @@ export function ProviderModelSelector({
   }, [provider])
 
   const triggerButton = (
-    <TooltipHint side={tooltipSide} content={`Provider: ${currentProvider.label} · Model: ${displayModelLabel}${reasoningLabel ? ` · Reasoning: ${reasoningLabel}` : ''}`}>
+    <TooltipHint side={tooltipSide} content={<div className="space-y-1 py-0.5"><p className="font-medium">{currentProvider.label}</p><p className="break-words text-muted-foreground">{displayModelLabel}</p>{reasoningLabel && <p className="text-muted-foreground">Reasoning: {reasoningLabel}</p>}<p className="border-t pt-1 text-[10px] text-muted-foreground">Choose provider and model</p></div>}>
     <button
       type="button"
       disabled={disabled}
@@ -956,7 +963,7 @@ export function ProviderModelSelector({
         'disabled:pointer-events-none disabled:opacity-50',
         className,
       )}
-      aria-label={`Provider ${currentProvider.label}, model ${displayModelLabel}${reasoningLabel ? `, reasoning ${reasoningLabel}` : ''}`}
+      aria-label={triggerLabel ?? `Provider ${currentProvider.label}, model ${displayModelLabel}${reasoningLabel ? `, reasoning ${reasoningLabel}` : ''}`}
     >
       {currentProvider.iconUrl
         ? <RemoteProviderLogo url={currentProvider.iconUrl} className="h-4 w-4" />

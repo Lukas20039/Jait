@@ -188,6 +188,22 @@ describe("WsControlPlane", () => {
     plane.stop();
   });
 
+  it("restores only the authenticated owner's halt state on subscription", async () => {
+    plane.getAgentControlState = userId => ({ halted: userId === "halted-owner", reason: userId, haltedAt: null, updatedAt: null });
+    for (const userId of ["halted-owner", "other-owner"]) {
+      const token = await createToken(userId);
+      const { ws, collector } = openWs(port, { token });
+      try {
+        await waitForOpen(ws);
+        await collector.next();
+        ws.send(JSON.stringify({ type: "resource.subscribe", payload: { resource: "root:/agent-control" } }));
+        let snapshot = await collector.next();
+        while (snapshot.type !== "agent.halted") snapshot = await collector.next();
+        expect(snapshot.payload).toMatchObject({ halted: userId === "halted-owner", reason: userId });
+      } finally { ws.close(); }
+    }
+  });
+
   it("accepts connection and sends session.created on connect", async () => {
     const { ws, collector } = openWs(port);
     await waitForOpen(ws);
@@ -1232,8 +1248,7 @@ describe("WsControlPlane", () => {
       client.ws.close();
     });
 
-    it("returns the authoritative streaming-session snapshot after reconnect", async () => {
-      const token = await createToken("user-streaming-sessions");
+    it("returns the authoritative streaming-session snapshot after reconnect", async () => {      const token = await createToken("user-streaming-sessions");
       plane.getStreamingSessionIds = (userId) => (
         userId === "user-streaming-sessions" ? [] : ["wrong-user-session"]
       );

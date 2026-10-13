@@ -20,7 +20,7 @@ const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
 const HTML_EXTENSIONS = new Set([".html", ".htm"]);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-import { registerChatRoutes, getPersonaChatRuntime } from "./routes/chat.js";
+import { registerChatRoutes, getPersonaChatRuntime, haltPersonaChatRuns } from "./routes/chat.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerSessionRoutes } from "./routes/sessions.js";
 import { registerAuthRoutes } from "./routes/auth.js";
@@ -46,6 +46,7 @@ import { registerScreenShareRoutes } from "./routes/screen-share.js";
 import { registerFilesystemRoutes } from "./routes/filesystem.js";
 import { registerAssistantProfileRoutes } from "./routes/assistant-profiles.js";
 import { registerThreadRoutes } from "./routes/threads.js";
+import { registerAgentControlRoutes } from "./routes/agent-control.js";
 import { registerProviderRoutes } from "./routes/providers.js";
 import { registerRepoRoutes } from "./routes/repositories.js";
 import { registerPullRequestRoutes } from "./routes/pull-requests.js";
@@ -91,6 +92,7 @@ import type { ScreenShareService } from "@jait/screen-share";
 import type { SessionStateService } from "./services/session-state.js";
 import type { ProjectStateService } from "./services/project-state.js";
 import type { ThreadService } from "./services/threads.js";
+import { AgentControlService, type AgentStopResult } from "./services/agent-control.js";
 import type { RepositoryService } from "./services/repositories.js";
 import type { GitService } from "./services/git.js";
 import type { PlanService } from "./services/plans.js";
@@ -264,17 +266,45 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
   if (deps.userService) {
     registerAuthRoutes(app, config, deps.userService, deps.toolRegistry);
   }
+  // Owner-wide autonomous-execution kill switch. Created before the routes that
+  // consult it so every dispatch path shares one instance (and one durable row).
+  const agentControl = deps.db
+    ? new AgentControlService(deps.db, {
+      stopRunning: async (userId) => {
+        const stopThreads = (app as unknown as { stopUserThreads?: (id: string) => Promise<AgentStopResult> }).stopUserThreads;
+        const results = await Promise.all([stopThreads?.(userId) ?? { stopped: 0, errors: [] }, haltPersonaChatRuns(userId)]);
+        return { stopped: results.reduce((sum, result) => sum + result.stopped, 0), errors: results.flatMap(result => result.errors) };
+      },
+      onChange: ({ userId, state }) => {
+        deps.ws?.broadcastToUser(userId, {
+          type: "agent.halted",
+          sessionId: "",
+          timestamp: new Date().toISOString(),
+          payload: state,
+        });
+        // Resume is the only path that clears a halt. Deliveries the stop held
+        // back are still queued, so lifting the halt has to restart the pump.
+        if (!state.halted) void teamChat?.pump();
+      },
+    })
+    : undefined;
+  if (agentControl) {
+    if (deps.ws) deps.ws.getAgentControlState = userId => agentControl.getState(userId);
+    registerAgentControlRoutes(app, config, { agentControl, audit: deps.audit });
+  }
   const teamChat = deps.db && deps.sessionService && deps.threadService && deps.userService
     ? new TeamChatService(deps.db, deps.sessionService, deps.threadService, (userId, agent) => {
       const repository = agent.repositoryIds.map(id => deps.repoService?.getById(id)).find(repo => repo?.userId === userId);
       return repository?.localPath;
     }) : undefined;
   if (teamChat && deps.db && deps.userService && deps.sessionService) {
-    registerTeamChatRoutes(app, config, teamChat, deps.db, deps.userService, deps.threadService!);
+    if (agentControl) teamChat.setHaltGuard(userId => agentControl.isHalted(userId));
+    registerTeamChatRoutes(app, config, teamChat, deps.db, deps.userService, deps.threadService!, agentControl);
     deps.toolRegistry?.register(createTeamChatTool(teamChat, deps.sessionService));
   }
   registerChatRoutes(app, config, {
     teamChat,
+    agentControl,
     db: deps.db,
     sessionService: deps.sessionService,
     toolRegistry: deps.toolRegistry,
@@ -457,6 +487,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
       skillRegistry: deps.skillRegistry,
       ws: deps.ws,
       gitService: deps.gitService,
+      agentControl,
     });
   }
 

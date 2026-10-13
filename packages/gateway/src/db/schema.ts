@@ -864,3 +864,17 @@ export const teamDeliveries = sqliteTable("team_room_deliveries", {
   status: text("status").notNull(),
   error: text("error"),
 }, table => [index("idx_team_delivery_status").on(table.status)]);
+
+/**
+ * Owner-wide hard stop. One row per user; `halted = true` freezes every
+ * autonomous execution path (agent threads, team deliveries, routed work)
+ * until the same user resumes it. Deliberately *not* per-agent: an emergency
+ * stop must be reachable without first identifying which identity is spinning.
+ */
+export const agentControl = sqliteTable("agent_control", {
+  userId: text("user_id").primaryKey(),
+  halted: integer("halted", { mode: "boolean" }).notNull().default(false),
+  reason: text("reason"),
+  haltedAt: text("halted_at"),
+  updatedAt: text("updated_at").notNull(),
+});

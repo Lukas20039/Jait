@@ -181,6 +181,10 @@ interface UseUICommandsOptions {
   /** Called with the authoritative running-session set after every WebSocket connection. */
   onSessionStreamingSnapshot?: (sessionIds: string[]) => void
   onConsentEvent?: (event: { type: string; payload: unknown }) => void
+  /** Called when the gateway broadcasts a `user.ask` question lifecycle event. */
+  onUserQuestionEvent?: (event: { type: string; payload: unknown }) => void
+  /** Called with the authoritative agent-control state after a halt/resume. */
+  onAgentHaltEvent?: (payload: unknown) => void
   /** Called when the gateway broadcasts a thread lifecycle event. */
   onThreadEvent?: ThreadEventHandler
   /** Called when the gateway broadcasts preview session state changes. */
@@ -217,6 +221,8 @@ export function useUICommands(opts: UseUICommandsOptions) {
     onSessionStreamingChange,
     onSessionStreamingSnapshot,
     onConsentEvent,
+    onUserQuestionEvent,
+    onAgentHaltEvent,
     onThreadEvent,
     onFsChanges,
     onConnectionStateChange,
@@ -238,6 +244,10 @@ export function useUICommands(opts: UseUICommandsOptions) {
   onSessionStreamingSnapshotRef.current = onSessionStreamingSnapshot
   const onConsentEventRef = useRef(onConsentEvent)
   onConsentEventRef.current = onConsentEvent
+  const onUserQuestionEventRef = useRef(onUserQuestionEvent)
+  onUserQuestionEventRef.current = onUserQuestionEvent
+  const onAgentHaltEventRef = useRef(onAgentHaltEvent)
+  onAgentHaltEventRef.current = onAgentHaltEvent
   const onThreadEventRef = useRef(onThreadEvent)
   onThreadEventRef.current = onThreadEvent
   const onPreviewSessionEventRef = useRef(onPreviewSessionEvent)
@@ -328,6 +338,14 @@ export function useUICommands(opts: UseUICommandsOptions) {
         }
       } else if (['consent.required', 'consent.resolved', 'consent.pending-snapshot'].includes(msg.type)) {
         onConsentEventRef.current?.(msg)
+      } else if (['user-question.requested', 'user-question.resolved', 'user-question.pending-snapshot'].includes(msg.type)) {
+        // Pending `user.ask` questions — the sidebar badges the owning chat so a
+        // question raised in a background chat is visible without opening it.
+        onUserQuestionEventRef.current?.(msg)
+      } else if (msg.type === 'agent.halted') {
+        // Owner-wide kill switch changed on some device. Driven from the server
+        // payload so a halt started in another tab (or a resume) lands here too.
+        onAgentHaltEventRef.current?.(msg.payload)
       } else if (msg.type === 'session.streaming') {
         // Any of the user's sessions started/stopped streaming — sidebar-wide, not session-scoped
         const payload = msg.payload as SessionStreamingData
@@ -714,6 +732,11 @@ export function useUICommands(opts: UseUICommandsOptions) {
           type: 'resource.subscribe',
           payload: { resource: 'root:/pending-consents' },
         }))
+        ws.send(JSON.stringify({
+          type: 'resource.subscribe',
+          payload: { resource: 'root:/pending-questions' },
+        }))
+        ws.send(JSON.stringify({ type: 'resource.subscribe', payload: { resource: 'root:/agent-control' } }))
         ws.send(JSON.stringify({
           type: 'resource.subscribe',
           payload: { resource: 'root:/streaming-sessions' },

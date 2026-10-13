@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from 'react'
-import { ShieldQuestion, Folder, FolderOpen, FolderInput, FolderX, Monitor, Plus, Smartphone, Globe, Archive, WifiOff, Loader2, MessageSquare, GitBranch, Search, MoreVertical, ChevronRight, ChevronDown, FolderPlus, Settings2, CornerUpLeft, Code } from 'lucide-react'
+import { CircleQuestionMark, ShieldQuestion, Folder, FolderOpen, FolderInput, FolderX, Monitor, Plus, Smartphone, Globe, Archive, WifiOff, Loader2, MessageSquare, GitBranch, Search, MoreVertical, ChevronRight, ChevronDown, FolderPlus, Settings2, CornerUpLeft, Code } from 'lucide-react'
 import { buildProjectTree, flattenProjectTree, validateProjectMove } from '@jait/shared'
 import { ProjectColorDot } from '@/components/project/project-color-picker'
 import { getSessionContextMenuHeight, SessionContextMenu } from '@/components/chat/session-context-menu'
@@ -86,6 +86,8 @@ interface SessionSelectorProps {
   /** IDs of sessions currently generating a response — rendered with a loading spinner. */
   streamingSessionIds?: Set<string>
   approvalSessionIds?: ReadonlySet<string>
+  /** IDs of sessions with an open `user.ask` question awaiting an answer. */
+  questionSessionIds?: ReadonlySet<string>
   sessionInfo?: SessionInfo | null
   nodes?: FsNode[]
   repositories?: AutomationRepository[]
@@ -207,6 +209,7 @@ export function SessionSelector({
   onDismiss,
   streamingSessionIds,
   approvalSessionIds,
+  questionSessionIds,
   sessionInfo,
   nodes = [],
   repositories = [],
@@ -760,6 +763,11 @@ export function SessionSelector({
                               <ShieldQuestion className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Chat waiting for approval" />
                             </TooltipHint>
                           )}
+                          {project.sessions.some(session => questionSessionIds?.has(session.id)) && (
+                            <TooltipHint content="Chat has a question">
+                              <CircleQuestionMark className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Chat has a question" />
+                            </TooltipHint>
+                          )}
                           <span className={`min-w-0 truncate text-xs ${hasUnreadSessions ? 'font-bold text-foreground' : 'font-normal'}`}>
                             {project.title || (isFolder ? 'Untitled folder' : 'Untitled Project')}
                           </span>
@@ -1012,6 +1020,7 @@ export function SessionSelector({
                               isActive={isActiveSession}
                               isStreaming={isStreaming}
                               isWaitingForApproval={approvalSessionIds?.has(session.id)}
+                              isAwaitingAnswer={questionSessionIds?.has(session.id)}
                               dragProps={{
                                 draggable: true,
                                 onDragStart: (e) => {
@@ -1179,7 +1188,8 @@ export function SessionSelector({
                       session={session}
                       isActive={isActive}
                       isStreaming={isStreaming}
-                              isWaitingForApproval={approvalSessionIds?.has(session.id)}
+                      isWaitingForApproval={approvalSessionIds?.has(session.id)}
+                      isAwaitingAnswer={questionSessionIds?.has(session.id)}
                       fallbackLabel="Personal chat"
                       dragProps={{
                         draggable: true,

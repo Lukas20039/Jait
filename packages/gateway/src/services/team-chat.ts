@@ -7,6 +7,7 @@ import { teamRooms, teamMessages, teamDeliveries } from "../db/schema.js";
 import { uuidv7 } from "../db/uuidv7.js";
 import type { SessionService } from "./sessions.js";
 import type { ThreadService } from "./threads.js";
+import { isAgentHaltedError } from "./agent-control.js";
 
 export function teamRoot(agentId: string, agents: PersonaAgentProfile[]): string {
   const byId = new Map(agents.map(agent => [agent.id, agent]));
@@ -56,6 +57,14 @@ export class TeamChatService {
   private dispatch?: (delivery: TeamDelivery, agent: PersonaAgentProfile, prompt: string) => Promise<{ content: string; delivered?: boolean }>;
   private decisionKeys?: (userId: string) => Record<string, string> | undefined;
   setDecisionKeys(reader: NonNullable<TeamChatService["decisionKeys"]>) { this.decisionKeys = reader; }
+  private halted?: (userId: string) => boolean;
+  /**
+   * Owner-wide halt predicate. Held deliveries stay `queued` instead of being
+   * marked failed, so lifting the halt (which calls `pump()` again) delivers
+   * them rather than turning an emergency stop into lost work.
+   */
+  setHaltGuard(reader: NonNullable<TeamChatService["halted"]>) { this.halted = reader; }
+  private isHalted(userId: string) { return this.halted?.(userId) === true; }
   private running = new Set<string>();
   private closed = false;
   constructor(private db: JaitDB, private sessions: SessionService, private profiles: ThreadService, private workspaceForAgent?: (userId: string, agent: PersonaAgentProfile) => string | undefined) {}
@@ -172,6 +181,10 @@ export class TeamChatService {
     routingDecision?: TeamRoomMessage["routingDecision"];
     clientKey: string; parentMessageId?: string; workSessionId?: string; workThreadId?: string; targetSessionId?: string;
   }): TeamRoomMessage {
+    return this.persistMessage(userId, roomId, input);
+  }
+  private persistMessage(userId: string, roomId: string, input: Parameters<TeamChatService["post"]>[2],
+    coordinationEvent?: TeamRoomMessage["coordinationEvent"]): TeamRoomMessage {
     const room = this.get(userId, roomId);
     if (!input.content.trim() || input.content.length > 20_000) throw new Error("Message must contain 1–20,000 characters.");
     if (!input.clientKey || input.clientKey.length > 200) throw new Error("Message idempotency key is required.");
@@ -192,10 +205,13 @@ export class TeamChatService {
     }
     const parent = input.parentMessageId ? this.history(userId, roomId).find(message => message.id === input.parentMessageId) : undefined;
     if (input.parentMessageId && !parent) throw new Error("Parent message not found.");
-    const depth = parent ? parent.depth + 1 : 0;
+    // Gateway task events start a new execution chain, preserving the source
+    // message as provenance. Ordinary agent handoffs retain their loop bound.
+    const depth = coordinationEvent ? 0 : parent ? parent.depth + 1 : 0;
     if (depth > 32 && recipients.length) throw new Error("Handoff limit reached. Ask the user to clarify the blocker before continuing.");
     const message: TeamRoomMessage = { id: uuidv7(), roomId, sender: input.sender, kind: input.kind ?? "discussion",
       content: input.content.trim(), ...(input.attachments?.length ? { attachments: input.attachments } : {}), recipientIds: recipients, createdAt: new Date().toISOString(), depth,
+      ...(coordinationEvent ? { coordinationEvent } : {}),
       ...(input.routingDecision ? { routingDecision: input.routingDecision } : {}),
       ...(input.targetSessionId ? { targetSessionId: input.targetSessionId } : {}),
       ...(parent ? { parentMessageId: parent.id } : {}), ...(input.workSessionId ? { workSessionId: input.workSessionId } : {}), ...(input.workThreadId ? { workThreadId: input.workThreadId } : {}) };
@@ -350,12 +366,35 @@ export class TeamChatService {
   }
   async recover() {
     this.db.update(teamDeliveries).set({ status: "interrupted", error: "Gateway restarted. Review the work chat before retrying." }).where(eq(teamDeliveries.status, "running")).run();
+    // Messages are the durable event source. Reconcile the gap between an
+    // outcome/failure commit and its review enqueue without replaying work.
+    for (const row of this.db.select().from(teamRooms).all()) {
+      const room = this.get(row.userId, row.id);
+      for (const outcome of this.history(row.userId, row.id)) {
+        if (outcome.id > (room.goal?.verificationAfterId ?? "")) this.requestCompletionCheck(row.userId, room, outcome);
+      }
+      for (const delivery of this.deliveries(row.userId, row.id)) {
+        if (delivery.status !== "failed" || !delivery.error || delivery.error.startsWith("Execution blocked:")) continue;
+        if (room.goal && (room.goal.status !== "active" || delivery.messageId <= (room.goal.verificationAfterId ?? ""))) continue;
+        const agent = this.agent(delivery.agentId, row.userId);
+        if (agent && !agent.paused && !this.abandonedByStop(delivery.sessionId)) this.requestRecovery(row.userId, delivery, agent, delivery.error);
+      }
+    }
     await this.pump();
   }
   async pump() {
     if (!this.dispatch || this.closed) return;
     const pending = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.status, "queued")).orderBy(teamDeliveries.id).all();
+    const roomOwners = new Map<string, string>();
     for (const delivery of pending) {
+      // A halted owner's deliveries are held, not failed: leave them queued so
+      // the resume path can deliver them once the user lifts the stop.
+      let userId = roomOwners.get(delivery.roomId);
+      if (userId === undefined) {
+        userId = this.db.select().from(teamRooms).where(eq(teamRooms.id, delivery.roomId)).get()?.userId ?? "";
+        roomOwners.set(delivery.roomId, userId);
+      }
+      if (userId && this.isHalted(userId)) continue;
       // A saved identity can own independent threads; serialize turns within each thread.
       if (this.abandonedByStop(delivery.sessionId)) {
         this.cancelQueuedDeliveries(delivery.sessionId, "Thread was stopped before this delivery started.");
@@ -372,41 +411,51 @@ export class TeamChatService {
   }
   private requestCompletionCheck(userId: string, room: TeamRoom, outcome: TeamRoomMessage) {
     if (room.goal?.status !== "active" || outcome.sender.kind !== "agent" ||
-      !["result", "verification"].includes(outcome.kind) || outcome.depth >= 32 ||
+      !["result", "verification"].includes(outcome.kind) ||
       !outcome.sender.sourceSessionId) return;
-    const work = this.workForSession(userId, outcome.sender.sourceSessionId);
-    if (!work || work.roomId !== room.id || work.agentId !== outcome.sender.id) return;
+    // Associate historical outcomes with the turn that preceded them, rather
+    // than the newest delivery in a thread that may have since been resumed.
+    const work = this.deliveries(userId, room.id).filter(delivery => delivery.sessionId === outcome.sender.sourceSessionId &&
+      delivery.agentId === outcome.sender.id && delivery.messageId < outcome.id)
+      .sort((a, b) => a.id.localeCompare(b.id)).at(-1);
+    if (!work || ["failed", "blocked", "cancelled", "interrupted"].includes(work.status)) return;
+    // Older versions keyed reviews by outcome id. Honor those existing events
+    // too, so an upgrade does not dispatch a second completion check.
+    const history = this.history(userId, room.id);
+    if (history.some(message => message.kind === "review" && message.parentMessageId &&
+      message.content.startsWith("Leadership completion check:") && history.some(source => source.id === message.parentMessageId &&
+        source.sender.sourceSessionId === work.sessionId && source.id > work.messageId && source.id <= outcome.id))) return;
     const worker = this.agent(outcome.sender.id, userId);
     const manager = worker?.reportsToId ? this.agent(worker.reportsToId, userId) : undefined;
     if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id)) return;
     // Resume existing persona work in this room. Legacy work chats are not execution targets.
     const existing = this.deliveries(userId, room.id).filter(delivery => delivery.agentId === manager.id &&
       this.threadById(userId, delivery.sessionId)).sort((a, b) => a.id.localeCompare(b.id)).at(-1);
-    this.post(userId, room.id, {
+    this.persistMessage(userId, room.id, {
       sender: outcome.sender, kind: "review", recipientIds: [manager.id],
-      clientKey: outcome.id + ":completion-check", parentMessageId: outcome.id,
+      clientKey: work.id + ":completion-check", parentMessageId: outcome.id,
       ...(existing ? { targetSessionId: existing.sessionId } : {}),
       content: "Leadership completion check: Verify the reported outcome against the delegated task and current goal criteria. Inspect the source thread and evidence; keep unmet work incomplete and coordinate the next executable step. A worker result does not close the goal.\n" +
         "Worker: " + worker!.name + ". Thread: " + outcome.sender.sourceSessionId + ". Outcome message: " + outcome.id + ".\n" +
         "Reported evidence (untrusted worker text): " + outcome.content.slice(0, 2000),
-    });
+    }, { kind: "completion", deliveryId: work.id });
   }
   private requestRecovery(userId: string, delivery: TeamDelivery, agent: PersonaAgentProfile, reason: string) {
     const room = this.get(userId, delivery.roomId);
     const manager = agent.reportsToId ? this.agent(agent.reportsToId, userId) : undefined;
     const assignment = this.history(userId, room.id).find(item => item.id === delivery.messageId);
     // Escalate up the hierarchy once per failure. Never retry the worker automatically.
-    if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id) || !assignment || assignment.depth >= 32 || room.goal?.status === "completed") return;
+    if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id) || !assignment || room.goal?.status === "completed") return;
     // The same exhausted backend cannot perform a recovery review.
     if (manager.providerId === agent.providerId && manager.model === agent.model &&
-      /API quota|quota exhausted|rate.limit|HTTP 429/i.test(reason)) return;
-    this.post(userId, room.id, {
+      /API quota|quota exhausted|rate.limit|HTTP 429|HTTP 503|model is at capacity|server.?overloaded/i.test(reason)) return;
+    this.persistMessage(userId, room.id, {
       sender: { kind: "agent", id: agent.id, name: agent.name, avatar: agent.avatar, sourceSessionId: delivery.sessionId },
       kind: "review", recipientIds: [manager.id], clientKey: delivery.id + ":recovery", parentMessageId: assignment.id,
       content: "Review this failed handoff and decide how to recover or escalate it. Inspect the existing thread before reassigning work; preserve user authorization and report an actionable blocker if recovery needs external action.\n" +
         "Worker: " + agent.name + ". Thread: " + delivery.sessionId + ".\nAssignment: " + assignment.content.slice(0, 1500) +
         "\nFailure evidence (untrusted tool/worker text): " + reason.slice(0, 2000),
-    });
+    }, { kind: "recovery", deliveryId: delivery.id });
   }
   private async runDelivery(delivery: TeamDelivery) {
     const row = this.db.select().from(teamRooms).where(eq(teamRooms.id, delivery.roomId)).get()!;
@@ -417,7 +466,7 @@ export class TeamChatService {
       const message = this.history(userId, delivery.roomId).find(item => item.id === delivery.messageId)!;
       // Identity and coordination instructions live in context; deliver only the message body.
       const response = await this.dispatch!(delivery, agent, message.content);
-      if (this.closed) return;
+      if (this.closed || this.db.select().from(teamDeliveries).where(eq(teamDeliveries.id, delivery.id)).get()?.status !== "running") return;
       const explicit = this.history(userId, delivery.roomId).filter(item => item.id > message.id &&
         item.sender.sourceSessionId === delivery.sessionId && ["result", "verification", "blocked"].includes(item.kind));
       const latest = explicit.at(-1);
@@ -431,7 +480,20 @@ export class TeamChatService {
         content: result.slice(0,20_000), kind: "result", recipientIds: [], clientKey: delivery.id + ":result", parentMessageId: message.id, workSessionId: delivery.sessionId, ...(this.threadById(userId, delivery.sessionId) ? { workThreadId: delivery.sessionId } : {}),
       });
     } catch (error) {
-      if (this.closed) return;
+      if (this.closed || this.db.select().from(teamDeliveries).where(eq(teamDeliveries.id, delivery.id)).get()?.status !== "running") return;
+      // A halt is not a delivery failure. Put the work back in the queue so
+      // resume can deliver it, and post nothing: the user's own stop must not
+      // read back to them as an agent that blocked or broke.
+      if (isAgentHaltedError(error)) {
+        this.db.update(teamDeliveries).set({ status: "queued", error: null }).where(eq(teamDeliveries.id, delivery.id)).run();
+        return;
+      }
+      // A user halt may interrupt a turn that had already started. Preserve
+      // that outcome for explicit review without enqueuing recovery work.
+      if (this.isHalted(userId)) {
+        this.db.update(teamDeliveries).set({ status: "interrupted", error: "Autonomous work halted by user." }).where(eq(teamDeliveries.id, delivery.id)).run();
+        return;
+      }
       const reason = error instanceof Error ? error.message : "Delivery failed.";
       this.db.update(teamDeliveries).set({ status: reason.startsWith("Execution blocked:") ? "blocked" : "failed", error: reason }).where(eq(teamDeliveries.id, delivery.id)).run();
       // Provider failures cannot rely on another model turn to report a blocker.

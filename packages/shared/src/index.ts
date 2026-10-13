@@ -1,4 +1,7 @@
 // @jait/shared — main entry point
+export * from "./chat-node.js";
+export * from "./agent-control.js";
+
 export * from "./types/index.js";
 export * from "./schemas/index.js";
 export * from "./constants/index.js";

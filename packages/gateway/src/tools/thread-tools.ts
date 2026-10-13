@@ -1,3 +1,4 @@
+import { agentHaltedBody } from "../services/agent-control.js";
 import { existsSync } from "node:fs";
 import type { WsEventType } from "@jait/shared";
 import type { AppConfig } from "../config.js";
@@ -526,6 +527,8 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
       return { ok: false, message: `Provider '${effectiveProviderId}' is not available: ${provider.info.unavailableReason ?? "unknown reason"}` };
     }
 
+    deps.threadService.agentControl.assertCanRun(effectiveThread.userId ?? context.userId ?? "", "start-thread");
+
     const mcpServers = deps.mcpConfig
       ? deps.providerRegistry.buildJaitMcpServerRefs(deps.mcpConfig, undefined, {
           sessionId: effectiveThread.id,
@@ -543,6 +546,11 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
         reasoningEffort: effectiveThread.reasoningEffort ?? undefined,
         mcpServers,
       });
+
+      if (deps.threadService.agentControl.isHalted(effectiveThread.userId ?? context.userId ?? "")) {
+        await provider.stopSession(session.id);
+        return { ok: false, message: "Autonomous agents are halted. Resume agents to continue." };
+      }
 
       if (options.generateTitleFromPrompt) {
         await generateAndApplyThreadTitle(context, effectiveThread, provider, effectiveProviderId, session.id, rawMessage);
@@ -704,6 +712,12 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
         }
       }
 
+      // Title generation may have awaited a model turn while a halt arrived.
+      if (deps.threadService.agentControl.isHalted(effectiveThread.userId ?? context.userId ?? "")) {
+        cleanup();
+        await provider.stopSession(session.id);
+        return { ok: false, message: "Autonomous agents are halted. Resume agents to continue." };
+      }
       deps.threadService.markRunning(effectiveThread.id, session.id);
       broadcastThreadStatus(effectiveThread.id, "running");
 
@@ -883,7 +897,13 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
 
     async execute(input, context): Promise<ToolResult> {
       const userId = ensureUserId(context);
-      const caller = deps.threadService.getById(context.threadId ?? context.sessionId);
+      const control = deps.threadService.agentControl;
+      if (["create", "create_many", "start", "send"].includes(input.action) && control.isHalted(userId)) {
+        const body = agentHaltedBody(control.getState(userId), input.action);
+        return { ok: false, message: String(body.error), data: body };
+      }
+      const callerId = context.threadId ?? context.sessionId;
+      const caller = callerId ? deps.threadService.getById(callerId) : undefined;
       if (caller?.personaAgentId && caller.userId === userId && ["create", "create_many"].includes(input.action)) {
         return { ok: false, message: "Saved-team agents coordinate new work through addressed team.chat assignments. Post results directly; do not create relay/helper threads." };
       }

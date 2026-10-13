@@ -5,6 +5,11 @@ import { signAuthToken } from "../security/http-auth.js";
 import { SessionStateService } from "../services/session-state.js";
 import { SessionService } from "../services/sessions.js";
 import { UserService } from "../services/users.js";
+import { ThreadService } from "../services/threads.js";
+import { TeamChatService } from "../services/team-chat.js";
+import { createTeamChatTool } from "../tools/team-chat-tools.js";
+import type { AppConfig } from "../config.js";
+import type { ToolContext } from "../tools/contracts.js";
 import { createTodoTool } from "../tools/core/todo.js";
 import { ToolRegistry } from "../tools/registry.js";
 import {
@@ -1091,6 +1096,94 @@ describe("mcp-server", () => {
         model: "gpt-5-codex",
         runtimeMode: "supervised",
       });
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  it.each(["/mcp", "/mcp/sse"])("resolves a worker's owner and execution context through %s", async (endpoint) => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      // The most recent chat belongs to someone else; worker calls must keep
+      // their own durable identity rather than adopting global chat defaults.
+      sessionService.create({ userId: "other-user", name: "Unrelated chat" });
+      const thread = threadService.create({
+        userId: "worker-owner",
+        personaAgentId: "developer",
+        title: "Worker preflight",
+        providerId: "codex",
+        model: "gpt-5.5",
+        runtimeMode: "supervised",
+        workingDirectory: "/project/worker",
+      });
+      let capturedContext: ToolContext | undefined;
+      const registry = new ToolRegistry();
+      registry.register({
+        name: "agent.github",
+        description: "Inspect worker identity",
+        parameters: { type: "object", properties: {} },
+        async execute(_input, context) {
+          capturedContext = context;
+          return context.userId
+            ? { ok: true, message: "Authenticated worker" }
+            : { ok: false, message: "Authenticated user required." };
+        },
+      });
+      registry.register(createTeamChatTool(new TeamChatService(db, sessionService, threadService), sessionService));
+      const app = Fastify();
+      appsToClose.push(app);
+      registerMcpRoutes(app, {
+        toolRegistry: registry, sessionService, threadService,
+        config: { host: "127.0.0.1", port: 3000, jwtSecret: "test-secret" } as AppConfig,
+      });
+      const response = await app.inject({
+        method: "POST",
+        url: `${endpoint}?sessionId=${thread.id}`,
+        payload: {
+          jsonrpc: "2.0", id: 1, method: "tools/call",
+          params: { name: "agent_github", arguments: {} },
+        },
+      });
+      expect(response.json().result).toMatchObject({ isError: false });
+      expect(capturedContext).toMatchObject({
+        sessionId: thread.id,
+        threadId: thread.id,
+        userId: "worker-owner",
+        projectRoot: "/project/worker",
+        providerId: "codex",
+        model: "gpt-5.5",
+        runtimeMode: "supervised",
+      });
+      const teamResponse = await app.inject({
+        method: "POST",
+        url: `${endpoint}?sessionId=${thread.id}`,
+        payload: {
+          jsonrpc: "2.0", id: 2, method: "tools/call",
+          params: { name: "team_chat", arguments: { action: "list" } },
+        },
+      });
+      expect(teamResponse.json().result).toMatchObject({
+        isError: false,
+        content: [{ text: expect.stringContaining("Persistent team rooms.") }],
+      });
+
+      const token = await signAuthToken({ id: "other-user", username: "other" }, "test-secret");
+      await app.inject({
+        method: "POST",
+        url: `${endpoint}?sessionId=${thread.id}`,
+        headers: { authorization: `Bearer ${token}` },
+        payload: {
+          jsonrpc: "2.0", id: 3, method: "tools/call",
+          params: { name: "agent_github", arguments: {} },
+        },
+      });
+      expect(capturedContext?.userId).toBe("other-user");
+      expect(capturedContext?.threadId).toBeUndefined();
+      expect(capturedContext?.providerId).toBeUndefined();
+      expect(capturedContext?.projectRoot).not.toBe("/project/worker");
     } finally {
       sqlite.close();
     }

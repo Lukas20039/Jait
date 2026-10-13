@@ -1,6 +1,7 @@
+import { agentHaltedBody, type AgentControlService, type AgentStopResult } from "../services/agent-control.js";
 import type { TeamChatService } from "../services/team-chat.js";
 import { rankSystemOne, systemOneEnabled, SYSTEM_ONE_PROMPT } from "../services/system-one.js";
-import { chatNotificationLink, notificationPreview } from "@jait/shared";
+import { getPersonalChatNodeId, chatNotificationLink, notificationPreview } from "@jait/shared";
 import { Buffer } from "node:buffer";
 import { createHash, randomUUID } from "node:crypto";
 import { hostname } from "node:os";
@@ -401,6 +402,10 @@ export function normalizeProviderSessionError(message: string): string {
     "limit exceeded",
   ].some((needle) => lower.includes(needle));
   return isAuthOrLimitError ? "Authentication required" : compact;
+}
+
+export function isChatTurnActive(sessionId: string): boolean {
+  return activeStreams.has(sessionId) || activeCliTurns.has(sessionId);
 }
 
 export function canUseGatewayProviderForProject(projectNodeId: string | null | undefined): boolean {
@@ -1174,6 +1179,26 @@ const activePersonaOwners = new Map<string, string>();
 
 export function getAgentSessionRuntime(sessionId: string): { running: boolean } {
   return { running: activeStreams.has(sessionId) };
+}
+
+/** Abort saved-agent chat turns as part of the owner halt; personal chats remain usable. */
+export async function haltPersonaChatRuns(userId: string): Promise<AgentStopResult> {
+  const sessions = [...activeStreams].filter(id => activePersonaOwners.get(id) === userId && sessionStreamingState.get(id)?.persona?.id);
+  const result: AgentStopResult = { stopped: 0, errors: [] };
+  await Promise.all(sessions.map(async id => {
+    const active = activeCliSessions.get(id);
+    sessionAbortControllers.get(id)?.abort();
+    try {
+      if (active) {
+        await active.provider.stopSession(active.providerSessionId);
+        if (activeCliSessions.get(id) === active) activeCliSessions.delete(id);
+      }
+      result.stopped++;
+    } catch (error) {
+      result.errors.push(`${id}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }));
+  return result;
 }
 
 export function getPersonaChatRuntime(userId: string, personaId: string): { count: number; state: "running" | "waiting" | "idle" } {
@@ -2618,6 +2643,7 @@ export const __chatTestUtils = {
 };
 
 export interface ChatRouteDeps {
+  agentControl?: AgentControlService;
   teamChat?: TeamChatService;
   db?: JaitDB;
   sessionService?: SessionService;
@@ -2664,6 +2690,7 @@ export function registerChatRoutes(
   let skillRegistry: SkillRegistry | undefined;
   let architectureDiagrams: ArchitectureDiagramService | undefined;
   let teamChat: TeamChatService | undefined;
+  let agentControl: AgentControlService | undefined;
 
   if (depsOrDb && typeof depsOrDb === "object" && "sessionService" in depsOrDb) {
     const deps = depsOrDb as ChatRouteDeps;
@@ -2683,6 +2710,7 @@ export function registerChatRoutes(
     skillRegistry = deps.skillRegistry;
     architectureDiagrams = deps.architectureDiagrams;
     teamChat = deps.teamChat;
+    agentControl = deps.agentControl;
   } else {
     db = depsOrDb as JaitDB | undefined;
     sessionService = sessionServiceArg;
@@ -3298,13 +3326,21 @@ export function registerChatRoutes(
       : null;
     const projectRootPath = projectService?.effectiveRootPath(projectRecord, authUser.id)
       ?? sessionRecord?.projectPath;
-    const wsRoot = surfaceRegistry
+    const personalNodeId = getPersonalChatNodeId(sessionRecord);
+    if (personalNodeId && personalNodeId !== "gateway" && !ws?.canAccessNode?.(personalNodeId, authUser.id)) {
+      return reply.status(403).send({ error: "NODE_FORBIDDEN", details: "The selected node does not belong to this user" });
+    }
+    const wsRoot = personalNodeId
+      ? personalNodeId === "gateway" ? process.cwd() : "."
+      : surfaceRegistry
       ? resolveProjectRoot(surfaceRegistry, sessionId, projectRootPath)
       : (projectRootPath?.trim() || process.cwd());
 
     // Only the gateway's own providers are pre-warmed (see route comment).
-    const projectNodeId = projectRecord?.nodeId?.trim();
-    const remoteSurfaceNodeId = surfaceRegistry?.getBySession(sessionId)
+    const projectNodeId = projectRecord?.nodeId?.trim() ?? getPersonalChatNodeId(sessionRecord);
+    const remoteSurfaceNodeId = getPersonalChatNodeId(sessionRecord)
+          ? undefined
+          : surfaceRegistry?.getBySession(sessionId)
       .map((surface) => surface.snapshot().metadata as Record<string, unknown> | undefined)
       .find((metadata) => metadata?.remote === true && typeof metadata.nodeId === "string")
       ?.nodeId as string | undefined;
@@ -3477,6 +3513,9 @@ export function registerChatRoutes(
       ? (requestedPersonaId ? teamChat?.profileById(authUser.id, requestedPersonaId) : undefined)
       : teamChat?.profileForSession(authUser.id, sessionId);
     if (requestedPersonaId && !personaProfile) return reply.status(404).send({ error: "NOT_FOUND", details: "Agent profile not found" });
+    if (personaProfile && agentControl?.isHalted(authUser.id)) {
+      return reply.status(409).send(agentHaltedBody(agentControl.getState(authUser.id), "agent-chat"));
+    }
     if (personaProfile?.paused) return reply.status(409).send({ error: "AGENT_PAUSED", details: "Agent is paused" });
     const persona: PersonaChatSnapshot | undefined = personaProfile ? {
       id: personaProfile.id, name: personaProfile.name, avatar: personaProfile.avatar, role: personaProfile.role,
@@ -3496,6 +3535,10 @@ export function registerChatRoutes(
       const session = sessionService.getById(sessionId, authUser.id);
       if (!session) {
         return reply.status(404).send({ error: "NOT_FOUND", details: "Session not found" });
+      }
+      const selectedNodeId = getPersonalChatNodeId(session);
+      if (selectedNodeId && selectedNodeId !== "gateway" && !ws?.canAccessNode?.(selectedNodeId, authUser.id)) {
+        return reply.status(403).send({ error: "NODE_FORBIDDEN", details: "The selected node does not belong to this user" });
       }
       const boundProfile = teamChat?.profileForSession(authUser.id, sessionId);
       let hasTeamWork = false;
@@ -3664,7 +3707,10 @@ export function registerChatRoutes(
     // working directory.
     const projectRootPath = projectService?.effectiveRootPath(projectRecord, authUser.id)
       ?? sessionRecord?.projectPath;
-    const wsRoot = surfaceRegistry
+    const personalNodeId = getPersonalChatNodeId(sessionRecord);
+    const wsRoot = personalNodeId
+      ? personalNodeId === "gateway" ? process.cwd() : "."
+      : surfaceRegistry
       ? resolveProjectRoot(surfaceRegistry, sessionId, projectRootPath)
       : (projectRootPath?.trim() || process.cwd());
     // Graphify: surface the saved project architecture graph so the agent
@@ -3684,8 +3730,9 @@ export function registerChatRoutes(
     const projectInstructions = sessionRecord?.projectId
       ? projectService?.resolveInstructionChain(sessionRecord.projectId, authUser.id) ?? undefined
       : undefined;
-    const projectNode = projectRecord?.nodeId && projectRecord.nodeId !== "gateway"
-      ? ws?.findNodeByDeviceId(projectRecord.nodeId)
+    const chatNodeId = projectRecord?.nodeId ?? getPersonalChatNodeId(sessionRecord);
+    const projectNode = chatNodeId && chatNodeId !== "gateway"
+      ? ws?.findNodeByDeviceId(chatNodeId)
       : undefined;
     const projectPlatform = projectNode?.platform ?? process.platform;
     if (hasPersonaSelection && sessionService && sessionRecord) {
@@ -3916,6 +3963,33 @@ export function registerChatRoutes(
       cliEventUnsubscribe?.();
       cliEventUnsubscribe = null;
     };
+
+    // ── Outer guard ──────────────────────────────────────────────────────────
+    // This `try` must open *before* the first registry mutation below
+    // (`activePersonaOwners` / `activeStreams`) and before the awaited memory
+    // retrieval further down, so that every failure after the session is
+    // registered is covered by the `finally` teardown at the end of this
+    // handler. Anything that throws before the guard — most plausibly
+    // `await retrieveRelevantMemoryContext(...)` — would otherwise leave the
+    // session in `activeStreams` for the life of the process: it would report
+    // `streaming: true` forever, later sends would queue or 409 behind it, and
+    // the Stop button could not clear it because /cancel only aborts the
+    // controller. That is the "run won't stop" wedge.
+    //
+    // A `finally` cannot see `let`/`const` bindings created inside its own
+    // `try` block, so the three names the teardown needs are declared here,
+    // outside the guard. The body below is intentionally left un-indented to
+    // match the file's existing style and keep this change reviewable.
+    let clientDisconnected = false;
+    const safeWrite = (data: string) => {
+      if (!clientDisconnected) {
+        try { writeSseChunk(reply, data); } catch { clientDisconnected = true; }
+      }
+    };
+    let keepalive: ReturnType<typeof setInterval> | null = null;
+    let unregisterInterventionResume: (() => void) | null = null;
+    try {
+    if (personaProfile) agentControl?.assertCanRun(authUser.id, "agent-chat");
     getOrCreateAccumulator(sessionId).persona = persona;
     activePersonaOwners.set(sessionId, authUser.id);
     activeStreams.add(sessionId);
@@ -3954,14 +4028,9 @@ export function registerChatRoutes(
       });
     }
 
-    let clientDisconnected = false;
+    // `clientDisconnected` and `safeWrite` are hoisted above the outer guard:
+    // the teardown in `finally` writes to the client with `safeWrite`.
     reply.raw.on("close", () => { clientDisconnected = true; });
-
-    const safeWrite = (data: string) => {
-      if (!clientDisconnected) {
-        try { writeSseChunk(reply, data); } catch { clientDisconnected = true; }
-      }
-    };
 
     // ── SSE keepalive heartbeat ──
     // While the agentic loop runs a long tool or waits for a slow LLM response,
@@ -3970,11 +4039,11 @@ export function registerChatRoutes(
     // "fetch failed" on the frontend and dropping the in-progress assistant
     // message. Emit an SSE comment (": keepalive\n\n") every 15s — comments are
     // ignored by the EventSource/reader parser but keep the TCP connection alive.
-    const keepalive = setInterval(() => {
-      if (clientDisconnected) { clearInterval(keepalive); return; }
+    keepalive = setInterval(() => {
+      if (clientDisconnected) { if (keepalive) clearInterval(keepalive); return; }
       safeWrite(`: keepalive\n\n`);
     }, 15_000);
-    reply.raw.on("close", () => { clearInterval(keepalive); });
+    reply.raw.on("close", () => { if (keepalive) clearInterval(keepalive); });
 
     // Start of a new turn: emit a synthetic `request` event so trajectory/
     // debug consumers get a turn boundary with the prompt + provider metadata.
@@ -4026,7 +4095,7 @@ export function registerChatRoutes(
     // Create steering controller for this session
     const steering = new SteeringController();
     sessionSteeringControllers.set(sessionId, steering);
-    const unregisterInterventionResume = interventionRunResumeRegistry.registerChatSession(sessionId, (message) => {
+    unregisterInterventionResume = interventionRunResumeRegistry.registerChatSession(sessionId, (message) => {
       if (!activeStreams.has(sessionId)) return { status: "not-running" as const };
       const controller = sessionSteeringControllers.get(sessionId);
       if (!controller) return { status: "not-running" as const };
@@ -4034,11 +4103,19 @@ export function registerChatRoutes(
       return { status: "steered" as const };
     });
 
+    // ── Turn body ───────────────────────────────────────────────────────────
+    // Inner guard: covers the CLI path and the agentic loop so provider
+    // failures are reported inline. The enclosing `finally` opened near the
+    // top of this handler still tears the session registries down afterwards,
+    // whatever throws here.
     try {
       let usedCliProvider = false;
       // ══ CLI Provider path (codex / claude-code via MCP) ══════════
       if (requestProvider && requestProvider !== "jait" && providerRegistry) {
-        const cliWsRoot = surfaceRegistry
+        const personalRemoteNode = getPersonalChatNodeId(sessionRecord);
+        const cliWsRoot = personalRemoteNode
+          ? personalRemoteNode !== "gateway" ? "." : process.cwd()
+          : surfaceRegistry
           ? resolveProjectRoot(surfaceRegistry, sessionId, projectRootPath)
           : (projectRootPath?.trim() || process.cwd());
 
@@ -4046,8 +4123,10 @@ export function registerChatRoutes(
         let isRemote = false;
         let remoteNodeInfo: { nodeId: string; nodeName: string; platform: string } | null = null;
         let remoteNodeClientId: string | undefined;
-        const projectNodeId = projectRecord?.nodeId?.trim();
-        const remoteSurfaceNodeId = surfaceRegistry?.getBySession(sessionId)
+        const projectNodeId = projectRecord?.nodeId?.trim() ?? getPersonalChatNodeId(sessionRecord);
+        const remoteSurfaceNodeId = getPersonalChatNodeId(sessionRecord)
+          ? undefined
+          : surfaceRegistry?.getBySession(sessionId)
           .map((surface) => surface.snapshot().metadata as Record<string, unknown> | undefined)
           .find((metadata) => metadata?.remote === true && typeof metadata.nodeId === "string")
           ?.nodeId as string | undefined;
@@ -4151,9 +4230,9 @@ export function registerChatRoutes(
         // restart, sleep/wake) wipes the client's in-memory provider process,
         // so the old providerSessionId would point at nothing and silently
         // hang instead of erroring.
-        const remoteConnectionUnchanged = !isRemote || (
+        const remoteConnectionUnchanged = (isRemote === Boolean(cachedCliSession?.remoteClientId)) && (!isRemote || (
           !!cachedCliSession?.remoteClientId && cachedCliSession.remoteClientId === remoteNodeClientId
-        );
+        ));
 
         // A pre-warmed process was started before the turn resolved its project
         // root. If the roots disagree the subprocess is running in the wrong
@@ -4482,6 +4561,7 @@ export function registerChatRoutes(
           promptCtx,
         );
         const cliContentWithAttachments = appendUploadedAttachmentPromptBlock(systemNotification ?? content, attachments);
+        const cliImageAttachments = attachments.filter((attachment) => attachment.mimeType.startsWith("image/"));
         const cliUserContent = memoryBlock ? `${memoryBlock}\n\n${cliContentWithAttachments}` : cliContentWithAttachments;
         const recentContextBlock = isNewCliSession
           ? buildExternalProviderRecentContext(history, isQuestionBranch ? 20 : 4)
@@ -4549,7 +4629,7 @@ export function registerChatRoutes(
           contextFlowJson = serializePersistedContextFlow(cliContextFlow);
           await waitForCliProviderRequest(
             () => Promise.race([
-              cliProvider!.sendTurn(providerSessionId, cliContent),
+              cliProvider!.sendTurn(providerSessionId, cliContent, cliImageAttachments),
               turnDonePromise,
             ]),
             streamAbort.signal,
@@ -4648,7 +4728,7 @@ export function registerChatRoutes(
           try {
             await waitForCliProviderRequest(
               () => Promise.race([
-                cliProvider!.sendTurn(providerSessionId, recoveryContent),
+                cliProvider!.sendTurn(providerSessionId, recoveryContent, cliImageAttachments),
                 turnDonePromise,
               ]),
               streamAbort.signal,
@@ -5075,9 +5155,21 @@ export function registerChatRoutes(
           ? partialToolCalls
           : (acc?.toolCalls ?? []);
         const errorMessage = err instanceof Error ? err.message : `Failed to reach ${providerLabel}`;
-        const streamedSegments = resultSegmentsJson
-          ? JSON.parse(resultSegmentsJson) as Array<{ type: string; content?: string }>
-          : [...(acc?.segments ?? [])];
+        // A streaming checkpoint can leave a truncated segments blob behind, so
+        // this parse is not guaranteed to succeed. Fall back to the live
+        // accumulator rather than losing the partial transcript (and, before
+        // the enclosing `finally` existed, the whole stream teardown) to a
+        // malformed JSON payload.
+        let streamedSegments: Array<{ type: string; content?: string }>;
+        if (resultSegmentsJson) {
+          try {
+            streamedSegments = JSON.parse(resultSegmentsJson) as Array<{ type: string; content?: string }>;
+          } catch {
+            streamedSegments = [...(acc?.segments ?? [])];
+          }
+        } else {
+          streamedSegments = [...(acc?.segments ?? [])];
+        }
         if (!streamedSegments.some((segment) => segment.type === "error" && segment.content === errorMessage)) {
           streamedSegments.push({ type: "error", content: errorMessage });
         }
@@ -5172,19 +5264,9 @@ export function registerChatRoutes(
       }
     }
 
-    // Stop the SSE keepalive heartbeat now that the turn is finishing.
-    clearInterval(keepalive);
-    // Tear down the time-based streaming checkpoint: drop the dirty hook so
-    // late accumulator mutations (cleanup-order edge cases) can't schedule
-    // another checkpoint, and clear any pending debounce timer. The fallback
-    // persist above (or the loop's onPersist) is the authoritative final write;
-    // if the turn never produced anything persistable, a pending timer would
-    // otherwise fire after `activeStreams.delete` and write one anyway.
-    streamDirtyHooks.delete(sessionId);
-    if (streamCheckpointDebounce) {
-      clearTimeout(streamCheckpointDebounce);
-      streamCheckpointDebounce = null;
-    }
+    // The SSE keepalive heartbeat and the time-based streaming checkpoint are
+    // torn down in the `finally` below, before `activeStreams.delete`, so they
+    // are stopped even when the persistence above throws.
 
     try {
       sessionStateService?.set(sessionId, { [ACTIVE_TURN_STATE_KEY]: null });
@@ -5206,10 +5288,52 @@ export function registerChatRoutes(
       app.log.error({ error, sessionId }, "Failed to record chat error state");
     }
 
+    } finally {
+      // ── Unconditional stream teardown ──────────────────────────────────────
+      // Runs on the normal path, on provider error, on user cancel, and on any
+      // throw raised by the catch handler or the fallback persist above. Every
+      // statement here is idempotent, so running it twice is harmless.
+      //
+      // Ordering matters and mirrors the previous normal-path sequence: stop
+      // the heartbeat, then drop the checkpoint dirty hook and cancel any
+      // pending debounce *before* `activeStreams.delete` — otherwise a timer
+      // scheduled moments ago could still fire after the delete and write a
+      // stray assistant row for a turn that is already over.
+      if (keepalive) clearInterval(keepalive);
+      streamDirtyHooks.delete(sessionId);
+      if (streamCheckpointDebounce) {
+        clearTimeout(streamCheckpointDebounce);
+        streamCheckpointDebounce = null;
+      }
+
+      activeStreams.delete(sessionId);
+      activePersonaOwners.delete(sessionId);
+      activeAssistantCheckpointIds.delete(sessionId);
+      activeCliTurns.delete(sessionId);
+      cleanupCliListeners();
+      ws?.broadcastToUser(authUser.id, {
+        type: "session.streaming",
+        sessionId,
+        timestamp: new Date().toISOString(),
+        payload: { sessionId, streaming: false },
+      });
+      sessionAbortControllers.delete(sessionId);
+      sessionSteeringControllers.delete(sessionId);
+      unregisterInterventionResume?.();
+      sessionStreamingState.delete(sessionId);
+    }
+
     // A reply finishing after the user leaves is new activity, even when the
-    // prompt itself was already read. Publish before done so visible readers
-    // can acknowledge this server timestamp when the final content paints.
-    sessionService?.touch(sessionId);
+    // prompt itself was already read. Publish after the teardown above so this
+    // also runs when the turn body threw, and so readers see `streaming: false`
+    // before the refreshed session row. Guarded like the sibling blocks above:
+    // a failed write here (SQLite busy, disk full) must not abort the remaining
+    // turn-finalisation work, or the client would never see its `done` event.
+    try {
+      sessionService?.touch(sessionId);
+    } catch (error) {
+      app.log.error({ error, sessionId }, "Failed to touch session on turn end");
+    }
     const completedSession = sessionService?.getById(sessionId, authUser.id);
     if (completedSession) {
       ws?.broadcastToUser(authUser.id, {
@@ -5219,22 +5343,6 @@ export function registerChatRoutes(
         payload: { session: completedSession },
       });
     }
-
-    activeStreams.delete(sessionId);
-    activePersonaOwners.delete(sessionId);
-    activeAssistantCheckpointIds.delete(sessionId);
-    activeCliTurns.delete(sessionId);
-    cleanupCliListeners();
-    ws?.broadcastToUser(authUser.id, {
-      type: "session.streaming",
-      sessionId,
-      timestamp: new Date().toISOString(),
-      payload: { sessionId, streaming: false },
-    });
-    sessionAbortControllers.delete(sessionId);
-    sessionSteeringControllers.delete(sessionId);
-    unregisterInterventionResume();
-    sessionStreamingState.delete(sessionId);
 
     // Preserve completed tool-call/result pairs for the next request. If a
     // cancellation genuinely interrupted a call, synthesize only its missing
@@ -5376,7 +5484,18 @@ export function registerChatRoutes(
       sessionStateService!.set(sessionId, { queued_messages: reordered });
       broadcastQueuedMessagesState(sessionId, reordered);
     }
-    if (controller) {
+    // A registered controller is not proof that a turn is still live. When the
+    // turn body throws before its `finally` teardown, the controller object
+    // outlives the turn it belonged to, so `abort()` is a silent no-op that
+    // still answered `cancelled: true`. Distinguish the two cases honestly so
+    // callers can reconcile a stop that cancelled nothing.
+    //
+    // Deliberately NOT gated on `activeStreams.has(sessionId)`: the controller
+    // is registered at sessionAbortControllers.set() well before
+    // activeStreams.add(), so that check would refuse to abort a live turn
+    // during provider warm-up. `signal.aborted` is the only safe test — it
+    // never blocks a first, real cancellation.
+    if (controller && !controller.signal.aborted) {
       if (activeCliTurns.has(sessionId)) {
         stopAndDeleteActiveCliSession(sessionId);
       }

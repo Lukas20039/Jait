@@ -9,6 +9,7 @@
  *   POST   /api/sessions/:id/archive  — archive
  *   POST   /api/sessions/:id/move     — move into a project (or to personal chats)
  */
+import { isChatTurnActive } from "./chat.js";
 import type { FastifyInstance } from "fastify";
 import type { AppConfig } from "../config.js";
 import type { SessionService } from "../services/sessions.js";
@@ -157,6 +158,25 @@ export function registerSessionRoutes(
     const session = sessionService.getById(id, authUser.id);
     if (!session) {
       return reply.status(404).send({ error: "NOT_FOUND", details: "Session not found" });
+    }
+    if ("nodeId" in body) {
+      if (isChatTurnActive(id)) {
+        return reply.status(409).send({ error: "CHAT_BUSY", details: "Wait for the current turn to finish before changing devices" });
+      }
+      if (session.projectId) {
+        return reply.status(400).send({ error: "PROJECT_NODE_FIXED", details: "Project chats use the project's location" });
+      }
+      if (typeof body["nodeId"] !== "string" || !body["nodeId"].trim() || body["nodeId"].length > 200) {
+        return reply.status(400).send({ error: "INVALID_NODE" });
+      }
+      const nodeId = body["nodeId"].trim();
+      if (nodeId !== "gateway" && !ws?.getFsNodes().some(node => node.id === nodeId && !node.isGateway)) {
+        return reply.status(400).send({ error: "NODE_UNAVAILABLE", details: "The selected node is not connected" });
+      }
+      if (nodeId !== "gateway" && !ws?.canAccessNode?.(nodeId, authUser.id)) {
+        return reply.status(403).send({ error: "NODE_FORBIDDEN", details: "The selected node does not belong to this user" });
+      }
+      sessionService.updateChatSelection(id, { nodeId }, authUser.id);
     }
     sessionService.update(id, {
       name: typeof body["name"] === "string" ? body["name"] : undefined,

@@ -51,6 +51,8 @@ interface DeveloperSidebarsProps {
   showTerminal: boolean
   streamingSessionIds: Set<string>
   approvalSessionIds?: ReadonlySet<string>
+  /** IDs of sessions with an open `user.ask` question awaiting an answer. */
+  questionSessionIds?: ReadonlySet<string>
   sidebarRef: RefObject<HTMLElement | null>
   onAssignRepository: (projectId: string) => void
   onArchiveSession: (sessionId: string) => void
@@ -114,6 +116,7 @@ export function DeveloperSidebars({
   showTerminal,
   streamingSessionIds,
   approvalSessionIds,
+  questionSessionIds,
   sidebarRef,
   onAssignRepository,
   onArchiveSession,
@@ -236,6 +239,7 @@ export function DeveloperSidebars({
               repositories={repositories}
               streamingSessionIds={streamingSessionIds}
               approvalSessionIds={approvalSessionIds}
+              questionSessionIds={questionSessionIds}
             />
           </ErrorBoundary>
           <div

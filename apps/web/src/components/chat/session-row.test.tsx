@@ -53,6 +53,25 @@ describe('SessionRow', () => {
     expect(renderRow({ isStreaming: true, isWaitingForApproval: false })).toContain('animate-spin')
   })
 
+  it('shows the question mark ahead of streaming, approval and errors', () => {
+    const html = renderRow({
+      isAwaitingAnswer: true,
+      isStreaming: true,
+      isWaitingForApproval: true,
+      session: { id: 'chat', metadata: JSON.stringify({ chat: { lastError: 'Old error' } }) },
+    })
+    expect(html).toContain('data-testid="session-row-question"')
+    expect(html).toContain('aria-label="Waiting for your answer"')
+    expect(html).not.toContain('lucide-shield-question')
+    expect(html).not.toContain('animate-spin')
+    expect(html).not.toContain('lucide-message-square-x')
+  })
+
+  it('drops the question mark once the answer arrives', () => {
+    expect(renderRow()).not.toContain('data-testid="session-row-question"')
+    expect(renderRow({ isAwaitingAnswer: false })).not.toContain('data-testid="session-row-question"')
+  })
+
   it('renders the session name and a non-empty relative time', () => {
     const html = renderRow()
     expect(html).toContain('Deploy fix')

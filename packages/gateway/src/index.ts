@@ -14,7 +14,7 @@ import { SessionStateService } from "./services/session-state.js";
 import { ProjectStateService } from "./services/project-state.js";
 import { AuditWriter } from "./services/audit.js";
 import { SurfaceRegistry, TerminalSurfaceFactory, FileSystemSurfaceFactory, RemoteFileSystemSurfaceFactory, BrowserSurfaceFactory, BrowserSurface, RemoteTerminalSurface } from "./surfaces/index.js";
-import { mergeSavedProjectLayout, resolveProjectPanelOpen, type SurfaceRegistrySnapshot } from "@jait/shared";
+import { getPersonalChatNodeId, mergeSavedProjectLayout, resolveProjectPanelOpen, type SurfaceRegistrySnapshot } from "@jait/shared";
 import { shouldSyncProjectSurfaceUi } from "./surfaces/project-ui-sync.js";
 import { createToolRegistry, type ToolRegistryDeps } from "./tools/index.js";
 import { notifySessionsOfGatewayRestart } from "./routes/chat.js";
@@ -630,6 +630,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     },
   });
   ws.getPendingConsents = () => consentManager.listPending().map(({ id, sessionId }) => ({ id, sessionId }));
+  ws.getPendingQuestions = () => userQuestionService.listPending().map(({ id, sessionId }) => ({ id, sessionId }));
   const permissions = getProfile(activeToolProfileName);
   const sessionApprovalsBySession = new Map<string, Set<string>>();
   const getSessionApprovals = (sessionId: string): Set<string> => {
@@ -657,7 +658,15 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
       ? projectService.getById(sessionRecord.projectId, context.userId)
       : undefined;
     const projectPath = projectRecord?.rootPath ?? sessionRecord?.projectPath;
-    const remoteNodeId = resolveRemoteNodeForSession(ws, projectPath ?? undefined, projectRecord?.nodeId);
+    const personalNodeId = getPersonalChatNodeId(sessionRecord);
+    if (personalNodeId && personalNodeId !== "gateway" && !ws.canAccessNode?.(personalNodeId, context.userId ?? null)) {
+      return { ok: false, message: "The selected node does not belong to this user" };
+    }
+    // Keep an explicit device binding even when it is offline. The proxy then
+    // reports unavailability instead of executing on another machine.
+    const remoteNodeId = personalNodeId
+      ? personalNodeId === "gateway" ? null : personalNodeId
+      : resolveRemoteNodeForSession(ws, projectPath ?? undefined, projectRecord?.nodeId);
     const executor = createRemoteToolExecutor(
       {
         ws,
@@ -665,7 +674,9 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
       },
       remoteNodeId,
     );
-    return executor(toolName, input, context);
+    return executor(toolName, input, personalNodeId && personalNodeId !== "gateway"
+      ? { ...context, projectRoot: "." }
+      : context);
   };
 
   const toolExecutor = async (

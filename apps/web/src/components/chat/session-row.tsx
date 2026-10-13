@@ -1,4 +1,4 @@
-import { Loader2, MessageSquare, MessageSquareX, ShieldQuestion } from 'lucide-react'
+import { CircleQuestionMark, Loader2, MessageSquare, MessageSquareX, ShieldQuestion } from 'lucide-react'
 import type {
   HTMLAttributes,
   MouseEventHandler,
@@ -31,6 +31,8 @@ export interface SessionRowProps {
   isActive: boolean
   isStreaming?: boolean
   isWaitingForApproval?: boolean
+  /** True while the chat has an open question awaiting the user's answer. */
+  isAwaitingAnswer?: boolean
   /** Shown when session.name is empty (e.g. "Personal chat" vs "Untitled session"). */
   fallbackLabel?: string
   onRowClick?: () => void
@@ -50,6 +52,7 @@ export function SessionRow({
   isActive,
   isStreaming = false,
   isWaitingForApproval = false,
+  isAwaitingAnswer = false,
   fallbackLabel = 'Untitled session',
   onRowClick,
   onRowContextMenu,
@@ -72,7 +75,15 @@ export function SessionRow({
       {...dragProps}
       {...longPressProps}
     >
-      {isWaitingForApproval ? (
+      {isAwaitingAnswer ? (
+        <TooltipHint content="Waiting for your answer">
+          <CircleQuestionMark
+            className="h-3.5 w-3.5 shrink-0 text-amber-500"
+            aria-label="Waiting for your answer"
+            data-testid="session-row-question"
+          />
+        </TooltipHint>
+      ) : isWaitingForApproval ? (
         <TooltipHint content="Waiting for approval">
           <ShieldQuestion className="h-3.5 w-3.5 shrink-0 text-amber-500" aria-label="Waiting for approval" />
         </TooltipHint>

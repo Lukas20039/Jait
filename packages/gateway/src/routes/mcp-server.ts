@@ -56,6 +56,7 @@ interface McpResponse {
 
 interface McpToolContextOverrides {
   sessionId?: string;
+  threadId?: string;
   projectRoot?: string;
   userId?: string;
   providerId?: string;
@@ -211,11 +212,12 @@ async function resolveMcpToolContext(
   sessionService?: SessionService,
   userService?: UserService,
   sessionState?: SessionStateService,
+  threadService?: ThreadService,
   params?: Record<string, unknown>,
 ): Promise<McpToolContextOverrides> {
   const overrides = resolveMcpToolContextOverrides(request, params);
   if (!request) {
-    return inferSessionBackedToolContext(overrides, sessionService, userService, sessionState);
+    return inferExecutionBackedToolContext(overrides, sessionService, userService, sessionState, threadService);
   }
 
   const token = extractBearerToken(request.headers.authorization);
@@ -243,28 +245,34 @@ async function resolveMcpToolContext(
   if (!user && !authBackedOverrides.sessionId && sessionService) {
     const session = sessionService.lastActive();
     if (session?.id) {
-      return inferSessionBackedToolContext({
+      return inferExecutionBackedToolContext({
         ...authBackedOverrides,
         sessionId: session.id,
         projectRoot: authBackedOverrides.projectRoot ?? session.projectPath ?? undefined,
-      }, sessionService, userService, sessionState);
+      }, sessionService, userService, sessionState, threadService);
     }
   }
 
-  return inferSessionBackedToolContext(authBackedOverrides, sessionService, userService, sessionState);
+  return inferExecutionBackedToolContext(authBackedOverrides, sessionService, userService, sessionState, threadService);
 }
 
-function inferSessionBackedToolContext(
+function inferExecutionBackedToolContext(
   overrides: McpToolContextOverrides,
   sessionService?: SessionService,
   userService?: UserService,
   sessionState?: SessionStateService,
+  threadService?: ThreadService,
 ): McpToolContextOverrides {
   const session = overrides.sessionId && sessionService
     ? sessionService.getById(overrides.sessionId)
     : null;
-  const userId = overrides.userId ?? session?.userId ?? undefined;
-  const projectRoot = overrides.projectRoot ?? session?.projectPath ?? undefined;
+  // CLI workers pass a durable Thread ID, which is not a chat session row.
+  // Resolve its owner here so tool consent, team access, and App identity all
+  // receive the same execution context; never borrow a different user's thread.
+  const thread = overrides.sessionId ? threadService?.getById(overrides.sessionId) : undefined;
+  const userId = overrides.userId ?? thread?.userId ?? session?.userId ?? undefined;
+  const ownedThread = thread?.userId === userId ? thread : undefined;
+  const projectRoot = overrides.projectRoot ?? ownedThread?.workingDirectory ?? session?.projectPath ?? undefined;
 
   const defaults = resolveThreadSelectionDefaults({
     userId,
@@ -275,11 +283,12 @@ function inferSessionBackedToolContext(
 
   return {
     ...overrides,
+    threadId: ownedThread?.id,
     userId,
     projectRoot,
-    providerId: overrides.providerId ?? defaults.providerId,
-    model: overrides.model ?? defaults.model,
-    runtimeMode: overrides.runtimeMode ?? defaults.runtimeMode,
+    providerId: overrides.providerId ?? ownedThread?.providerId ?? defaults.providerId,
+    model: overrides.model ?? ownedThread?.model ?? defaults.model,
+    runtimeMode: overrides.runtimeMode ?? ownedThread?.runtimeMode ?? defaults.runtimeMode,
   };
 }
 
@@ -356,7 +365,7 @@ export function listToolsForMcp(
 // ── Route registration ───────────────────────────────────────────────
 
 export function registerMcpRoutes(app: FastifyInstance, deps: McpDeps): void {
-  const { toolRegistry, toolExecutor, config, sessionService, userService, sessionState } = deps;
+  const { toolRegistry, toolExecutor, config, sessionService, userService, sessionState, threadService } = deps;
 
   // Callback for post-tool-execution side effects (e.g., thread todo activities)
   const onToolExecuted: McpToolExecutedCallback = (toolName, result, context) => {
@@ -436,7 +445,7 @@ export function registerMcpRoutes(app: FastifyInstance, deps: McpDeps): void {
 
     const negotiatedVersion = requestedVersion ?? DEFAULT_MCP_PROTOCOL_VERSION;
     applyMcpProtocolVersionHeader(reply, negotiatedVersion);
-    const context = await resolveMcpToolContext(request, config, sessionService, userService, sessionState, body.params);
+    const context = await resolveMcpToolContext(request, config, sessionService, userService, sessionState, threadService, body.params);
     const toolSet = resolveMcpToolSet(request.query);
     const progressToken = resolveMcpProgressToken(body);
     const acceptsEventStream = String(request.headers.accept ?? "").includes("text/event-stream");
@@ -570,7 +579,7 @@ export function registerMcpRoutes(app: FastifyInstance, deps: McpDeps): void {
       body,
       toolRegistry,
       DEFAULT_MCP_PROTOCOL_VERSION,
-      await resolveMcpToolContext(request, config, sessionService, userService, sessionState, body.params),
+      await resolveMcpToolContext(request, config, sessionService, userService, sessionState, threadService, body.params),
       onToolExecuted,
       progressToken != null && client?.alive
         ? (chunk) => {
@@ -694,6 +703,7 @@ export async function handleMcpRequest(
 
       const context: ToolContext = {
         sessionId: contextOverrides.sessionId,
+        threadId: contextOverrides.threadId,
         actionId: uuidv7(),
         projectRoot: contextOverrides.projectRoot ?? process.cwd(),
         requestedBy: "mcp-client",

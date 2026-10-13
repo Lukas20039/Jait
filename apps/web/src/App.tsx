@@ -1,6 +1,7 @@
 import { applyPendingApprovalEvent } from '@/lib/pending-approvals'
+import { applyPendingQuestionEvent, pendingQuestionSessionIds } from '@/lib/pending-questions'
 import { safeNotificationLink } from '@jait/shared'
-import { openNotification, subscribeNotificationNavigation, retryNotificationNavigation, androidNotificationBridge } from '@/lib/notification-navigation'
+import { openNotification, subscribeNotificationNavigation, retryNotificationNavigation, androidNotificationBridge, setAndroidNotificationContext, watchAndroidNotifications } from '@/lib/notification-navigation'
 import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo, type FocusEvent } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { AuthOverlays } from '@/components/auth/auth-overlays'
@@ -18,6 +19,8 @@ import { LinuxWindowControls } from '@/components/desktop/linux-window-controls'
 import { WinCaptionButtons } from '@/components/desktop/win-caption-buttons'
 import { AppNavigationSidebar } from '@/components/app-shell/app-navigation-sidebar'
 import { UpdateButton } from '@/components/app-shell/update-button'
+import { AgentHaltBanner, AgentStopAllButton } from '@/components/app-shell/agent-halt-banner'
+import { useAgentControl } from '@/hooks/useAgentControl'
 import type { SidebarAccount } from '@/components/app-shell/mode-sidebar'
 import { AppPageOutlet } from '@/components/app-shell/app-page-outlet'
 import { ChatToolbar } from '@/components/app-shell/chat-toolbar'
@@ -652,6 +655,14 @@ function App() {
   useEffect(() => { setPendingApprovals(new Map()) }, [token])
   const handleConsentEvent = useCallback((event: { type: string; payload: unknown }) => {
     setPendingApprovals((prev) => applyPendingApprovalEvent(prev, event))
+  }, [])
+  // Open `user.ask` questions, tracked per request so one chat can show a
+  // question badge until every one of its questions is answered.
+  const [pendingQuestions, setPendingQuestions] = useState<ReadonlyMap<string, string>>(() => new Map())
+  const questionSessionIds = useMemo(() => pendingQuestionSessionIds(pendingQuestions), [pendingQuestions])
+  useEffect(() => { setPendingQuestions(new Map()) }, [token])
+  const handleUserQuestionEvent = useCallback((event: { type: string; payload: unknown }) => {
+    setPendingQuestions((prev) => applyPendingQuestionEvent(prev, event))
   }, [])
   const [streamingSessionIds, setStreamingSessionIds] = useState<Set<string>>(() => new Set())
   useEffect(() => {
@@ -2023,6 +2034,10 @@ function App() {
       })
   }, [token],)
 
+  // Owner-wide stop switch. Server-backed: the banner reflects a broadcast, so
+  // every device agrees and a reload cannot show a stale "running".
+  const agentControl = useAgentControl({ token, enabled: !!token })
+
   const { sendUIState, sendArchitectureRenderResult } = useUICommands({
     sessionId: activeSessionId,
     token,
@@ -2033,6 +2048,8 @@ function App() {
     onSessionStreamingChange: handleSessionStreamingChange,
     onSessionStreamingSnapshot: handleSessionStreamingSnapshot,
     onConsentEvent: handleConsentEvent,
+    onUserQuestionEvent: handleUserQuestionEvent,
+    onAgentHaltEvent: agentControl.applyEvent,
     onThreadEvent: useCallback((type: string, payload: Record<string, unknown>) => {
       if (type.startsWith('project.') || type.startsWith('chat.')) {
         handleProjectEventRef.current(type, payload)
@@ -2863,7 +2880,7 @@ function App() {
     const update = () => {
       const visible = currentView === 'chat' && viewMode !== 'manager' && document.visibilityState === 'visible' && document.hasFocus()
       setVisibleNotificationSession(visible ? activeSessionId : null)
-      void android?.setNotificationContext?.({ sessionId: activeSessionId ?? '', visible }).catch(() => {})
+      setAndroidNotificationContext(android, { sessionId: activeSessionId ?? '', visible })
       if (visible && activeSessionId) void revokeSystemNotification(`chat-complete:${activeSessionId}`)
       retryNotificationNavigation()
     }
@@ -2885,20 +2902,16 @@ function App() {
     const desktop = window.jaitDesktop
     const android = androidNotificationBridge()
     let disposed = false
-    let removeAndroid: (() => Promise<void>) | undefined
     const accept = (activation: import('@jait/shared').NotificationActivation) => { if (!disposed) openNotification(activation) }
     const removeDesktop = desktop?.onNotificationOpen?.(accept)
-    void android?.addListener?.('notificationOpen', accept).then((listener) => {
-      if (disposed) void listener.remove()
-      else removeAndroid = () => listener.remove()
-    }).catch(() => {})
+    const androidNotifications = watchAndroidNotifications(android, accept)
     const read = () => {
-      void desktop?.getPendingNotification?.().then((r) => { if (r.activation) accept(r.activation) }).catch(() => {})
-      void android?.getPendingNotification?.().then((r) => { if (r.activation) accept(r.activation) }).catch(() => {})
+      void Promise.resolve().then(() => desktop?.getPendingNotification?.()).then((r) => { if (r?.activation) accept(r.activation) }).catch(() => {})
+      androidNotifications.read()
     }
     read()
     window.addEventListener('focus', read)
-    return () => { disposed = true; removeDesktop?.(); void removeAndroid?.(); window.removeEventListener('focus', read) }
+    return () => { disposed = true; removeDesktop?.(); androidNotifications.dispose(); window.removeEventListener('focus', read) }
   }, [])
 
   useEffect(() => {
@@ -5157,6 +5170,20 @@ function App() {
                 {desktopPlatform === 'win32' ? <WinCaptionButtons isMaximized={isMaximized} /> : <LinuxWindowControls isMaximized={isMaximized} />}
               </div>
             )}
+            {/* Server-driven stop banner: visible wherever the user is, so a
+                halted gateway never looks merely idle. */}
+            <AgentHaltBanner
+              state={agentControl.state}
+              pending={agentControl.pending}
+              error={agentControl.error}
+              onResume={() => { void agentControl.resume() }}
+            />
+            <AgentStopAllButton
+              runningCount={activeManagerThreads.length}
+              pending={agentControl.pending}
+              error={agentControl.error}
+              onStopAll={() => { void agentControl.stopAll() }}
+            />
             {isMobile && <AppHeader
               activeManagerThreads={activeManagerThreads}
               appPlatform={appPlatform}
@@ -5430,6 +5457,7 @@ function App() {
                       showTerminal={showTerminal}
                       streamingSessionIds={streamingSessionIds}
                       approvalSessionIds={approvalSessionIds}
+                      questionSessionIds={questionSessionIds}
                       sidebarRef={sidebarRef}
                       onAssignRepository={(projectId) => {
                         void handleAssignProjectRepository(projectId)
@@ -5835,6 +5863,7 @@ function App() {
                       repositories={automation.repositories}
                       streamingSessionIds={streamingSessionIds}
                       approvalSessionIds={approvalSessionIds}
+                      questionSessionIds={questionSessionIds}
                     />
                   </ErrorBoundary>
                 }

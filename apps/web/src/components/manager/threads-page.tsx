@@ -340,6 +340,7 @@ export function ThreadsPage({
                     onSearchFiles={onSearchFiles}
                     projectOpen={showProject}
                     chatId={automation.selectedThread?.id ?? undefined}
+                    allowPersonalChatNode={false}
                     merged
                   />
                 </ErrorBoundary>

@@ -380,7 +380,7 @@ export class SessionService {
    */
   updateChatSelection(
     id: string,
-    selection: { provider?: string | null; model?: string | null; reasoningEffort?: string | null },
+    selection: { provider?: string | null; model?: string | null; reasoningEffort?: string | null; nodeId?: string },
     userId?: string,
   ) {
     const existing = this.getById(id, userId);
@@ -397,6 +397,7 @@ export class SessionService {
     if (selection.provider !== undefined) chat["provider"] = selection.provider;
     if (selection.model !== undefined) chat["model"] = selection.model;
     if (selection.reasoningEffort !== undefined) chat["reasoningEffort"] = selection.reasoningEffort;
+    if (selection.nodeId !== undefined) chat["nodeId"] = selection.nodeId;
     metadata["chat"] = chat;
     this.update(id, { metadata }, userId);
   }
