@@ -680,7 +680,7 @@ function MessageInner({
       <div
         className={cn(
           'absolute z-10 rounded-md border border-border/60 bg-background/95 p-0.5 shadow-sm',
-          outsideBubble ? 'right-0 top-full mt-0.5' : 'right-1 bottom-[.25rem]',
+          outsideBubble ? 'right-1 bottom-1' : 'right-1 bottom-[.25rem]',
           'opacity-0 transition-opacity group-hover/message:opacity-100 focus-within:opacity-100',
           copied && 'opacity-100',
         )}
@@ -957,7 +957,10 @@ function MessageInner({
                       )}
                       onClick={handleUserBubbleClick}
                     >
-                      <div className="min-w-0 space-y-3">
+                      <div className={cn('min-w-0 space-y-3',
+                        // Keep the inset controls clear of text without changing bubble padding.
+                        canCopyMessage && messageActionItems.length > 0 && (isMobile ? 'pr-3' : 'pr-20'),
+                      )}>
                         <AttachmentList attachments={userAttachments.filter(item => !item.mimeType.startsWith('image/'))} />
                         <div className="min-w-0 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                           {(optimisticUserDisplaySegments ?? userDisplaySegments).length > 0

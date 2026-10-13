@@ -47,6 +47,24 @@ test('image viewport and portal controls never start message editing', async ({ 
 })
 
 for (const width of [390, 1280]) {
+  test(`user message controls stay within the bubble at ${width}px`, async ({ page }) => {
+    await openFixture(page, width)
+    const sent = page.getByTestId('sent')
+    const bubble = sent.locator('[data-message-from="user"]').last()
+    await bubble.hover()
+    const controls = sent.getByRole('button', { name: width < 768 ? 'Message actions' : 'Edit message', exact: true })
+    await expect(controls).toBeVisible()
+    const bubbleBox = (await bubble.boundingBox())!
+    const controlsBox = (await controls.boundingBox())!
+    expect(controlsBox.y).toBeGreaterThanOrEqual(bubbleBox.y)
+    expect(controlsBox.y + controlsBox.height).toBeLessThanOrEqual(bubbleBox.y + bubbleBox.height)
+    if (width < 768) {
+      await controls.click()
+      await page.getByRole('menuitem', { name: 'Edit message', exact: true }).click()
+    } else await controls.click()
+    await expect(sent.getByRole('button', { name: 'Cancel editing message' })).toBeVisible()
+  })
+
   test(`user image gallery sits above an evenly padded bubble at ${width}px`, async ({ page }) => {
     await openFixture(page, width)
     const sent = page.getByTestId('sent')
