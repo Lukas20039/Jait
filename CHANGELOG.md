@@ -4,6 +4,14 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.933](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.933) — 2026-10-13
+
+- fix(team-chat): keep execution instructions in task threads — 91d68e15
+
+Route completion and recovery instructions into the receiving task thread instead of the visible room conversation, and keep room messages short and conversational. Detailed final answers are retained by the task thread rather than posted verbatim to the team room.
+
+Package versions: gateway 0.1.933, shared 0.1.100, web 0.1.445.
+
 ## [v0.1.932](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.932) — 2026-10-13
 
 - test: expand core smoke coverage and stabilize browser workflows — 7d750b18
