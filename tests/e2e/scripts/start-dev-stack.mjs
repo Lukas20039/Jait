@@ -131,6 +131,11 @@ try {
     CORS_ORIGIN: frontendUrl,
     NODE_ENV: 'test',
     JAIT_DB_PATH: resolve(e2eStateDir, 'jait.db'),
+    JAIT_STATE_DIR: e2eStateDir,
+    // A fresh test DB cannot identify worktrees owned by the normal gateway.
+    // Never start cleanup against the host's shared worktrees or temp storage.
+    JAIT_DISK_JANITOR_ENABLED: '0',
+    JAIT_WINDOWS_SANDBOX_STORAGE: resolve(e2eStateDir, 'sandbox'),
     // The live viewer belongs to the gateway origin even while React uses Vite.
     JAIT_WEB_DIR: resolve(webDir, 'public'),
   })

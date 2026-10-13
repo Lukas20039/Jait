@@ -74,12 +74,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
         }
         await page.waitForSelector('button[aria-label="Account menu"]', { timeout: 30_000 })
         if (path === '/jobs') {
-          await page.evaluate(async () => {
-            const modulePath = '/src/lib/notification-navigation.ts'
-            const { openNotification } = await import(/* @vite-ignore */ modulePath)
-            openNotification({ id: 'visual-jobs', link: '/jobs' })
-          })
-          await expect(page.getByRole('heading', { name: 'Scheduled Jobs' })).toBeVisible()
+          await page.getByRole('tab', { name: 'Developer', exact: true }).click()
+          const openMenu = page.getByRole('button', { name: 'Open menu', exact: true })
+          if (await openMenu.isVisible()) await openMenu.click()
+          await page.getByRole('button', { name: 'Jobs', exact: true }).click()
+          await expect(page.getByRole('heading', { name: 'Scheduled Jobs', exact: true })).toBeVisible()
         }
         await page.evaluate(theme => {
           document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -113,6 +112,7 @@ test('catalogue graph border stays within its visible scroll region', async ({ p
   for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 600 }, { width: 1024, height: 400 }, { width: 390, height: 844 }, { width: 360, height: 640 }]) {
     await page.setViewportSize(viewport)
     await page.goto('/agents')
+    await expect(page.getByRole('heading', { name: 'Agents', exact: true })).toBeVisible()
     await page.getByRole('button', { name: 'Account menu' }).click()
     await page.getByRole('menuitem', { name: 'Catalogue', exact: true }).click()
     const graph = page.getByTestId('catalogue-graph')
@@ -144,11 +144,14 @@ test('job dialog stays inside a short mobile viewport', async ({ page }) => {
   }, { token, api })
   await page.goto('/agents')
   await page.getByRole('button', { name: 'Account menu' }).waitFor()
-  await page.evaluate(async () => {
-    const modulePath = '/src/lib/notification-navigation.ts'
-    const { openNotification } = await import(/* @vite-ignore */ modulePath)
-    openNotification({ id: 'visual-job-dialog', link: '/jobs' })
-  })
+  await expect(page.getByRole('heading', { name: 'Agents', exact: true })).toBeVisible()
+  await page.getByRole('tab', { name: 'Developer', exact: true }).click()
+  const skipProjectSetup = page.getByRole('button', { name: 'Skip for now', exact: true })
+  await skipProjectSetup.click()
+  await expect(skipProjectSetup).toBeHidden()
+  const openMenu = page.getByRole('button', { name: 'Open menu', exact: true })
+  if (await openMenu.isVisible()) await openMenu.click()
+  await page.getByRole('button', { name: 'Jobs', exact: true }).click()
   await page.getByRole('button', { name: 'New Job', exact: true }).click()
   const dialog = page.getByTestId('create-job-dialog')
   await expect(dialog).toBeVisible()

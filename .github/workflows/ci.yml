@@ -75,3 +75,25 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      - name: Install web smoke test runtime
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.jait/artifacts/playwright-browsers
+        run: |
+          npm --prefix tests/e2e ci
+          node tests/e2e/node_modules/playwright/cli.js install chromium
+
+      - name: Test core workflows in the web app
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.jait/artifacts/playwright-browsers
+        run: bun run test:smoke
+
+      - name: Upload web test evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-smoke-evidence
+          path: |
+            .jait/artifacts/playwright-results
+            .jait/artifacts/playwright-report
+          retention-days: 7
