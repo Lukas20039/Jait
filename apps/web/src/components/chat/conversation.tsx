@@ -1272,7 +1272,7 @@ export function Conversation({ children, className, mobile = false, loading, isS
     prevChildCount.current = count
     prevLoadingRef.current = loading
 
-    if (!loading && count > 0 && (wasEmpty || finishedLoading)) {
+    if (!loading && count > 0 && (wasEmpty || finishedLoading || !initialScrollReady)) {
       detachedRef.current = false
       setStickToBottom(true)
       stickToBottomRef.current = true
@@ -1301,7 +1301,7 @@ export function Conversation({ children, className, mobile = false, loading, isS
         setInitialScrollReady(true)
       })
     }
-  }, [childItems.length, loading])
+  }, [childItems.length, loading, initialScrollReady])
 
   useEffect(() => {
     return () => {
