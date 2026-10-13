@@ -4,6 +4,24 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.935](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.935) — 2026-10-13
+
+- fix(gateway): keep agent previews usable and recover browser launches — a6746079
+
+Start new agent-created previews shared with the agent while preserving user takeover across reuse, replacement, and restart. Reuse the browser surface's configured-channel and installed-browser fallbacks for standalone screenshots. Report precise browser sharing and missing executable blockers with recovery instructions.
+
+Validation: four regression checks failed before the fixes and pass after them; the full suite passed with 4,983 tests passing and 73 skipped. Typecheck, changed-file lint, and artifact-path checks passed. No database migration or required configuration change.
+
+Package version: gateway 0.1.935.
+
+## [v0.1.934](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.934) — 2026-10-13
+
+- fix(tools): resolve tool aliases exactly and validate advertised constraints — 45f2637b
+
+Resolve discovered tool aliases against the registry and enforce advertised action-specific argument constraints.
+
+Package version: gateway 0.1.934.
+
 ## [v0.1.933](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.933) — 2026-10-13
 
 - fix(team-chat): keep execution instructions in task threads — 91d68e15
