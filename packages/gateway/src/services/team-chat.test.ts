@@ -126,6 +126,51 @@ describe("persistent team coordination", () => {
     expect(service.context(owner, delivery.sessionId)).toContain(selected.id);
   });
 
+  it("keeps manager handoffs conversational while delivering the full review instructions", async () => {
+    service.setGoal(owner, room.id, "Ship", ["PR merged"], human);
+    const evidence = "Tests pass; PR not merged. See the evidence in the task thread.";
+    const dispatcher = vi.fn(async (_delivery, agent, _prompt: string) => ({ content: agent.id === "Developer" ? evidence : "I'll check the PR." }));
+    service.setDispatcher(dispatcher);
+    post("Implement", "conversational-worker", ["Developer"]);
+    await vi.waitFor(() => expect(dispatcher).toHaveBeenCalledTimes(2));
+    const review = service.history(owner, room.id).find(message => message.coordinationEvent?.kind === "completion")!;
+    expect(review.content).toBe("Hey @Scrum, could you check my task update?");
+    expect(review.content).not.toContain(evidence);
+    expect(review.workThreadId).toBe(service.deliveries(owner, room.id)[0]!.sessionId);
+    expect(dispatcher.mock.calls[1]?.[2]).toContain("Verify the reported outcome");
+    expect(dispatcher.mock.calls[1]?.[2]).toContain(evidence);
+    expect(service.get(owner, room.id).goal?.status).toBe("active");
+  });
+
+  it("keeps detailed final reports in the task thread without claiming success in the room", async () => {
+    const report = "## Findings\\n" + "Tests could not run; the change remains unverified. ".repeat(30);
+    service.setDispatcher(async () => ({ content: report }));
+    post("Investigate", "detailed-report", ["QA"]);
+    await vi.waitFor(() => expect(service.deliveries(owner, room.id)[0]?.status).toBe("completed"));
+    const result = service.history(owner, room.id).find(message => message.kind === "result")!;
+    expect(result.content).toBe("I've left a detailed update in my task thread. Please check it for the outcome and next steps.");
+    expect(result.workThreadId).toBe(service.deliveries(owner, room.id)[0]!.sessionId);
+    expect(result.content).not.toContain("Findings");
+    expect(result.content).not.toContain("done");
+    expect(result.content).not.toContain("pass");
+  });
+
+  it("keeps recovery evidence in the receiving thread rather than the team request", async () => {
+    const dispatcher = vi.fn(async (_delivery, agent, _prompt: string) => {
+      if (agent.id === "Developer") throw new Error("Runtime missing: bun");
+      return { content: "I'll check the runtime." };
+    });
+    service.setDispatcher(dispatcher);
+    post("Run the checks", "conversational-recovery", ["Developer"]);
+    await vi.waitFor(() => expect(dispatcher).toHaveBeenCalledTimes(2));
+    const review = service.history(owner, room.id).find(message => message.coordinationEvent?.kind === "recovery")!;
+    expect(review.content).toBe("Hey @Scrum, I'm blocked on this task. Can you help me unblock it?");
+    expect(review.workThreadId).toBe(service.deliveries(owner, room.id)[0]!.sessionId);
+    expect(dispatcher.mock.calls[1]?.[2]).toContain("Runtime missing: bun");
+    expect(dispatcher.mock.calls[1]?.[2]).toContain("Run the checks");
+    expect(dispatcher.mock.calls[1]?.[2]).toContain("Inspect the existing thread before reassigning");
+  });
+
   it("requires root coordinators and intermediate managers to verify completion", () => {
     profiles.savePersonaAgent(owner, profile("Junior", "Developer"));
     const rootContext = service.context(owner, "", profile("Scrum"))!;
@@ -158,7 +203,7 @@ describe("persistent team coordination", () => {
       clientKey: "worker-outcome", workSessionId: worker.sessionId };
     service.post(owner, room.id, outcome);
     service.post(owner, room.id, outcome);
-    const checks = service.history(owner, room.id).filter(message => message.content.startsWith("Leadership completion check:"));
+    const checks = service.history(owner, room.id).filter(message => message.coordinationEvent?.kind === "completion");
     expect(checks).toHaveLength(1);
     expect(checks[0]!.recipientIds).toEqual(["Scrum"]);
     expect(checks[0]!.targetSessionId).toBe(managerThread);
@@ -279,7 +324,7 @@ describe("persistent team coordination", () => {
     service.post(owner, room.id, { sender: { ...sender("Junior"), sourceSessionId: worker.sessionId },
       kind: "verification", content: "Acceptance evidence", recipientIds: [], clientKey: "junior-outcome" });
     expect(service.deliveries(owner, room.id).at(-1)?.agentId).toBe("Developer");
-    expect(service.history(owner, room.id).at(-1)?.content).toContain("Leadership completion check:");
+    expect(service.history(owner, room.id).at(-1)?.content).toBe("Hey @Developer, could you check my task update?");
   });
 
   it("checks final dispatcher results even when the worker does not explicitly post", async () => {
@@ -291,7 +336,7 @@ describe("persistent team coordination", () => {
     await vi.waitFor(() => expect(dispatcher).toHaveBeenCalledTimes(2));
     await vi.waitFor(() => expect(service.deliveries(owner, room.id).every(delivery => delivery.status === "completed")).toBe(true));
     expect(service.get(owner, room.id).goal?.status).toBe("active");
-    expect(service.history(owner, room.id).filter(message => message.content.startsWith("Leadership completion check:"))).toHaveLength(1);
+    expect(service.history(owner, room.id).filter(message => message.coordinationEvent?.kind === "completion")).toHaveLength(1);
   });
 
   it("does not route outcome checks outside selected room membership", () => {
