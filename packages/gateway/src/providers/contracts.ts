@@ -76,6 +76,9 @@ export type ProviderEvent =
 
 // ── Provider interface ───────────────────────────────────────────────
 
+/** Uploaded image bytes travel with the turn, including across remote nodes. */
+export type ProviderTurnAttachment = string | { name: string; mimeType: string; data: string };
+
 export interface CliProviderAdapter {
   readonly id: ProviderId;
   readonly providerType?: ProviderId;
@@ -130,7 +133,7 @@ export interface CliProviderAdapter {
   /**
    * Send a user message / turn to an active session.
    */
-  sendTurn(sessionId: string, message: string, attachments?: string[]): Promise<void>;
+  sendTurn(sessionId: string, message: string, attachments?: ProviderTurnAttachment[]): Promise<void>;
 
   /**
    * Interrupt the current turn in a session.

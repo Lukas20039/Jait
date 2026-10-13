@@ -39,6 +39,7 @@ import type {
   CliProviderAdapter,
   McpServerRef,
   ProviderEvent,
+  ProviderTurnAttachment,
   ProviderAuthStatus,
   ProviderLoginResult,
   ProviderLogoutResult,
@@ -256,6 +257,8 @@ interface AcpSessionState {
   agent: Agent;
   client: JaitAcpClient;
   acpSessionId: string;
+  /** Provider failures may arrive as notifications before the prompt resolves. */
+  turnError?: string;
   approvals: Map<string, PendingApproval>;
   initialized: InitializeResponse;
   /**
@@ -955,6 +958,11 @@ export class AcpProvider implements CliProviderAdapter {
           fs: { readTextFile: false, writeTextFile: false },
           // Shell work must go through the always-visible jait.terminal MCP tool.
           terminal: false,
+          // Codex ACP otherwise serializes service failures as assistant text.
+          // Negotiate its typed failure extension and read it on prompt results.
+          ...(this.providerType === "codex" ? {
+            _meta: { jetbrains: { air: { version: 1, capabilities: ["sessionFailure"] } } },
+          } : {}),
         },
       });
 
@@ -1044,15 +1052,22 @@ export class AcpProvider implements CliProviderAdapter {
     return session;
   }
 
-  async sendTurn(sessionId: string, message: string, attachments?: string[]): Promise<void> {
+  async sendTurn(sessionId: string, message: string, attachments?: ProviderTurnAttachment[]): Promise<void> {
     const state = this.getSession(sessionId);
+    state.turnError = undefined;
+    state.session.error = undefined;
+    state.session.status = "running";
     this.emitEvent({ type: "turn.started", sessionId });
     const prompt = [
       { type: "text" as const, text: message },
-      ...(attachments ?? []).map((path) => ({
+      ...(attachments ?? []).map((attachment) => typeof attachment === "string" ? ({
         type: "resource_link" as const,
-        uri: `file://${path}`,
-        name: path.split("/").pop() || path,
+        uri: `file://${attachment}`,
+        name: attachment.split("/").pop() || attachment,
+      }) : ({
+        type: "image" as const,
+        mimeType: attachment.mimeType,
+        data: attachment.data.startsWith("data:") ? attachment.data.split(",")[1] ?? "" : attachment.data,
       })),
     ];
 
@@ -1061,6 +1076,8 @@ export class AcpProvider implements CliProviderAdapter {
         sessionId: state.acpSessionId,
         prompt,
       });
+      const failure = state.turnError ?? readAcpSessionFailure(result._meta);
+      if (failure) throw new Error(failure);
       if (result.stopReason === "cancelled") {
         this.emitEvent({ type: "session.error", sessionId, error: "Turn cancelled" });
       }
@@ -1170,9 +1187,26 @@ export class AcpProvider implements CliProviderAdapter {
   handleSessionUpdate(sessionId: string, params: SessionNotification): void {
     const update = params.update;
     if (isTransientJaitMcpStartupCancellation(update)) return;
+    const failure = readAcpSessionFailure(update._meta);
+    if (failure) {
+      const state = this.sessions.get(sessionId);
+      if (state) state.turnError = failure;
+      else this.emitEvent({ type: "session.error", sessionId, error: failure });
+      return;
+    }
     switch (update.sessionUpdate) {
       case "agent_message_chunk":
         if (update.content.type === "text") {
+          // Older Codex adapters send this complete service error with no
+          // message id. Real assistant deltas carry an id; preserve quotations.
+          const text = update.content.text.trim();
+          if (this.providerType === "codex" && !update.messageId
+            && text === "Selected model is at capacity. Please try a different model.") {
+            const state = this.sessions.get(sessionId);
+            if (state) state.turnError = text;
+            else this.emitEvent({ type: "session.error", sessionId, error: text });
+            break;
+          }
           this.emitEvent({ type: "token", sessionId, content: update.content.text });
         }
         break;
@@ -1892,4 +1926,12 @@ export function loadAcpProviderConfigs(): AcpProviderConfig[] {
   } catch {
     return defaults;
   }
+}
+
+/** Codex ACP's negotiated extension carries terminal failures on prompt results. */
+function readAcpSessionFailure(meta: unknown): string | undefined {
+  if (!isRecord(meta) || !isRecord(meta.jetbrains) || !isRecord(meta.jetbrains.air)) return;
+  const failure = meta.jetbrains.air.sessionFailure;
+  if (!isRecord(failure) || failure.severity !== "error" || typeof failure.title !== "string") return;
+  return failure.title.trim() || undefined;
 }
