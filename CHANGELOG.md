@@ -4,6 +4,19 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.932](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.932) — 2026-10-13
+
+- test: expand core smoke coverage and stabilize browser workflows — 7d750b18
+- feat(workbench): add agent halt controls and personal chat devices — 514f86fc
+- fix(chat): inset message actions without blocking bubble text — 0f723b55
+- fix(providers): forward uploaded images and surface ACP failures — 3331c8ef
+- fix(chat): reveal transcripts after StrictMode replay — bb9bd8a0
+- fix(scheduler): validate cron schedules before persistence — 0f209d4e
+
+Add durable owner halt/resume controls across threads, saved-agent chats, MCP and scheduled work; report stop failures and restore halt state on reconnect. Personal chats can select an owned execution device, while project chats retain their project location. Improve agent run views and graph layout, preserve uploaded images across providers, expose ACP failures, validate schedules, and cover core web workflows in CI.
+
+Migration 75 adds the `agent_control` table. Package versions: gateway 0.1.932, shared 0.1.100, web 0.1.445.
+
 ## [v0.1.931](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.931) — 2026-10-12
 
 - fix(gateway): bound tool discovery to prevent chat recovery freezes — 8bbaa55d
