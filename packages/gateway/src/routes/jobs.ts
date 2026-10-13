@@ -1,3 +1,4 @@
+import { isValidCronExpression } from "../scheduler/cron.js";
 import type { FastifyInstance } from "fastify";
 import type { AppConfig } from "../config.js";
 import type { SchedulerService, ScheduledJobRecord } from "../scheduler/service.js";
@@ -252,6 +253,10 @@ export function registerJobRoutes(
       return reply.status(400).send({ detail: "name and cron_expression are required" });
     }
 
+    if (!isValidCronExpression(cron)) {
+      return reply.status(400).send({ detail: "Invalid cron_expression: use five fields with numbers, wildcards, steps, lists or ranges" });
+    }
+
     const jobType = body["job_type"] === "agent_task" || body["job_type"] === "system_job"
       ? body["job_type"] as JobType
       : "system_job";
@@ -324,6 +329,10 @@ export function registerJobRoutes(
     const existing = scheduler.get(id, authUser.id);
     if (!existing) {
       return reply.status(404).send({ detail: "Job not found" });
+    }
+
+    if (body["cron_expression"] !== undefined && (typeof body["cron_expression"] !== "string" || !isValidCronExpression(body["cron_expression"]))) {
+      return reply.status(400).send({ detail: "Invalid cron_expression" });
     }
 
     const existingInput = asRecord(existing.input) ?? {};
