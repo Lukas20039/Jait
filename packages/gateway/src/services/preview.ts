@@ -63,6 +63,8 @@ export interface StartPreviewInput {
   port?: number | null;
   frameworkHint?: string | null;
   sharedWithAgent?: boolean;
+  /** Tool-created previews start shared; existing user control always wins. */
+  agentInitiated?: boolean;
 }
 
 interface InternalPreviewSession extends PreviewSession {
@@ -166,7 +168,7 @@ export class PreviewService {
       return this.get(input.sessionId)!;
     }
 
-    const sharedWithAgent = input.sharedWithAgent ?? existing?.sharedWithAgent ?? false;
+    const sharedWithAgent = input.sharedWithAgent ?? existing?.sharedWithAgent ?? (input.agentInitiated === true);
     const startPromise = this.startFresh({ ...input, sharedWithAgent });
     this.startingSessions.set(input.sessionId, startPromise);
     try {

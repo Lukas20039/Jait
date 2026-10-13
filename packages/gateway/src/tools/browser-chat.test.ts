@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createBrowserNavigateTool } from './browser-tools.js';
 import { createSurfacesStartTool } from './surface-tools.js';
+import { createPreviewOpenTool } from './preview-tools.js';
 import { PreviewService } from '../services/preview.js';
 
 function fixture() {
@@ -28,6 +29,27 @@ function fixture() {
 }
 
 describe('chat agent browser', () => {
+  it('opens a usable agent preview and preserves takeover across reuse and replacement', async () => {
+    const { service, context } = fixture();
+    const open = createPreviewOpenTool(undefined, undefined, service);
+    const result = await open.execute({ target: '4173' }, context('agent-preview'));
+    expect(result.ok).toBe(true);
+    expect(service.get('agent-preview')?.sharedWithAgent).toBe(true);
+    expect(() => service.assertAgentControl(result.data!.browserId as string)).not.toThrow();
+    service.setSharedWithAgent('agent-preview', false);
+    await open.execute({ target: '4173' }, context('agent-preview'));
+    expect(service.get('agent-preview')?.sharedWithAgent).toBe(false);
+    await open.execute({ target: '4174' }, context('agent-preview'));
+    expect(service.get('agent-preview')?.sharedWithAgent).toBe(false);
+    await service.restart('agent-preview');
+    expect(service.get('agent-preview')?.sharedWithAgent).toBe(false);
+    expect(() => service.assertAgentControl(service.get('agent-preview')!.browserId!)).toThrow(/not shared/);
+    service.setSharedWithAgent('agent-preview', true);
+    expect(() => service.assertAgentControl(service.get('agent-preview')!.browserId!)).not.toThrow();
+    const userPreview = await service.start({ sessionId: 'user-preview', target: '4173' });
+    expect(userPreview.sharedWithAgent).toBe(false);
+  });
+
   it('exposes a live browser for each chat without starting a project server', async () => {
     const { service, tool, context } = fixture();
     const a = await tool.execute({ url: 'https://example.com' }, context('chat-a'));

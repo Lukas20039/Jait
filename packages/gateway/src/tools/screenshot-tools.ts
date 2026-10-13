@@ -12,6 +12,7 @@ import { existsSync, copyFileSync, mkdirSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { isAbsolute, join, resolve } from "node:path";
 import type { ToolDefinition, ToolResult } from "./contracts.js";
+import { launchLocalBrowser } from "../surfaces/browser.js";
 
 interface ScreenshotCaptureInput {
   /** URL (http/https), "dev" (frontend dev url), or a local HTML file path. */
@@ -108,7 +109,9 @@ export function createScreenshotCaptureTool(): ToolDefinition<ScreenshotCaptureI
 
       let browser: { close: () => Promise<void> } | null = null;
       try {
-        browser = (await (chromium as { launch: () => Promise<unknown> }).launch()) as { close: () => Promise<void> };
+        browser = await launchLocalBrowser(chromium as {
+          launch: (options: Record<string, unknown>) => Promise<{ close: () => Promise<void> }>;
+        });
         const ctx = await (browser as unknown as {
           newContext: (opts: unknown) => Promise<{
             newPage: () => Promise<{

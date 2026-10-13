@@ -679,6 +679,14 @@ async function connectOrLaunchBrowser(
     return await chromium.connectOverCDP(liveViewSession.cdpUrl);
   }
 
+  return launchLocalBrowser(chromium, headless);
+}
+
+/** Shared local launch policy for browser surfaces and standalone captures. */
+export async function launchLocalBrowser<T>(
+  chromium: { launch: (options: Record<string, unknown>) => Promise<T> },
+  headless = true,
+): Promise<T> {
   const launchTimeoutMs = parsePositiveIntegerEnv(
     process.env["BROWSER_LAUNCH_TIMEOUT_MS"],
     DEFAULT_BROWSER_LAUNCH_TIMEOUT_MS,
@@ -1713,10 +1721,10 @@ function parseCsvEnv(raw: string | undefined, fallback: string[]): string[] {
   return values.length > 0 ? values : fallback;
 }
 
-async function launchBrowserWithFallback(
-  chromium: PlaywrightChromium,
+async function launchBrowserWithFallback<T>(
+  chromium: { launch: (options: Record<string, unknown>) => Promise<T> },
   strategies: BrowserLaunchStrategy[],
-): Promise<PlaywrightBrowser> {
+): Promise<T> {
   const errors: string[] = [];
 
   for (const strategy of strategies) {
