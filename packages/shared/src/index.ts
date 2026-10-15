@@ -24,3 +24,5 @@ export * from "./security-workbench.js";
 export * from "./jait-link.js";
 
 export * from "./team-chat.js";
+
+export * from "./network-resources.js";
