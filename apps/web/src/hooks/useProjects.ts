@@ -267,7 +267,7 @@ export function useProjects(token?: string | null, onLoginRequired?: () => void)
     try {
       const [projectsRes, sessionsRes, lastActiveRes] = await Promise.all([
         fetch(`${API_URL}/api/projects?status=active&limit=${visibleLimit}`, { headers: authHeaders(token) }),
-        fetch(`${API_URL}/api/sessions?status=active&limit=100`, { headers: authHeaders(token) }),
+        fetch(`${API_URL}/api/sessions?status=active&personal=true`, { headers: authHeaders(token) }),
         fetch(`${API_URL}/api/projects/last-active`, { headers: authHeaders(token) }),
       ])
       if (projectsRes.status === 401 || sessionsRes.status === 401 || lastActiveRes.status === 401) {

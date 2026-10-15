@@ -116,11 +116,12 @@ export function registerSessionRoutes(
     const query = request.query as Record<string, unknown>;
     const status =
       typeof query["status"] === "string" ? query["status"] : undefined;
+    const personalOnly = query["personal"] === "true";
     const limit = parseSessionListLimit(query["limit"]);
     if (!limit) {
-      return { sessions: sessionService.list(status, authUser.id), hasMore: false };
+      return { sessions: sessionService.list(status, authUser.id, undefined, personalOnly), hasMore: false };
     }
-    const sessions = sessionService.list(status, authUser.id, limit + 1);
+    const sessions = sessionService.list(status, authUser.id, limit + 1, personalOnly);
     return {
       sessions: sessions.slice(0, limit),
       hasMore: sessions.length > limit,
