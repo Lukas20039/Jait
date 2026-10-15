@@ -4,6 +4,17 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.937](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.937) — 2026-10-15
+
+- feat(messenger): reuse chat composer and add receipts, read actions and dictation — 596a81d2
+- feat: add encrypted messenger and improve agent workflows — c4912d4b
+
+Add the built-in encrypted Matrix Messenger with optional Synapse deployment. Reuse Jait's chat composer, messages and scrolling; add public receipt details, manual read/unread controls, notification read actions and room-specific dictation drafts. Includes the agent workflow improvements in the preceding feature commit.
+
+Validation: workspace typechecks and release guard passed; the full unit suite passed 5,062 tests with 78 skipped. Five browser checks with real isolated Synapse, desktop notification tests and Android Java compilation passed. Full-app production packaging and real WhatsApp/Teams bridge accounts remain unverified; dictation browser coverage uses synthetic audio and a mocked transcription response.
+
+Package versions: gateway 0.1.937, web 0.1.447, mobile 0.1.28. Matrix/bridges remain optional and require explicit account setup.
+
 ## [v0.1.936](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.936) — 2026-10-15
 
 - fix(network): keep resource controls usable on mobile and isolate browser checks — 8feb3bae
