@@ -5,7 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { NetworkResource } from '@jait/shared'
 import { groupNetworkResources } from '@/lib/network-resources'
-import { siLinux, siApple, siAndroid, siDocker, siNginx, siRedis, siPostgresql, siHomeassistant } from 'simple-icons'
+import linuxSvg from 'simple-icons/icons/linux.svg?raw'
+import appleSvg from 'simple-icons/icons/apple.svg?raw'
+import androidSvg from 'simple-icons/icons/android.svg?raw'
+import dockerSvg from 'simple-icons/icons/docker.svg?raw'
+import nginxSvg from 'simple-icons/icons/nginx.svg?raw'
+import redisSvg from 'simple-icons/icons/redis.svg?raw'
+import postgresqlSvg from 'simple-icons/icons/postgresql.svg?raw'
+import homeassistantSvg from 'simple-icons/icons/homeassistant.svg?raw'
 import {
   Search,
   RefreshCw,
@@ -182,21 +189,23 @@ function preloadImage(src: string): HTMLImageElement {
   return img
 }
 
+const logoUri = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.replace('<svg ', '<svg fill="#ffffff" '))}`
+
 const OS_IMAGES: Record<string, HTMLImageElement> = {
   windows: preloadImage(buildSvgDataUri(WINDOWS_PATH, '#ffffff')),
-  macos: preloadImage(buildSvgDataUri(siApple.path, '#ffffff')),
-  linux: preloadImage(buildSvgDataUri(siLinux.path, '#ffffff')),
-  android: preloadImage(buildSvgDataUri(siAndroid.path, '#ffffff')),
-  ios: preloadImage(buildSvgDataUri(siApple.path, '#ffffff')),
+  macos: preloadImage(logoUri(appleSvg)),
+  linux: preloadImage(logoUri(linuxSvg)),
+  android: preloadImage(logoUri(androidSvg)),
+  ios: preloadImage(logoUri(appleSvg)),
 }
 
 const RESOURCE_IMAGES: Record<NetworkResource['icon'], HTMLImageElement> = {
-  docker: preloadImage(buildSvgDataUri(siDocker.path, '#ffffff')),
+  docker: preloadImage(logoUri(dockerSvg)),
   jait: preloadImage('/icon.svg'),
-  nginx: preloadImage(buildSvgDataUri(siNginx.path, '#ffffff')),
-  redis: preloadImage(buildSvgDataUri(siRedis.path, '#ffffff')),
-  postgresql: preloadImage(buildSvgDataUri(siPostgresql.path, '#ffffff')),
-  homeassistant: preloadImage(buildSvgDataUri(siHomeassistant.path, '#ffffff')),
+  nginx: preloadImage(logoUri(nginxSvg)),
+  redis: preloadImage(logoUri(redisSvg)),
+  postgresql: preloadImage(logoUri(postgresqlSvg)),
+  homeassistant: preloadImage(logoUri(homeassistantSvg)),
 }
 
 /** Detect OS family from an osVersion string like "Windows 11 Pro", "Ubuntu 24.04 LTS", etc. */
@@ -953,7 +962,7 @@ export function NetworkPanel({ token, sessionId }: NetworkPanelProps) {
             </span>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
           <select aria-label="Inspect resource" value={selectedNode?.id ?? ''}
             onChange={event => {
               const id = event.target.value

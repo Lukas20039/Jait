@@ -1,6 +1,9 @@
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
+// The first Vite request may optimize dependencies on a fresh checkout.
+test.setTimeout(120_000)
+
 for (const width of [1280, 390]) {
   test(`Docker resources have meaningful identity and expandable groups at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 850 })
@@ -17,8 +20,7 @@ for (const width of [1280, 390]) {
       resources: unavailable ? [] : [container('sandbox-alpha', 'sandbox', 'jait'), container('sandbox-beta', 'sandbox', 'jait'), container('web-server', 'application', 'nginx')],
       inventory: { status: unavailable ? 'unavailable' : 'available', truncated: false },
     } }))
-    await page.goto('/')
-    await page.evaluate(() => import('/src/e2e-fixtures/network-resources.tsx'))
+    await page.goto('/src/e2e-fixtures/network-resources.html')
     const panel = page.locator('#network-resource-fixture')
     await expect(panel.getByLabel('Visible graph nodes')).toHaveText('3 shown')
     await panel.getByLabel('Inspect resource').selectOption('group-jait-sandboxes')
@@ -34,12 +36,15 @@ for (const width of [1280, 390]) {
     await panel.getByLabel('Inspect resource').selectOption('docker-web-server')
     await expect(panel.getByRole('img', { name: 'nginx logo' })).toBeVisible()
     await expect(panel.getByText('nginx:alpine', { exact: true })).toBeVisible()
+    await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `network-resource-details-${width}.png`) })
     await panel.getByRole('button', { name: 'Close node details' }).click()
     await panel.getByRole('button', { name: 'Expand sandboxes', exact: true }).click()
     await expect(panel.getByLabel('Visible graph nodes')).toHaveText('5 shown')
     await panel.getByRole('button', { name: 'Collapse sandboxes', exact: true }).click()
     await expect(panel.getByLabel('Visible graph nodes')).toHaveText('3 shown')
     await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `network-resources-${width}.png`) })
+    const refreshBounds = await panel.getByRole('button', { name: 'Refresh', exact: true }).boundingBox()
+    expect(refreshBounds!.x + refreshBounds!.width).toBeLessThanOrEqual(width)
     unavailable = true
     await panel.getByRole('button', { name: 'Refresh', exact: true }).click()
     await expect(panel.getByRole('status')).toHaveText('Docker inventory unavailable; showing network discoveries.')
