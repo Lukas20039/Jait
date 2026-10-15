@@ -10,7 +10,7 @@ for (const width of [1280, 390, 320]) {
       if (route.request().url().endsWith('/halt')) stopCalls += 1
       return route.fulfill({ json: { state: { halted: false, reason: null, haltedAt: null, updatedAt: null } } })
     })
-    await page.goto('/')
+    await page.goto('/src/e2e-fixtures/index.html')
     await page.evaluate(() => import('/src/e2e-fixtures/agent-controls.tsx'))
     const scope = width < 768 ? page.locator('header') : page.getByRole('complementary', { name: 'Workspace sidebar' })
     await scope.locator('[data-agent-control]').click()
@@ -51,7 +51,7 @@ for (const width of [1280, 390, 320]) {
       } else if (url.endsWith('/resume')) halted = false
       await route.fulfill({ json: { state: state() } })
     })
-    await page.goto('/')
+    await page.goto('/src/e2e-fixtures/index.html')
     await page.evaluate(() => import('/src/e2e-fixtures/agent-controls.tsx'))
     const scope = width < 768 ? page.locator('header') : page.getByRole('complementary', { name: 'Workspace sidebar' })
     const stop = scope.getByRole('button', { name: 'Agent controls', exact: true })

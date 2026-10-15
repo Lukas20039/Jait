@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 for (const width of [390, 1280]) {
   test(`single queued message expands without dragging or shifting transcript at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await page.goto('/src/e2e-fixtures/index.html', { waitUntil: 'domcontentloaded' })
     await page.evaluate(() => import('/src/e2e-fixtures/queue-selection.tsx'))
     const row = page.locator('[data-queue-id="single"]')
     await expect(row).toBeVisible()
@@ -19,7 +19,7 @@ for (const width of [390, 1280]) {
     await row.getByRole('button', { name: 'Collapse queued message' }).click()
     await expect(row.getByRole('button', { name: 'Expand queued message' })).toBeVisible()
     await row.getByRole('button', { name: 'Edit message' }).click()
-    const editor = row.getByRole('textbox')
+    const editor = page.locator('[data-queue-editor]').getByRole('textbox')
     await editor.fill('Updated message')
     await editor.press('Enter')
     await expect(row.getByText('Updated message', { exact: true })).toBeVisible()

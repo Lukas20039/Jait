@@ -274,6 +274,7 @@ export function DeveloperChatWorkspace({
   onVoiceInput,
   renderInlineSecretPrompt,
 }: DeveloperChatWorkspaceProps) {
+  const [editingQueue, setEditingQueue] = useState(false)
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
   // Width of the chat panel, used to hide the floating top indicators when the
   // panel gets too narrow (they would overlap transcript text otherwise).
@@ -324,7 +325,7 @@ export function DeveloperChatWorkspace({
     if (message?.role !== 'user') return
     setEditingMessageId(message.id)
   }, [messages])
-  const showNormalComposer = shouldShowNormalChatComposer(isMobile, editingMessageId)
+  const showNormalComposer = shouldShowNormalChatComposer(isMobile, editingMessageId, editingQueue)
   const panelHideButton = showPanelHideButton ? (
     <TooltipHint content="Hide chat panel">
       <Button
@@ -644,6 +645,7 @@ export function DeveloperChatWorkspace({
                 {messageQueue.length > 0 && (
                   <MessageQueue
                     items={messageQueue}
+                    onEditingChange={setEditingQueue}
                     onRemove={onDequeueMessage}
                     onEdit={onUpdateQueueItem}
                     onReorder={onReorderQueueItem}

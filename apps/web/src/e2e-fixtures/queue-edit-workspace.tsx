@@ -1,0 +1,128 @@
+import { useRef, useState, type ComponentProps } from 'react'
+import { createRoot } from 'react-dom/client'
+import { AuthProvider } from '@/hooks/useAuth'
+import { DeveloperChatWorkspace } from '@/components/app-shell/developer-chat-workspace'
+import type { PromptInputHandle } from '@/components/chat/prompt-input'
+import type { QueuedMessage } from '@/components/chat/message-queue'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { ConfirmDialogProvider } from '@/components/ui/confirm-dialog'
+import '@/index.css'
+
+const noop = () => {}
+function Harness() {
+  const isMobile = window.innerWidth < 768
+  const inputValueRef = useRef('Keep my unsent draft')
+  const promptRef = useRef<PromptInputHandle>(null)
+  const [items, setItems] = useState<QueuedMessage[]>([{ id: 'queued-1', content: 'Edit this queued message', queuedAt: 1, held: true }])
+  const props: ComponentProps<typeof DeveloperChatWorkspace> = {
+    activeProject: null,
+    activeProjectId: null,
+    activeProjectDisplayName: null,
+    activeProjectRoot: null,
+    activeSessionId: 'queue-edit-fixture',
+    availableFilesForMention: [],
+    availableSkills: [],
+    changedFiles: [],
+    changedFilesForComposer: [],
+    chatCollapsed: false,
+    chatMode: 'build',
+    chatProvider: 'jait',
+    chatProviderRuntimeMode: 'supervised',
+    chatResponseStyle: 'normal',
+    showDebugPanel: false,
+    onCloseDebugPanel: noop,
+    cliModel: null,
+    reasoningEffort: null,
+    contextUsage: null,
+    defaultStreamingAction: 'queue',
+    developerChatPanelStyle: { height: '100dvh', width: '100%' },
+    developerChatSubmitLoading: false,
+    developerChatUiState: { showTodoList: false },
+    developerComposerControlRow: <span data-testid="normal-composer-controls">Normal composer</span>,
+    developerPlaceholder: 'Normal composer draft',
+    editComposerBag: {},
+    error: null,
+    hasMessages: true,
+    hasMoreMessages: false,
+    hitMaxRounds: false,
+    inputSegments: undefined,
+    inputValueRef: inputValueRef,
+    inputVersion: 0,
+    isLoading: false,
+    isLoadingHistory: false,
+    isMobile: isMobile,
+    loadOlderMessages: noop,
+    limitReached: false,
+    managerThreads: [],
+    messageContents: ['Queue editing conversation'],
+    messageQueue: items,
+    messages: [{ id: 'assistant-1', role: 'assistant', content: 'Queue editing conversation' }],
+    pendingPlan: null,
+    previewOpen: false,
+    promptBeforeProcessingQueuedMessage: false,
+    projectSuggestions: [],
+    projects: [],
+    projectsLoading: false,
+    promptInputRef: promptRef,
+    sendTarget: 'chat',
+    sessionInfo: null,
+    setChatPanelElement: noop,
+    showDesktopProject: false,
+    showProject: false,
+    showScreenShare: false,
+    showPanelHideButton: false,
+    suggestions: [],
+    threadTargetRepoRuntime: null,
+    token: null,
+    todoList: [],
+    voiceLevels: [],
+    voiceRecording: false,
+    voiceTranscribing: false,
+    onAcceptAllFiles: noop,
+    onAcceptFile: noop,
+    onCancelRequest: noop,
+    onChangedFileClick: noop,
+    onChatModeChange: noop,
+    onClearTodoList: noop,
+    onCliModelChange: noop,
+    onReasoningEffortChange: noop,
+    onContinueChat: noop,
+    onDequeueMessage: id => setItems(items => items.filter(item => item.id !== id)),
+    onEditPreviousMessage: noop,
+    onExecutePlan: noop,
+    onHandleInputChange: value => { inputValueRef.current = value },
+    onHandleMemoryFeedback: noop,
+    onHandleSuggestion: noop,
+    onMemorySourceOpen: noop,
+    onOpenAddProject: noop,
+    onOpenMessagePath: noop,
+    onOpenSourceControl: noop,
+    onOpenTerminalFromToolCall: noop,
+    onHidePanel: noop,
+    onApprovalResponse: noop,
+    onAskQueuedMessageInParallel: noop,
+    onProviderChange: noop,
+    onProviderRuntimeModeChange: noop,
+    onQueue: noop,
+    onSteer: noop,
+    onRejectAllFiles: noop,
+    onRejectFile: noop,
+    onRejectPlan: noop,
+    onReorderQueueItem: noop,
+    onResponseStyleChange: noop,
+    onSearchFiles: async () => [],
+    onSendTargetChange: noop,
+    onSendQueuedAfterInterruptedExit: noop,
+    onSetApproveAllInSession: noop,
+    onStopRecording: noop,
+    onSubmit: noop,
+    onToggleHoldQueueItem: noop,
+    onUpdateQueueItem: (id, content, attachments, displaySegments) => setItems(items => items.map(item => item.id === id ? { ...item, content, attachments, displaySegments } : item)),
+    onVoiceInput: noop,
+  }
+  return <TooltipProvider><ConfirmDialogProvider>
+    <button className="fixed left-2 top-2 z-[80]" onClick={() => setItems([])}>Remove queued item externally</button>
+    <DeveloperChatWorkspace {...props} />
+  </ConfirmDialogProvider></TooltipProvider>
+}
+createRoot(document.getElementById('root')!).render(<AuthProvider><Harness /></AuthProvider>)

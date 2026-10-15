@@ -18,6 +18,7 @@ import type { UserMessageSegment } from '@/lib/user-message-segments'
 import { mergeAttachmentsIntoSegments } from '@/lib/message-segment-builders'
 import type { DefaultStreamingAction } from '@/lib/prompt-submit-routing'
 import { TooltipHint } from '@/components/ui/tooltip'
+import { shouldShowNormalChatComposer } from '@/components/chat/message-edit-layout'
 import { ChatPanelDivider } from './chat-panel-divider'
 
 export interface ParallelChatPrompt {
@@ -155,6 +156,7 @@ function ParallelChatPanelImpl({
   const handleLatestContentViewed = useCallback(() => {
     if (viewedActivityAt) onSessionViewed?.(session.id, viewedActivityAt)
   }, [onSessionViewed, session.id, viewedActivityAt])
+  const [editingQueue, setEditingQueue] = useState(false)
   const [draft, setDraft] = useState('')
   const [inputVersion, setInputVersion] = useState(0)
   const initialPromptSentRef = useRef(false)
@@ -463,6 +465,7 @@ function ParallelChatPanelImpl({
         {messageQueue.length > 0 && (
           <MessageQueue
             items={messageQueue}
+            onEditingChange={setEditingQueue}
             onRemove={dequeueMessage}
             onEdit={updateQueueItem}
             onReorder={reorderQueueItem}
@@ -470,6 +473,7 @@ function ParallelChatPanelImpl({
             iconOnly={isMobile}
           />
         )}
+        <div hidden={!shouldShowNormalChatComposer(isMobile, null, editingQueue)} className="space-y-1.5">
         <div className="rounded-2xl border bg-background dark:bg-card focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 overflow-hidden">
         <PromptInput
           merged
@@ -508,6 +512,7 @@ function ParallelChatPanelImpl({
         />
         </div>
         {composerControlRow}
+        </div>
         </div>
       </div>
     </section>

@@ -145,6 +145,8 @@ describe('message edit mobile layout', () => {
     expect(shouldShowNormalChatComposer(true, 'message-1')).toBe(false)
     expect(shouldShowNormalChatComposer(true, null)).toBe(true)
     expect(shouldShowNormalChatComposer(false, 'message-1')).toBe(true)
+    expect(shouldShowNormalChatComposer(true, null, true)).toBe(false)
+    expect(shouldShowNormalChatComposer(false, null, true)).toBe(true)
   })
 
   it('hides the context indicator while trajectory mode is open', () => {

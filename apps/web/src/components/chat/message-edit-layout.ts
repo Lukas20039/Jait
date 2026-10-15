@@ -35,8 +35,9 @@ export function getMobileUserMessageEditTop(
 export function shouldShowNormalChatComposer(
   isMobile: boolean,
   editingMessageId: string | null,
+  editingQueue = false,
 ): boolean {
-  return !isMobile || editingMessageId === null
+  return !isMobile || (editingMessageId === null && !editingQueue)
 }
 
 export function shouldShowChatContextIndicator(

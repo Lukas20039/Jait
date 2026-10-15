@@ -7,7 +7,8 @@ import { getMessageEditPromptClassName, getUserMessageEditComposerShellClassName
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowRight, ChevronDown, ChevronRight, GitBranch, GripVertical, ListPlus, Lock, LockOpen, Pencil, Square, X } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
@@ -28,6 +29,7 @@ export interface QueuedMessage {
 
 interface MessageQueueProps {
   items: QueuedMessage[]
+  onEditingChange?: (editing: boolean) => void
   onRemove?: (id: string) => void
   onEdit?: (id: string, newContent: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => void | Promise<void>
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
@@ -109,11 +111,19 @@ function QueueItemPreview({ item, index }: { item: QueuedMessage; index: number 
   )
 }
 
+// Virtual transcript rows use transforms. Keep the floating mobile editor
+// attached to the viewport rather than that row's containing block.
+function QueueEditSurface({ mobile, children }: { mobile: boolean; children: ReactNode }) {
+  return mobile ? createPortal(children, document.body) : children
+}
+
 /* ── Inline-editable queued message row ─────────────────────────────── */
 
 function QueueItem({
   item,
   index,
+  editing,
+  onEditingChange,
   onRemove,
   onEdit,
   onReorder,
@@ -130,6 +140,8 @@ function QueueItem({
 }: {
   item: QueuedMessage
   index: number
+  editing: boolean
+  onEditingChange: (id: string, editing: boolean) => void
   onRemove?: (id: string) => void
   onEdit?: (id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => void | Promise<void>
   onReorder?: (sourceId: string, targetId: string | null, placement: 'before' | 'after') => void
@@ -144,7 +156,7 @@ function QueueItem({
   dropAfter?: boolean
   onDragStart?: (id: string, event: React.PointerEvent<HTMLElement>) => void
 }) {
-  const [editing, setEditing] = useState(false)
+  const setEditing = useCallback((next: boolean) => onEditingChange(item.id, next), [item.id, onEditingChange])
   const [collapsed, setCollapsed] = useState(true)
   const [draft, setDraft] = useState(item.displayContent ?? item.content)
   const [draftSegments, setDraftSegments] = useState<UserMessageSegment[]>(item.displaySegments ?? [{ type: 'text', text: item.displayContent ?? item.content }])
@@ -194,12 +206,12 @@ function QueueItem({
     } finally {
       setSaving(false)
     }
-  }, [saving, draftSegments, item, onEdit])
+  }, [saving, draftSegments, item, onEdit, setEditing])
 
   const cancelEdit = useCallback(() => {
     setDraft(item.displayContent ?? item.content)
     setEditing(false)
-  }, [item.content, item.displayContent])
+  }, [item.content, item.displayContent, setEditing])
 
   return (
     <>
@@ -273,6 +285,7 @@ function QueueItem({
         )}
         {!editing && <AttachmentList attachments={collectAttachments(item.attachments, item.displaySegments)} className="mb-1.5" />}
         {editing ? (
+          <QueueEditSurface mobile={isMobile}>
           <div data-no-drag="true" data-queue-editor className={getUserMessageEditComposerShellClassName()}
             style={isMobile && mobileEditTop != null ? { top: mobileEditTop } : undefined}
             onKeyDown={event => {
@@ -289,6 +302,7 @@ function QueueItem({
                 disabled={saving} onClick={cancelEdit} aria-label="Cancel editing message"><X className="h-3.5 w-3.5" /></Button>}
               className={getMessageEditPromptClassName()} />
           </div>
+          </QueueEditSurface>
         ) : collapsed ? (
           <button type="button" onClick={toggleCollapsed} aria-expanded={!collapsed} className="block w-full min-w-0 text-left text-foreground"><span className={cn('block', iconOnly ? 'line-clamp-2 break-words' : 'truncate')}>{item.displayContent ?? item.content}</span></button>
         ) : (
@@ -428,7 +442,19 @@ function QueueItem({
 
 /* ── Queue container ────────────────────────────────────────────────── */
 
-export function MessageQueue({ items, onRemove, onEdit, onReorder, onSteer, onStopAndSteer, onSendToParallelThread, parallelActionLabel, onToggleHold, iconOnly, className }: MessageQueueProps) {
+export function MessageQueue({ items, onEditingChange, onRemove, onEdit, onReorder, onSteer, onStopAndSteer, onSendToParallelThread, parallelActionLabel, onToggleHold, iconOnly, className }: MessageQueueProps) {
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const editing = editingId !== null && items.some(item => item.id === editingId)
+  const handleEditingChange = useCallback((id: string, active: boolean) => {
+    setEditingId(current => active ? id : current === id ? null : current)
+  }, [])
+  useEffect(() => {
+    onEditingChange?.(editing)
+    return () => { if (editing) onEditingChange?.(false) }
+  }, [editing, onEditingChange])
+  useEffect(() => {
+    if (editingId !== null && !items.some(item => item.id === editingId)) setEditingId(null)
+  }, [editingId, items])
   const containerRef = useRef<HTMLDivElement>(null)
   const dragCaptureElementRef = useRef<HTMLElement | null>(null)
   const [dragSourceId, setDragSourceId] = useState<string | null>(null)
@@ -576,6 +602,8 @@ export function MessageQueue({ items, onRemove, onEdit, onReorder, onSteer, onSt
           key={item.id}
           item={item}
           index={i}
+          editing={editingId === item.id}
+          onEditingChange={handleEditingChange}
           onRemove={onRemove}
           onEdit={onEdit}
           onReorder={items.length > 1 ? onReorder : undefined}
