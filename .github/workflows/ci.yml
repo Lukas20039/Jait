@@ -86,7 +86,7 @@ jobs:
       - name: Test core workflows in the web app
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.jait/artifacts/playwright-browsers
-        run: bun run test:smoke
+        run: node tests/e2e/scripts/run-isolated.mjs bun run test:smoke
 
       - name: Upload web test evidence
         if: failure()

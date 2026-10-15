@@ -7,8 +7,8 @@ import { resolve } from 'node:path'
  */
 const configuredFrontendUrl = process.env.FRONTEND_URL
 const configuredApiUrl = process.env.API_URL
-const FRONTEND_URL = configuredFrontendUrl || 'http://127.0.0.1:3100'
-const API_URL = configuredApiUrl || (configuredFrontendUrl ? 'http://localhost:8000' : 'http://127.0.0.1:8100')
+const FRONTEND_URL = configuredFrontendUrl || `http://127.0.0.1:${process.env.E2E_FRONTEND_PORT || 3100}`
+const API_URL = configuredApiUrl || (configuredFrontendUrl ? 'http://localhost:8000' : `http://127.0.0.1:${process.env.E2E_API_PORT || 8100}`)
 const shouldStartLocalStack = !configuredFrontendUrl && !configuredApiUrl
 const includeFullBrowserMatrix = process.env.PLAYWRIGHT_ALL_BROWSERS === '1'
 const includeMobileMatrix = process.env.PLAYWRIGHT_MOBILE === '1'
@@ -90,6 +90,7 @@ export default defineConfig({
         command: 'node ./scripts/start-dev-stack.mjs',
         url: FRONTEND_URL,
         reuseExistingServer: false,
+        gracefulShutdown: { signal: 'SIGTERM', timeout: 5000 },
         timeout: 120000,
       }
     : undefined,

@@ -92,7 +92,7 @@ async function shutdown(exitCode = 0) {
 
   for (const child of children.slice().reverse()) {
     try {
-      if (!child.killed) child.kill('SIGKILL')
+      if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL')
     } catch {
       // ignore
     }
@@ -141,7 +141,7 @@ try {
   })
   await waitForUrl(gatewayHealthUrl, 'gateway health')
 
-  spawnServer('web', 'bun', ['run', 'dev', '--host', '0.0.0.0'], webDir, {
+  spawnServer('web', process.execPath, [resolve(webDir, 'node_modules/vite/bin/vite.js'), '--config', 'vite.config.ts', '--host', '127.0.0.1'], webDir, {
     JAIT_GATEWAY_URL: gatewayUrl,
     VITE_WS_URL: gatewayUrl.replace(/^http/, 'ws'),
     NODE_ENV: 'development',
