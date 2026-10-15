@@ -1,3 +1,5 @@
+import { MessageReadStatus } from './message-read-status'
+import type { MessengerReadReceipt } from '@/lib/messenger/model'
 import { AgentAvatar } from '@/components/manager/agent-avatar'
 import type { ChatPersona } from '@/lib/chat-persona'
 import { AttachmentList, collectAttachments } from './attachment-list'
@@ -62,6 +64,16 @@ import {
 import { TooltipHint } from '@/components/ui/tooltip'
 
 interface MessageProps {
+  /** Personal-message metadata; uses the same bubbles/actions with literal text and no AI controls. */
+  messenger?: {
+    sender: string
+    timestamp: number
+    pending?: boolean
+    failed?: boolean
+    unableToDecrypt?: boolean
+    readBy?: MessengerReadReceipt[]
+    attachment?: ReactNode
+  }
   persona?: ChatPersona
   messageId?: string
   messageIndex?: number
@@ -167,6 +179,7 @@ function ThinkingDots() {
 }
 
 function MessageInner({
+  messenger,
   persona,
   messageId,
   messageIndex,
@@ -247,6 +260,7 @@ function MessageInner({
   }, [lazyContextFlow, contextFlowLoading, contextFlow, messageIndex, sessionId, authToken])
 
   const { userDisplayText, userDisplaySegments } = useMemo(() => {
+    if (messenger) return { userDisplayText: content, userDisplaySegments: [{ type: 'text' as const, text: content }] }
     if (!isUser) {
       return {
         userDisplayText: content,
@@ -268,7 +282,7 @@ function MessageInner({
 
     const parsed = parseLegacyReferencedFilesBlock(content)
     return { userDisplayText: parsed.text, userDisplaySegments: parsed.displaySegments }
-  }, [isUser, content, displayContentProp, referencedFilesProp, displaySegmentsProp])
+  }, [messenger, isUser, content, displayContentProp, referencedFilesProp, displaySegmentsProp])
 
   const [copied, setCopied] = useState(false)
   const [isRetrying, setIsRetrying] = useState(false)
@@ -461,7 +475,7 @@ function MessageInner({
       window.removeEventListener('resize', update)
     }
   }, [isEditing, isMobile])
-  const canEdit = isUser && !!messageId && !!onEditMessage
+  const canEdit = !messenger && isUser && !!messageId && !!onEditMessage
   const canRetry = canEdit
   const showStreamingIndicator = isStreaming && !thinking && !(typeof content === 'string' ? content : '').trim()
   const hasCopyableMessage = buildCopyText().length > 0
@@ -707,7 +721,7 @@ function MessageInner({
     )
   }
 
-  const assistantActions = !isUser ? renderActions() : null
+  const assistantActions = !messenger && !isUser ? renderActions() : null
   const hasThinkingSegment = !isUser && segments?.some((segment) => segment.type === 'thinking' && segment.content.trim())
   const hasSteeringSegment = !isUser && segments?.some((segment) => segment.type === 'steering')
   const memoryProvenanceEntries = !isUser ? getInjectedMemoryProvenanceEntries(effectiveContextFlow) : []
@@ -859,7 +873,7 @@ function MessageInner({
             )}
 
             {hasUserRenderableContent || content ? (
-              isUser ? (
+              isUser || messenger ? (
                 isEditing ? (
                   <div
                     className={getUserMessageEditComposerShellClassName()}
@@ -939,6 +953,12 @@ function MessageInner({
                   </div>
                 ) : (
                   <div className="relative w-fit max-w-full space-y-2">
+                    {messenger && <div className="flex flex-wrap items-center gap-2 text-2xs text-muted-foreground">
+                      <span className="max-w-48 truncate font-medium">{messenger.sender}</span>
+                      <time title={new Date(messenger.timestamp).toLocaleString()} dateTime={new Date(messenger.timestamp).toISOString()}>{new Date(messenger.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time>
+                      {messenger.pending && <span>Sending…</span>}
+                      {messenger.failed && <span className="text-destructive">Not sent</span>}
+                    </div>}
                     <UserMessageImages images={userImages} />
                     {steered && (
                       <span className="mb-1 inline-flex items-center gap-1 text-2xs font-medium uppercase tracking-wider text-primary/70">
@@ -949,12 +969,13 @@ function MessageInner({
                     <TooltipHint content={canEdit && !isEditing ? 'Click to edit message' : undefined}>
                     <AIMessageContent
                       ref={userBubbleRef}
-                      data-message-from="user"
+                      data-message-from={role}
                       className={cn(
                         'min-w-0 rounded-lg bg-muted p-4 break-words [overflow-wrap:anywhere]',
                         canEdit && !isEditing && 'cursor-text transition-colors hover:bg-muted/80',
                         'leading-relaxed [font-size:0.9rem]',
                         steered && 'border border-dashed border-primary/40 bg-primary/5',
+                        messenger?.unableToDecrypt && 'italic text-muted-foreground',
                       )}
                       onClick={handleUserBubbleClick}
                     >
@@ -1019,10 +1040,12 @@ function MessageInner({
                               )
                             : (optimisticUserDisplayText ?? userDisplayText)}
                         </div>
+                        {messenger?.attachment}
                       </div>
                     </AIMessageContent>
                     </TooltipHint>
 
+                    {messenger && isUser && !messenger.pending && !messenger.failed && <div className="pr-10"><MessageReadStatus readers={messenger.readBy ?? []} /></div>}
                     {renderActions(true)}
                   </div>
                 )

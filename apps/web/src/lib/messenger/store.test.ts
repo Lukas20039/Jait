@@ -3,15 +3,17 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import { MessengerStore } from './store'
 import { sessionKey, type MessengerSession } from './model'
 
-const mock = vi.hoisted(() => ({ createClient: vi.fn(), notify: vi.fn(), failCrypto: false }))
-vi.mock('@/lib/system-notifications', () => ({ triggerSystemNotification: mock.notify }))
+const mock = vi.hoisted(() => ({ createClient: vi.fn(), notify: vi.fn(), revoke: vi.fn(), failCrypto: false }))
+vi.mock('@/lib/system-notifications', () => ({ triggerSystemNotification: mock.notify, revokeSystemNotification: mock.revoke }))
 vi.mock('./crypto', () => ({ initializeCrypto: (client: Client) => client.initRustCrypto() }))
 vi.mock('matrix-js-sdk', () => ({
   createClient: mock.createClient,
   ClientEvent: { Sync: 'sync', Room: 'Room' },
   SyncState: { Prepared: 'PREPARED', Syncing: 'SYNCING', Error: 'ERROR', Reconnecting: 'RECONNECTING' },
-  RoomEvent: { Timeline: 'timeline', Name: 'name', MyMembership: 'membership', Receipt: 'receipt', LocalEchoUpdated: 'echo' },
+  RoomEvent: { Timeline: 'timeline', Name: 'name', MyMembership: 'membership', Receipt: 'receipt', LocalEchoUpdated: 'echo', AccountData: 'accountData' },
   MatrixEventEvent: { Decrypted: 'decrypted' },
+  EventType: { MarkedUnread: 'm.marked_unread' },
+  NotificationCountType: { Total: 'total', Highlight: 'highlight' },
   Preset: { TrustedPrivateChat: 'trusted_private_chat' },
 }))
 
@@ -27,6 +29,8 @@ class Client extends EventEmitter {
   sendTextMessage = vi.fn(async () => ({}))
   createRoom = vi.fn(async () => ({ room_id: '!new:matrix.test' }))
   getPushActionsForEvent = vi.fn(() => ({ notify: true }))
+  setRoomAccountData = vi.fn(async (_roomId: string, _type: string, _content: { unread: boolean }) => ({}))
+  setRoomReadMarkers = vi.fn(async (_roomId: string, _eventId: string, _event: unknown) => ({}))
   mxcUrlToHttp = vi.fn(() => 'https://matrix.test/_matrix/client/v1/media/download/matrix.test/file')
 }
 
@@ -51,6 +55,7 @@ beforeEach(() => {
   stores = []
   mock.failCrypto = false
   mock.notify.mockResolvedValue(undefined)
+  mock.revoke.mockResolvedValue(undefined)
   mock.createClient.mockImplementation(() => { const client = new Client(); clients.push(client); return client })
   vi.stubGlobal('navigator', { locks: { request: vi.fn((_name, _opts, callback) => callback({})) } })
   vi.stubGlobal('window', {})
@@ -182,5 +187,86 @@ describe('personal Matrix client lifecycle', () => {
     client.emit('decrypted', event)
     expect(mock.notify).toHaveBeenCalledTimes(1)
     expect(mock.notify.mock.calls[0][0]).toMatchObject({ body: 'New message', link: '/messenger?roomId=!room%3Amatrix.test' })
+  })
+})
+
+function readRoom(client: Client) {
+  const events = ['$old', '$new'].map((id, index) => ({
+    getId: () => id, getSender: () => '@bob:matrix.test', status: null,
+    getTs: () => 1700000000000 + index, getType: () => 'm.room.message',
+    getContent: () => ({ body: id }), isRedacted: () => false, isEncrypted: () => false,
+    isDecryptionFailure: () => false,
+  }))
+  const accountData = new Map<string, unknown>()
+  const room = {
+    roomId: '!room:matrix.test', name: 'Personal',
+    getMyMembership: () => 'join', getMember: () => ({ name: 'Bob' }), getMembers: () => [],
+    getLiveTimeline: () => ({ getEvents: () => events }),
+    findEventById: (id: string) => events.find(event => event.getId() === id),
+    getUnfilteredTimelineSet: () => ({ compareEventOrdering: (a: string, b: string) => events.findIndex(event => event.getId() === a) - events.findIndex(event => event.getId() === b) }),
+    getReadReceiptForUserId: vi.fn(() => null as unknown),
+    hasUserReadEvent: vi.fn(() => false),
+    getAccountData: (type: string) => ({ getContent: () => accountData.get(type) ?? {} }),
+    currentState: { getStateEvents: (_type: string, key?: string) => key === undefined ? [] : null },
+    getUnreadNotificationCount: () => 2, setUnread: vi.fn(),
+  }
+  client.getRoom.mockImplementation((id?: string) => id === room.roomId ? room as never : null)
+  client.getRooms.mockReturnValue([room] as never)
+  return { room, events, accountData }
+}
+
+describe('read and unread controls', () => {
+  it('marks a non-selected conversation read, persists its flag, and clears its counts', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room, events } = readRoom(client)
+    await store.markRead(room.roomId)
+    expect(client.setRoomReadMarkers).toHaveBeenCalledWith(room.roomId, '$new', events[1])
+    expect(client.setRoomAccountData).toHaveBeenCalledWith(room.roomId, 'm.marked_unread', { unread: false })
+    expect(room.setUnread).toHaveBeenCalledWith('total', 0)
+    expect(store.getSnapshot().selectedRoomId).toBeNull()
+  })
+  it('does not mark newer messages read through an old notification or regress a newer real receipt', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room, events } = readRoom(client)
+    await store.markRead(room.roomId, '$old')
+    expect(client.setRoomReadMarkers).toHaveBeenCalledWith(room.roomId, '$old', events[0])
+    expect(room.setUnread).not.toHaveBeenCalled()
+    client.setRoomReadMarkers.mockClear()
+    room.getReadReceiptForUserId.mockReturnValue({ eventId: '$new', data: { ts: 1700000000001 } })
+    await store.markRead(room.roomId, '$old')
+    expect(client.setRoomReadMarkers).not.toHaveBeenCalled()
+  })
+  it('serializes read/unread, preserves the manual unread mark through automatic reads, and accepts remote sync', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room, accountData } = readRoom(client)
+    let finish: () => void = () => {}
+    client.setRoomReadMarkers.mockImplementationOnce(async () => { await new Promise<void>(resolve => { finish = resolve }); return {} })
+    const reading = store.markRead(room.roomId)
+    await vi.waitFor(() => expect(client.setRoomReadMarkers).toHaveBeenCalledOnce())
+    const unread = store.markUnread(room.roomId)
+    finish(); await reading; await unread
+    await store.markRead(room.roomId, undefined, true)
+    expect(client.setRoomAccountData.mock.calls.map(call => call[2])).toEqual([{ unread: false }, { unread: true }])
+    expect(store.getSnapshot().rooms[0]?.markedUnread).toBe(true)
+    accountData.set('m.marked_unread', { unread: true })
+    client.emit('accountData', { getType: () => 'm.marked_unread', getContent: () => ({ unread: true }) }, room)
+    accountData.set('m.marked_unread', { unread: false })
+    client.emit('accountData', { getType: () => 'm.marked_unread', getContent: () => ({ unread: false }) }, room)
+    expect(store.getSnapshot().rooms[0]?.markedUnread).toBe(false)
+  })
+  it('does not claim a failed manual write succeeded', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room } = readRoom(client)
+    client.setRoomAccountData.mockRejectedValueOnce(new Error('offline'))
+    await expect(store.markUnread(room.roomId)).rejects.toThrow('offline')
+    expect(store.getSnapshot().rooms[0]?.markedUnread).not.toBe(true)
+  })
+  it('cancels pending read operations when the authenticated store is disposed', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room } = readRoom(client)
+    const read = store.markRead(room.roomId)
+    store.dispose()
+    await expect(read).rejects.toThrow('Cancelled')
+    expect(client.setRoomReadMarkers).not.toHaveBeenCalled()
   })
 })

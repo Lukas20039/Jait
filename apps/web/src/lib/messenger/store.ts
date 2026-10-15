@@ -1,6 +1,8 @@
 import type { MatrixClient, MatrixEvent, Room } from 'matrix-js-sdk'
 import type { IEncryptedFile } from 'matrix-encrypt-attachment'
-import { triggerSystemNotification } from '@/lib/system-notifications'
+import { latestConfirmedEvent, roomReadReceipts } from './read-state'
+import { messengerReadLink } from './notification-actions'
+import { triggerSystemNotification, revokeSystemNotification } from '@/lib/system-notifications'
 import {
   MAX_ATTACHMENT_BYTES, bridgeLabel, messengerError, normalizeHomeserver, readSession, sessionKey,
   type MessengerMessage, type MessengerRoom, type MessengerSession, type MessengerSnapshot,
@@ -30,6 +32,10 @@ export class MessengerStore {
   private liveEvents = new Set<string>()
   private visibleRoom: string | null = null
   private initialSyncComplete = false
+  private readOperations = new Map<string, Promise<unknown>>()
+  private unreadOverrides = new Map<string, boolean>()
+  private automaticReadPaused = new Set<string>()
+  private notifiedEvents = new Map<string, Set<string>>()
 
   constructor(private owner: string, private storage: Storage = sessionStorage) {}
 
@@ -159,11 +165,27 @@ export class MessengerStore {
       const refresh = () => { if (this.client === client) this.refresh() }
       client.on(sdk.RoomEvent.Name, refresh)
       client.on(sdk.RoomEvent.MyMembership, refresh)
-      client.on(sdk.RoomEvent.Receipt, refresh)
+      client.on(sdk.RoomEvent.Receipt, (_event, room) => {
+        if (this.client !== client) return
+        this.refresh()
+        for (const id of this.notifiedEvents.get(room.roomId) ?? []) {
+          if (room.hasUserReadEvent(this.session!.userId, id)) {
+            void revokeSystemNotification('matrix:' + id)
+            this.notifiedEvents.get(room.roomId)?.delete(id)
+          }
+        }
+      })
+      client.on(sdk.RoomEvent.AccountData, (_event, room) => {
+        if (this.client !== client) return
+        if (_event.getType() !== 'm.marked_unread') return
+        if (this.unreadOverrides.get(room.roomId) === Boolean(_event.getContent().unread)) this.unreadOverrides.delete(room.roomId)
+        this.refresh()
+      })
       client.on(sdk.RoomEvent.LocalEchoUpdated, refresh)
       client.on(sdk.ClientEvent.Room, () => { if (this.client === client) this.refresh() })
       this.update({
         status: 'syncing',
+        notifications: this.storage.getItem(sessionKey(this.owner) + '.notifications') === '1',
         session: { homeserver: session.homeserver, userId: session.userId, deviceId: session.deviceId },
       })
       await client.startClient({ initialSyncLimit: 40, lazyLoadMembers: true })
@@ -215,27 +237,96 @@ export class MessengerStore {
         const last = messages.at(-1)
         return {
           id: room.roomId, name: room.name, ...bridgeLabel(bridge?.getContent()),
-          unread: room.getUnreadNotificationCount(), membership: room.getMyMembership(),
+          unread: room.getUnreadNotificationCount(),
+          markedUnread: this.unreadOverrides.get(room.roomId) ?? Boolean(room.getAccountData('m.marked_unread')?.getContent().unread), membership: room.getMyMembership(),
           encrypted: !!room.currentState.getStateEvents('m.room.encryption', ''),
           timestamp: last?.timestamp ?? 0, preview: last?.body ?? (room.getMyMembership() === 'invite' ? 'Invitation' : 'No messages yet'),
         }
       }).sort((a, b) => b.timestamp - a.timestamp)
     const selected = this.client.getRoom(this.snapshot.selectedRoomId ?? '')
     const messages = selected?.getLiveTimeline().getEvents().map(event => this.message(event, selected)).filter((m): m is MessengerMessage => m !== null) ?? []
+    if (selected && messages.some(message => message.own)) {
+      const receipts = roomReadReceipts(selected, this.session.userId)
+      for (const message of messages) if (message.own) message.readBy = receipts.get(message.id) ?? []
+    }
     this.update({ rooms, messages })
   }
 
   selectRoom(id: string | null) {
+    if (id) this.automaticReadPaused.delete(id)
     this.update({ selectedRoomId: id })
     this.refresh()
   }
 
-  async markRead() {
-    const client = this.client
-    const room = client?.getRoom(this.snapshot.selectedRoomId ?? '')
-    if (!client || !room || room.getMyMembership() !== 'join') return
-    const event = room.getLiveTimeline().getEvents().filter(event => !event.status).at(-1)
-    if (event) await client.sendReadReceipt(event)
+  private queueReadOperation(roomId: string, operation: () => Promise<void>) {
+    const previous = this.readOperations.get(roomId) ?? Promise.resolve()
+    const next = previous.catch(() => {}).then(operation)
+    this.readOperations.set(roomId, next)
+    void next.finally(() => { if (this.readOperations.get(roomId) === next) this.readOperations.delete(roomId) }).catch(() => {})
+    return next
+  }
+
+  async markRead(roomId = this.snapshot.selectedRoomId, eventId?: string, automatic = false) {
+    if (!roomId) return
+    if (eventId) this.automaticReadPaused.add(roomId)
+    const generation = this.generation
+    return this.queueReadOperation(roomId, async () => {
+      this.assertCurrent(generation)
+      if (automatic && this.automaticReadPaused.has(roomId)) return
+      const { client, sdk } = this.connected()
+      const room = client.getRoom(roomId)
+      if (!room || room.getMyMembership() !== 'join') throw new Error('Join the conversation first.')
+      let event = eventId ? room.findEventById(eventId) : latestConfirmedEvent(room)
+      if (eventId && !event) {
+        const timeline = await client.getEventTimeline(room.getUnfilteredTimelineSet(), eventId)
+        event = timeline?.getEvents().find(item => item.getId() === eventId)
+      }
+      this.assertCurrent(generation)
+      if (eventId && !event) throw new Error('The notified message is no longer available.')
+      if (event) {
+        // Do not move an existing read watermark backwards when acting on an old notification.
+        const receipt = room.getReadReceiptForUserId(this.session!.userId, true)
+        const order = receipt ? room.getUnfilteredTimelineSet().compareEventOrdering(event.getId()!, receipt.eventId) : null
+        if (eventId && receipt && order === null && receipt.eventId !== eventId) throw new Error('Could not establish the notification read order.')
+        if (!receipt || (receipt.eventId !== event.getId() && (order === null || order > 0))) {
+          await client.setRoomReadMarkers(roomId, event.getId()!, event)
+          this.assertCurrent(generation)
+        }
+        if (!eventId || event.getId() === latestConfirmedEvent(room)?.getId()) {
+          room.setUnread(sdk.NotificationCountType.Total, 0)
+          room.setUnread(sdk.NotificationCountType.Highlight, 0)
+        }
+      }
+      await client.setRoomAccountData(roomId, sdk.EventType.MarkedUnread, { unread: false })
+      this.assertCurrent(generation)
+      this.unreadOverrides.set(roomId, false)
+      if (!eventId) this.automaticReadPaused.delete(roomId)
+      const ids = this.notifiedEvents.get(roomId)
+      for (const id of ids ?? []) {
+        if (!eventId || id === eventId || room.hasUserReadEvent(this.session!.userId, id)) {
+          void revokeSystemNotification('matrix:' + id)
+          ids?.delete(id)
+        }
+      }
+      this.refresh()
+    })
+  }
+
+  async markUnread(roomId: string) {
+    this.automaticReadPaused.add(roomId)
+    const generation = this.generation
+    try {
+      await this.queueReadOperation(roomId, async () => {
+        this.assertCurrent(generation)
+        const { client, sdk } = this.connected()
+        if (client.getRoom(roomId)?.getMyMembership() !== 'join') throw new Error('Join the conversation first.')
+        await client.setRoomAccountData(roomId, sdk.EventType.MarkedUnread, { unread: true })
+        this.assertCurrent(generation)
+        this.automaticReadPaused.add(roomId)
+        this.unreadOverrides.set(roomId, true)
+        this.refresh()
+      })
+    } catch (error) { if (generation === this.generation) this.automaticReadPaused.delete(roomId); throw error }
   }
 
   setVisibleRoom(id: string | null) { this.visibleRoom = id }
@@ -249,9 +340,13 @@ export class MessengerStore {
     if (!this.snapshot.notifications || event.getSender() === this.session?.userId || event.status) return
     if (this.visibleRoom === room.roomId && document.visibilityState === 'visible' && document.hasFocus()) return
     if (!this.client.getPushActionsForEvent(event)?.notify) return
+    const notified = this.notifiedEvents.get(room.roomId) ?? new Set<string>()
+    notified.add(id)
+    this.notifiedEvents.set(room.roomId, notified)
     await triggerSystemNotification({
       id: 'matrix:' + id, title: room.name, body: 'New message',
       link: '/messenger?roomId=' + encodeURIComponent(room.roomId),
+      markReadLink: messengerReadLink(room.roomId, id, this.session!.userId, this.session!.homeserver),
     }).catch(() => {})
   }
 
@@ -260,6 +355,7 @@ export class MessengerStore {
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') throw new Error('Allow notifications in your browser settings first.')
     }
+    this.storage.setItem(sessionKey(this.owner) + '.notifications', enabled ? '1' : '0')
     this.update({ notifications: enabled })
   }
 
@@ -368,10 +464,16 @@ export class MessengerStore {
     this.session = null
     this.initialSyncComplete = false
     this.storage.removeItem(sessionKey(this.owner))
+    this.storage.removeItem(sessionKey(this.owner) + '.notifications')
     this.releaseLock?.()
     this.releaseLock = null
     this.seen.clear()
     this.liveEvents.clear()
+    this.readOperations.clear()
+    this.unreadOverrides.clear()
+    this.automaticReadPaused.clear()
+    for (const ids of this.notifiedEvents.values()) for (const id of ids) void revokeSystemNotification('matrix:' + id)
+    this.notifiedEvents.clear()
     this.update({ status: 'disconnected', session: null, rooms: [], messages: [], selectedRoomId: null, error: null, notifications: false })
   }
 }

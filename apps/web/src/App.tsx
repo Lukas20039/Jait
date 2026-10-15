@@ -1,3 +1,4 @@
+import { handleMessengerNotification } from '@/lib/messenger/notification-actions'
 import { applyPendingApprovalEvent } from '@/lib/pending-approvals'
 import { applyPendingQuestionEvent, pendingQuestionSessionIds } from '@/lib/pending-questions'
 import { safeNotificationLink } from '@jait/shared'
@@ -2924,6 +2925,15 @@ function App() {
       }
       const link = safeNotificationLink(activation.link)
       if (!link) return true
+      const messengerAction = await handleMessengerNotification(activation)
+      if (messengerAction !== null) {
+        if (messengerAction) await Promise.allSettled([
+          window.jaitDesktop?.acknowledgeNotification?.({ id: activation.id }),
+          androidNotificationBridge()?.acknowledgeNotification?.({ id: activation.id }),
+          revokeSystemNotification(activation.id),
+        ])
+        return messengerAction
+      }
       const url = new URL(link, window.location.origin)
       const sessionId = url.searchParams.get('sessionId')
       const threadId = url.searchParams.get('threadId')

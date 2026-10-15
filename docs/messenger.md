@@ -16,6 +16,10 @@ The included Docker helper runs a small single-user, non-federated Synapse serve
 - Explicit image loading, including bridge QR codes, and authenticated media downloads.
 - Bridge setup conversations, Matrix direct conversations, and message-key recovery from server backup.
 - Explicitly enabled Jait notifications while the client remains open. Notification previews say “New message.”
+- Public Matrix read receipts with reader names and receipt times; unsupported bridge receipts remain unknown.
+- Manual mark-as-read/unread synchronized through Matrix account data.
+- “Mark as read” on supported notifications, scoped to the notified event so newer messages stay unread.
+- Dictation through the shared composer microphone control, using Settings → speech-to-text provider. Click **Dictate**, speak, then **Done**; review the draft before sending. A delayed transcript stays with its original conversation.
 - Responsive conversation navigation on narrow screens.
 
 One Matrix account can be connected per Jait user/browser tab. It can aggregate multiple upstream bridge logins if those bridges support them. WhatsApp, Telegram, Signal and Teams require installed/configured bridges and separate account authorization. Service buttons help address setup conversations; they do not claim a service is connected.
@@ -82,6 +86,8 @@ Trust a bridge before installing its appservice registration: it handles upstrea
 
 ## Privacy and lifecycle
 
+Dictation explicitly sends recorded microphone audio to Jait’s configured speech-to-text service (which may be a remote provider). It does not include conversation history or Matrix credentials. It requires Jait authentication and microphone access.
+
 Matrix credentials/messages are not stored in Jait settings, AI chat history, memory or prompts. No agent tools expose this inbox. Password and recovery-key input are cleared after submission. Access tokens live in memory and tab-scoped sessionStorage, partitioned by Jait gateway/user; refresh resumes that tab session. Per-owner/per-device encryption keys persist in browser IndexedDB.
 
 The provider remains mounted across Jait pages, preserving synchronization and notifications. Disconnect stops synchronization, clears local session/conversations and attempts token revocation. Jait logout stops the client and clears the tab session. Browser key stores remain; clear site data to remove them. Keep an independent recovery path before signing out of your only working Matrix device.
@@ -107,3 +113,5 @@ node scripts/matrix-stack.mjs stop --data-dir .jait/artifacts/matrix-validation
 ~~~
 
 This creates synthetic local accounts, verifies encrypted delivery in both directions and ciphertext on the server, transfers an encrypted attachment, accepts an invitation, checks filters/mobile layout, and resumes a session after refresh. Real messenger accounts are not connected. Keep local test credentials and raw browser traces private. With an HTTP proxy, include localhost and 127.0.0.1 in NO_PROXY for Playwright.
+
+The inbox reuses Jait’s `Conversation`, `Message`, `PromptInput`, `ChatComposerSurface`, and attachment components. Their messenger mode keeps the shared scrolling, keyboard, mobile, and copy behavior while omitting AI controls and project reference chips. File selection, paste, and drop send attachments directly through the Matrix client. Personal conversation text is rendered literally.

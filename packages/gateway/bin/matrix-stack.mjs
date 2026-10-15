@@ -10,7 +10,8 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 
 const args = process.argv.slice(2)
-const command = args.shift() ?? 'help'
+const requestedCommand = args.shift() ?? 'help'
+const command = requestedCommand === '--help' || requestedCommand === '-h' ? 'help' : requestedCommand
 function option(name, fallback) {
   const index = args.indexOf(name)
   if (index < 0) return fallback

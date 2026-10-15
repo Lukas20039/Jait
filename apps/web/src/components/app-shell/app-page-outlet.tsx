@@ -103,7 +103,7 @@ export function AppPageOutlet({
     return <div className={'flex min-h-0 flex-1 overflow-hidden ' + (isMobile ? 'pt-12' : '')}>
       <ErrorBoundary name="Messenger" variant="section" className="h-full w-full" resetKeys={[currentView, token]}>
         <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading messenger…</div>}>
-          <MessengerPage />
+          <MessengerPage token={token} sttProvider={sttProvider} />
         </Suspense>
       </ErrorBoundary>
     </div>

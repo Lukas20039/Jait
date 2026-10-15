@@ -8,6 +8,14 @@ export interface MessengerSession {
   cryptoStore: string
 }
 
+export interface MessengerReadReceipt {
+  userId: string
+  name: string
+  timestamp: number | null
+  /** False means this is a later read watermark, not the exact first-read time. */
+  exact: boolean
+}
+
 export interface MessengerMessage {
   id: string
   sender: string
@@ -18,6 +26,7 @@ export interface MessengerMessage {
   unableToDecrypt: boolean
   pending: boolean
   failed: boolean
+  readBy?: MessengerReadReceipt[]
   attachment?: {
     url: string
     name: string
@@ -34,6 +43,7 @@ export interface MessengerRoom {
   service: string
   network: string
   unread: number
+  markedUnread?: boolean
   membership: string
   encrypted: boolean
   timestamp: number

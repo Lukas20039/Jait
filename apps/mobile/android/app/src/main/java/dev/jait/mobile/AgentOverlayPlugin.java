@@ -202,7 +202,7 @@ public class AgentOverlayPlugin extends Plugin {
         ChatNotifications.show(getContext(), id, call.getString("title", "Jait"),
             call.getString("body", ""), call.getString("replaceId", id),
             call.getString("link", "/chat"), call.getString("scope", NotificationNavigation.scope(getContext())),
-            call.getString("sessionId", ""), "completion".equals(call.getString("kind", "")));
+            call.getString("sessionId", ""), "completion".equals(call.getString("kind", "")), call.getString("markReadLink", null));
         call.resolve();
     }
 

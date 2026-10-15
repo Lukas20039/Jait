@@ -4,6 +4,8 @@ let pending: NotificationActivation | null = null
 let handler: ((activation: NotificationActivation) => Promise<boolean>) | null = null
 let running = false
 
+export function pendingNotificationLink(): string | null { return pending?.link ?? null }
+
 export function openNotification(activation: NotificationActivation): void {
   const link = safeNotificationLink(activation.link)
   if (!link) return

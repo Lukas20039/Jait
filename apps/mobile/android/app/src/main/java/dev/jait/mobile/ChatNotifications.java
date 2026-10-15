@@ -19,6 +19,11 @@ final class ChatNotifications {
 
     static void show(Context context, String id, String title, String body, String replaceId,
                      String link, String scope, String sessionId, boolean completion) {
+        show(context, id, title, body, replaceId, link, scope, sessionId, completion, null);
+    }
+
+    static void show(Context context, String id, String title, String body, String replaceId,
+                     String link, String scope, String sessionId, boolean completion, String markReadLink) {
         NotificationManager manager = context.getSystemService(NotificationManager.class);
         NotificationChannel channel = new NotificationChannel(CHANNEL, "Chat completions", NotificationManager.IMPORTANCE_HIGH);
         channel.enableVibration(true);
@@ -55,6 +60,13 @@ final class ChatNotifications {
             .setGroup("jait-chats")
             .addAction(R.drawable.ic_jait_notification, "Open chat", open)
             .setLocalOnly(false);
+        if (markReadLink != null && markReadLink.startsWith("/messenger?") && !markReadLink.contains("\\")) {
+            Intent readIntent = NotificationNavigation.intent(context, cardId, markReadLink, scope);
+            readIntent.setData(android.net.Uri.parse("jait-notification://mark-read/" + android.net.Uri.encode(cardId)));
+            PendingIntent read = PendingIntent.getActivity(context, 0, readIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            builder.addAction(R.drawable.ic_jait_notification, "Mark as read", read);
+        }
         manager.notify(cardId, 0, builder.build());
         PhoneWearListenerService.pushSnapshot(context);
     }

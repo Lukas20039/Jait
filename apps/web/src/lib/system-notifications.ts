@@ -1,3 +1,5 @@
+import { parseMessengerReadLink } from './messenger/notification-actions'
+import { showMessengerBrowserNotification, closeMessengerBrowserNotification } from './messenger/browser-notifications'
 import { safeNotificationLink, type NotificationContext } from '@jait/shared'
 import { openNotification, androidNotificationBridge } from './notification-navigation'
 import { getApiUrl } from './gateway-url'
@@ -9,6 +11,7 @@ export interface SystemNotificationInput extends NotificationContext {
   body: string
   level?: 'info' | 'success' | 'warning' | 'error'
   includeToast?: boolean
+  markReadLink?: string
 }
 
 type BrowserNotificationCtor = typeof Notification
@@ -75,10 +78,15 @@ async function notifyWithBrowserApi(
     title: string
     body: string
     link?: string
+    markReadLink?: string
+    scope?: string
   },
 ): Promise<void> {
   if (!NotificationCtor) return
 
+  if (notif.link && notif.markReadLink && NotificationCtor.permission === 'granted') {
+    try { if (await showMessengerBrowserNotification({ ...notif, link: notif.link, markReadLink: notif.markReadLink })) return } catch { /* Plain notification and in-app action remain available. */ }
+  }
   const options: NotificationOptions = {
     body: notif.body,
     tag: notif.id,
@@ -120,6 +128,7 @@ function trackBrowserNotification(id: string, notification: Notification, link?:
  * a notification the user already dismissed is simply not there to close.
  */
 export async function revokeSystemNotification(id: string): Promise<void> {
+  void closeMessengerBrowserNotification(id).catch(() => {})
   const browserNotification = liveBrowserNotifications.get(id)
   if (browserNotification) {
     liveBrowserNotifications.delete(id)
@@ -178,8 +187,10 @@ export async function triggerSystemNotification(input: SystemNotificationInput):
     }
   }
   const link = safeNotificationLink(notif.link)
+  const markReadLink = parseMessengerReadLink(notif.markReadLink) ? safeNotificationLink(notif.markReadLink) : null
   const nativeInput = {
     id: notif.id, title: notif.title, body: notif.body,
+    ...(markReadLink ? { markReadLink } : {}),
     ...(link ? { link, scope: getApiUrl() || window.location?.origin || '' } : {}),
     ...(notif.replaceId ? { replaceId: notif.replaceId } : {}),
     ...(notif.sessionId ? { sessionId: notif.sessionId } : {}),
@@ -241,7 +252,8 @@ function emitToast(notif: SystemNotificationInput): void {
     : notif.level === 'success' ? toast.success
     : toast.info
   const link = safeNotificationLink(notif.link)
-  toastFn(notif.title, { description: notif.body, ...(link ? { action: {
+  const markReadLink = parseMessengerReadLink(notif.markReadLink) ? safeNotificationLink(notif.markReadLink) : null
+  toastFn(notif.title, { description: notif.body, ...(markReadLink ? { cancel: { label: 'Mark as read', onClick: () => openNotification({ id: notif.replaceId ?? notif.id, link: markReadLink }) } } : {}), ...(link ? { action: {
     label: 'Open', onClick: () => openNotification({ id: notif.replaceId ?? notif.id, link }),
   } } : {}) })
 }

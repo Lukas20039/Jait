@@ -10,6 +10,7 @@ import { estimateMessageHeight, estimateMessageHeightFromMessage } from '@/lib/p
 import { TooltipHint } from '@/components/ui/tooltip'
 
 interface ConversationProps {
+  variant?: 'assistant' | 'messenger'
   children: React.ReactNode
   className?: string
   compact?: boolean
@@ -434,7 +435,7 @@ function ConversationPositioningSkeleton({ label }: { label: string }) {
   )
 }
 
-export function Conversation({ children, className, mobile = false, loading, isStreaming, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
+export function Conversation({ variant = 'assistant', children, className, mobile = false, loading, isStreaming, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   // The scroll container may not exist yet on first mount (history still
   // loading renders the skeleton branch), and a plain ref object is not
@@ -1408,6 +1409,8 @@ export function Conversation({ children, className, mobile = false, loading, isS
         <div
           ref={attachScrollElement}
           data-conversation-scroll
+          role={variant === 'messenger' ? 'log' : undefined}
+          aria-label={variant === 'messenger' ? 'Messages' : undefined}
           onScroll={updateBottomState}
           className="h-full min-w-0 flex-1 overflow-y-auto scrollbar-none"
           style={{
@@ -1423,7 +1426,7 @@ export function Conversation({ children, className, mobile = false, loading, isS
               </div>
             </div>
           )}
-          <div ref={innerRef} className="mx-auto max-w-4xl px-4 pt-12 pb-6 sm:py-6 sm:px-5">
+          <div ref={innerRef} className={cn('mx-auto max-w-4xl px-4 pb-6 sm:py-6 sm:px-5', variant === 'messenger' ? 'pt-6' : 'pt-12')}>
             {hasMore && (
               <div className="flex justify-center py-3">
                 <button
@@ -1473,7 +1476,7 @@ export function Conversation({ children, className, mobile = false, loading, isS
         <ConversationPositioningSkeleton label={loading ? loadingLabel : 'Preparing conversation'} />
       )}
 
-      {initialScrollReady && !loading && canJumpUp && !previousMessagePreviewSuppressed && (
+      {variant === 'assistant' && initialScrollReady && !loading && canJumpUp && !previousMessagePreviewSuppressed && (
         // Styled after the user chat bubble itself (bg-muted, rounded, right
         // where user messages sit) because the chip *is* the previous message:
         // clicking it jumps to that message and starts editing it. The frame

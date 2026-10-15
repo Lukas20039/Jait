@@ -82,6 +82,11 @@ type PromptChipReference =
   | ({ type: 'skill' } & UserSkillReference)
 
 interface PromptInputProps {
+  /** Personal messaging keeps the editor, shortcuts and attachments without AI/project controls. */
+  variant?: 'assistant' | 'messenger'
+  /** Optional direct file transport, e.g. encrypted Matrix uploads (never the AI attachment path). */
+  onFilesSelected?: (files: File[]) => void
+
   value: string
   onChange: (value: string) => void
   onSubmit: (chipFiles?: ReferencedFile[], attachments?: ChatAttachment[], segments?: UserMessageSegment[]) => void
@@ -670,6 +675,8 @@ function appendSegmentNodes(
 }
 
 export interface PromptInputHandle {
+  /** Clear the confirmed submission, including its local attachment draft. */
+  reset: () => void
   /** Insert a file chip into the input (used by project Send button). */
   insertChip: (file: ReferencedFile) => void
   /** Insert text and/or structured references into the composer. */
@@ -844,6 +851,8 @@ function ComposerSendSplitButton({
 /* ------------------------------------------------------------------ */
 
 export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(function PromptInput({
+  variant = 'assistant',
+  onFilesSelected,
   value,
   onChange,
   onSubmit,
@@ -970,16 +979,16 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   const [searchResults, setSearchResults] = useState<ReferencedFile[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const searchAbort = useRef<AbortController | null>(null)
-  const personalChat = Boolean(allowPersonalChatNode && provider && onProviderChange && onCliModelChange && chatId && !projectId && !projectPath && !repoRuntime)
+  const personalChat = Boolean(variant === 'assistant' && allowPersonalChatNode && provider && onProviderChange && onCliModelChange && chatId && !projectId && !projectPath && !repoRuntime)
   const personalNode = usePersonalChatNode(chatId, personalChat)
   const composerDisabled = Boolean(disabled) || personalNode.busy
   const controlsLocked = Boolean(controlsDisabled ?? disabled ?? false)
   const selectorsDisabled = controlsLocked || personalNode.busy
-  const showProviderModelSelector = Boolean(provider && onProviderChange && onCliModelChange)
-  const showResponseStyleSelector = Boolean(responseStyle && onResponseStyleChange)
-  const showProviderRuntimeSelector = Boolean(provider && providerRuntimeMode && onProviderRuntimeModeChange)
-  const showModeSelector = Boolean(mode && onModeChange && sendTarget !== 'thread' && sendTarget !== 'swarm' && (!provider || provider === 'jait'))
-  const shouldShowSendTargetSelector = showSendTargetSelector && Boolean(sendTarget && onSendTargetChange)
+  const showProviderModelSelector = variant === 'assistant' && Boolean(provider && onProviderChange && onCliModelChange)
+  const showResponseStyleSelector = variant === 'assistant' && Boolean(responseStyle && onResponseStyleChange)
+  const showProviderRuntimeSelector = variant === 'assistant' && Boolean(provider && providerRuntimeMode && onProviderRuntimeModeChange)
+  const showModeSelector = variant === 'assistant' && Boolean(mode && onModeChange && sendTarget !== 'thread' && sendTarget !== 'swarm' && (!provider || provider === 'jait'))
+  const shouldShowSendTargetSelector = variant === 'assistant' && showSendTargetSelector && Boolean(sendTarget && onSendTargetChange)
   const projectDisplayName = projectName?.trim() || projectPath?.trim() || null
   const hasFooterControls = shouldShowSendTargetSelector || showProviderModelSelector || showResponseStyleSelector || showProviderRuntimeSelector || showModeSelector || Boolean(footerLeadingContent)
   const hasFooterLeftContent = hasFooterControls
@@ -1148,6 +1157,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
 
   /** Expose imperative methods for parent components. */
   useImperativeHandle(ref, () => ({
+    reset: resetComposer,
     insertChip: (file: ReferencedFile) => {
       const el = editableRef.current
       if (!el) return
@@ -1203,7 +1213,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
       setIsEmpty(false)
     },
-  }), [handleRemoveChip, segments, syncComposerSegments])
+  }), [handleRemoveChip, segments, syncComposerSegments, resetComposer])
 
   // Debounced search when mention query changes
   useEffect(() => {
@@ -1490,6 +1500,8 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       isSyncing.current = false
       pushUndoRef.current()
 
+      if (variant === 'messenger') return
+
       // Detect @ trigger — resolve cursor into a text node
       const sel = window.getSelection()
       if (!sel || sel.rangeCount === 0) return
@@ -1572,7 +1584,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
 
     el.addEventListener('input', handleNativeInput)
     return () => el.removeEventListener('input', handleNativeInput)
-  }, [syncComposerSegments]) // other dependencies are read from refs
+  }, [syncComposerSegments, variant]) // other dependencies are read from refs
 
   /**
    * Run one composer send action with the payload the caller already collected.
@@ -1604,6 +1616,8 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   }, [runSendAction, segments])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.nativeEvent.isComposing) return
+    if (composerDisabled || submitLoading) return
     // Intercept undo/redo to prevent browser native undo corruption
     if ((e.ctrlKey || e.metaKey) && !e.altKey) {
       if (e.key === 'z' && !e.shiftKey) {
@@ -1762,7 +1776,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       }
       runSendAction(action, { chips, segments: nextSegments })
     }
-  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, clearOnSubmit, attachments, segments, resetComposer, clearSubmittedAttachments, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
+  }, [composerDisabled, submitLoading, mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, clearOnSubmit, attachments, segments, resetComposer, clearSubmittedAttachments, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
 
   const readFileAsAttachment = useCallback((file: File): Promise<ChatAttachment> => {
     return new Promise((resolve, reject) => {
@@ -1784,6 +1798,11 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   }, [])
 
   const addFilesAsAttachments = useCallback(async (files: FileList | File[]) => {
+    if (composerDisabled) return
+    if (onFilesSelected) {
+      onFilesSelected(Array.from(files))
+      return
+    }
     const el = editableRef.current
     if (!el) return
     pushUndoSnapshot(true)
@@ -1844,7 +1863,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       setReadingAttachments(count => count - 1)
       if (el.isConnected) setIsEmpty(isTextEmpty(getTextFromEditable(el)) && !hasChipRefs(el))
     }
-  }, [readFileAsAttachment, handleRemoveChip, pushUndoSnapshot, syncComposerSegments])
+  }, [readFileAsAttachment, handleRemoveChip, pushUndoSnapshot, syncComposerSegments, onFilesSelected, composerDisabled])
 
   const removeAttachment = useCallback((name: string) => {
     setAttachments((prev) => {
@@ -1895,14 +1914,14 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       return
     }
     if (!el) return
-    const structured = parseUserMessageClipboardPayload(e.clipboardData.getData(JAIT_REF_MIME))
+    const structured = variant === 'messenger' ? [] : parseUserMessageClipboardPayload(e.clipboardData.getData(JAIT_REF_MIME))
     const pastedText = e.clipboardData.getData('text/plain')
-    if (structured.length === 0 && isLongPaste(pastedText)) {
+    if (variant === 'assistant' && structured.length === 0 && isLongPaste(pastedText)) {
       e.preventDefault()
       setAttachments(previous => [...previous, createPastedTextAttachment(pastedText, previous)])
       return
     }
-    const markdownSegments = structured.length > 0 ? structured : parseUserMessageMarkdown(e.clipboardData.getData('text/plain'))
+    const markdownSegments = variant === 'messenger' ? [] : structured.length > 0 ? structured : parseUserMessageMarkdown(pastedText)
     if (markdownSegments.length > 0) {
       e.preventDefault()
       pushUndoSnapshot(true)
@@ -1927,7 +1946,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
     isSyncing.current = false
     setIsEmpty(isTextEmpty(nextValue) && !hasChipRefs(el))
     scrollCaretIntoView(el)
-  }, [addFilesAsAttachments, handleRemoveChip, onChange, pushUndoSnapshot, syncComposerSegments])
+  }, [variant, addFilesAsAttachments, handleRemoveChip, onChange, pushUndoSnapshot, syncComposerSegments])
 
   // Drag-and-drop handlers
   const onDragEnter = useCallback((e: React.DragEvent) => {
@@ -1972,6 +1991,11 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       isSyncing.current = false
       setIsEmpty(false)
       return true
+    }
+
+    if (variant === 'messenger') {
+      if (e.dataTransfer.files?.length) void addFilesAsAttachments(e.dataTransfer.files)
+      return
     }
 
     // Handle project tree file/folder drop
@@ -2043,12 +2067,13 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
         void addFilesAsAttachments(uploadable)
       }
     }
-  }, [onChange, handleRemoveChip, addFilesAsAttachments, syncComposerSegments])
+  }, [variant, onChange, handleRemoveChip, addFilesAsAttachments, syncComposerSegments])
 
   return (
     <div
       ref={rootRef}
       data-testid="chat-composer"
+      data-chat-variant={variant}
       className={cn(
         'group relative z-10 flex flex-col',
         merged
@@ -2104,8 +2129,10 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       <input
         ref={fileInputRef}
         type="file"
+        aria-label="Attach a file"
+        disabled={composerDisabled}
         multiple
-        accept="image/*,.txt,.md,.ts,.tsx,.js,.jsx,.py,.json,.yaml,.yml,.toml,.css,.html,.xml,.csv,.log,.sh,.bat,.rs,.go,.java,.c,.cpp,.h,.hpp"
+        accept={variant === 'messenger' ? undefined : "image/*,.txt,.md,.ts,.tsx,.js,.jsx,.py,.json,.yaml,.yml,.toml,.css,.html,.xml,.csv,.log,.sh,.bat,.rs,.go,.java,.c,.cpp,.h,.hpp"}
         className="hidden"
         onChange={(e) => {
           if (e.target.files?.length) {
@@ -2126,6 +2153,8 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
           ref={editableRef}
           contentEditable={!composerDisabled}
           role="textbox"
+          aria-label="Message"
+          aria-disabled={composerDisabled}
           aria-multiline
           suppressContentEditableWarning
           onKeyDown={handleKeyDown}
@@ -2320,19 +2349,21 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
             size="icon"
             variant="ghost"
             className="shrink-0 rounded-lg"
+            disabled={composerDisabled}
             onClick={() => fileInputRef.current?.click()} aria-label="Attach files"
           >
             <Paperclip className="h-4 w-4" />
           </Button>
           </TooltipHint>
           {onVoiceInput && !voiceRecording && !voiceTranscribing && (
-            <TooltipHint side="bottom" content="Voice input">
+            <TooltipHint side="bottom" content={variant === 'messenger' ? 'Dictate with your configured speech-to-text provider' : 'Voice input'}>
             <Button
               type="button"
               size="icon"
               variant="ghost"
               className="shrink-0 rounded-lg"
-              onClick={onVoiceInput} aria-label="Voice input"
+              disabled={composerDisabled}
+              onClick={onVoiceInput} aria-label={variant === 'messenger' ? 'Dictate' : 'Voice input'}
             >
               <Mic className="h-4 w-4" />
             </Button>
