@@ -4,6 +4,17 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.939](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.939) — 2026-10-15
+
+- fix(web): use maintained Vite config for default builds — ed30985a
+- fix(web): center mobile mode switch and add agent controls menu — 27cb0c0e
+
+Keep the mobile Manager/Developer switch centered, place agent controls on the left, and preserve account clearance. Add an agent menu with Go to Agents and Stop all agents/Resume agents actions. Include larger horizontal avatars and a vertical collapsed sidebar stack with 16px account clearance. Remove stale generated Vite config files that shadowed the maintained TypeScript config and blocked desktop releases from resolving the Matrix crypto WASM asset.
+
+Validation: the centering regression failed before the fix with a 49px offset at 320px and passes afterward. Six browser checks at 1280px, 390px and 320px, 15 related unit tests, the fail-then-pass Vite config selection test, workspace typechecks, lint, release guard and artifact checks passed. The additional full-app thread-provider check timed out while loading the isolated test server. The production build hit the default Node heap limit; a build with a larger heap is still pending.
+
+Package versions: gateway 0.1.939, web 0.1.449.
+
 ## [v0.1.938](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.938) — 2026-10-15
 
 - feat(web): show agent avatar beside recognized @mention names in team chat (#264) (#265) — 9717cbaa
