@@ -140,16 +140,15 @@ describe("CLI provider pre-warm", () => {
     expect(prewarmed.json()).toMatchObject({ status: "started" });
     expect(provider.startSession).toHaveBeenCalledTimes(1);
 
-    // The user's first message must now stream without paying for the spawn.
-    const startedAt = Date.now();
+    // Assert reuse of the completed warm session, independent of host load.
+    const warmSession = await provider.startSession.mock.results[0]!.value;
     const response = await h.chat();
-    const firstTurnMs = Date.now() - startedAt;
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toContain('"type":"token"');
     expect(provider.startSession).toHaveBeenCalledTimes(1);
     expect(provider.sendTurn).toHaveBeenCalledTimes(1);
-    expect(firstTurnMs).toBeLessThan(SlowStartProvider.START_MS);
+    expect(provider.sendTurn.mock.calls[0]?.[0]).toBe(warmSession.id);
 
     await h.close();
   });

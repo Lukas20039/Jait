@@ -1,6 +1,6 @@
 import { evaluateDecision, systemOneEnabled } from "./system-one.js";
 import { personaAgentProfileSchema } from "@jait/shared";
-import { and, eq, asc, desc } from "drizzle-orm";
+import { and, eq, desc, sql } from "drizzle-orm";
 import type { PersonaAgentProfile, TeamRoom, TeamRoomMessage, TeamSender, TeamMessageKind, TeamDelivery, TeamWorkContext } from "@jait/shared";
 import type { JaitDB } from "../db/connection.js";
 import { teamRooms, teamMessages, teamDeliveries } from "../db/schema.js";
@@ -134,11 +134,19 @@ export class TeamChatService {
   }
   history(userId: string, roomId: string): TeamRoomMessage[] {
     this.get(userId, roomId);
-    return this.db.select().from(teamMessages).where(eq(teamMessages.roomId, roomId)).orderBy(asc(teamMessages.id)).all().map(row => JSON.parse(row.data));
+    return this.db.select().from(teamMessages).where(eq(teamMessages.roomId, roomId)).orderBy(sql`${teamMessages}.rowid`).all().map(row => JSON.parse(row.data));
+  }
+  // UUIDv7 suffixes are random within a millisecond. SQLite insertion order
+  // is the durable event order, including for messages written before upgrade.
+  private historyAfter(userId: string, roomId: string, messageId: string): TeamRoomMessage[] {
+    const history = this.history(userId, roomId);
+    if (!messageId) return history;
+    const index = history.findIndex(message => message.id === messageId);
+    return index < 0 ? [] : history.slice(index + 1);
   }
   deliveries(userId: string, roomId: string): TeamDelivery[] {
     this.get(userId, roomId);
-    return this.db.select().from(teamDeliveries).where(eq(teamDeliveries.roomId, roomId)).all().map(row => {
+    return this.db.select().from(teamDeliveries).where(eq(teamDeliveries.roomId, roomId)).orderBy(sql`${teamDeliveries}.rowid`).all().map(row => {
       const thread = this.threadById(userId, row.sessionId);
       return { ...row, ...(thread ? { threadId: thread.id, threadStatus: thread.status } : {}) } as TeamDelivery;
     });
@@ -146,7 +154,7 @@ export class TeamChatService {
   workForSession(userId: string, sessionId: string): TeamWorkContext | null {
     const thread = this.profiles.getById(sessionId);
     if (thread?.userId === userId) {
-      const delivery = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.sessionId, sessionId)).orderBy(desc(teamDeliveries.id)).get();
+      const delivery = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.sessionId, sessionId)).orderBy(sql`${teamDeliveries}.rowid DESC`).get();
       if (delivery && this.owner(delivery.roomId) === userId) return {
         roomId: delivery.roomId, agentId: delivery.agentId, deliveryId: delivery.id, messageId: delivery.messageId,
       };
@@ -302,7 +310,7 @@ export class TeamChatService {
     const room = this.get(userId, roomId);
     if (sender.kind !== "user" && !(sender.kind === "agent" && sender.id === room.rootAgentId)) throw new Error("Only the user or coordinator can close the goal.");
     if (!room.goal || room.goal.status !== "active" || evidence.length !== room.goal.criteria.length || evidence.some(e => !e.trim())) throw new Error("Completion requires evidence for every acceptance criterion.");
-    if (sender.kind !== "user" && !this.history(userId, roomId).some(message => message.id > (room.goal?.verificationAfterId ?? "") && message.kind === "verification" && message.sender.kind === "agent" && message.sender.id !== sender.id)) throw new Error("An independent team member must post verification before completion.");
+    if (sender.kind !== "user" && !this.historyAfter(userId, roomId, room.goal?.verificationAfterId ?? "").some(message => message.kind === "verification" && message.sender.kind === "agent" && message.sender.id !== sender.id)) throw new Error("An independent team member must post verification before completion.");
     room.goal = { ...room.goal, status: "completed", evidence };
     this.db.update(teamRooms).set({ data: JSON.stringify(room) }).where(eq(teamRooms.id, roomId)).run();
     return room;
@@ -372,12 +380,12 @@ export class TeamChatService {
     // outcome/failure commit and its review enqueue without replaying work.
     for (const row of this.db.select().from(teamRooms).all()) {
       const room = this.get(row.userId, row.id);
-      for (const outcome of this.history(row.userId, row.id)) {
-        if (outcome.id > (room.goal?.verificationAfterId ?? "")) this.requestCompletionCheck(row.userId, room, outcome);
+      for (const outcome of this.historyAfter(row.userId, row.id, room.goal?.verificationAfterId ?? "")) {
+        this.requestCompletionCheck(row.userId, room, outcome);
       }
       for (const delivery of this.deliveries(row.userId, row.id)) {
         if (delivery.status !== "failed" || !delivery.error || delivery.error.startsWith("Execution blocked:")) continue;
-        if (room.goal && (room.goal.status !== "active" || delivery.messageId <= (room.goal.verificationAfterId ?? ""))) continue;
+        if (room.goal && (room.goal.status !== "active" || !this.historyAfter(row.userId, row.id, room.goal.verificationAfterId ?? "").some(message => message.id === delivery.messageId))) continue;
         const agent = this.agent(delivery.agentId, row.userId);
         if (agent && !agent.paused && !this.abandonedByStop(delivery.sessionId)) this.requestRecovery(row.userId, delivery, agent, delivery.error);
       }
@@ -386,7 +394,7 @@ export class TeamChatService {
   }
   async pump() {
     if (!this.dispatch || this.closed) return;
-    const pending = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.status, "queued")).orderBy(teamDeliveries.id).all();
+    const pending = this.db.select().from(teamDeliveries).where(eq(teamDeliveries.status, "queued")).orderBy(sql`${teamDeliveries}.rowid`).all();
     const roomOwners = new Map<string, string>();
     for (const delivery of pending) {
       // A halted owner's deliveries are held, not failed: leave them queued so
@@ -417,22 +425,24 @@ export class TeamChatService {
       !outcome.sender.sourceSessionId) return;
     // Associate historical outcomes with the turn that preceded them, rather
     // than the newest delivery in a thread that may have since been resumed.
+    const history = this.history(userId, room.id);
+    const position = new Map(history.map((message, index) => [message.id, index]));
+    const indexOf = (id: string) => position.get(id) ?? -1;
     const work = this.deliveries(userId, room.id).filter(delivery => delivery.sessionId === outcome.sender.sourceSessionId &&
-      delivery.agentId === outcome.sender.id && delivery.messageId < outcome.id)
-      .sort((a, b) => a.id.localeCompare(b.id)).at(-1);
+      delivery.agentId === outcome.sender.id && indexOf(delivery.messageId) >= 0 && indexOf(delivery.messageId) < indexOf(outcome.id))
+      .at(-1);
     if (!work || ["failed", "blocked", "cancelled", "interrupted"].includes(work.status)) return;
     // Older versions keyed reviews by outcome id. Honor those existing events
     // too, so an upgrade does not dispatch a second completion check.
-    const history = this.history(userId, room.id);
     if (history.some(message => message.kind === "review" && message.parentMessageId &&
       message.content.startsWith("Leadership completion check:") && history.some(source => source.id === message.parentMessageId &&
-        source.sender.sourceSessionId === work.sessionId && source.id > work.messageId && source.id <= outcome.id))) return;
+        source.sender.sourceSessionId === work.sessionId && indexOf(source.id) > indexOf(work.messageId) && indexOf(source.id) <= indexOf(outcome.id)))) return;
     const worker = this.agent(outcome.sender.id, userId);
     const manager = worker?.reportsToId ? this.agent(worker.reportsToId, userId) : undefined;
     if (!manager || manager.paused || !this.roomMembers(userId, room.id).some(member => member.id === manager.id)) return;
     // Resume existing persona work in this room. Legacy work chats are not execution targets.
     const existing = this.deliveries(userId, room.id).filter(delivery => delivery.agentId === manager.id &&
-      this.threadById(userId, delivery.sessionId)).sort((a, b) => a.id.localeCompare(b.id)).at(-1);
+      this.threadById(userId, delivery.sessionId)).at(-1);
     this.persistMessage(userId, room.id, {
       sender: outcome.sender, kind: "review", recipientIds: [manager.id],
       clientKey: work.id + ":completion-check", parentMessageId: outcome.id,
@@ -488,13 +498,13 @@ export class TeamChatService {
       // Ordinary messages remain verbatim; gateway review events carry instructions only in the receiving thread.
       const response = await this.dispatch!(delivery, agent, this.deliveryPrompt(userId, message));
       if (this.closed || this.db.select().from(teamDeliveries).where(eq(teamDeliveries.id, delivery.id)).get()?.status !== "running") return;
-      const explicit = this.history(userId, delivery.roomId).filter(item => item.id > message.id &&
+      const explicit = this.historyAfter(userId, delivery.roomId, message.id).filter(item =>
         item.sender.sourceSessionId === delivery.sessionId && ["result", "verification", "blocked"].includes(item.kind));
       const latest = explicit.at(-1);
       if (!response.delivered && latest?.kind === "blocked") throw new Error(latest.content);
       this.db.update(teamDeliveries).set({ status: response.delivered ? "delivered" : "completed", error: null }).where(eq(teamDeliveries.id, delivery.id)).run();
       // Explicit tool posts are preferred. A final answer still becomes visible to the team.
-      const alreadyPosted = this.history(userId, delivery.roomId).some(item => item.id > message.id && item.sender.sourceSessionId === delivery.sessionId && ["result", "verification", "blocked"].includes(item.kind));
+      const alreadyPosted = this.historyAfter(userId, delivery.roomId, message.id).some(item => item.sender.sourceSessionId === delivery.sessionId && ["result", "verification", "blocked"].includes(item.kind));
       const result = response.content.trim();
       // Detailed final answers are retained by the task thread. Never infer a
       // successful outcome from a turn ending or truncate away its qualifications.
@@ -524,8 +534,7 @@ export class TeamChatService {
       const reason = error instanceof Error ? error.message : "Delivery failed.";
       this.db.update(teamDeliveries).set({ status: reason.startsWith("Execution blocked:") ? "blocked" : "failed", error: reason }).where(eq(teamDeliveries.id, delivery.id)).run();
       // Provider failures cannot rely on another model turn to report a blocker.
-      const alreadyBlocked = this.history(userId, delivery.roomId).some(item => item.id > delivery.messageId
-        && item.sender.sourceSessionId === delivery.sessionId && item.kind === "blocked");
+      const alreadyBlocked = this.historyAfter(userId, delivery.roomId, delivery.messageId).some(item => item.sender.sourceSessionId === delivery.sessionId && item.kind === "blocked");
       if (agent && !alreadyBlocked) this.post(userId, delivery.roomId, {
         sender: { kind: "agent", id: agent.id, name: agent.name, avatar: agent.avatar, sourceSessionId: delivery.sessionId },
         content: reason.slice(0, 2000), kind: "blocked", recipientIds: [], clientKey: delivery.id + ":blocked",

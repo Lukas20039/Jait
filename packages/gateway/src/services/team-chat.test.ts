@@ -6,6 +6,7 @@ import { TeamChatService, rankTeamRecipients } from "./team-chat.js";
 import { createTeamChatTool } from "../tools/team-chat-tools.js";
 import { personaAgentProfileSchema, type TeamSender, type TeamRoom } from "@jait/shared";
 
+import * as uuidIds from "../db/uuidv7.js";
 import * as systemOne from "./system-one.js";
 
 const owner = "owner";
@@ -34,7 +35,7 @@ describe("persistent team coordination", () => {
     service = new TeamChatService(opened.db, sessions, profiles);
     room = service.ensureRoom(owner, "Developer");
   });
-  afterEach(() => { service.close(); if (!databaseClosed) opened.sqlite.close(); });
+  afterEach(() => { vi.restoreAllMocks(); service.close(); if (!databaseClosed) opened.sqlite.close(); });
   const post = (content: string, key: string, recipientIds?: string[]) => service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
 
   it("runs independent tasks for the same agent concurrently while queuing same-thread follow-ups", async () => {
@@ -587,17 +588,27 @@ describe("persistent team coordination", () => {
     expect(service.deliveries(owner, room.id)).toHaveLength(2);
   });
 
-  it("allows a later verified result to resolve an earlier blocker in the same turn", async () => {
+  it.each([
+    { kinds: ["blocked", "verification"] as const, status: "completed" },
+    { kinds: ["verification", "blocked"] as const, status: "failed" },
+  ])("uses persisted order for same-millisecond outcomes: $status", async ({ kinds, status }) => {
+    // Force valid IDs in descending lexical order within one millisecond.
+    // This also checks assignment/outcome association and restart history.
+    let suffix = 0xffffffffffff;
+    vi.spyOn(uuidIds, "uuidv7").mockImplementation(() =>
+      "019fe795-0000-7000-8000-" + (suffix--).toString(16).padStart(12, "0"));
     service.setDispatcher(async (delivery, agent) => {
-      for (const kind of ["blocked", "verification"] as const) service.post(owner, room.id, {
+      for (const kind of kinds) service.post(owner, room.id, {
         sender: { ...sender(agent.id), sourceSessionId: delivery.sessionId }, content: kind,
         kind, recipientIds: [], clientKey: delivery.id + ":" + kind, parentMessageId: delivery.messageId,
       });
       return { content: "Verified." };
     });
     post("Verify", "resolved-blocker", ["QA"]);
-    await vi.waitFor(() => expect(service.deliveries(owner, room.id)[0]?.status).toBe("completed"));
-    expect(service.deliveries(owner, room.id)).toHaveLength(1);
+    await vi.waitFor(() => expect(service.deliveries(owner, room.id)[0]?.status).toBe(status));
+    const outcomes = service.history(owner, room.id).filter(message => kinds.includes(message.kind as typeof kinds[number]) && message.sender.id === "QA");
+    expect(outcomes.map(message => message.kind)).toEqual([...kinds]);
+    if (status === "completed") expect(service.deliveries(owner, room.id)).toHaveLength(1);
   });
 
   it("bounds handoff loops and makes paused-recipient failures visible", () => {
