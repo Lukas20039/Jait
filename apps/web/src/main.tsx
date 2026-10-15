@@ -8,6 +8,7 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import { AuthProvider } from '@/hooks/useAuth'
 import { installVersionWatchdog } from '@/lib/version-watchdog'
 import App from './App'
+import { MessengerProvider } from '@/components/messenger/messenger-provider'
 import { detectPlatform, initDeviceId } from '@/lib/device-id'
 import './index.css'
 
@@ -52,12 +53,14 @@ function renderApp() {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <AuthProvider>
+        <MessengerProvider>
         <ConfirmDialogProvider>
           <HotkeysProvider>
             <App />
             <ThemeAwareToaster />
           </HotkeysProvider>
         </ConfirmDialogProvider>
+        </MessengerProvider>
       </AuthProvider>
     </ErrorBoundary>,
   )

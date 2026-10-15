@@ -78,7 +78,7 @@ export function TeamChatsPanel({ isMobile = false, onHide }: { isMobile?: boolea
       </nav>
     </aside>}
     {(!isMobile || !mobileList) && selected && <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-      <TeamRoomView key={selected.id} roomId={selected.id} onBack={() => setMobileList(true)} backLabel="Back to team chats" showBack={isMobile} initialInput={drafts.current.get(selected.id) ?? ''} onInputChange={text => drafts.current.set(selected.id, text)} onRuntimeChange={setRuntime} />
+      <TeamRoomView key={selected.id} roomId={selected.id} initialIdentity={{ id: selected.id, name: selected.name, members: membersFor(selected) }} onBack={() => setMobileList(true)} backLabel="Back to team chats" showBack={isMobile} initialInput={drafts.current.get(selected.id) ?? ''} onInputChange={text => drafts.current.set(selected.id, text)} onRuntimeChange={setRuntime} />
     </div>}
     <Dialog open={creating} onOpenChange={open => { if (!saving) setCreating(open) }}>
       <DialogContent className="max-w-lg">

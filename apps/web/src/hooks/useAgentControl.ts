@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { agentsApi } from '@/lib/agents-api'
 import { agentControlApi, type AgentControlState, type AgentHaltResult } from '@/lib/agent-control-api'
 
 const RUNNING: AgentControlState = { halted: false, reason: null, haltedAt: null, updatedAt: null }
@@ -32,6 +33,7 @@ export interface UseAgentControlOptions {
  */
 export function useAgentControl({ token, enabled = true }: UseAgentControlOptions = {}) {
   const [state, setState] = useState<AgentControlState>(RUNNING)
+  const [avatars, setAvatars] = useState<string[]>([])
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const mountedRef = useRef(true)
@@ -40,6 +42,15 @@ export function useAgentControl({ token, enabled = true }: UseAgentControlOption
     mountedRef.current = true
     return () => { mountedRef.current = false }
   }, [])
+
+  useEffect(() => {
+    let active = true
+    setAvatars([])
+    if (enabled) void agentsApi.listPersonaAgents().then(agents => {
+      if (active) setAvatars(agents.map(agent => agent.avatar))
+    }).catch(() => {})
+    return () => { active = false }
+  }, [token, enabled])
 
   const refresh = useCallback(async () => {
     if (!enabled) return
@@ -98,5 +109,5 @@ export function useAgentControl({ token, enabled = true }: UseAgentControlOption
     }
   }, [])
 
-  return { state, halted: state.halted, pending, error, refresh, applyEvent, stopAll, resume }
+  return { state, avatars, halted: state.halted, pending, error, refresh, applyEvent, stopAll, resume }
 }

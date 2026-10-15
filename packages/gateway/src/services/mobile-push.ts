@@ -93,11 +93,14 @@ export class MobilePushService {
    */
   async sendAttention(item: AttentionItem): Promise<void> {
     if (!this.serviceAccount || !item.userId) return;
-    const ttlSeconds = Math.max(0, Math.floor((Date.parse(item.expiresAt) - Date.now()) / 1000));
+    // Questions have no deadline; do not manufacture one for their notification.
+    const ttl = item.expiresAt === null
+      ? undefined
+      : `${Math.max(0, Math.floor((Date.parse(item.expiresAt) - Date.now()) / 1000))}s`;
     await Promise.all(this.list(item.userId).map((registration) => this.sendData(
       registration,
       { type: "attention.raised", key: item.key, item: JSON.stringify(item) },
-      `${ttlSeconds}s`,
+      ttl,
     )));
   }
 
@@ -151,7 +154,7 @@ export class MobilePushService {
   private async sendData(
     registration: PushRegistration,
     data: Record<string, string>,
-    ttl: string,
+    ttl?: string,
   ): Promise<void> {
     const account = this.serviceAccount;
     if (!account) return;

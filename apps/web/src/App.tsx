@@ -19,7 +19,7 @@ import { LinuxWindowControls } from '@/components/desktop/linux-window-controls'
 import { WinCaptionButtons } from '@/components/desktop/win-caption-buttons'
 import { AppNavigationSidebar } from '@/components/app-shell/app-navigation-sidebar'
 import { UpdateButton } from '@/components/app-shell/update-button'
-import { AgentHaltBanner, AgentStopAllButton } from '@/components/app-shell/agent-halt-banner'
+import { AgentControlButton } from '@/components/app-shell/agent-control-button'
 import { useAgentControl } from '@/hooks/useAgentControl'
 import type { SidebarAccount } from '@/components/app-shell/mode-sidebar'
 import { AppPageOutlet } from '@/components/app-shell/app-page-outlet'
@@ -5108,7 +5108,18 @@ function App() {
     return <GatewayUnavailable onRetry={retryGatewayReachable} canSetBackend={isStandaloneApp} />
   }
 
+  const renderAgentControl = (collapsed: boolean) => isAuthenticated ? <AgentControlButton
+    state={agentControl.state}
+    runningCount={activeManagerThreads.length}
+    avatars={agentControl.avatars}
+    pending={agentControl.pending}
+    error={agentControl.error}
+    collapsed={collapsed}
+    onStopAll={() => { void agentControl.stopAll() }}
+    onResume={() => { void agentControl.resume() }}
+  /> : null
   const sidebarAccount: SidebarAccount = {
+    agentControl: renderAgentControl,
     updateControl: (collapsed) => <UpdateButton appPlatform={appPlatform} updateInfo={updateInfo} releases={releases} updateApplying={updateApplying} updateAwaitingRestart={updateAwaitingRestart} onApplyUpdate={handleApplyUpdate} collapsed={collapsed} />,
     username: isAuthenticated ? user?.username ?? null : null,
     initial: userInitial,
@@ -5170,21 +5181,12 @@ function App() {
                 {desktopPlatform === 'win32' ? <WinCaptionButtons isMaximized={isMaximized} /> : <LinuxWindowControls isMaximized={isMaximized} />}
               </div>
             )}
-            {/* Server-driven stop banner: visible wherever the user is, so a
-                halted gateway never looks merely idle. */}
-            <AgentHaltBanner
-              state={agentControl.state}
-              pending={agentControl.pending}
-              error={agentControl.error}
-              onResume={() => { void agentControl.resume() }}
-            />
-            <AgentStopAllButton
-              runningCount={activeManagerThreads.length}
-              pending={agentControl.pending}
-              error={agentControl.error}
-              onStopAll={() => { void agentControl.stopAll() }}
-            />
+            {/* Reserve header space before manager banners and toolbars, so their actions remain reachable. */}
+            {isMobile && (currentView === 'threads' || currentView === 'agents' || compactManagerToolbar) && (
+              <div className="h-14 shrink-0" aria-hidden="true" />
+            )}
             {isMobile && <AppHeader
+              agentControl={renderAgentControl(true)}
               activeManagerThreads={activeManagerThreads}
               appPlatform={appPlatform}
               automation={automation}
@@ -5779,6 +5781,7 @@ function App() {
 
             {isMobile && (
               <MobileNavDrawer
+                account={sidebarAccount}
                 open={showMobileToolbar}
                 onClose={() => setShowMobileToolbar(false)}
                 currentView={currentView}

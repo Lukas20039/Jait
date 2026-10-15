@@ -19,6 +19,7 @@ describe("user.ask tool", () => {
     const tool = createUserAskTool(service);
 
     expect(tool.tier).toBe("core");
+    expect(tool.parameters.properties).not.toHaveProperty("timeoutMs");
     expect(tool.description).toContain("every connected Jait client");
   });
 

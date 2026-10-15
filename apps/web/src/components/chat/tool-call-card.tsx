@@ -2625,12 +2625,13 @@ function BrowserSnapshotView({ snapshot }: { snapshot: string | null | undefined
 }
 
 function BrowserScreenshotView({ path }: { path: string | null | undefined }) {
+  const { sessionId } = useContext(SubAgentAuthContext)
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const trimmedPath = typeof path === 'string' ? path.trim() : ''
   const source = trimmedPath
-    ? resolveChatImageUrl(trimmedPath) ?? `${getApiUrl()}/api/browser/screenshot?path=${encodeURIComponent(trimmedPath)}`
+    ? resolveChatImageUrl(trimmedPath, getApiUrl(), sessionId) ?? `${getApiUrl()}/api/browser/screenshot?path=${encodeURIComponent(trimmedPath)}${sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''}`
     : null
   const { src, failed: fetchFailed } = useGatewayImage(source)
 
@@ -2682,6 +2683,7 @@ function BrowserScreenshotView({ path }: { path: string | null | undefined }) {
  * `useGatewayImage` instead of a bare `<img src>`.
  */
 function ImageView({ src, path, alt, caption }: { src?: string | null; path?: string | null; alt: string; caption?: string }) {
+  const { sessionId } = useContext(SubAgentAuthContext)
   const [loaded, setLoaded] = useState(false)
   const [expanded, setExpanded] = useState(false)
   // An inline data URI can still arrive truncated when a very large chat forced
@@ -2691,7 +2693,7 @@ function ImageView({ src, path, alt, caption }: { src?: string | null; path?: st
   const trimmedSrc = typeof src === 'string' ? src.trim() : ''
   const trimmedPath = typeof path === 'string' ? path.trim() : ''
   const pathSource = trimmedPath
-    ? resolveChatImageUrl(trimmedPath) ?? `${getApiUrl()}/api/browser/screenshot?path=${encodeURIComponent(trimmedPath)}`
+    ? resolveChatImageUrl(trimmedPath, getApiUrl(), sessionId) ?? `${getApiUrl()}/api/browser/screenshot?path=${encodeURIComponent(trimmedPath)}${sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''}`
     : null
   const useInline = Boolean(trimmedSrc) && brokenSrc !== trimmedSrc
   const source = useInline ? trimmedSrc : pathSource

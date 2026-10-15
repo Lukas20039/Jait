@@ -46,6 +46,7 @@ import { VoiceMicButtonMobile, VoiceActiveControls, VoiceWakeWordPill } from '@/
 import type { ThemeMode } from '@/hooks/useAuth'
 
 interface AppHeaderProps {
+  agentControl?: React.ReactNode
   activeManagerThreads: any
   appPlatform: any
   automation: any
@@ -88,6 +89,7 @@ interface AppHeaderProps {
 
 export function AppHeader(props: AppHeaderProps) {
   const {
+    agentControl,
     activeManagerThreads,
     appPlatform,
     automation,
@@ -204,7 +206,7 @@ export function AppHeader(props: AppHeaderProps) {
             <header
               className={
                 isMobile
-                  ? 'fixed top-2 left-2 right-2 z-40 flex items-center gap-1 pointer-events-none h-10'
+                  ? 'fixed top-2 left-2 right-2 z-40 flex items-center gap-1 h-10 rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border'
                   : `relative flex items-center gap-1 shrink-0 border-b bg-background px-2 sm:gap-2 sm:px-5 ${isDesktop ? 'h-10 !pl-[0.8rem]' : 'h-10'}`
               }
               data-tauri-drag-region={hasCustomTitleBar || undefined}
@@ -218,24 +220,9 @@ export function AppHeader(props: AppHeaderProps) {
               } as React.CSSProperties : undefined}
             >
           {/* Left: Logo + mobile mic */}
-          <div className={`flex items-center gap-1 shrink-0 ${isMobile ? 'pointer-events-auto rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border px-2 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+          <div className={`flex items-center gap-1 shrink-0 ${isMobile ? 'px-1 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
             <JaitIcon size={20} className="shrink-0" />
             <VoiceMicButtonMobile {...voiceControlProps} />
-            {isMobile && activeManagerThreads.length > 0 && (
-              <ManagerActiveThreadsMenu
-                threads={activeManagerThreads}
-                getRepositoryForThread={automation.getRepositoryForThread}
-                threadPrStates={automation.threadPrStates}
-                ghAvailable={automation.ghAvailable}
-                onOpenThread={(threadId) => {
-                  setCurrentView('threads')
-                  automation.setSelectedThreadId(threadId)
-                  setShowProject(false)
-                  setShowProjectEditor(false)
-                }}
-                onStopThread={(threadId) => automation.handleStop(threadId)}
-              />
-            )}
           </div>
 
           {/* Full nav only appears when it cannot collide with the centered mode selector. */}
@@ -260,8 +247,8 @@ export function AppHeader(props: AppHeaderProps) {
               activeProjectTitle={activeProjectTitle}
             />
           ) : !sidebarOwnsNavigation ? (
-            <div ref={selectorRef} className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 ${isMobile ? 'pointer-events-auto rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border px-1.5 h-10 flex items-center' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
-              <ViewModeSelector mode={viewMode} onChange={setViewMode} compact={isMobile} />
+            <div ref={selectorRef} className={isMobile ? 'relative z-10 flex h-10 shrink-0 items-center' : 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10'} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+              <ViewModeSelector mode={viewMode} onChange={setViewMode} compact={isMobile} className={isMobile ? "[&_[role=tab]]:w-8" : undefined} />
             </div>
           ) : null}
 
@@ -269,7 +256,7 @@ export function AppHeader(props: AppHeaderProps) {
           <div className={`${isMobile ? 'flex-1' : 'hidden'} min-w-0`} />
 
           {/* Right: Context + Model + Account */}
-          <div ref={rightRef} className={`flex items-center gap-1 sm:gap-1.5 shrink-0 ${isMobile ? 'pointer-events-auto rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border px-1 py-0.5 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+          <div ref={rightRef} className={`flex items-center gap-1 sm:gap-1.5 shrink-0 ${isMobile ? 'px-1 py-0.5 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
 
             {/* Desktop status items — hidden on mobile */}
             <div className="hidden md:flex items-center gap-1 sm:gap-1.5">
@@ -301,6 +288,7 @@ export function AppHeader(props: AppHeaderProps) {
 
             </div>
 
+            {agentControl}
             <UpdateButton appPlatform={appPlatform} updateInfo={updateInfo} releases={releases} updateApplying={updateApplying} updateAwaitingRestart={updateAwaitingRestart} onApplyUpdate={handleApplyUpdate} />
 
             {/* Mobile avatar + menu group */}

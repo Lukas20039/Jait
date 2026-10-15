@@ -8,7 +8,7 @@ import type { ChatAttachment } from '@/hooks/useChat'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { AgentAvatar } from './agent-avatar'
-import { TeamAvatar } from './team-avatar'
+import { TeamAvatar, type TeamAvatarMember } from './team-avatar'
 import { agentsApi } from '@/lib/agents-api'
 import { useStickToBottom } from '@/components/chat/use-stick-to-bottom'
 
@@ -44,8 +44,9 @@ export function TeamGoalPanel({ roomId, goal }: { roomId: string; goal: NonNulla
   </details>
 }
 
-export function TeamRoomView({ roomId, onBack, embedded = false, initialInput = '', onInputChange, onRuntimeChange, backLabel = 'Back to agents', showBack = true }: {
+export function TeamRoomView({ roomId, initialIdentity, onBack, embedded = false, initialInput = '', onInputChange, onRuntimeChange, backLabel = 'Back to agents', showBack = true }: {
   roomId: string
+  initialIdentity?: { id: string; name: string; members: readonly TeamAvatarMember[] }
   backLabel?: string
   showBack?: boolean
   onBack: () => void
@@ -118,12 +119,18 @@ export function TeamRoomView({ roomId, onBack, embedded = false, initialInput = 
     } catch (error) { changeInput(content); attachments.forEach(attachment => composer.current?.addAttachment(attachment)); setError(error instanceof Error ? error.message : 'Could not send message') }
     finally { setSending(false) }
   }
+  // Reuse the list's identity until the authoritative room snapshot arrives.
+  // Unknown membership must remain distinct from a confirmed empty team.
+  const identity = snapshot?.room.id === roomId
+    ? { ...snapshot.room, members: snapshot.members }
+    : initialIdentity?.id === roomId ? initialIdentity : undefined
   return <div className="flex min-h-0 flex-1 flex-col">
     {!embedded && <header className="flex shrink-0 items-center gap-3 border-b px-4 py-3">
       {showBack && <Button size="icon" variant="ghost" onClick={onBack} aria-label={backLabel}><ArrowLeft className="h-4 w-4" /></Button>}
-      <TeamAvatar members={snapshot?.members ?? []} runningIds={runningIds} />
-      <div className="min-w-0"><h1 className="truncate font-semibold">{snapshot?.room.name ?? 'Team conversation'}</h1>
-        <p className="truncate text-xs text-muted-foreground">{snapshot?.members.map(member => member.name).join(', ')}</p></div>
+      {identity ? <TeamAvatar members={identity.members} runningIds={runningIds} />
+        : <span role="img" aria-label="Loading team members" className="h-12 w-12 shrink-0 rounded-full bg-muted" />}
+      <div className="min-w-0"><h1 className="truncate font-semibold">{identity?.name ?? 'Team conversation'}</h1>
+        <p className="truncate text-xs text-muted-foreground">{identity?.members.map(member => member.name).join(', ')}</p></div>
     </header>}
     {snapshot?.room.goal && <TeamGoalPanel key={roomId} roomId={roomId} goal={snapshot.room.goal} />}
     <div className="relative min-h-0 flex-1">

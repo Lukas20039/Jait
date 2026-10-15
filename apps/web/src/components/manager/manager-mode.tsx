@@ -63,7 +63,7 @@ export function ManagerMode({ currentPage, onPageChange, isMobile, children, acc
 
   return (
     <ManagerSidebarContext.Provider value={section}>
-      <main className={`flex min-h-0 flex-1 ${isMobile ? 'pt-14' : ''}`}>
+      <main className="flex min-h-0 flex-1">
         {!isMobile && (
           <AppNavigationSidebar
             account={account}

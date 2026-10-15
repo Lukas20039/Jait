@@ -101,7 +101,7 @@ export function ChatToolbar({
     <div
       className={`border-b bg-muted/30 px-2 sm:px-5 shrink-0 ${isMobile && !compactManagerToolbar ? 'hidden' : 'flex'} ${
         compactManagerToolbar
-          ? 'min-h-[35px] items-center gap-1.5 pt-14 py-2'
+          ? 'min-h-[35px] items-center gap-1.5 py-2'
           : 'h-11 md:h-[35px] items-center gap-1 overflow-x-auto overflow-y-visible scrollbar-none'
       }`}
     >

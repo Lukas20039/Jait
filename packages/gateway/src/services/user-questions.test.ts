@@ -53,9 +53,9 @@ describe("UserQuestionService", () => {
     expect(service.listPending()).toHaveLength(0);
   });
 
-  it("rejects resolution by the wrong user and times out unanswered requests", async () => {
+  it("rejects resolution by the wrong user and keeps unanswered requests pending", async () => {
     vi.useFakeTimers();
-    const service = new UserQuestionService({ defaultTimeoutMs: 25 });
+    const service = new UserQuestionService();
 
     const resultPromise = service.ask({
       sessionId: "session-1",
@@ -69,9 +69,26 @@ describe("UserQuestionService", () => {
     expect(service.submit(request!.id, { answers: {} })).toBe(false);
     expect(service.listPending("session-1", "user-1")).toHaveLength(1);
 
-    vi.advanceTimersByTime(25);
-
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
+    expect(vi.getTimerCount()).toBe(0);
+    expect(service.listPending("session-1", "user-1")).toHaveLength(1);
+    expect(request!.expiresAt).toBeNull();
+    expect(service.cancel(request!.id, "user-1")).toBe(true);
     await expect(resultPromise).resolves.toBeNull();
     expect(service.listPending("session-1", "user-1")).toHaveLength(0);
   });
+  it("accepts an answer after the former five-minute deadline", async () => {
+    vi.useFakeTimers();
+    const service = new UserQuestionService();
+    const promise = service.ask({ sessionId: "session-1", userId: "user-1",
+      questions: [{ id: "choice", header: "Choice", question: "Which one?" }] });
+    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
+    const [request] = service.listPending("session-1", "user-1");
+    expect(request).toBeDefined();
+    const answers = { choice: { selected: ["yes"], freeText: null, skipped: false } };
+    expect(service.submit(request!.id, { answers }, "user-1")).toBe(true);
+    await expect(promise).resolves.toEqual({ answers });
+    expect(service.listPending()).toEqual([]);
+  });
+
 });

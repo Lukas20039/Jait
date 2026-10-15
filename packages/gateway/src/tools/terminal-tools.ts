@@ -13,6 +13,7 @@
  * stopped when the limit is exceeded).
  */
 
+import { runSandboxBackgroundTerminal } from "./sandbox-background-terminal.js";
 import type { ToolDefinition, ToolContext, ToolResult } from "./contracts.js";
 import type { SurfaceRegistry } from "../surfaces/registry.js";
 import { uuidv7 } from "../db/uuidv7.js";
@@ -1289,6 +1290,13 @@ export function createTerminalRunTool(
 
       if (input.sandbox) {
         const sandboxCommand = rewriteProjectPathForSandboxCommand(command, context.projectRoot);
+        if (isBackground) {
+          return runSandboxBackgroundTerminal(sandboxManager, context.sandboxContainerName
+            ? { containerName: context.sandboxContainerName, command: sandboxCommand, timeoutMs: timeout }
+            : { command: sandboxCommand, projectRoot: context.projectRoot, timeoutMs: timeout,
+                mountMode: input.sandboxMountMode ?? "read-write", networkEnabled: false,
+                memoryLimitMb: 512, cpuLimit: "1.0" }, command, context);
+        }
         const result = context.sandboxContainerName
           ? await sandboxManager.execInContainer({
               containerName: context.sandboxContainerName,

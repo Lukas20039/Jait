@@ -412,7 +412,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
   }
 
   registerFilesystemRoutes(app, deps.ws);
-  registerBrowserAssetRoutes(app);
+  registerBrowserAssetRoutes(app, config, deps, access);
   app.post("/api/preview/access", async (request, reply) => {
     const user = await requireAuth(request, reply, config.jwtSecret);
     if (!user) return;
@@ -669,16 +669,40 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
   return app;
 }
 
-function registerBrowserAssetRoutes(app: FastifyInstance): void {
+function registerBrowserAssetRoutes(app: FastifyInstance, config: AppConfig, deps: ServerDeps, access: ControlAccess): void {
   app.get("/api/browser/screenshot", async (request, reply) => {
-    const { path } = request.query as { path?: string };
+    const { path, sessionId } = request.query as { path?: string; sessionId?: string };
     if (!path || !path.trim()) {
       return reply.status(400).send({ error: "MISSING_PATH", message: "path is required" });
     }
 
-    const resolvedPath = resolve(path);
-    if (!isPathWithin(await realpath(process.cwd()), await realpath(resolvedPath).catch(() => resolvedPath))) {
-      return reply.status(403).send({ error: "PATH_FORBIDDEN", message: "Screenshot path must stay within the gateway project" });
+    // Tool paths belong to the chat's project, which can differ from the
+    // gateway's launch directory. Never accept a client-supplied project root.
+    let projectRoot = process.cwd();
+    if (sessionId) {
+      const user = await requireAuth(request, reply, config.jwtSecret);
+      if (!user) return;
+      if (!access.session(sessionId, user.id)) {
+        return reply.status(404).send({ error: "NOT_FOUND", message: "Chat not found" });
+      }
+      const session = deps.sessionService?.getById(sessionId, user.id);
+      const thread = deps.threadService?.getById(sessionId);
+      const surface = deps.surfaceRegistry?.getSurface(`fs-${sessionId}`);
+      const surfaceRoot = surface?.state === "running" && surface.type === "filesystem"
+        ? surface.snapshot().metadata.projectRoot as string | undefined : undefined;
+      const root = session?.projectPath || thread?.workingDirectory || surfaceRoot;
+      if (!root) {
+        return reply.status(404).send({ error: "NO_PROJECT", message: "Chat has no project" });
+      }
+      projectRoot = root;
+    }
+
+    const resolvedRoot = resolve(projectRoot);
+    const resolvedPath = resolve(resolvedRoot, path);
+    const canonicalRoot = await realpath(resolvedRoot).catch(() => resolvedRoot);
+    const canonicalPath = await realpath(resolvedPath).catch(() => resolvedPath);
+    if (!isPathWithin(resolvedRoot, resolvedPath) || !isPathWithin(canonicalRoot, canonicalPath)) {
+      return reply.status(403).send({ error: "PATH_FORBIDDEN", message: "Screenshot path must stay within the chat project" });
     }
 
     const extension = extname(resolvedPath).toLowerCase();

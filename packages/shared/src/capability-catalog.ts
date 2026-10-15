@@ -29,6 +29,13 @@ export const JAIT_PAGES = {
       { id: "workspace", description: "Read, edit, search, execute, and preview work in the active project.", toolRefs: ["read", "edit", "search", "jait.terminal", "preview.open"] }],
     toolPrefixes: ["chat.", "session.", "file.", "terminal.", "preview.", "browser.", "web.", "project.", "surface.", "screen.", "voice.", "architecture."],
   },
+  messenger: {
+    title: "Messenger", path: "/messenger", mode: "developer",
+    description: "Read and reply to personal conversations through a Matrix homeserver and installed bridges. This inbox is independent of AI chat and assistant channels.",
+    examples: ["Open my messenger", "Connect a Matrix account", "Read bridged conversations"],
+    features: [{ id: "inbox", description: "Browser Matrix client with encrypted messages, attachments, invitations, service filters, bridge setup conversations, and notifications while Jait is open. Bridge coverage depends on the installed adapter; Teams tenant support is not guaranteed.", toolRefs: [], uiOnlyReason: "Personal messages and Matrix credentials stay in the browser client; no agent tools expose this inbox." }],
+    toolPrefixes: [],
+  },
   agents: {
     title: "Agents", path: "/agents", mode: "manager",
     description: "Manage persistent Jait people and teams: profiles, personas, roles, reporting lines, providers, models, repositories, skills, and tool preferences. These are saved agents from the Agents page, distinct from temporary execution workers.",

@@ -507,7 +507,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     getApp: () => httpAppRef,
   };
   let toolRegistry = createToolRegistry(surfaceRegistry, toolDeps);
-  providerRegistry.register(new JaitProvider({
+  const jaitProvider = new JaitProvider({
     config,
     threadService,
     userService,
@@ -516,7 +516,8 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     // from the early build this provider is constructed with (see toolDeps above).
     getToolRegistry: () => toolRegistry,
     toolExecutor: (toolName, input, context) => toolExecutor(toolName, input, context),
-  }));
+  });
+  providerRegistry.register(jaitProvider);
   console.log(`Providers registered: ${providerRegistry.list().map(p => p.id).join(", ")}`);
   console.log(`Tools registered: ${toolRegistry.listNames().join(", ")}`);
 
@@ -544,7 +545,6 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     },
   });
   const userQuestionService = new UserQuestionService({
-    defaultTimeoutMs: 300_000,
     onRequest: (request) => {
       ws.broadcastAll({
         type: "user-question.requested",
@@ -576,7 +576,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
       });
       attention.clear("question", request.id, request.status === "submitted"
         ? "answered"
-        : request.status === "timeout" ? "timeout" : "cancelled");
+        : "cancelled");
       console.log(`User question ${request.status}: ${request.id}`);
     },
   });
@@ -1440,6 +1440,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   }
 
   // Docker discovery and cleanup can wait until the gateway is responsive.
+  if (!options.evaluation) jaitProvider.startSandboxMaintenance();
   if (!options.evaluation) void browserSandboxManager.cleanupBrowserSandboxes().then((removed) => {
     if (removed.length > 0) {
       console.log(`[browser] Removed ${removed.length} stale browser sandbox container(s) from previous runs.`);
@@ -1549,6 +1550,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     if (forceTimer.unref) forceTimer.unref();
     try {
       consentManager.cancelAll("shutdown");
+      await jaitProvider.dispose();
       await pluginManager.disposeAll();
       await channelManager.dispose();
       await previewService.stopAll();

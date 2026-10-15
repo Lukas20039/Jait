@@ -66,7 +66,7 @@ export function VoiceActiveControls({
 }: Pick<VoiceHeaderControlsBaseProps, 'setVoiceOverlayOpen' | 'voiceAssistant' | 'isDesktop'> & { isMobile: boolean; activeProjectTitle?: string | null }) {
   return (
     <div
-      className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm px-1.5 py-1 ${isMobile ? 'pointer-events-auto' : ''}`}
+      className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center gap-1.5 px-1.5 py-1 ${isMobile ? '' : 'rounded-full border border-border/60 bg-background/80 backdrop-blur-sm'}`}
       style={noDragStyle(isDesktop)}
     >
       {activeProjectTitle ? (

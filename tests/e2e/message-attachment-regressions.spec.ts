@@ -107,3 +107,32 @@ for (const width of [390, 1280]) {
     await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `queued-message-edit-${width}.png`) })
   })
 }
+
+for (const action of ['click', 'enter'] as const) {
+  for (const success of [true, false]) {
+    test(`sent message draft stays visible while saving (${action}, ${success ? 'success' : 'rejection'})`, async ({ page }) => {
+      await openFixture(page)
+      const sent = page.getByTestId('sent')
+      await sent.getByText('Before ', { exact: true }).click()
+      const editor = sent.getByRole('textbox')
+      await expect(editor).toBeVisible()
+      await editor.press('End')
+      await page.keyboard.type(' edited')
+      const draft = await editor.textContent()
+      if (action === 'enter') await editor.press('Enter')
+      else await sent.getByRole('button', { name: 'Send message', exact: true }).click()
+      await expect(page.getByRole('button', { name: 'Complete edit' })).toBeVisible()
+      // The edit request is held pending: text and attachments must remain on screen.
+      await expect(editor).toHaveText(draft!)
+      await expect(sent.getByRole('button', { name: 'Remove notes.txt' })).toBeVisible()
+      await page.getByRole('button', { name: success ? 'Complete edit' : 'Reject edit' }).click()
+      if (success) {
+        await expect(editor).toHaveCount(0)
+        await expect(sent).toContainText('edited')
+      } else {
+        await expect(editor).toHaveText(draft!)
+        await expect(sent.getByRole('button', { name: 'Send message', exact: true })).toBeEnabled()
+      }
+    })
+  }
+}

@@ -38,6 +38,25 @@ describe("MobilePushService", () => {
     } finally { sqlite.close(); }
   });
 
+  it("sends questions without an expiry or push TTL override", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const send = vi.fn(async (_url: unknown, _init?: RequestInit) => new Response("{}", { status: 200 }));
+      const service = new MobilePushService(db, {
+        project_id: "test", client_email: "test@example.com", private_key: "unused",
+      }, send as typeof fetch);
+      Object.assign(service, { accessToken: { value: "test-token", expiresAt: Date.now() + 3600_000 } });
+      service.register("phone", "user-a", "token-phone");
+      await service.sendAttention({ key: "question:q1", kind: "question", requestId: "q1", sessionId: "s1",
+        userId: "user-a", title: "Question", body: "Choose", urgent: false, actions: [], link: "/",
+        createdAt: new Date().toISOString(), expiresAt: null });
+      const body = JSON.parse(send.mock.calls[0]![1]!.body as string);
+      expect(body.message.android).toEqual({ priority: "high" });
+      expect(JSON.parse(body.message.data.item).expiresAt).toBeNull();
+    } finally { sqlite.close(); }
+  });
+
   it("persists registrations across service instances", async () => {
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);

@@ -1002,7 +1002,12 @@ export function ProviderModelSelector({
   ) : trigger
 
   const selectorContent = (
-    <div className="grid min-h-0 flex-1 grid-cols-[minmax(9.5rem,0.8fr)_minmax(13rem,1.45fr)] overflow-hidden">
+    <div className={cn(
+      'grid min-h-0 flex-1 overflow-hidden',
+      isMobile
+        ? 'grid-cols-[minmax(0,0.8fr)_minmax(0,1.45fr)]'
+        : 'grid-cols-[minmax(9.5rem,0.8fr)_minmax(13rem,1.45fr)]',
+    )}>
       <section className="flex min-h-0 min-w-0 flex-col border-r" aria-labelledby="provider-selector-heading">
       <div className={cn('flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2', isMobile && 'min-h-10')}>
         <div id="provider-selector-heading" className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">Providers</div>
@@ -1252,6 +1257,7 @@ export function ProviderModelSelector({
                       stopPropagation
                       quickJumpIndex={row.quickJumpIndex}
                       highlighted={highlightedIndex === virtualRow.index}
+                      mobile={isMobile}
                     />
                   </div>
                 )
@@ -1264,7 +1270,7 @@ export function ProviderModelSelector({
             </div>
           )}
         </div>
-        <ModelPickerRail sections={railSections} activeRowIndex={highlightedIndex} onJump={handleRailJump} />
+        {!isMobile && <ModelPickerRail sections={railSections} activeRowIndex={highlightedIndex} onJump={handleRailJump} />}
       </div>
 
       {modelSupportsReasoning && !loadingModels && (
@@ -1469,6 +1475,7 @@ interface ModelRowProps {
   stopPropagation: boolean
   quickJumpIndex: number | null
   highlighted: boolean
+  mobile: boolean
 }
 
 function ModelRow({
@@ -1483,6 +1490,7 @@ function ModelRow({
   stopPropagation,
   quickJumpIndex,
   highlighted,
+  mobile,
 }: ModelRowProps) {
   return (
     <div
@@ -1504,14 +1512,15 @@ function ModelRow({
       } : undefined}
       className={cn(
         'group flex w-full cursor-pointer items-start gap-2 px-3 py-1.5 text-left transition-colors',
+        mobile && 'gap-1 px-2',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
         highlighted ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground',
         selected && !highlighted && 'bg-accent/50',
       )}
     >
       <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 items-center gap-1.5 text-xs font-medium">
-          <span className="truncate">{formatModelDisplayLabel(model.name)}</span>
+        <div className={cn('flex min-w-0 items-center gap-x-1.5 text-xs font-medium', mobile && 'flex-wrap')}>
+          <span className={mobile ? 'min-w-0 [overflow-wrap:anywhere]' : 'truncate'}>{formatModelDisplayLabel(model.name)}</span>
           {model.isDefault && <span className="shrink-0 text-2xs font-normal text-muted-foreground">(default)</span>}
         </div>
         <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[0.6875rem] leading-snug text-muted-foreground/70">
@@ -1522,7 +1531,7 @@ function ModelRow({
       </div>
       <span className="flex shrink-0 items-center gap-0.5">
         {selected && <Check className="h-3.5 w-3.5 text-primary" />}
-        <Kbd keys={quickJumpIndex !== null ? [String(quickJumpIndex)] : []} emptyLabel="" />
+        {!mobile && <Kbd keys={quickJumpIndex !== null ? [String(quickJumpIndex)] : []} emptyLabel="" />}
         {onToggleFavorite && (
           <button
             type="button"

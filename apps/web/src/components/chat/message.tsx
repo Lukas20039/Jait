@@ -877,6 +877,7 @@ function MessageInner({
                           key={`edit-${messageId ?? 'user-message'}`}
                           ref={editPromptInputRef}
                           draftStateKey={`edit:${messageId ?? 'user-message'}`}
+                          clearOnSubmit={false}
                           value={editDraft}
                           segments={editSegments}
                           initialAttachments={userAttachments}

@@ -370,7 +370,7 @@ interface UserQuestionRequest {
   title: string
   attention: 'normal' | 'urgent'
   questions: UserQuestionItem[]
-  expiresAt: string
+  expiresAt: string | null
   status: 'pending' | 'submitted' | 'cancelled' | 'timeout'
 }
 

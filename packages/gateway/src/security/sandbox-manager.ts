@@ -1,3 +1,5 @@
+import { commandSandboxGateway, commandSandboxOwner, commandSandboxOwnerAlive } from "./agent-sandbox-owner.js";
+import { startSandboxBackgroundProcess, type SandboxBackgroundExecution } from "./sandbox-background-process.js";
 import { worktreeGitMountArgs } from "./worktree-sandbox.js";
 import { spawn, execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
@@ -83,6 +85,8 @@ export interface SandboxRunResult {
 }
 
 export interface SandboxSessionOptions {
+  sessionId?: string;
+  threadId?: string;
   projectRoot: string;
   mountMode?: SandboxMountMode;
   networkEnabled?: boolean;
@@ -246,11 +250,10 @@ export class SandboxManager {
     private readonly runProcess: (cmd: string[], timeoutMs: number) => Promise<ProcessResult> = runDockerProcess,
   ) {}
 
-  async runCommand(options: SandboxRunOptions): Promise<SandboxRunResult> {
+  private commandInvocation(options: SandboxRunOptions): { cmd: string[]; containerName: string } {
     const projectRoot = resolve(options.projectRoot);
     const mountMode = options.mountMode ?? "read-write";
     const containerName = `jait-sb-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    const timeoutMs = Math.max(1000, options.timeoutMs);
 
     const mountArgs = this.buildMountArgs(projectRoot, mountMode);
     const networkArgs = options.networkEnabled === false ? ["--network", "none"] : [];
@@ -276,6 +279,12 @@ export class SandboxManager {
       options.command,
     ];
 
+    return { cmd, containerName };
+  }
+
+  async runCommand(options: SandboxRunOptions): Promise<SandboxRunResult> {
+    const { cmd, containerName } = this.commandInvocation(options);
+    const timeoutMs = Math.max(1000, options.timeoutMs);
     const result = await this.runProcess(cmd, timeoutMs);
     return {
       ok: !result.timedOut && result.exitCode === 0,
@@ -303,6 +312,11 @@ export class SandboxManager {
       "--rm",
       "--name",
       containerName,
+      "--label", "dev.jait.kind=agent",
+      "--label", `dev.jait.gateway=${commandSandboxGateway()}`,
+      "--label", `dev.jait.owner=${commandSandboxOwner()}`,
+      ...(options.sessionId ? ["--label", `dev.jait.session=${options.sessionId}`] : []),
+      ...(options.threadId ? ["--label", `dev.jait.thread=${options.threadId}`] : []),
       ...networkArgs,
       ...memoryArgs,
       ...cpuArgs,
@@ -329,9 +343,40 @@ export class SandboxManager {
     };
   }
 
-  async execInContainer(options: SandboxExecOptions): Promise<SandboxRunResult> {
+  /** Only the exact keepalive process counts as idle. Inspection errors retain the container. */
+  async isCommandSandboxIdle(containerName: string): Promise<boolean> {
+    const result = await this.runProcess([containerBinary(), "top", containerName, "-eo", "pid,args"], 5_000);
+    if (result.exitCode !== 0 || result.timedOut) return false;
+    const lines = result.output.trim().split(/\r?\n/);
+    return lines.length === 2 && /^PID\s+(COMMAND|ARGS)$/.test(lines[0]!.trim())
+      && /^\d+\s+tail -f \/dev\/null$/.test(lines[1]!.trim());
+  }
+
+  /** Reclaim only labelled containers from dead gateway processes in our namespace. */
+  async cleanupOrphanedCommandSandboxes(ownerAlive = commandSandboxOwnerAlive): Promise<string[]> {
+    const result = await this.runProcess([containerBinary(), "ps", "--filter", "label=dev.jait.kind=agent",
+      "--filter", `label=dev.jait.gateway=${commandSandboxGateway()}`, "--format",
+      '{"name":{{json .Names}},"owner":{{json (.Label "dev.jait.owner")}}}'], 15_000);
+    if (result.exitCode !== 0 || result.timedOut) return [];
+    const removed: string[] = [];
+    for (const line of result.output.split(/\r?\n/)) {
+      let row: { name?: string; owner?: string };
+      try { row = JSON.parse(line); } catch { continue; }
+      if (typeof row?.name !== "string" || !/^jait-agent-sb-[a-z0-9-]+$/.test(row.name)
+        || typeof row.owner !== "string" || !row.owner || ownerAlive(row.owner)) continue;
+      try {
+        if (!await this.isCommandSandboxIdle(row.name)) continue;
+        await this.stopContainer(row.name);
+        removed.push(row.name);
+      } catch (error) {
+        console.warn(`[sandbox] Could not reclaim ${row.name}:`, error);
+      }
+    }
+    return removed;
+  }
+
+  private execInvocation(options: SandboxExecOptions): { cmd: string[]; containerName: string } {
     const containerName = options.containerName.trim();
-    const timeoutMs = Math.max(1000, options.timeoutMs);
     const cmd = [
       containerBinary(),
       "exec",
@@ -343,6 +388,20 @@ export class SandboxManager {
       options.command,
     ];
 
+    return { cmd, containerName };
+  }
+
+  startBackgroundCommand(options: SandboxRunOptions | SandboxExecOptions): SandboxBackgroundExecution {
+    const isExisting = "containerName" in options;
+    const { cmd, containerName } = isExisting
+      ? this.execInvocation(options)
+      : this.commandInvocation(options);
+    return startSandboxBackgroundProcess(cmd, containerName, options.timeoutMs, !isExisting);
+  }
+
+  async execInContainer(options: SandboxExecOptions): Promise<SandboxRunResult> {
+    const { cmd, containerName } = this.execInvocation(options);
+    const timeoutMs = Math.max(1000, options.timeoutMs);
     const result = await this.runProcess(cmd, timeoutMs);
     return {
       ok: !result.timedOut && result.exitCode === 0,
@@ -505,12 +564,15 @@ export class SandboxManager {
   async stopContainer(containerName: string): Promise<void> {
     const trimmed = containerName.trim();
     if (!trimmed) return;
-    await this.runProcess([
+    const result = await this.runProcess([
       containerBinary(),
       "rm",
       "-f",
       trimmed,
     ], 15_000);
+    if ((result.exitCode !== 0 || result.timedOut) && !/No such container/i.test(result.output)) {
+      throw new Error(`Failed to stop sandbox ${trimmed}: ${result.output}`);
+    }
   }
 
   async cleanupBrowserSandboxes(options: BrowserSandboxCleanupOptions = {}): Promise<string[]> {

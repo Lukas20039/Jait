@@ -2,7 +2,7 @@
   "name": "@jait/web",
   "version": "0.1.446",
   "private": true,
-  "description": "Jait web frontend \u2014 bundled into @jait/gateway at build time",
+  "description": "Jait web frontend — bundled into @jait/gateway at build time",
   "author": "JakobWl",
   "type": "module",
   "license": "MIT",
@@ -20,10 +20,10 @@
     "local-first"
   ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build --base ./",
+    "dev": "vite --config vite.config.ts",
+    "build": "vite build --config vite.config.ts --base ./",
     "analyze": "bun run build && source-map-explorer \"dist/assets/*.js\" --html dist/bundle-report.html --no-border-checks",
-    "preview": "vite preview",
+    "preview": "vite preview --config vite.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -40,6 +40,7 @@
     "@llm-ui/markdown": "^0.13.3",
     "@llm-ui/react": "^0.13.3",
     "@lobehub/icons": "^4.12.0",
+    "@matrix-org/matrix-sdk-crypto-wasm": "18.9.0",
     "@monaco-editor/loader": "^1.7.0",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-avatar": "1.2.6",
@@ -67,6 +68,8 @@
     "es-toolkit": "^1.52.0",
     "livekit-client": "^2.22.3",
     "lucide-react": "^1.53.0",
+    "matrix-encrypt-attachment": "^1.0.3",
+    "matrix-js-sdk": "^44.0.0",
     "mermaid": "^11.17.2",
     "motion": "^12.43.0",
     "react": "19.2.8",

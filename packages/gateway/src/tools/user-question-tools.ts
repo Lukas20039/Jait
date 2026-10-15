@@ -4,7 +4,6 @@ import { ToolName } from "./tool-names.js";
 
 interface UserAskInput {
   title?: string;
-  timeoutMs?: number;
   attention?: "normal" | "urgent";
   questions: Array<{
     id: string;
@@ -42,12 +41,11 @@ function normalizeQuestions(input: UserAskInput): UserQuestion[] {
 export function createUserAskTool(userQuestions: UserQuestionService): ToolDefinition<UserAskInput> {
   return {
     name: ToolName.UserAsk,
-    description: "Ask the user one or more structured questions and wait for their answers. Questions are surfaced on every connected Jait client; attention only controls notification emphasis.",
+    description: "Ask the user one or more structured questions and wait until they answer or cancel, without a timeout. Questions are surfaced on every connected Jait client; attention only controls notification emphasis.",
     parameters: {
       type: "object",
       properties: {
         title: { type: "string", description: "Short title shown above the questions." },
-        timeoutMs: { type: "number", description: "Optional timeout in milliseconds." },
         attention: {
           type: "string",
           enum: ["normal", "urgent"],
@@ -114,7 +112,6 @@ export function createUserAskTool(userQuestions: UserQuestionService): ToolDefin
         title: input.title,
         attention: input.attention,
         questions,
-        timeoutMs: input.timeoutMs,
       });
       if (!result) {
         return { ok: false, message: "The user did not answer the question request." };

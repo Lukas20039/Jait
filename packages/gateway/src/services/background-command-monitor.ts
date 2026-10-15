@@ -215,19 +215,26 @@ class BackgroundCommandMonitor {
     command: string;
     startedAt: number;
     exitPromise: Promise<{ exitCode: number | null; output: string }>;
-  }): void {
-    if (this.active.size >= MAX_CONCURRENT_WATCHERS) return;
-
+    shouldNotify?: () => boolean;
+    onCancel?: () => void;
+  }): boolean {
+    if (this.active.size >= MAX_CONCURRENT_WATCHERS) return false;
+    let cancelled = false;
     const entry: ActiveWatcher = {
       sessionId: options.sessionId,
       terminalId: options.terminalId,
-      cancel: () => this.active.delete(entry),
+      cancel: () => {
+        cancelled = true;
+        this.active.delete(entry);
+        options.onCancel?.();
+      },
     };
     this.active.add(entry);
 
     void options.exitPromise
       .then(({ exitCode, output }) => {
-        entry.cancel();
+        this.active.delete(entry);
+        if (cancelled || options.shouldNotify?.() === false) return;
         this.invokeHandler({
           sessionId: options.sessionId,
           terminalId: options.terminalId,
@@ -237,7 +244,8 @@ class BackgroundCommandMonitor {
           durationMs: Date.now() - options.startedAt,
         });
       })
-      .catch(() => entry.cancel());
+      .catch(() => this.active.delete(entry));
+    return true;
   }
 
   /**

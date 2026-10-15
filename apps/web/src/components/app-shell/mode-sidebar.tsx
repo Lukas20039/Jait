@@ -27,6 +27,7 @@ export interface SidebarAccount {
   loading: boolean
   onLogin: () => void
   onLogout: () => void
+  agentControl?: (collapsed: boolean) => ReactNode
   updateControl?: (collapsed: boolean) => ReactNode
   themeMode: ThemeMode
   onThemeModeChange: (mode: ThemeMode) => void
@@ -108,6 +109,7 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
       <div className="flex flex-col gap-1 border-t pt-2">
         {account?.updateControl?.(collapsed)}
         {bottomItems.map(renderItem)}
+        {account?.agentControl?.(collapsed)}
         {account && (account.loading ? (
           <div className="h-10 animate-pulse rounded-md bg-muted" aria-label="Loading account" />
         ) : account.username ? (

@@ -30,8 +30,8 @@ export interface UserQuestionRequest {
   attention: "normal" | "urgent";
   questions: UserQuestion[];
   createdAt: string;
-  expiresAt: string;
-  status: "pending" | "submitted" | "cancelled" | "timeout";
+  expiresAt: null;
+  status: "pending" | "submitted" | "cancelled";
 }
 
 export interface UserQuestionResult {
@@ -41,23 +41,19 @@ export interface UserQuestionResult {
 interface PendingUserQuestion {
   request: UserQuestionRequest;
   resolve: (value: UserQuestionResult | null) => void;
-  timer: ReturnType<typeof setTimeout>;
 }
 
 export interface UserQuestionServiceOptions {
-  defaultTimeoutMs?: number;
   onRequest?: (request: UserQuestionRequest) => void;
   onResolved?: (request: UserQuestionRequest) => void;
 }
 
 export class UserQuestionService {
   private readonly pending = new Map<string, PendingUserQuestion>();
-  private readonly defaultTimeoutMs: number;
   private readonly onRequest?: (request: UserQuestionRequest) => void;
   private readonly onResolved?: (request: UserQuestionRequest) => void;
 
   constructor(options: UserQuestionServiceOptions = {}) {
-    this.defaultTimeoutMs = options.defaultTimeoutMs ?? 300_000;
     this.onRequest = options.onRequest;
     this.onResolved = options.onResolved;
   }
@@ -69,10 +65,8 @@ export class UserQuestionService {
     title?: string;
     attention?: "normal" | "urgent";
     questions: UserQuestion[];
-    timeoutMs?: number;
   }): Promise<UserQuestionResult | null> {
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + (input.timeoutMs ?? this.defaultTimeoutMs));
     const request: UserQuestionRequest = {
       id: uuidv7(),
       sessionId: input.sessionId,
@@ -82,15 +76,12 @@ export class UserQuestionService {
       attention: input.attention === "urgent" ? "urgent" : "normal",
       questions: input.questions,
       createdAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString(),
+      expiresAt: null,
       status: "pending",
     };
 
     return new Promise((resolve) => {
-      const timer = setTimeout(() => {
-        this.resolveRequest(request.id, null, "timeout");
-      }, input.timeoutMs ?? this.defaultTimeoutMs);
-      this.pending.set(request.id, { request, resolve, timer });
+      this.pending.set(request.id, { request, resolve });
       this.onRequest?.(request);
     });
   }
@@ -129,7 +120,6 @@ export class UserQuestionService {
     const entry = this.pending.get(requestId);
     if (!entry) return;
     this.pending.delete(requestId);
-    clearTimeout(entry.timer);
     const request = { ...entry.request, status };
     entry.resolve(result);
     this.onResolved?.(request);

@@ -35,7 +35,7 @@ export function AppNavigationSidebar({
   // The catalog is also the navigation registry. Adding a routable page requires
   // its explanation and an icon; missing page metadata cannot silently ship.
   const icons: Record<AppView, LucideIcon> = {
-    chat: MessageSquare, agents: UsersRound, threads: MessagesSquare, pulls: GitPullRequest,
+    messenger: MessageSquare, chat: MessageSquare, agents: UsersRound, threads: MessagesSquare, pulls: GitPullRequest,
     todo: ListChecks, email: Mail, calendar: CalendarDays, memory: Brain, jobs: Calendar,
     network: Wifi, settings: Settings,
   }

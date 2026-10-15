@@ -14,6 +14,8 @@ import {
   X,
 } from 'lucide-react'
 
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import type { SidebarAccount } from '@/components/app-shell/mode-sidebar'
 import { Button } from '@/components/ui/button'
 import type { AppView } from '@/lib/app-view'
 
@@ -25,6 +27,7 @@ interface NavItem {
 
 const NAV_ITEMS: readonly NavItem[] = [
   { view: 'chat', label: 'Chat', icon: MessageSquare },
+  { view: 'messenger', label: 'Messenger', icon: MessagesSquare },
   { view: 'pulls', label: 'PRs', icon: GitPullRequest },
   { view: 'todo', label: 'Todo', icon: Boxes },
   { view: 'email', label: 'Email', icon: Mail },
@@ -40,6 +43,7 @@ const MANAGER_NAV_ITEMS: readonly NavItem[] = [
 ]
 
 interface MobileNavDrawerProps {
+  account?: SidebarAccount
   open: boolean
   onClose: () => void
 
@@ -55,6 +59,7 @@ interface MobileNavDrawerProps {
 }
 
 export function MobileNavDrawer({
+  account,
   open,
   onClose,
   currentView,
@@ -139,6 +144,13 @@ export function MobileNavDrawer({
           </div>}
 
         </div>
+        {account && <div className="shrink-0 space-y-1 border-t p-2">
+          {account.agentControl?.(false)}
+          <Button variant="ghost" className="h-11 w-full justify-start gap-3" onClick={account.username ? onOpenSettings : account.onLogin} aria-label={account.username ? 'Account settings' : 'Sign in'}>
+            <Avatar className="h-7 w-7"><AvatarFallback>{account.initial}</AvatarFallback></Avatar>
+            <span className="truncate">{account.username ?? 'Sign in'}</span>
+          </Button>
+        </div>}
       </aside>
     </>
   )

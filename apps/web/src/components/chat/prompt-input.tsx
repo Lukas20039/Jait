@@ -85,6 +85,8 @@ interface PromptInputProps {
   value: string
   onChange: (value: string) => void
   onSubmit: (chipFiles?: ReferencedFile[], attachments?: ChatAttachment[], segments?: UserMessageSegment[]) => void
+  /** Editors retain their draft until the parent finishes saving and closes them. */
+  clearOnSubmit?: boolean
   onStop?: () => void
   /** Queue a message while the agent is busy. */
   onQueue?: (chipFiles?: ReferencedFile[], attachments?: ChatAttachment[], segments?: UserMessageSegment[]) => void
@@ -845,6 +847,7 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
   value,
   onChange,
   onSubmit,
+  clearOnSubmit = true,
   onStop,
   onQueue,
   onSteer,
@@ -1751,15 +1754,15 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
       if (action === 'submit') {
         if (!isLoading || sendTarget === 'thread') {
           const submittedAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), nextSegments)
-          clearSubmittedAttachments()
+          if (clearOnSubmit) clearSubmittedAttachments()
           onSubmit(chips, submittedAttachments, nextSegments)
-          resetComposer()
+          if (clearOnSubmit) resetComposer()
         }
         return
       }
       runSendAction(action, { chips, segments: nextSegments })
     }
-  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, attachments, segments, resetComposer, clearSubmittedAttachments, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
+  }, [mentionOpen, searchResults, mentionIndex, insertMention, slashOpen, slashResults, slashIndex, insertSkill, value, isLoading, sendTarget, defaultStreamingAction, onQueue, onSteer, onThreadSubmit, onAskInParallel, onSubmit, clearOnSubmit, attachments, segments, resetComposer, clearSubmittedAttachments, restoreSnapshot, runSendAction, readingAttachments, syncComposerSegments])
 
   const readFileAsAttachment = useCallback((file: File): Promise<ChatAttachment> => {
     return new Promise((resolve, reject) => {
@@ -2408,9 +2411,9 @@ export const PromptInput = forwardRef<PromptInputHandle, PromptInputProps>(funct
                 const chips = el ? getChipFiles(el) : []
                 const nextSegments = el ? getComposerSegments(el) : normalizeUserMessageSegments(segments)
                 const submittedAttachments = collectAttachments(attachmentsRef.current.filter(item => !item.mimeType.startsWith('image/')), nextSegments)
-                clearSubmittedAttachments()
+                if (clearOnSubmit) clearSubmittedAttachments()
                 onSubmit(chips, submittedAttachments, nextSegments)
-                resetComposer()
+                if (clearOnSubmit) resetComposer()
               }}
             >
               {submitLoading

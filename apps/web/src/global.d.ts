@@ -88,3 +88,8 @@ declare global {
 }
 
 export {}
+
+declare module 'matrix-crypto-wasm-asset?url' {
+  const url: string
+  export default url
+}
