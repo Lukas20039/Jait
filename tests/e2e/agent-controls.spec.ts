@@ -2,6 +2,35 @@ import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
 for (const width of [1280, 390, 320]) {
+  test(`agent control opens a menu without stopping work at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 850 })
+    let stopCalls = 0
+    await page.route('**/api/persona-agents', route => route.fulfill({ json: { agents: [] } }))
+    await page.route('**/api/agent-control{,/**}', route => {
+      if (route.request().url().endsWith('/halt')) stopCalls += 1
+      return route.fulfill({ json: { state: { halted: false, reason: null, haltedAt: null, updatedAt: null } } })
+    })
+    await page.goto('/')
+    await page.evaluate(() => import('/src/e2e-fixtures/agent-controls.tsx'))
+    const scope = width < 768 ? page.locator('header') : page.getByRole('complementary', { name: 'Workspace sidebar' })
+    await scope.locator('[data-agent-control]').click()
+    await expect(page.getByRole('menu')).toBeVisible()
+    expect(stopCalls).toBe(0)
+    await expect(page.getByRole('menuitem', { name: 'Stop all agents', exact: true })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(scope.locator('[data-agent-control]')).toBeFocused()
+    await page.keyboard.press('ArrowDown')
+    await expect(page.getByRole('menu')).toBeVisible()
+    const menu = (await page.getByRole('menu').boundingBox())!
+    expect(menu.x).toBeGreaterThanOrEqual(0)
+    expect(menu.x + menu.width).toBeLessThanOrEqual(width)
+    await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `agent-control-menu-${width}.png`) })
+    await page.getByRole('menuitem', { name: 'Go to Agents', exact: true }).click()
+    await expect(page.getByRole('heading', { name: 'Agents page', exact: true })).toBeVisible()
+    await expect(page.getByRole('menu')).toHaveCount(0)
+    expect(stopCalls).toBe(0)
+  })
+
   test(`agent controls stop and resume without a banner at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 850 })
     let halted = false
@@ -25,47 +54,106 @@ for (const width of [1280, 390, 320]) {
     await page.goto('/')
     await page.evaluate(() => import('/src/e2e-fixtures/agent-controls.tsx'))
     const scope = width < 768 ? page.locator('header') : page.getByRole('complementary', { name: 'Workspace sidebar' })
-    const stop = scope.getByRole('button', { name: 'Stop all agents', exact: true })
+    const stop = scope.getByRole('button', { name: 'Agent controls', exact: true })
     await expect(stop).toBeVisible()
     await expect(stop.locator('svg.agent-creature')).toHaveCount(3)
+    const faces = await stop.locator('.team-avatar-member').evaluateAll(elements => elements.map(element => {
+      const box = element.getBoundingClientRect()
+      return { x: box.x, y: box.y, width: box.width }
+    }))
+    for (let index = 1; index < faces.length; index += 1) {
+      expect(faces[index].y).toBe(faces[0].y)
+      expect(faces[index].width).toBeGreaterThanOrEqual(24)
+      const step = faces[index].x - faces[index - 1].x
+      expect(step).toBeGreaterThanOrEqual(faces[index].width * 0.55)
+      expect(step).toBeLessThan(faces[index].width * 0.7)
+    }
+    await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `agent-control-stack-ready-${width}.png`) })
     if (width >= 768) {
       const account = scope.getByRole('button', { name: 'Account menu' })
       expect((await stop.boundingBox())!.y).toBeLessThan((await account.boundingBox())!.y)
       await scope.getByRole('button', { name: 'Collapse sidebar' }).click()
       await expect(scope).toHaveCSS('width', '56px')
       await expect(stop).toBeVisible()
+      const verticalFaces = await stop.locator('.team-avatar-member').evaluateAll(elements => elements.map(element => {
+        const box = element.getBoundingClientRect()
+        return { x: box.x, y: box.y, width: box.width }
+      }))
+      expect(verticalFaces).toHaveLength(3)
+      for (let index = 1; index < verticalFaces.length; index += 1) {
+        expect(verticalFaces[index].x).toBe(verticalFaces[0].x)
+        expect(verticalFaces[index].width).toBeGreaterThanOrEqual(32)
+        expect(verticalFaces[index].y).toBeGreaterThan(verticalFaces[index - 1].y)
+      }
+      const assertAccountClearance = async () => {
+        const controlBox = (await stop.boundingBox())!
+        const accountBox = (await account.boundingBox())!
+        expect(accountBox.y - (controlBox.y + controlBox.height)).toBeGreaterThanOrEqual(16)
+        expect(accountBox.y + accountBox.height).toBeLessThanOrEqual(page.viewportSize()!.height)
+        for (const face of await stop.locator('.team-avatar-member').all()) {
+          const box = (await face.boundingBox())!
+          expect(box.y).toBeGreaterThanOrEqual(controlBox.y)
+          expect(box.y + box.height).toBeLessThanOrEqual(controlBox.y + controlBox.height)
+        }
+      }
+      await assertAccountClearance()
+      await page.setViewportSize({ width, height: 600 })
+      await assertAccountClearance()
+      await account.click()
+      await expect(page.getByRole('menu')).toBeVisible()
+      await page.keyboard.press('Escape')
+      await page.setViewportSize({ width, height: 850 })
+      await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/agent-control-vertical-desktop.png') })
     } else {
       const header = await scope.boundingBox()
       expect(header!.height).toBe(40)
       const control = await stop.boundingBox()
-      expect(control!.width).toBeLessThanOrEqual(40)
+      expect(control!.width).toBeLessThanOrEqual(64)
       expect(control!.height).toBeLessThanOrEqual(40)
+      await scope.getByRole('tab', { name: 'Developer', exact: true }).click()
+      await expect(scope.getByRole('tab', { name: 'Developer', exact: true })).toHaveAttribute('aria-selected', 'true')
+      await scope.getByRole('tab', { name: 'Manager', exact: true }).click()
+      await expect(scope.getByRole('tab', { name: 'Manager', exact: true })).toHaveAttribute('aria-selected', 'true')
       const modes = await scope.getByRole('tablist', { name: 'View mode' }).boundingBox()
-      expect(modes!.x + modes!.width).toBeLessThanOrEqual(control!.x)
+      expect(Math.abs(modes!.x + modes!.width / 2 - (header!.x + header!.width / 2))).toBeLessThanOrEqual(1)
+      expect(control!.x + control!.width).toBeLessThanOrEqual(modes!.x - 4)
+      const account = (await scope.getByRole('button', { name: 'Account menu' }).boundingBox())!
+      expect(account.x).toBeGreaterThanOrEqual(modes!.x + modes!.width + 4)
       expect(control!.x).toBeGreaterThanOrEqual(header!.x)
       expect(control!.x + control!.width).toBeLessThanOrEqual(header!.x + header!.width)
     }
     await stop.click()
-    await expect(stop).toBeDisabled()
+    await page.getByRole('menuitem', { name: 'Stop all agents', exact: true }).click()
+    await expect(stop).toHaveAttribute('aria-busy', 'true')
+    await stop.click()
+    await expect(page.getByRole('menuitem', { name: 'Stop all agents', exact: true })).toBeDisabled()
+    await page.keyboard.press('Escape')
     await expect.poll(() => stopCalls).toBe(1)
     releaseStop!()
-    const resume = scope.getByRole('button', { name: 'Resume agents', exact: true })
-    await expect(resume).toBeEnabled()
+    const resume = stop
+    await expect(resume).toHaveAttribute('data-agent-control', 'halted')
     await expect(page.getByText('Autonomous work is halted.', { exact: true })).toHaveCount(0)
     await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `agent-control-halted-${width}.png`) })
     await resume.click()
-    await expect(stop).toBeEnabled()
+    await page.getByRole('menuitem', { name: 'Resume agents', exact: true }).click()
+    await expect(stop).toHaveAttribute('data-agent-control', 'ready')
     rejectStop = true
     await stop.click()
+    await page.getByRole('menuitem', { name: 'Stop all agents', exact: true }).click()
     await expect(scope.getByRole('alert')).toHaveText('Could not stop agents')
     await expect(stop).toBeEnabled()
     expect(halted).toBe(false)
     if (width < 768) {
       await scope.getByRole('button', { name: 'Open menu', exact: true }).click()
       const drawer = page.getByRole('dialog', { name: 'Navigation' })
-      const drawerStop = drawer.getByRole('button', { name: 'Stop all agents', exact: true })
+      const drawerStop = drawer.getByRole('button', { name: 'Agent controls', exact: true })
       await expect(drawerStop).toBeVisible()
+      await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `agent-control-stack-drawer-${width}.png`) })
       expect((await drawerStop.boundingBox())!.y).toBeLessThan((await drawer.getByRole('button', { name: 'Account settings' }).boundingBox())!.y)
+      await drawerStop.click()
+      await page.getByRole('menuitem', { name: 'Go to Agents', exact: true }).click()
+      await expect(page.getByRole('heading', { name: 'Agents page', exact: true })).toBeVisible()
+      await expect(drawer).not.toBeInViewport()
     }
   })
 }

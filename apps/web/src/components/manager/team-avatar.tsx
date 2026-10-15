@@ -9,7 +9,7 @@ export function TeamAvatar({ members, runningIds = new Set<string>(), layout = '
   members: readonly TeamAvatarMember[]
   runningIds?: ReadonlySet<string>
   layout?: 'cluster' | 'stack'
-  size?: 24 | 32 | 48 | 64
+  size?: 16 | 20 | 24 | 32 | 48 | 64
   className?: string
 }) {
   const unique = members.filter((member, index) => members.findIndex(other => other.id === member.id) === index)

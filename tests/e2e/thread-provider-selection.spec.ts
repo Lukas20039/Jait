@@ -59,7 +59,7 @@ test('opening a running thread shows its actual provider and model', async ({ pa
   if (isMobile) await expect(minimap).toHaveCount(0)
   else await expect(minimap).toBeVisible()
   await expect(page.getByRole('button', { name: 'Retry devices' })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'Stop all agents', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Agent controls', exact: true })).toBeVisible()
   await expect(page.getByText('Autonomous work is halted.', { exact: true })).toHaveCount(0)
   if (isMobile) {
     const header = page.locator('header').first()
@@ -74,7 +74,7 @@ test('opening a running thread shows its actual provider and model', async ({ pa
   }
   await page.screenshot({ path: path.resolve(__dirname, `../../.jait/shots/thread-provider-selection${isMobile ? '-mobile' : ''}.png`), fullPage: true })
   await page.goto('/agents')
-  const stopAll = page.getByRole('button', { name: 'Stop all agents', exact: true })
+  const stopAll = page.getByRole('button', { name: 'Agent controls', exact: true })
   await expect(stopAll).toBeVisible()
   if (isMobile) {
     const headerBox = await page.locator('header').first().boundingBox()
@@ -83,6 +83,6 @@ test('opening a running thread shows its actual provider and model', async ({ pa
     expect(stopAllBox).not.toBeNull()
     expect(stopAllBox!.y).toBeGreaterThanOrEqual(headerBox!.y)
     expect(stopAllBox!.y + stopAllBox!.height).toBeLessThanOrEqual(headerBox!.y + headerBox!.height)
-    expect(stopAllBox!.width).toBeLessThanOrEqual(40)
+    expect(stopAllBox!.width).toBeLessThanOrEqual(64)
   }
 })

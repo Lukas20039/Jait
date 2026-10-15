@@ -221,8 +221,9 @@ export function AppHeader(props: AppHeaderProps) {
             >
           {/* Left: Logo + mobile mic */}
           <div className={`flex items-center gap-1 shrink-0 ${isMobile ? 'px-1 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
-            <JaitIcon size={20} className="shrink-0" />
+            <JaitIcon size={20} className={isMobile && agentControl ? "hidden min-[360px]:block shrink-0" : "shrink-0"} />
             <VoiceMicButtonMobile {...voiceControlProps} />
+            {isMobile && agentControl}
           </div>
 
           {/* Full nav only appears when it cannot collide with the centered mode selector. */}
@@ -247,7 +248,7 @@ export function AppHeader(props: AppHeaderProps) {
               activeProjectTitle={activeProjectTitle}
             />
           ) : !sidebarOwnsNavigation ? (
-            <div ref={selectorRef} className={isMobile ? 'relative z-10 flex h-10 shrink-0 items-center' : 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10'} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+            <div ref={selectorRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
               <ViewModeSelector mode={viewMode} onChange={setViewMode} compact={isMobile} className={isMobile ? "[&_[role=tab]]:w-8" : undefined} />
             </div>
           ) : null}
@@ -288,7 +289,7 @@ export function AppHeader(props: AppHeaderProps) {
 
             </div>
 
-            {agentControl}
+            {!isMobile && agentControl}
             <UpdateButton appPlatform={appPlatform} updateInfo={updateInfo} releases={releases} updateApplying={updateApplying} updateAwaitingRestart={updateAwaitingRestart} onApplyUpdate={handleApplyUpdate} />
 
             {/* Mobile avatar + menu group */}

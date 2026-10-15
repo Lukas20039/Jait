@@ -1,0 +1,25 @@
+.team-avatar-stack.agent-control-avatars {
+  padding-left: calc(var(--team-avatar-size) * 0.4);
+  isolation: isolate;
+}
+
+.team-avatar-stack.agent-control-avatars .team-avatar-member {
+  position: relative;
+  margin-left: calc(var(--team-avatar-size) * -0.4);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.team-avatar-stack.agent-control-avatars-vertical {
+  flex-direction: column;
+  width: var(--team-avatar-size);
+  height: auto;
+  padding-left: 0;
+  padding-top: calc(var(--team-avatar-size) * 0.4);
+}
+
+.team-avatar-stack.agent-control-avatars-vertical .team-avatar-member {
+  margin-left: 0;
+  margin-top: calc(var(--team-avatar-size) * -0.4);
+}

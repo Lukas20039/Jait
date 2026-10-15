@@ -5118,13 +5118,15 @@ function App() {
     return <GatewayUnavailable onRetry={retryGatewayReachable} canSetBackend={isStandaloneApp} />
   }
 
-  const renderAgentControl = (collapsed: boolean) => isAuthenticated ? <AgentControlButton
+  const renderAgentControl = (collapsed: boolean, placement: 'sidebar' | 'header' = 'sidebar') => isAuthenticated ? <AgentControlButton
     state={agentControl.state}
+    placement={placement}
     runningCount={activeManagerThreads.length}
     avatars={agentControl.avatars}
     pending={agentControl.pending}
     error={agentControl.error}
     collapsed={collapsed}
+    onOpenAgents={() => { setCurrentView('agents'); setShowMobileToolbar(false) }}
     onStopAll={() => { void agentControl.stopAll() }}
     onResume={() => { void agentControl.resume() }}
   /> : null
@@ -5196,7 +5198,7 @@ function App() {
               <div className="h-14 shrink-0" aria-hidden="true" />
             )}
             {isMobile && <AppHeader
-              agentControl={renderAgentControl(true)}
+              agentControl={renderAgentControl(true, 'header')}
               activeManagerThreads={activeManagerThreads}
               appPlatform={appPlatform}
               automation={automation}
