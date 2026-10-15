@@ -4,6 +4,22 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.936](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.936) — 2026-10-15
+
+- fix(network): keep resource controls usable on mobile and isolate browser checks — 8feb3bae
+- feat(network): enrich Docker resources and group Jait sandboxes — e5608bee
+- fix(chat): load personal history independently of project chats — 8827bd93
+
+Show Docker containers as named resources with stable IDs, explicit application logos, image/network/status details, and a searchable resource picker. Group Jait sandboxes by default with expand/collapse controls; remove duplicate scanned container addresses and local host aliases. Keep scan results available when Docker inventory cannot be read. Docker inspection collects selected metadata only, with bounded work and cached polling.
+
+Align the JavaScript Vite config with the TypeScript config so production source maps remain opt-in.
+
+Load personal chat history independently of the global 100-chat page so project activity cannot hide older personal chats.
+
+Validation: clean workspace typecheck and lint passed; 4,993 tests passed with 73 skipped. Desktop and mobile browser checks passed for logos, details, search, grouping, and Docker-unavailable feedback.
+
+Package versions: gateway 0.1.936, web 0.1.446, shared 0.1.101. No database migration or required configuration change. Existing sandboxes without ownership metadata show owner as not recorded.
+
 ## [v0.1.935](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.935) — 2026-10-13
 
 - fix(gateway): keep agent previews usable and recover browser launches — a6746079
