@@ -4,6 +4,16 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.938](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.938) — 2026-10-15
+
+- feat(web): show agent avatar beside recognized @mention names in team chat (#264) (#265) — 9717cbaa
+
+Show each recognized team-chat @mention with the saved agent's existing avatar beside its name. Match multi-word names case-insensitively and prefer the longest matching name; preserve message text and leave recipient routing unchanged. Closes #264 via PR #265.
+
+Validation: the integrated web suite passed 194 files / 1,655 tests. Bugzilla independently verified the final PR head with 39 focused tests and the web suite. Existing gateway CI failures remain tracked separately; the local production web build stalled in disk I/O after increasing Node's heap, so full production packaging remains unverified here.
+
+Package versions: gateway 0.1.938, web 0.1.448. No database migration or required configuration change.
+
 ## [v0.1.937](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.937) — 2026-10-15
 
 - feat(messenger): reuse chat composer and add receipts, read actions and dictation — 596a81d2
