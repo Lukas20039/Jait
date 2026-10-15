@@ -4,6 +4,18 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.940](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.940) — 2026-10-15
+
+- fix(ci): isolate browser smoke ports and clean up server processes — 0561f4b4
+- fix(web): preserve mobile drafts while editing queued messages — 9c7a56a9
+- fix(gateway): preserve team event order and stabilize test concurrency — c160de61
+
+Use persisted team-message order for delivery outcomes, completion verification and restart recovery, including messages created in the same millisecond. Bound Vitest concurrency and assert warm-session reuse without a wall-clock deadline. Allocate separate browser smoke ports for each CI invocation and clean up the test stack. Keep one mobile composer while editing queued messages, preserve the unsent draft and inline attachments, and add an isolated two-worker UI fixture suite.
+
+Validation: deterministic team outcome regressions fail on the previous code and pass with the fix; 39 team service tests pass. The mobile regression previously showed two editors instead of one; all 27 UI fixture checks pass. Full suite: 5,087 passed, 78 skipped. Production build, workspace typechecks, lint, artifact checks, 33 real Chromium browser-tool tests and 25 web smoke tests pass.
+
+Package versions: gateway 0.1.940, web 0.1.450. No database migration or application configuration change.
+
 ## [v0.1.939](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.939) — 2026-10-15
 
 - fix(web): use maintained Vite config for default builds — ed30985a

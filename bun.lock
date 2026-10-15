@@ -45,7 +45,7 @@
     },
     "apps/web": {
       "name": "@jait/web",
-      "version": "0.1.449",
+      "version": "0.1.450",
       "dependencies": {
         "@capacitor/app": "^6.0.3",
         "@capacitor/core": "^6.2.2",
@@ -145,9 +145,10 @@
     },
     "packages/gateway": {
       "name": "@jait/gateway",
-      "version": "0.1.939",
+      "version": "0.1.940",
       "bin": {
         "jait": "./bin/jait.mjs",
+        "jait-matrix": "./bin/matrix-stack.mjs",
       },
       "dependencies": {
         "@agentclientprotocol/claude-agent-acp": "0.87.0",
