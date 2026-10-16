@@ -47,7 +47,7 @@ export function createScreenshotCaptureTool(): ToolDefinition<ScreenshotCaptureI
   return {
     name: "screenshot.capture",
     description:
-      "Capture a headless browser screenshot (PNG) of a URL, local HTML file, or the running dev frontend ('dev') and return the saved PNG path. The image renders inline in chat. Use this to visually show the user UI state, designs, or layout issues.",
+      "Capture a headless browser screenshot (PNG) of a URL, local HTML file, or the running dev frontend ('dev') and return the saved PNG path. The image already renders inline in chat; do not call image.view afterward or display the same image again. Use this to visually show the user UI state, designs, or layout issues.",
     tier: "standard",
     category: "screen",
     source: "builtin",
@@ -175,7 +175,7 @@ export function createScreenshotCaptureTool(): ToolDefinition<ScreenshotCaptureI
         copyFileSync(outPath, displayPath);
         return {
           ok: true,
-          message: `Screenshot saved to ${outPath}`,
+          message: `Screenshot saved to ${outPath} and displayed in chat. Do not call image.view or display this screenshot again.`,
           data: { path: displayPath, capturePath: outPath, target: input.target, url, width, height, mobile: Boolean(input.mobile) },
         };
       } catch (err) {

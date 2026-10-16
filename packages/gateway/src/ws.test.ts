@@ -175,6 +175,32 @@ describe("WsControlPlane", () => {
     expect(port).toBeGreaterThan(0);
   });
 
+  it("routes Messenger requests only to the enabled owner's browser and rejects forged results", async () => {
+    const registered = vi.spyOn(plane.messenger, "register");
+    const alice = openWs(port, { token: await createToken("alice") });
+    const bob = openWs(port, { token: await createToken("bob") });
+    try {
+      await Promise.all([waitForOpen(alice.ws), waitForOpen(bob.ws)]);
+      await alice.collector.next(); await bob.collector.next();
+      alice.ws.send(JSON.stringify({ type: "messenger.register", payload: { enabled: true } }));
+      await vi.waitFor(() => expect(registered).toHaveBeenCalledOnce());
+      const response = plane.messenger.request("alice", { action: "status" });
+      const request = await alice.collector.next();
+      expect(request.type).toBe("messenger.request");
+      const done = vi.fn(); void response.then(done);
+      bob.ws.send(JSON.stringify({ type: "messenger.result", payload: { requestId: request.payload.requestId, result: { ok: true, message: "forged" } } }));
+      await new Promise(resolve => setTimeout(resolve, 20));
+      expect(done).not.toHaveBeenCalled();
+      alice.ws.send(JSON.stringify({ type: "messenger.result", payload: { requestId: request.payload.requestId, result: { ok: true, message: "connected" } } }));
+      expect((await response).message).toBe("connected");
+      expect((await plane.messenger.request("bob", { action: "status" })).ok).toBe(false);
+      const revoked = plane.messenger.request("alice", { action: "status" });
+      await alice.collector.next();
+      alice.ws.send(JSON.stringify({ type: "messenger.register", payload: { enabled: false } }));
+      expect((await revoked).ok).toBe(false);
+    } finally { alice.ws.close(); bob.ws.close(); }
+  });
+
   it("allows only the gateway owner to manage gateway permissions", () => {
     expect(plane.canAccessNode?.("gateway", "owner")).toBe(false);
     plane.isGatewayOwner = userId => userId === "owner";

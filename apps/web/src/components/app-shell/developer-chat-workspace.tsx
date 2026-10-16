@@ -41,6 +41,7 @@ const FLOATING_CHAT_INDICATORS_MIN_WIDTH = 480
 const GIT_DIFF_INDICATOR_LEFT_INSET_PX = 8
 
 interface DeveloperChatWorkspaceProps {
+  newChatContext?: ReactNode
   activeProject: any
   activeProjectId: string | null
   activeProjectDisplayName: string | null
@@ -160,6 +161,7 @@ interface DeveloperChatWorkspaceProps {
 }
 
 export function DeveloperChatWorkspace({
+  newChatContext,
   activeProject,
   activeProjectId,
   activeProjectDisplayName,
@@ -388,7 +390,8 @@ export function DeveloperChatWorkspace({
             <h1 className="text-3xl font-semibold tracking-tight">Jait</h1>
             <p className="text-base text-muted-foreground mt-1">Just Another Intelligent Tool</p>
           </div>
-          {!projectsLoading && projects.length === 0 ? (
+          {newChatContext}
+          {!newChatContext && !projectsLoading && projects.length === 0 ? (
             <div className="text-center space-y-3">
               <p className="text-sm text-muted-foreground">Add a project folder to start chatting with your code.</p>
               <Button variant="default" size="lg" onClick={onOpenAddProject}>
@@ -397,7 +400,7 @@ export function DeveloperChatWorkspace({
               </Button>
             </div>
           ) : (
-            <Suggestions suggestions={showProject && activeProject ? projectSuggestions : suggestions} onSelect={onHandleSuggestion} />
+            <Suggestions suggestions={activeProjectId ? projectSuggestions : suggestions} onSelect={onHandleSuggestion} />
           )}
           <div className="space-y-1.5">
             {developerChatUiState.showTodoList && (

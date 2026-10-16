@@ -163,6 +163,8 @@ describe("browser surface startup and screenshot transport", () => {
     const f = fixture();
     const result = await f.tool("browser.screenshot").execute({}, { ...context, projectRoot: directory });
     expect(result.ok).toBe(true);
+    expect(result.message).toContain("displayed in chat");
+    expect(result.message).toContain("Do not call image.view");
     const requestedPath = f.surface.screenshot.mock.calls[0]?.[0];
     expect(requestedPath?.startsWith(join(directory, ".jait", "shots", "browser-"))).toBe(true);
     const data = result.data as { result: { path: string } };

@@ -29,6 +29,8 @@ describe("screenshot browser launch", () => {
       target: "http://127.0.0.1:4173/", path: ".jait/shots/screenshot-launch-regression.png",
     }, { sessionId: "launch-test", actionId: "test", requestedBy: "assistant", projectRoot });
     expect(result.ok).toBe(true);
+    expect(result.message).toContain("displayed in chat");
+    expect(result.message).toContain("Do not call image.view");
     expect(launch).toHaveBeenCalledTimes(2);
     expect(launch.mock.calls[1][0]).toMatchObject({ headless: true, channel: "chrome" });
     expect(close).toHaveBeenCalledOnce();

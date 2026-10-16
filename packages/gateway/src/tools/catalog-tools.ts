@@ -23,10 +23,10 @@ export function createJaitCatalogTool(registry: ToolRegistry): ToolDefinition<{ 
       const pages = JAIT_PAGE_IDS.filter((id) => !input.pageId || input.pageId === id).map((id) => {
         const page: JaitPageContract = JAIT_PAGES[id];
         const resolved = tools.filter((tool) => isJaitPageTool(tool, id));
-        const searchText = [id, page.title, page.description, ...page.examples, ...page.features.map((f) => f.description), ...resolved.map((t) => t.description)].join(" ").toLowerCase();
+        const searchText = [id, page.title, page.description, ...page.examples, ...Object.values(page.queryParameters ?? {}), ...page.features.map((f) => f.description), ...resolved.map((t) => t.description)].join(" ").toLowerCase();
         const score = words.filter((word) => searchText.includes(word)).length;
         return { id, title: page.title, description: page.description, examples: page.examples,
-          link: jaitPageLink(id), features: page.features.map((feature) => ({
+          link: jaitPageLink(id), queryParameters: page.queryParameters, features: page.features.map((feature) => ({
             ...feature, availableToolRefs: feature.toolRefs.filter((name) => tools.some((tool) => tool.name === name)),
             missingToolRefs: feature.toolRefs.filter((name) => !tools.some((tool) => tool.name === name)),
           })),

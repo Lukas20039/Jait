@@ -1,3 +1,4 @@
+import { EmailToolView } from '@/components/email/email-tool-view'
 import { MermaidToolResult } from './mermaid-tool-result'
 import { ImageViewerContent } from './image-viewer'
 import { memo, useCallback, useContext, createContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type UIEvent } from 'react'
@@ -3445,7 +3446,7 @@ interface ToolCallCardProps {
 }
 
 function isInlineToolBodyKind(bodyKind: ReturnType<typeof getToolCallBodyKind>): boolean {
-  return bodyKind === 'browserActivity' || bodyKind === 'browserScreenshot' || bodyKind === 'imageView' || bodyKind === 'security' || bodyKind === 'jaitLink' || bodyKind === 'mermaidDiagram'
+  return bodyKind === 'emailView' || bodyKind === 'browserActivity' || bodyKind === 'browserScreenshot' || bodyKind === 'imageView' || bodyKind === 'security' || bodyKind === 'jaitLink' || bodyKind === 'mermaidDiagram'
 }
 
 export function isInlineToolCall(call: ToolCallInfo): boolean {
@@ -4332,6 +4333,8 @@ function ToolCallCardInner({
     <BrowserSnapshotView snapshot={snapshotText} />
   ) : bodyKind === 'browserScreenshot' && screenshotPath ? (
     <BrowserScreenshotView path={screenshotPath} />
+  ) : bodyKind === 'emailView' ? (
+    <EmailToolView data={resultData} args={normalizedArgs} />
   ) : bodyKind === 'imageView' ? (
     <ImageView src={imageDataUri} path={screenshotPath} alt="Image" caption={typeof normalizedArgs.path === 'string' ? `Image: ${normalizedArgs.path}` : undefined} />
   ) : bodyKind === 'subagent' ? (

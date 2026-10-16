@@ -17,6 +17,7 @@ export type ToolCallBodyKind =
   | 'browserSnapshot'
   | 'browserScreenshot'
   | 'imageView'
+  | 'emailView'
   | 'editDiff'
   | 'subagent'
   | 'threadList'
@@ -572,6 +573,7 @@ export function getToolCallBodyKind(input: ToolCallBodyInput): ToolCallBodyKind 
 
   if (input.status === 'pending') return 'pending'
   if (isTerminal) return 'terminal'
+  if (input.status === 'success' && (normalizedTool === 'email.read' || (normalizedTool === 'email.view' && input.args.action === 'open'))) return 'emailView'
   if (normalizedTool === 'diagram.render' && input.status === 'success') return 'mermaidDiagram'
   if (normalizedTool === 'jait.link' && input.status === 'success') return 'jaitLink'
   if (isSecurityToolName(normalizedTool) && input.displayOutput) return 'security'

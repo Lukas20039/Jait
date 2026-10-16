@@ -1,3 +1,4 @@
+import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from 'react'
 import { CircleQuestionMark, ShieldQuestion, Folder, FolderOpen, FolderInput, FolderX, Monitor, Plus, Smartphone, Globe, Archive, WifiOff, Loader2, MessageSquare, GitBranch, Search, MoreVertical, ChevronRight, ChevronDown, FolderPlus, Settings2, CornerUpLeft, Code } from 'lucide-react'
 import { buildProjectTree, flattenProjectTree, validateProjectMove } from '@jait/shared'
@@ -221,7 +222,7 @@ export function SessionSelector({
   const searchLabel = view === 'projects' ? 'Search projects' : view === 'chats' ? 'Search personal chats' : 'Search chats and projects'
   // Derive online node IDs from the nodes prop (already fetched by App.tsx)
   const onlineNodeIds = useMemo(() => new Set(nodes.filter((n) => !n.isGateway).map((n) => n.id)), [nodes])
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useUrlSearchState('chat', view === 'projects' ? 'projectsQ' : 'q')
   const [visibleSessionsByProject, setVisibleSessionsByProject] = useState<Record<string, number>>({})
   const [visiblePersonalSessions, setVisiblePersonalSessions] = useState(PERSONAL_SESSIONS_LIMIT)
   // Projects & Chats / Personal chats split. Resizable and persisted locally,

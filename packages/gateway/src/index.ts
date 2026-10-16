@@ -1017,6 +1017,8 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     const channelToolDeps = { channels: channelManager, scheduler, defaultTimeZone: hostTimeZone };
     toolRegistry.register(createChannelSendTool(channelToolDeps));
     toolRegistry.register(createChannelRemindTool(channelToolDeps));
+    const { createMessengerTools } = await import("./tools/messenger-tools.js");
+    for (const tool of createMessengerTools(ws.messenger)) toolRegistry.register(tool);
   }
 
   // Forward gateway notifications (maintenance, routines, provider limits) to

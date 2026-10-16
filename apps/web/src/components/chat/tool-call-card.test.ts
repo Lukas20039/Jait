@@ -1480,3 +1480,16 @@ describe('security tool-card integration', () => {
     expect(isInlineToolCall({ ...call('security.http.check'), status: 'pending', result: undefined, approvalRequestId: 'approve-scope' })).toBe(false)
   })
 })
+
+describe('inline email cards', () => {
+  it('keeps successful email_read and email_view results visible like images', () => {
+    for (const tool of ['email_read', 'email_view', 'mcp__jait__email_view']) {
+      const call = { callId: 'email-card', tool, args: { action: 'open', messageId: 'm1' }, status: 'success', result: { ok: true, message: 'Mail', data: { message: { id: 'm1', subject: 'Hello', bodyHtml: '<p>Mail body</p>' } } } } as ToolCallInfo;
+      expect(isInlineToolCall(call)).toBe(true);
+    }
+  });
+  it('keeps errors and compose actions in their normal tool state', () => {
+    expect(isInlineToolCall({ callId: 'error', tool: 'email_view', args: { action: 'open' }, status: 'error', result: { ok: false, message: 'No account' } } as ToolCallInfo)).toBe(false);
+    expect(isInlineToolCall({ callId: 'compose', tool: 'email_view', args: { action: 'compose' }, status: 'success', result: { ok: true, message: 'Draft opened' } } as ToolCallInfo)).toBe(false);
+  });
+});

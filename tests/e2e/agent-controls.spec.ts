@@ -57,6 +57,18 @@ for (const width of [1280, 390, 320]) {
     const stop = scope.getByRole('button', { name: 'Agent controls', exact: true })
     await expect(stop).toBeVisible()
     await expect(stop.locator('svg.agent-creature')).toHaveCount(3)
+    const body = stop.locator('.agent-creature-body').first()
+    const eyes = stop.locator('.agent-creature-eyes').first()
+    await expect(body).toHaveCSS('animation-name', 'agent-work')
+    await expect(eyes).toHaveCSS('animation-name', 'agent-blink')
+    const initialTransform = await body.evaluate(element => getComputedStyle(element).transform)
+    await expect.poll(() => body.evaluate(element => getComputedStyle(element).transform)).not.toBe(initialTransform)
+    // Decorative motion must not claim these particular agents are working.
+    await expect(stop.locator('[data-agent-state="running"]')).toHaveCount(0)
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await expect(body).toHaveCSS('animation-name', 'none')
+    await expect(eyes).toHaveCSS('animation-name', 'none')
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
     const faces = await stop.locator('.team-avatar-member').evaluateAll(elements => elements.map(element => {
       const box = element.getBoundingClientRect()
       return { x: box.x, y: box.y, width: box.width }
@@ -132,11 +144,15 @@ for (const width of [1280, 390, 320]) {
     releaseStop!()
     const resume = stop
     await expect(resume).toHaveAttribute('data-agent-control', 'halted')
+    await expect(body).toHaveCSS('animation-name', 'none')
+    await expect(eyes).toHaveCSS('animation-name', 'none')
     await expect(page.getByText('Autonomous work is halted.', { exact: true })).toHaveCount(0)
     await page.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/', `agent-control-halted-${width}.png`) })
     await resume.click()
     await page.getByRole('menuitem', { name: 'Resume agents', exact: true }).click()
     await expect(stop).toHaveAttribute('data-agent-control', 'ready')
+    await expect(body).toHaveCSS('animation-name', 'agent-work')
+    await expect(eyes).toHaveCSS('animation-name', 'agent-blink')
     rejectStop = true
     await stop.click()
     await page.getByRole('menuitem', { name: 'Stop all agents', exact: true }).click()

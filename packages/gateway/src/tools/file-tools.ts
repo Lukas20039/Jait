@@ -233,7 +233,7 @@ export function createFileStatTool(registry: SurfaceRegistry): ToolDefinition<Fi
 export function createImageViewTool(registry: SurfaceRegistry): ToolDefinition<ImageViewInput> {
   return {
     name: "image.view",
-    description: "Display a project image in the tool card. The user already sees the image there; do not repeat it in assistant messages with Markdown image embeds, attachments, or redundant file links unless explicitly requested. Do not call again when a tool card has already shown the image.",
+    description: "Display a project image in the tool card. The user already sees the image there; do not repeat it in assistant messages with Markdown image embeds, attachments, or redundant file links unless explicitly requested. Do not call after screenshot.capture or browser.screenshot: those tools already display the image. Do not call again when a tool card has already shown the image.",
     tier: "standard",
     category: "filesystem",
     source: "builtin",

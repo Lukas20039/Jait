@@ -76,6 +76,8 @@ import { NodePermissionsGate, shouldShowNodePermissionsGate } from '@/components
 import { FirstProjectSetup } from '@/components/onboarding/FirstProjectSetup'
 import { readFirstProjectSetupDone, saveFirstProjectSetupDone, shouldOfferFirstProjectSetup } from '@/components/onboarding/first-project-setup'
 import { getChatCacheScope } from '@/lib/chat-history-cache'
+import { useLastChatProject } from '@/hooks/use-last-chat-project'
+import { NewChatContextSelector } from '@/components/chat/new-chat-context-selector'
 import { primeStateCache, primeStateValue } from '@/lib/state-batch'
 import { useAutomation } from '@/hooks/useAutomation'
 import { normalizeChangedFiles } from '@/lib/changed-files'
@@ -94,7 +96,7 @@ import { useVoiceRecording } from '@/hooks/useVoiceRecording'
 import { useVoiceSession } from '@/hooks/useVoiceSession'
 import { useGatewayReachable } from '@/hooks/useGatewayReachable'
 import { useViewRouting } from '@/hooks/useViewRouting'
-import { parseAppView, type AppView } from '@/lib/app-view'
+import { appViewToPath, parseAppView, type AppView } from '@/lib/app-view'
 import { createDraftPrewarmTrigger } from '@/lib/chat-prewarm'
 import { getActiveVsCodeTheme, setActiveVsCodeTheme } from '@/lib/vscode-theme-store'
 import {
@@ -598,6 +600,9 @@ function App() {
     token,
     onLoginRequired
   )
+  const [changingNewChatContext, setChangingNewChatContext] = useState(false)
+  const changingNewChatContextRef = useRef(false)
+  const lastChatProjectId = useLastChatProject(getChatCacheScope(token, API_URL), activeProjectId, changingNewChatContext || !projectsInitialLoadComplete)
   const chatDraftsRef = useRef(new Map<string, { text: string; segments: UserMessageSegment[] | undefined }>())
   const draftSessionRef = useRef(activeSessionId)
   useLayoutEffect(() => {
@@ -2952,6 +2957,9 @@ function App() {
         const view = parseAppView(url.pathname.replace(/^\//, '')) ?? 'chat'
         setCurrentView(view)
       }
+      const destinationView = sessionId ? 'chat' : threadId ? 'threads' : parseAppView(url.pathname.replace(/^\//, '')) ?? 'chat'
+      window.history.pushState(window.history.state, '', appViewToPath(destinationView) + url.search)
+      window.dispatchEvent(new PopStateEvent('popstate'))
       await Promise.allSettled([
         window.jaitDesktop?.acknowledgeNotification?.({ id: activation.id }),
         androidNotificationBridge()?.acknowledgeNotification?.({ id: activation.id }),
@@ -3966,6 +3974,7 @@ function App() {
   )
 
   const handleSubmit = async (chipFiles?: ReferencedFile[], fileAttachments?: ChatAttachment[], displaySegments?: UserMessageSegment[]) => {
+    if (changingNewChatContextRef.current) return
     if (sendTarget === 'thread') {
       const sent = await handleThreadSubmit(chipFiles, fileAttachments, displaySegments)
       if (sent) {
@@ -4545,6 +4554,7 @@ function App() {
   }, [automation.selectedRepo, automation.refresh, automation.setError])
 
   const handleSuggestion = async (suggestion: string) => {
+    if (changingNewChatContextRef.current) return
     if (!token) {
       setShowLoginDialog(true)
       return
@@ -4879,6 +4889,34 @@ function App() {
   })
   const developerChatHydrating = developerChatSubmitLoading && messages.length === 0
   const hasMessages = messages.length > 0 || showDeveloperChatHistoryLoading
+
+  const handleNewChatContextChange = async (projectId: string | null) => {
+    if (hasMessages || isLoading || !projectsInitialLoadComplete || developerChatSubmitLoading || changingNewChatContextRef.current || projectId === activeProjectId) return false
+    const sourceSessionId = activeSessionId
+    changingNewChatContextRef.current = true
+    setChangingNewChatContext(true)
+    try {
+      // Search can return projects outside the paginated sidebar. Hydrate the
+      // record before selecting it so paths and execution nodes stay accurate.
+      if (projectId && !projects.some(project => project.id === projectId)) {
+        const project = await loadProject(projectId)
+        if (!project || project.status !== 'active') {
+          toast.error('This project is no longer available. Choose another project.')
+          return false
+        }
+      }
+      // Navigation while loading a project must not move a different chat.
+      if (activeSessionIdRef.current !== sourceSessionId) return false
+      const changed = sourceSessionId
+        ? await moveSession(sourceSessionId, projectId)
+        : await createSession(projectId)
+      if (!changed) toast.error('Could not change the chat context. Please try again.')
+      return Boolean(changed)
+    } finally {
+      changingNewChatContextRef.current = false
+      setChangingNewChatContext(false)
+    }
+  }
   const developerChatUiState = getDeveloperChatUiState({
     developerChatHydrating,
     isLoadingHistory: showDeveloperChatHistoryLoading,
@@ -5623,6 +5661,20 @@ function App() {
                   !showMobileTerminalFullscreen &&
                   (<>
                       <DeveloperChatWorkspace
+                        newChatContext={
+                          <NewChatContextSelector
+                            projects={projects}
+                            activeProjectId={activeProjectId}
+                            lastProjectId={lastChatProjectId}
+                            disabled={!projectsInitialLoadComplete || projectsLoading || isLoading || developerChatSubmitLoading || changingNewChatContext}
+                            onSelectProject={handleNewChatContextChange}
+                            onAddProject={() => {
+                              setProjectPickerMode('project')
+                              setFolderPickerOpen(true)
+                            }}
+                            searchProjects={searchProjects}
+                          />
+                        }
                         onLatestContentViewed={viewedActivityAt ? handleLatestContentViewed : undefined}
                         showDebugPanel={showDebugPanel}
                         onCloseDebugPanel={() => setShowDebugPanel(false)}
@@ -5645,7 +5697,7 @@ function App() {
                         contextUsage={contextUsage}
                         defaultStreamingAction={settings.chat_streaming_action ?? 'queue'}
                         developerChatPanelStyle={developerChatPanelStyle}
-                        developerChatSubmitLoading={developerChatSubmitLoading}
+                        developerChatSubmitLoading={developerChatSubmitLoading || changingNewChatContext}
                         developerChatUiState={developerChatUiState}
                         developerComposerControlRow={developerComposerControlRow}
                         developerPlaceholder={developerPlaceholder}

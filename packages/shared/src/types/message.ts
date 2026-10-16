@@ -38,6 +38,7 @@ export function attentionKey(kind: AttentionKind, requestId: string): string {
 
 // WebSocket event types
 export type WsEventType =
+  | "messenger.request"
   | "session.created"
   | "session.closed"
   | "node.registry"

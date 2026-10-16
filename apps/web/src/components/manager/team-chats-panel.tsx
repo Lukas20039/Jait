@@ -1,3 +1,4 @@
+import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { useEffect, useRef, useState } from 'react'
 import type { TeamRoom } from '@jait/shared'
 import { Check, MessagesSquare, Plus, Search, X } from 'lucide-react'
@@ -21,8 +22,9 @@ export function TeamChatsPanel({ isMobile = false, onHide }: { isMobile?: boolea
   const [creating, setCreating] = useState(false)
   const [name, setName] = useState('')
   const [memberIds, setMemberIds] = useState<string[]>([])
-  const [search, setSearch] = useState('')
-  const [agentSearch, setAgentSearch] = useState('')
+  const [search, setSearch] = useUrlSearchState('agents', 'teamQ')
+  const [agentSearch, setAgentSearch] = useUrlSearchState('agents', 'agentQ')
+  useEffect(() => { if (agentSearch) setCreating(true) }, [agentSearch])
   const [saving, setSaving] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
   const drafts = useRef(new Map<string, string>())

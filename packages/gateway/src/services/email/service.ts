@@ -7,6 +7,9 @@ import type { JaitDB } from "../../db/connection.js";
 import { emailAccounts } from "../../db/schema.js";
 import { uuidv7 } from "../../db/uuidv7.js";
 import type { UserSecretService } from "../user-secrets.js";
+import { ImapMailboxClient } from "./imap.js";
+import { connectMailboxSchema, emailAccountSettingsSchema, sendEmailSchema } from "./connection.js";
+import type { ConnectMailboxInput, EmailAccountSettings, OAuthEmailProvider } from "@jait/shared";
 import { GmailClient } from "./gmail.js";
 import { OutlookClient } from "./outlook.js";
 import {
@@ -31,18 +34,18 @@ import type {
 
 const TOKEN_SECRET_TYPE = "email-account";
 const APP_SECRET_TYPE = "email-oauth-app";
-const PROVIDERS: EmailProvider[] = ["gmail", "outlook"];
+const PROVIDERS: OAuthEmailProvider[] = ["gmail", "outlook"];
 
 interface PendingConnect {
   userId: string | null;
-  provider: EmailProvider;
+  provider: OAuthEmailProvider;
   codeVerifier: string;
   redirectUri: string;
   createdAt: number;
 }
 
 export class EmailService {
-  private readonly clients: Record<EmailProvider, MailboxClient> = {
+  private readonly clients: Record<OAuthEmailProvider, MailboxClient> = {
     gmail: new GmailClient(),
     outlook: new OutlookClient(),
   };
@@ -56,7 +59,7 @@ export class EmailService {
   // ── OAuth client credentials ───────────────────────────────────────
 
   /** Resolve OAuth app credentials: per-user secret first, then env. */
-  resolveCredentials(provider: EmailProvider, userId: string | null): OAuthClientCredentials | null {
+  resolveCredentials(provider: OAuthEmailProvider, userId: string | null): OAuthClientCredentials | null {
     const clientId = this.secrets.getValue(userId, APP_SECRET_TYPE, `${provider}-client-id`);
     const clientSecret = this.secrets.getValue(userId, APP_SECRET_TYPE, `${provider}-client-secret`);
     if (clientId && clientSecret) return { clientId, clientSecret };
@@ -64,14 +67,20 @@ export class EmailService {
   }
 
   /** Which providers are ready to connect (have OAuth app credentials). */
-  configuredProviders(userId: string | null): Record<EmailProvider, boolean> {
+  configuredProviders(userId: string | null): Record<OAuthEmailProvider, boolean> {
     return {
       gmail: !!this.resolveCredentials("gmail", userId),
       outlook: !!this.resolveCredentials("outlook", userId),
     };
   }
 
-  saveAppCredentials(userId: string | null, provider: EmailProvider, creds: OAuthClientCredentials): void {
+  saveAppCredentials(userId: string | null, provider: OAuthEmailProvider, creds: OAuthClientCredentials): void {
+    if (!creds.clientId && !creds.clientSecret) {
+      for (const secret of this.secrets.list(userId, APP_SECRET_TYPE)) {
+        if ([`${provider}-client-id`, `${provider}-client-secret`].includes(secret.key)) this.secrets.delete(secret.id, userId);
+      }
+      return;
+    }
     this.secrets.save({
       userId,
       type: APP_SECRET_TYPE,
@@ -92,7 +101,7 @@ export class EmailService {
 
   startConnect(params: {
     userId: string | null;
-    provider: EmailProvider;
+    provider: OAuthEmailProvider;
     redirectUri: string;
   }): { authUrl: string } {
     if (!PROVIDERS.includes(params.provider)) {
@@ -157,7 +166,7 @@ export class EmailService {
       .where(userId ? eq(emailAccounts.userId, userId) : isNull(emailAccounts.userId))
       .orderBy(desc(emailAccounts.updatedAt))
       .all()
-      .map(rowToAccount);
+      .map(row => this.withAccountSettings(rowToAccount(row)));
   }
 
   getAccount(userId: string | null, accountId: string): EmailAccount | null {
@@ -171,7 +180,7 @@ export class EmailService {
         ),
       )
       .get();
-    return row ? rowToAccount(row) : null;
+    return row ? this.withAccountSettings(rowToAccount(row)) : null;
   }
 
   /** Resolve an account by id, or fall back to the user's first account. */
@@ -182,8 +191,9 @@ export class EmailService {
       return acct;
     }
     const accounts = this.listAccounts(userId);
+    if (accounts.length > 1) throw new Error("Multiple email accounts are connected. Specify accountId (use email_accounts to list them).");
     const first = accounts[0];
-    if (!first) throw new Error("No email account connected. Connect Gmail or Outlook first.");
+    if (!first) throw new Error("No email account connected. Add a mailbox on the Email page first.");
     return first;
   }
 
@@ -193,7 +203,46 @@ export class EmailService {
     this.db.delete(emailAccounts).where(eq(emailAccounts.id, accountId)).run();
     const secretId = this.findTokenSecretId(userId, accountId);
     if (secretId) this.secrets.delete(secretId, userId);
+    const settingsId = this.secrets.list(userId, "email-account-settings").find(item => item.key === accountId)?.id;
+    if (settingsId) this.secrets.delete(settingsId, userId);
     return true;
+  }
+
+  async connectMailbox(userId: string | null, input: ConnectMailboxInput): Promise<EmailAccount> {
+    const config = connectMailboxSchema.parse(input);
+    // Verify credentials before saving anything; a failed attempt leaves existing accounts intact.
+    try { await new ImapMailboxClient(config).verify(); }
+    catch { throw new Error("Connection failed. Check server names, TLS, username and app password."); }
+    const account = this.upsertAccount(userId, "imap", config.email.toLowerCase());
+    this.secrets.save({ userId, type: TOKEN_SECRET_TYPE, key: account.id, label: "Mailbox credentials", value: JSON.stringify(config) });
+    if (config.displayName) this.updateAccount(userId, account.id, { displayName: config.displayName });
+    return this.getAccount(userId, account.id)!;
+  }
+
+  private withAccountSettings(account: EmailAccount): EmailAccount {
+    let settings: EmailAccountSettings = {};
+    try { settings = JSON.parse(this.secrets.getValue(account.userId, "email-account-settings", account.id) || "{}"); } catch { /* defaults */ }
+    return { ...account, signature: typeof settings.signature === "string" ? settings.signature : "", signatureEnabled: settings.signatureEnabled !== false };
+  }
+
+  updateAccount(userId: string | null, accountId: string, input: EmailAccountSettings): EmailAccount {
+    const account = this.getAccount(userId, accountId);
+    if (!account) throw new Error("Account not found");
+    const patch = emailAccountSettingsSchema.parse(input);
+    const settings = { signature: patch.signature ?? account.signature ?? "", signatureEnabled: patch.signatureEnabled ?? account.signatureEnabled ?? true };
+    this.secrets.save({ userId, type: "email-account-settings", key: accountId, label: "Email signature", value: JSON.stringify(settings) });
+    if (patch.displayName !== undefined) this.db.update(emailAccounts).set({ displayName: patch.displayName }).where(eq(emailAccounts.id, accountId)).run();
+    return this.getAccount(userId, accountId)!;
+  }
+
+  private async mailbox(account: EmailAccount): Promise<{ client: MailboxClient; token: string }> {
+    if (account.provider === "imap") {
+      const raw = this.secrets.getValue(account.userId, TOKEN_SECRET_TYPE, account.id);
+      if (!raw) throw new Error("Reconnect this mailbox to restore its credentials");
+      const config = connectMailboxSchema.parse(JSON.parse(raw));
+      return { client: new ImapMailboxClient({ ...config, displayName: account.displayName }), token: "" };
+    }
+    return { client: this.clients[account.provider], token: await this.validAccessToken(account) };
   }
 
   private upsertAccount(userId: string | null, provider: EmailProvider, email: string): EmailAccount {
@@ -265,6 +314,7 @@ export class EmailService {
     if (!tokens) throw new Error("No stored credentials for this account. Reconnect it.");
     if (tokens.expiresAt - Date.now() > 60_000) return tokens.accessToken;
     if (!tokens.refreshToken) throw new Error("Access token expired and no refresh token is available. Reconnect.");
+    if (account.provider === "imap") throw new Error("IMAP accounts do not use OAuth tokens");
     const credentials = this.resolveCredentials(account.provider, account.userId);
     if (!credentials) throw new Error(`${account.provider} OAuth credentials are not configured.`);
     const refreshed = await refreshTokens({
@@ -284,21 +334,28 @@ export class EmailService {
     opts: ListMessagesOptions,
   ): Promise<{ account: EmailAccount; messages: EmailMessageSummary[] }> {
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    const messages = await this.clients[account.provider].listMessages(token, opts);
+    const { client, token } = await this.mailbox(account);
+    const messages = await client.listMessages(token, opts);
     return { account, messages };
   }
 
   async getMessage(userId: string | null, accountId: string | undefined, id: string): Promise<EmailMessageFull> {
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    return this.clients[account.provider].getMessage(token, id);
+    const { client, token } = await this.mailbox(account);
+    return client.getMessage(token, id);
   }
 
   async sendMessage(userId: string | null, accountId: string | undefined, input: SendMessageInput): Promise<{ id: string }> {
+    input = sendEmailSchema.parse(input);
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    return this.clients[account.provider].sendMessage(token, input);
+    const { client, token } = await this.mailbox(account);
+    let body = input.body;
+    const signature = account.signature?.trim();
+    if (input.includeSignature !== false && account.signatureEnabled !== false && signature) {
+      const escaped = signature.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/\r?\n/g, "<br>");
+      body += input.html ? "<br><br>-- <br>" + escaped : "\n\n-- \n" + signature;
+    }
+    return client.sendMessage(token, { ...input, body });
   }
 
   async tagMessage(
@@ -309,20 +366,20 @@ export class EmailService {
     remove: string[],
   ): Promise<void> {
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    await this.clients[account.provider].tagMessage(token, id, add, remove);
+    const { client, token } = await this.mailbox(account);
+    await client.tagMessage(token, id, add, remove);
   }
 
   async deleteMessage(userId: string | null, accountId: string | undefined, id: string): Promise<void> {
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    await this.clients[account.provider].deleteMessage(token, id);
+    const { client, token } = await this.mailbox(account);
+    await client.deleteMessage(token, id);
   }
 
   async listFolders(userId: string | null, accountId: string | undefined): Promise<EmailFolder[]> {
     const account = this.resolveAccount(userId, accountId);
-    const token = await this.validAccessToken(account);
-    return this.clients[account.provider].listFolders(token);
+    const { client, token } = await this.mailbox(account);
+    return client.listFolders(token);
   }
 
   private gcPending(): void {

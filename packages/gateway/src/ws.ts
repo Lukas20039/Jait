@@ -1,4 +1,6 @@
 import { WebSocketServer, type WebSocket } from "ws";
+import { MessengerBridge } from "./services/messenger-bridge.js";
+import type { MessengerToolResponse } from "@jait/shared";
 import type { WsEvent } from "@jait/shared";
 import type { UICommandPayload } from "@jait/shared";
 import type {
@@ -121,6 +123,7 @@ export function resolveSessionScopedClientTarget(
 }
 
 export class WsControlPlane {
+  readonly messenger = new MessengerBridge();
   private wss: WebSocketServer | null = null;
   private clients = new Map<string, ConnectedClient>();
   private jwtSecret: Uint8Array;
@@ -314,6 +317,7 @@ export class WsControlPlane {
       });
 
       ws.on("close", () => {
+        this.messenger.unregister(clientId);
         this.rejectPendingProviderOpsForClient(clientId);
         this.dropRemoteBackgroundCommandsForClient(clientId);
         this.broadcastDisconnectedNodes(clientId);
@@ -322,6 +326,7 @@ export class WsControlPlane {
       });
 
       ws.on("error", () => {
+        this.messenger.unregister(clientId);
         this.rejectPendingProviderOpsForClient(clientId);
         this.dropRemoteBackgroundCommandsForClient(clientId);
         this.broadcastDisconnectedNodes(clientId);
@@ -343,6 +348,7 @@ export class WsControlPlane {
   }
 
   private async authenticateClient(client: ConnectedClient, token: string): Promise<boolean> {
+    this.messenger.unregister(client.id);
     try {
       if (token.startsWith("jait-node-")) {
         const paired = this.nodeCredentials.resolve(token);
@@ -960,6 +966,26 @@ export class WsControlPlane {
             timestamp: new Date().toISOString(),
             payload: { message: "UI state target does not match the subscribed session", code: "SESSION_SCOPE_MISMATCH" },
           });
+        }
+        break;
+      }
+      case "messenger.register": {
+        if (!client.userId) break;
+        if ((msg.payload as { enabled?: unknown })?.enabled === true) {
+          this.messenger.register(client.id, {
+            userId: client.userId,
+            active: () => this.hasAuthority(client) && client.ws.readyState === 1,
+            send: request => this.send(client.ws, {
+              type: "messenger.request", sessionId: "", timestamp: new Date().toISOString(), payload: request,
+            }),
+          });
+        } else this.messenger.unregister(client.id);
+        break;
+      }
+      case "messenger.result": {
+        const payload = msg.payload as { requestId?: string; result?: MessengerToolResponse } | undefined;
+        if (client.userId && typeof payload?.requestId === "string" && payload.result) {
+          this.messenger.complete(client.id, client.userId, payload.requestId, payload.result);
         }
         break;
       }
@@ -2086,6 +2112,7 @@ export class WsControlPlane {
   }
 
   stop() {
+    this.messenger.stop();
     if (this.heartbeatTimer) {
       clearInterval(this.heartbeatTimer);
       this.heartbeatTimer = null;

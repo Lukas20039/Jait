@@ -58,6 +58,7 @@ export interface MessengerSnapshot {
   selectedRoomId: string | null
   messages: MessengerMessage[]
   notifications: boolean
+  assistantAccess: boolean
 }
 
 export function normalizeHomeserver(input: string): string {

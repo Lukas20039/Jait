@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { FolderGit2, MessagesSquare } from 'lucide-react'
 
 import { TeamChatsPanel } from './team-chats-panel'
@@ -29,12 +29,19 @@ interface ManagerModeProps {
 export function ManagerMode({ currentPage, onPageChange, isMobile, children, account, viewMode, onViewModeChange }: ManagerModeProps) {
   const [section, setSection] = useState<ManagerSidebarSection>('threads')
 
-  const [teamChats, setTeamChats] = useState(() => {
+  const readTeamChatsParam = () => {
     if (typeof window === 'undefined' || !window.location) return false
     const query = new URLSearchParams(window.location.search)
     return query.has('teamRoom') || query.get('panel') === 'team-chats'
-  })
+  }
+  const [teamChats, setTeamChats] = useState(readTeamChatsParam)
+  useEffect(() => {
+    const restore = () => setTeamChats(readTeamChatsParam())
+    window.addEventListener('popstate', restore)
+    return () => window.removeEventListener('popstate', restore)
+  }, [])
   const setTeamChatsParam = (open: boolean) => {
+    setTeamChats(open)
     const url = new URL(window.location.href)
     if (open) url.searchParams.set('panel', 'team-chats')
     else url.searchParams.delete('panel')
@@ -44,11 +51,9 @@ export function ManagerMode({ currentPage, onPageChange, isMobile, children, acc
   // page or open a chat: the user picks a chat first.
   const openTeamChats = () => {
     const next = !teamChats
-    setTeamChats(next)
     setTeamChatsParam(next)
   }
   const hideTeamChats = () => {
-    setTeamChats(false)
     setTeamChatsParam(false)
   }
   const navigate = (page: AppView) => {

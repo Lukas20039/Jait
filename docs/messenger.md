@@ -26,6 +26,26 @@ One Matrix account can be connected per Jait user/browser tab. It can aggregate 
 
 Not included: automatic bridge installation, provisioning APIs, simultaneous Matrix accounts, calls, reactions UI, message editing, native Teams activity feeds, guaranteed Teams guest-tenant coverage, push after Jait closes, interactive device verification or cross-signing setup. New direct conversations are encrypted by default. Configure bridge encryption support before opening their setup conversations. Use another Matrix client such as Element for device verification and recovery setup. Bridges requiring verified devices may need that step.
 
+## Assistant tools and shareable searches
+
+The discoverable tools are `messenger.connect`, `messenger.status`, `messenger.rooms`, `messenger.messages`, `messenger.search`, `messenger.send`, and `messenger.open`. They operate on this personal inbox, separately from assistant bot channels.
+
+`messenger.connect` prepares a sign-in link for an existing homeserver and optional username. Enter passwords or device tokens only in the private Messenger form. It does not sign in, install bridges, or complete upstream account authorization. After connecting, enable **Allow assistant access** in **Connections**. Access is off by default and resets on reload/disconnect. Exactly one tab per Jait user should have access enabled; leave it open while using tools.
+
+Requested room/message data passes through the gateway into the assistant conversation and may reach your configured AI provider. Matrix tokens, encryption keys and attachment decryption keys stay in the browser. Read tools do not select rooms or mark messages read. Sending and opening direct conversations use the normal tool consent path. Verify an exact recipient/room ID before sending. A timeout can leave delivery uncertain; inspect the room before retrying.
+
+Search is literal and case insensitive, over loaded decrypted timelines only: up to 50 joined rooms, 2000 events per room and 50 results. It does not establish that a message is absent from all server history. `messenger.messages` with `earlier=true` loads one additional page of up to 40 events in a specified room. Undecryptable messages remain a coverage gap. Bridge bot IDs vary; use a verified full Matrix user ID with `messenger.open` to prepare its encrypted setup conversation, then complete private login/QR steps there.
+
+Shareable page parameters:
+
+- `q`: conversation name/network filter.
+- `service`: exact service label, such as WhatsApp or Telegram.
+- `messageQ`: search loaded message text and filter the selected room.
+- `roomId`: selected Matrix conversation.
+- `homeserver` and `username`: private sign-in form prefill, without credentials.
+
+For example: `/messenger?service=WhatsApp&q=Homelab&messageQ=firewall&roomId=%21room%3Aexample.com`. Navigation restores search fields; editing preserves the other parameters. Never put passwords, access tokens or recovery keys in links.
+
 ## Connect an existing homeserver
 
 1. Open Messenger and enter your HTTPS homeserver URL and Matrix credentials.

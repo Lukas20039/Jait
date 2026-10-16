@@ -15,11 +15,17 @@ export interface JaitPageContract {
   description: string;
   examples: readonly string[];
   features: readonly JaitPageFeature[];
+  /** Supported URL parameters for agent links and shareable page searches. */
+  queryParameters?: Readonly<Record<string, string>>;
   /** New tools in these namespaces automatically join the page. */
   toolPrefixes: readonly string[];
 }
 export const JAIT_PAGES = {
   chat: {
+    queryParameters: {
+      q: "Search personal chats and projects in the sidebar.",
+      projectsQ: "Search the projects-only sidebar.",
+    },
     title: "Chat", path: "/", mode: "developer",
     description: "Ask Jait to work in a personal or project conversation, use tools, and inspect the results.",
     examples: ["Start a chat", "Find a prior conversation", "Run a command in this project"],
@@ -30,13 +36,19 @@ export const JAIT_PAGES = {
     toolPrefixes: ["chat.", "session.", "file.", "terminal.", "preview.", "browser.", "web.", "project.", "surface.", "screen.", "voice.", "architecture."],
   },
   messenger: {
+    queryParameters: { q: "Filter conversations by name or network.", messageQ: "Search loaded decrypted message text; bounded to 50 joined rooms, not complete history.", service: "Filter conversations by exact service label, e.g. WhatsApp.", roomId: "Select a Matrix conversation.", homeserver: "Prefill existing Matrix homeserver sign-in; no credentials.", username: "Optional Matrix username to prefill." },
     title: "Messenger", path: "/messenger", mode: "developer",
     description: "Read and reply to personal conversations through a Matrix homeserver and installed bridges. This inbox is independent of AI chat and assistant channels.",
     examples: ["Open my messenger", "Connect a Matrix account", "Read bridged conversations"],
-    features: [{ id: "inbox", description: "Browser Matrix client with encrypted messages, attachments, invitations, service filters, bridge setup conversations, and notifications while Jait is open. Bridge coverage depends on the installed adapter; Teams tenant support is not guaranteed.", toolRefs: [], uiOnlyReason: "Personal messages and Matrix credentials stay in the browser client; no agent tools expose this inbox." }],
-    toolPrefixes: [],
+    features: [{ id: "inbox", description: "Browser Matrix client with encrypted messages, attachments, invitations, URL-backed search, bridge setup conversations, and optional assistant tools while Jait is open. Assistant access explicitly shares requested messages with the configured model; credentials and keys remain in the browser. Bridge coverage depends on the installed adapter; Teams tenant support is not guaranteed.", toolRefs: ["messenger.connect", "messenger.status", "messenger.rooms", "messenger.messages", "messenger.search", "messenger.send", "messenger.open"] }],
+    toolPrefixes: ["messenger."],
   },
   agents: {
+    queryParameters: {
+      panel: "Use team-chats to open the team chats panel.",
+      teamQ: "Filter team chats by name; use panel=team-chats.",
+      agentQ: "Search agents in the new team chat dialog; use panel=team-chats.",
+    },
     title: "Agents", path: "/agents", mode: "manager",
     description: "Manage persistent Jait people and teams: profiles, personas, roles, reporting lines, providers, models, repositories, skills, and tool preferences. These are saved agents from the Agents page, distinct from temporary execution workers.",
     examples: ["Set up a Scrum team", "Create an agent", "Give the developer a manager", "Pause an agent", "Assign skills to my team"],
@@ -60,6 +72,9 @@ export const JAIT_PAGES = {
     toolPrefixes: ["github.", "git."],
   },
   todo: {
+    queryParameters: {
+      q: "Search todos by text, tag, status, or date.",
+    },
     title: "Todo", path: "/todo", mode: "developer",
     description: "Manage saved follow-up tasks across chats and track multi-step work.",
     examples: ["Save a task for later", "Show my todos"],
@@ -67,10 +82,15 @@ export const JAIT_PAGES = {
     toolPrefixes: ["jait.todos", "todo"],
   },
   email: {
+    queryParameters: {
+      q: "Provider mail search query (Gmail syntax or Outlook search); applied automatically on navigation.",
+      accountId: "Connected mailbox account ID.",
+      folder: "Mailbox folder or label; defaults to inbox.",
+    },
     title: "Email", path: "/emails", mode: "developer",
     description: "Read and organize mail using connected accounts and available channel tools.",
     examples: ["Read my email", "Show mail accounts"],
-    features: [{ id: "mail", description: "Use connected mail services; availability depends on account and tool configuration.", toolRefs: [], uiOnlyReason: "Account-specific adapters are resolved from registered tools; no generic mail mutation is implied." }],
+    features: [{ id: "mail", description: "Connect multiple Gmail, Outlook or secure IMAP/SMTP accounts, manage account signatures, and render messages in chat. Account setup requires the Email page; sending and deletion retain their tool consent checks.", toolRefs: ["email_accounts", "email_list", "email_read", "email_view", "email_send", "email_tag", "email_delete"] }],
     toolPrefixes: ["email.", "mail.", "gmail.", "outlook.", "himalaya."],
   },
   calendar: {
@@ -103,6 +123,15 @@ export const JAIT_PAGES = {
     toolPrefixes: ["network.", "security.", "node.", "ssh."],
   },
   settings: {
+    queryParameters: {
+      q: "Search settings across tabs; overrides saved search, including q= to clear.",
+      tab: "Settings tab: general, api, tools, extensions, skills, email, channels, nodes, shortcuts, usage, activity, changelog.",
+      toolsQ: "Filter tools; use tab=tools.",
+      extensionsQ: "Filter extensions; use tab=extensions.",
+      skillsQ: "Filter installed skills; use tab=skills&skillsTab=installed.",
+      marketplaceQ: "Search ClawHub; use tab=skills&skillsTab=marketplace.",
+      skillsTab: "Skills subtab: installed or marketplace.",
+    },
     title: "Settings", path: "/settings", mode: "both",
     description: "Configure Jait, providers, models, tool policies, skills, plugins, channels, and gateway services.",
     examples: ["Configure Jait", "Show tools", "Connect a provider", "Manage skills"],

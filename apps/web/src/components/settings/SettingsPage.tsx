@@ -1,3 +1,4 @@
+import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { AccountInvitations } from "./AccountInvitations"
 import { DesktopGatewaySetup } from '@/components/onboarding/DesktopGatewaySetup'
 import { OpenCodeGoConnection } from './opencode-go-connection'
@@ -565,13 +566,21 @@ export function SettingsPage({
     waitingForCompletion?: boolean
   } | null>(null)
   const [providerLoginCode, setProviderLoginCode] = useState('')
-  const [activeTab, setActiveTab] = useState<SettingsTab>(() => {
+  const [tab, setActiveTab] = useUrlSearchState('settings', 'tab', () => {
     if (focusNodeId) return 'nodes'
     try {
       const saved = window.localStorage.getItem('jait.settings.activeTab')
       return saved && Object.hasOwn(SETTINGS_TAB_LABELS, saved) ? saved as SettingsTab : 'general'
     } catch { return 'general' }
   })
+  const activeTab = Object.hasOwn(SETTINGS_TAB_LABELS, tab) ? tab as SettingsTab : 'general'
+  // A tab specified by a link stays selected until the user edits the search.
+  const linkedTabRef = useRef(typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('tab'))
+  useEffect(() => {
+    const restore = () => { linkedTabRef.current = new URLSearchParams(window.location.search).get('tab') }
+    window.addEventListener('popstate', restore)
+    return () => window.removeEventListener('popstate', restore)
+  }, [])
   const settingsRootRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     try { window.localStorage.setItem('jait.settings.activeTab', activeTab) } catch { /* storage may be disabled */ }
@@ -597,7 +606,7 @@ export function SettingsPage({
       scroller?.removeEventListener('scroll', onScroll)
     }
   }, [activeTab, focusNodeId])
-  const [search, setSearch] = useState(() => {
+  const [search, setSearch] = useUrlSearchState('settings', 'q', () => {
     try { return window.sessionStorage.getItem('jait.settings.search') ?? '' } catch { return '' }
   })
   useEffect(() => {
@@ -1365,7 +1374,7 @@ export function SettingsPage({
   // When the user searches, jump to the first tab that has matching content so the
   // top-level search box actually finds results across the settings pages.
   useEffect(() => {
-    if (!searchQuery) return
+    if (!searchQuery || linkedTabRef.current) return
     if (tabHasMatch(activeTab)) return
     const next = (Object.keys(SETTINGS_TAB_LABELS) as SettingsTab[]).find((t) => tabHasMatch(t))
     if (next && next !== activeTab) setActiveTab(next)
@@ -1632,7 +1641,7 @@ const providerAccountsCard = (
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => { linkedTabRef.current = null; setSearch(event.target.value) }}
             placeholder="Search settings..."
             className="pl-9"
           />

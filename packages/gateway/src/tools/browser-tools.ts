@@ -484,7 +484,7 @@ export function createBrowserInteractionTools(
     ),
     {
       name: "browser.screenshot",
-      description: "Capture a browser screenshot",
+      description: "Capture a browser screenshot and display it inline in chat. Do not call image.view afterward or display the same image again.",
       tier: "standard",
       category: "browser",
       source: "builtin",
@@ -537,7 +537,7 @@ export function createBrowserInteractionTools(
         await writeFile(displayPath, bytes);
         return {
           ok: true,
-          message: `Screenshot saved to ${screenshotPath}`,
+          message: `Screenshot saved to ${screenshotPath} and displayed in chat. Do not call image.view or display this screenshot again.`,
           data: { browserId: surface.id, result: { path: displayPath, capturePath: screenshotPath } },
         };
       },

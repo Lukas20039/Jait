@@ -1,3 +1,4 @@
+import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AlertCircle, ArrowUpDown, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Circle, CircleDashed, Filter, Flag, GripVertical, History, ListChecks, Loader2, Mic, MicOff, Play, Plus, RefreshCw, Search, Tags, Trash2, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -709,7 +710,7 @@ export function TodoPage({
   const [todos, setTodos] = useState<JaitTodo[]>([])
   const [mode, setMode] = useState<TodoMode>('list')
   const [statusFilter, setStatusFilter] = useState<TodoStatus | 'all'>('all')
-  const [metadataSearch, setMetadataSearch] = useState('')
+  const [metadataSearch, setMetadataSearch] = useUrlSearchState('todo')
   const [sort, setSort] = useState<TodoSort>('manual')
   const [hydratedFilterRepoId, setHydratedFilterRepoId] = useState<string | null>(null)
   const [month, setMonth] = useState(() => new Date())

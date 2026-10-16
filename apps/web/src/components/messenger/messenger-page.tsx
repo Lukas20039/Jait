@@ -1,3 +1,4 @@
+import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { automaticReadAllowed } from '@/lib/messenger/notification-actions'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ArrowLeft, Bell, Link2, Loader2, LockKeyhole, LogOut, MessageCircle, Plus, Search, Settings2, X } from 'lucide-react'
@@ -53,8 +54,8 @@ function Attachment({ message }: { message: MessengerMessage }) {
 
 function ConnectionForm() {
   const { store, snapshot } = useMessenger()
-  const [homeserver, setHomeserver] = useState('')
-  const [username, setUsername] = useState('')
+  const [homeserver, setHomeserver] = useUrlSearchState('messenger', 'homeserver')
+  const [username, setUsername] = useUrlSearchState('messenger', 'username')
   const [password, setPassword] = useState('')
   const [token, setToken] = useState('')
   const [useToken, setUseToken] = useState(false)
@@ -83,7 +84,7 @@ function ConnectionForm() {
     </form>
     {snapshot.error && <p role="alert" className="text-sm text-destructive">{snapshot.error}</p>}
     {(busy || snapshot.error) && <Button variant="outline" size="sm" onClick={() => void store.disconnect().catch(() => {})}>{busy ? 'Cancel connection' : 'Clear saved connection'}</Button>}
-    <p className="text-xs text-muted-foreground">Your password is never saved. The session stays in this browser tab; encryption keys stay in this browser. Messages are not sent to AI.</p>
+    <p className="text-xs text-muted-foreground">Your password is never saved. The session stays in this browser tab; encryption keys stay in this browser. Messages are not sent to AI unless you enable assistant access in Connections.</p>
     <details className="rounded-lg border p-4 text-sm">
       <summary className="cursor-pointer font-medium">Need a Matrix server?</summary>
       <p className="mt-3 text-muted-foreground">Use an existing homeserver, or run Jait’s optional Synapse deployment. It runs separately and keeps working when Jait is closed.</p>
@@ -95,8 +96,10 @@ function ConnectionForm() {
 export default function MessengerPage({ token = null, sttProvider = 'whisper' }: { token?: string | null; sttProvider?: SttProvider }) {
   const { store, snapshot } = useMessenger()
   const [connectionsOpen, setConnectionsOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const [service, setService] = useState('All')
+  const [search, setSearch] = useUrlSearchState('messenger')
+  const [serviceValue, setService] = useUrlSearchState('messenger', 'service')
+  const service = serviceValue || 'All'
+  const [messageSearch, setMessageSearch] = useUrlSearchState('messenger', 'messageQ')
   const [recipient, setRecipient] = useState('')
   const [drafts, setDrafts] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState(false)
@@ -129,7 +132,9 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
   }
   const ready = snapshot.status === 'ready'
   const connected = !!snapshot.session
-  const services = ['All', ...new Set(snapshot.rooms.map(room => room.service))]
+  const services = ['All', ...new Set([...snapshot.rooms.map(room => room.service), ...(service !== 'All' ? [service] : [])])]
+  const messages = snapshot.messages.filter(message => !messageSearch || (!message.unableToDecrypt && message.body.toLowerCase().includes(messageSearch.toLowerCase())))
+  const searchResults = store.searchLoadedMessages(messageSearch)
   const rooms = snapshot.rooms.filter(room => (service === 'All' || room.service === service) && (room.name + ' ' + room.network).toLowerCase().includes(search.toLowerCase()))
 
   useEffect(() => {
@@ -137,7 +142,7 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
       const params = new URLSearchParams(window.location.search)
       if (params.get('action') === 'mark-read') return
       const id = params.get('roomId')
-      if (id) store.selectRoom(id)
+      store.selectRoom(id)
     }
     selectFromUrl()
     window.addEventListener('popstate', selectFromUrl)
@@ -218,6 +223,10 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
           </form>
           <p className="text-xs text-muted-foreground">Teams tenant coverage depends on the installed bridge and each organization’s policies.</p>
         </div>
+        <div className="space-y-2 rounded-md border p-3">
+          <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={snapshot.assistantAccess} disabled={!ready} onChange={event => store.setAssistantAccess(event.target.checked)} />Allow assistant access</label>
+          <p className="text-xs text-muted-foreground">While this tab is connected, tools can read and search messages and send with consent. Requested message text is shared with the gateway and your AI provider. Matrix credentials and encryption keys stay in this browser. Access resets when you reload or disconnect.</p>
+        </div>
         <details className="text-sm"><summary className="cursor-pointer">Recover encrypted history</summary>
           <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => { event.preventDefault(); const key = recoveryKey; setRecoveryKey(''); void act(async () => { await store.restoreKeys(key); setNotice('Encryption keys restored.') }, 'Could not restore keys. Check the recovery key and that this account has a server key backup.') }}>
             <Input className="min-w-0 flex-1" aria-label="Matrix recovery key" type="password" value={recoveryKey} onChange={event => setRecoveryKey(event.target.value)} placeholder="Matrix backup recovery key" autoComplete="off" required />
@@ -233,9 +242,17 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
           <div className="space-y-3 border-b p-3">
             <div className="flex items-center justify-between"><h2 className="text-sm font-medium">Conversations <span className="text-muted-foreground">{snapshot.rooms.length}</span></h2><Button variant="ghost" size="icon" className="h-7 w-7" aria-label="New conversation" onClick={() => setConnectionsOpen(true)}><Plus className="h-4 w-4" /></Button></div>
             <div className="relative"><Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" /><Input aria-label="Search conversations" placeholder="Search conversations" value={search} onChange={event => setSearch(event.target.value)} className="pl-8" /></div>
-            <select aria-label="Filter by service" value={service} onChange={event => setService(event.target.value)} className="h-8 w-full rounded-md border bg-background px-2 text-xs">{services.map(service => <option key={service}>{service}</option>)}</select>
+            <select aria-label="Filter by service" value={service} onChange={event => setService(event.target.value === 'All' ? '' : event.target.value)} className="h-8 w-full rounded-md border bg-background px-2 text-xs">{services.map(service => <option key={service}>{service}</option>)}</select>
+          </div>
+          <div className="space-y-2 border-b p-3">
+            <Input aria-label="Search loaded messages" placeholder="Search loaded messages" value={messageSearch} onChange={event => setMessageSearch(event.target.value)} />
+            {messageSearch && <p className="text-xs text-muted-foreground">Loaded, decrypted history only. Up to 50 rooms and 50 results.</p>}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
+            {messageSearch && <div aria-label="Message search results" className="border-b">
+              {searchResults.filter(item => rooms.some(room => room.id === item.roomId)).map(item => <button key={item.roomId + item.message.id} onClick={() => selectRoom(item.roomId)} className="block w-full space-y-1 border-b p-3 text-left text-sm hover:bg-muted/60"><span className="block truncate font-medium">{item.roomName}</span><span className="line-clamp-2 break-words text-xs text-muted-foreground">{item.message.body.slice(0, 300)}</span></button>)}
+              {!searchResults.some(item => rooms.some(room => room.id === item.roomId)) && <p className="p-3 text-sm text-muted-foreground">No matching loaded messages.</p>}
+            </div>}
             {rooms.map(item => <div key={item.id} role="group" aria-label={'Conversation ' + item.name} className="group/room flex min-w-0 items-center border-b border-border/50"><button onClick={() => selectRoom(item.id)} aria-pressed={item.id === roomId} className={'flex min-w-0 flex-1 gap-3 p-3 text-left hover:bg-muted/60 ' + (item.id === roomId ? 'bg-secondary' : '')}>
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">{item.name.slice(0, 2).toUpperCase()}</span>
               <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{item.name}</span>{(item.unread > 0 || item.markedUnread) && <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">{item.unread || <span aria-label="Unread">•</span>}</span>}</span><span className="block truncate text-2xs text-muted-foreground">{item.service}{item.network ? ' · ' + item.network : ''}{item.membership === 'invite' ? ' · Invitation' : ''}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.preview}</span></span>
@@ -257,12 +274,12 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
                 key={room.id}
                 variant="messenger"
                 mobile={mobile}
-                messageContents={snapshot.messages.map(message => message.body)}
-                messageEstimateInputs={snapshot.messages.map(message => ({ content: message.body, role: message.own ? 'user' : 'assistant' }))}
+                messageContents={messages.map(message => message.body)}
+                messageEstimateInputs={messages.map(message => ({ content: message.body, role: message.own ? 'user' : 'assistant' }))}
                 hasMore={ready && snapshot.messages.length > 0}
                 onLoadMore={() => { if (!busy) void act(() => store.loadEarlier()) }}
               >
-                {snapshot.messages.map(message => <Message
+                {messages.map(message => <Message
                   key={message.id}
                   messageId={message.id}
                   role={message.own ? 'user' : 'assistant'}

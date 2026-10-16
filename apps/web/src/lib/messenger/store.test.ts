@@ -27,6 +27,7 @@ class Client extends EventEmitter {
   getRooms = vi.fn(() => [])
   getRoom = vi.fn(() => null)
   sendTextMessage = vi.fn(async () => ({}))
+  scrollback = vi.fn(async () => ({}))
   createRoom = vi.fn(async () => ({ room_id: '!new:matrix.test' }))
   getPushActionsForEvent = vi.fn(() => ({ notify: true }))
   setRoomAccountData = vi.fn(async (_roomId: string, _type: string, _content: { unread: boolean }) => ({}))
@@ -214,6 +215,54 @@ function readRoom(client: Client) {
   client.getRooms.mockReturnValue([room] as never)
   return { room, events, accountData }
 }
+
+describe('explicit assistant access', () => {
+  it('requires opt-in, validates input, and resets access on disconnect', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room } = readRoom(client)
+    const command = { action: 'send', roomId: room.roomId, text: 'literal **message**' }
+    const expiry = () => Date.now() + 10000
+    expect((await store.assistantCommand(command, expiry())).ok).toBe(false)
+    expect(client.sendTextMessage).not.toHaveBeenCalled()
+    store.setAssistantAccess(true)
+    expect((await store.assistantCommand({ ...command, roomId: '!other:test' }, expiry())).ok).toBe(false)
+    expect((await store.assistantCommand(command, Date.now() - 1)).ok).toBe(false)
+    expect((await store.assistantCommand({ ...command, text: ' ' }, expiry())).ok).toBe(false)
+    expect((await store.assistantCommand(command, expiry())).ok).toBe(true)
+    expect(client.sendTextMessage).toHaveBeenCalledExactlyOnceWith(room.roomId, 'literal **message**')
+    await store.disconnect()
+    expect(store.getSnapshot().assistantAccess).toBe(false)
+  })
+
+  it('searches decrypted loaded history without receipts, selection changes, or attachment keys', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room, events } = readRoom(client)
+    events[0]!.getContent = () => ({ body: 'hello firewall', file: { url: 'mxc://test/file', key: { k: 'secret-attachment-key' } } } as never)
+    events[1]!.getContent = () => ({ body: 'firewall is encrypted' })
+    events[1]!.isDecryptionFailure = () => true
+    store.setAssistantAccess(true)
+    const result = await store.assistantCommand({ action: 'search', query: 'FIREWALL' }, Date.now() + 10000)
+    expect(result.ok).toBe(true)
+    expect(result.data).toMatchObject({ messages: [{ id: '$old', roomId: room.roomId, body: 'hello firewall' }], coverage: { undecryptable: 1 } })
+    expect(JSON.stringify(result)).not.toContain('secret-attachment-key')
+    expect(JSON.stringify(result)).not.toContain('private-token')
+    expect(client.setRoomReadMarkers).not.toHaveBeenCalled()
+    expect(store.getSnapshot().selectedRoomId).toBeNull()
+    const status = await store.assistantCommand({ action: 'status' }, Date.now() + 10000)
+    expect(JSON.stringify(status)).not.toContain('private-token')
+  })
+
+  it('loads only the requested history page and rechecks opt-in after asynchronous loading', async () => {
+    const { store } = makeStore(); await store.connect(input)
+    const client = clients.at(-1)!; const { room } = readRoom(client)
+    store.setAssistantAccess(true)
+    client.scrollback.mockImplementationOnce(async () => { store.setAssistantAccess(false); return {} })
+    const result = await store.assistantCommand({ action: 'messages', roomId: room.roomId, earlier: true }, Date.now() + 10000)
+    expect(result.ok).toBe(false)
+    expect(result.data).toBeUndefined()
+    expect(client.scrollback).toHaveBeenCalledExactlyOnceWith(room, 40)
+  })
+})
 
 describe('read and unread controls', () => {
   it('marks a non-selected conversation read, persists its flag, and clears its counts', async () => {

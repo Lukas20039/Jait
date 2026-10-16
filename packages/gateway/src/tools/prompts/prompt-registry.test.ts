@@ -25,6 +25,7 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("copy the finished artifact");
     expect(prompt).not.toContain("> /tmp/out.txt");
     expect(prompt).toContain("The tool card is the user-facing image display");
+    expect(prompt).toContain("do not follow them with image.view");
     expect(prompt).toContain("do not repeat it in assistant messages");
     expect(prompt).toContain("unless the user explicitly requests them");
   });
