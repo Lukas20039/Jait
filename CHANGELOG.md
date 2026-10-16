@@ -4,6 +4,19 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.943](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.943) — 2026-10-16
+
+- fix(threads): allow cross-provider delegation — fe34ef1f
+- test(threads): cover cross-provider delegation and model isolation — d16d07f4
+- test(contracts): expand security parity coverage inventory — 12cb001d
+- feat(messenger): share gateway Matrix state and add Rust contracts — 009ae4cc
+
+Move Matrix login, syncing, encryption state and encrypted history recovery into the gateway so clients share a persistent device. Add Rust HTTP and internal acceptance contracts and a migration coverage inventory. Let chat threads delegate work to agents that run on a different provider, and cover the resulting thread's model isolation with tests.
+
+Validation: 5,174 unit/integration tests passed (78 skipped); 93 HTTP and 50 internal contract scenarios passed. Typechecks, Rust unit tests, formatting, lint and artifact checks passed.
+
+Package versions: gateway 0.1.943, web 0.1.453, shared 0.1.103.
+
 ## [v0.1.942](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.942) — 2026-10-16
 
 - feat: expand email and messenger workflows and chat navigation — d75b530e
