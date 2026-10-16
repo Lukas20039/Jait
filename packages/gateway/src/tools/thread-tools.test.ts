@@ -960,6 +960,136 @@ describe("thread.control tool", () => {
     }
   });
 
+  it("starts a thread stored on a provider that differs from the calling chat (codex chat -> jait thread)", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const { userService, sessionState, context } = createSelectedProviderContext(db, "codex", {
+        model: "gpt-5-codex",
+      });
+      const providerRegistry = new ProviderRegistry();
+      const jaitProvider = new MockThreadProvider("jait");
+      providerRegistry.register(new MockThreadProvider("codex"));
+      providerRegistry.register(jaitProvider);
+
+      const threadService = new ThreadService(db);
+      const thread = threadService.create({
+        userId: context.userId,
+        title: "Jait worker driven from Codex",
+        providerId: "jait",
+      });
+
+      const tool = createThreadControlTool({
+        threadService,
+        providerRegistry,
+        userService,
+        sessionState,
+      });
+
+      const result = await tool.execute(
+        {
+          action: "start",
+          threadId: thread.id,
+          message: "Run the delegated worker",
+        },
+        { ...context, providerId: "codex", model: "gpt-5-codex" },
+      );
+
+      expect(result.ok).toBe(true);
+      const data = result.data as { thread: { providerId: string; providerSessionId: string | null } };
+      expect(data.thread.providerId).toBe("jait");
+      expect(data.thread.providerSessionId).toBe("mock-session-1");
+      expect(jaitProvider.sendTurn).toHaveBeenCalledTimes(1);
+      // The caller's model belongs to codex and must not leak into the jait thread.
+      expect(jaitProvider.lastStartOptions?.model).toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  it("starts a thread stored on a CLI provider from a Jait chat (jait chat -> codex thread)", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const { userService, sessionState, context } = createSelectedProviderContext(db, "jait");
+      const providerRegistry = new ProviderRegistry();
+      const codexProvider = new MockThreadProvider("codex");
+      providerRegistry.register(new MockThreadProvider("jait"));
+      providerRegistry.register(codexProvider);
+
+      const threadService = new ThreadService(db);
+      const thread = threadService.create({
+        userId: context.userId,
+        title: "Codex worker driven from Jait",
+        providerId: "codex",
+      });
+
+      const tool = createThreadControlTool({
+        threadService,
+        providerRegistry,
+        userService,
+        sessionState,
+      });
+
+      const result = await tool.execute(
+        {
+          action: "start",
+          threadId: thread.id,
+          message: "Run the delegated worker",
+        },
+        { ...context, providerId: "jait", model: "jait-default" },
+      );
+
+      expect(result.ok).toBe(true);
+      const data = result.data as { thread: { providerId: string; providerSessionId: string | null } };
+      expect(data.thread.providerId).toBe("codex");
+      expect(data.thread.providerSessionId).toBe("mock-session-1");
+      expect(codexProvider.sendTurn).toHaveBeenCalledTimes(1);
+      expect(codexProvider.lastStartOptions?.model).toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  it("still inherits the caller model when provider matches the thread", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const { userService, sessionState, context } = createSelectedProviderContext(db, "codex");
+      const providerRegistry = new ProviderRegistry();
+      const provider = new MockThreadProvider("codex");
+      providerRegistry.register(provider);
+
+      const threadService = new ThreadService(db);
+      const thread = threadService.create({
+        userId: context.userId,
+        title: "Same-provider thread",
+        providerId: "codex",
+      });
+
+      const tool = createThreadControlTool({
+        threadService,
+        providerRegistry,
+        userService,
+        sessionState,
+      });
+
+      const result = await tool.execute(
+        {
+          action: "start",
+          threadId: thread.id,
+          message: "Continue here",
+        },
+        { ...context, providerId: "codex", model: "gpt-5-codex" },
+      );
+
+      expect(result.ok).toBe(true);
+      expect(provider.lastStartOptions?.model).toBe("gpt-5-codex");
+    } finally {
+      sqlite.close();
+    }
+  });
+
   it("inherits the selected provider model from session state", async () => {
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
