@@ -151,10 +151,10 @@ mocked call arguments, seeded consent queues or legacy job payloads. Reviews tha
 omit those assertions remain pending in `coverage.json`; corrected earlier
 claims are documented in `fragments/parity-review-gaps.json`.
 
-The current reviewed inventory credits 36 declarations, including twelve exact
+The previous reviewed inventory credited 36 declarations, including twelve exact
 internal-reference mappings (two replace earlier HTTP-level auth mappings). This includes nine edge
-batch mappings and removes twelve earlier partial mappings. The Rust audit still
-reports 3,058 pending declaration/source requirements; the strict
+batch mappings and removes twelve earlier partial mappings. At that checkpoint, the Rust audit reported
+3,058 pending declaration/source requirements; the strict
 `--require-parity` gate must continue to fail.
 Making its status mandatory for merges is a separate branch-protection setting.
 
@@ -188,3 +188,30 @@ The isolated reviewed reports for this batch are under
 `.jait/artifacts/gateway-rust-readiness/continuation-evidence/`.
 The temporary Matrix dependency startup failure was resolved by concurrent
 Messenger work before the final passing run.
+
+## Parallel Flash preparation checkpoint
+
+The current run passes 93/93 managed gateway cases and 50/50 internal cases.
+The security batch now reconstructs all 18 network-scan declarations, five SSRF
+declarations and 15 assessment declarations, including all ten unsupported-target
+variants, all twelve invalid-scope fixtures, failed completion persistence, and
+real local TCP before/after verification. Rust owns all expected outcomes.
+The reviewed inventory now credits 74 declarations, leaving 3,020 requirements
+in the existing inventory. The audit still rejects concurrent Messenger drift,
+including a deleted regression declaration; no credit was obtained by removing it.
+Formatting, Clippy and all 16 Rust unit/runner checks pass.
+
+The internal runner dispatches lane adapters lazily and compiles independent
+`vectors/fixtures.json`, `vectors/provider.json` and `vectors/storage.json` sources.
+Expected values remain in the Rust assertion path. Duplicate scenario ids fail
+before running, and vector JSON participates in source fingerprints so edits
+invalidate fresh evidence. The three vector files are placeholders until workers
+complete them and receive assertion review.
+
+Three independent Jait-provider DeepSeek v4.1 Flash batches are specified in
+`.jait/artifacts/gateway-rust-readiness/parallel-flash/dispatch-plan.json`.
+Their launch failed with `agent_halted`; no threads were created. Resume autonomous
+agents through Jait before dispatching these prepared batches. Coverage credit
+requires passing Rust reports and exact original-assertion review for every batch.
+Security evidence: `.jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json`.
+Managed gateway evidence: `.jait/artifacts/contracts/49f7d931-76a4-4f56-a2ab-3698da8c2817/report.json`.

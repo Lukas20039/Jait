@@ -9,7 +9,7 @@
         {
           "id": "internal.security.arp-linux",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -21,7 +21,7 @@
         {
           "id": "internal.security.arp-macos",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -33,7 +33,7 @@
         {
           "id": "internal.security.arp-hyphen",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -45,7 +45,7 @@
         {
           "id": "internal.security.arp-filtered",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -57,7 +57,7 @@
         {
           "id": "internal.security.arp-empty",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -69,7 +69,7 @@
         {
           "id": "internal.security.prefix-cidr",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -81,7 +81,7 @@
         {
           "id": "internal.security.prefix-ip",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -93,7 +93,7 @@
         {
           "id": "internal.security.prefix-bare",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -105,7 +105,7 @@
         {
           "id": "internal.security.prefix-range",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -117,7 +117,7 @@
         {
           "id": "internal.security.prefix-invalid",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -129,7 +129,7 @@
         {
           "id": "internal.security.ipv4-valid",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -141,7 +141,7 @@
         {
           "id": "internal.security.ipv4-invalid",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -153,7 +153,7 @@
         {
           "id": "internal.security.ips-normalize",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -165,7 +165,7 @@
         {
           "id": "internal.security.ips-empty",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -177,7 +177,7 @@
         {
           "id": "internal.security.merge-first",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -189,7 +189,7 @@
         {
           "id": "internal.security.merge-later",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -201,7 +201,7 @@
         {
           "id": "internal.security.candidates-one",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -213,7 +213,7 @@
         {
           "id": "internal.security.candidates-two",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -225,7 +225,7 @@
         {
           "id": "internal.security.ssrf-ipv4",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -237,7 +237,7 @@
         {
           "id": "internal.security.ssrf-reserved",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -249,7 +249,7 @@
         {
           "id": "internal.security.ssrf-ipv6",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -261,7 +261,7 @@
         {
           "id": "internal.security.ssrf-allow",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -273,7 +273,7 @@
         {
           "id": "internal.security.ssrf-allowlist",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -285,7 +285,7 @@
         {
           "id": "internal.security.scope-targets",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -297,7 +297,7 @@
         {
           "id": "internal.security.scope-bounds",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -309,7 +309,7 @@
         {
           "id": "internal.security.assessment-dispatch",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -321,7 +321,7 @@
         {
           "id": "internal.security.assessment-ownership",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -333,7 +333,7 @@
         {
           "id": "internal.security.assessment-expired",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -345,7 +345,7 @@
         {
           "id": "internal.security.assessment-partial",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -357,7 +357,7 @@
         {
           "id": "internal.security.assessment-cancel",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -369,7 +369,7 @@
         {
           "id": "internal.security.assessment-frozen-budget",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -381,7 +381,7 @@
         {
           "id": "internal.security.assessment-forward-cancel",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -393,7 +393,7 @@
         {
           "id": "internal.security.assessment-duration",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -405,7 +405,7 @@
         {
           "id": "internal.security.assessment-probe-errors",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -417,7 +417,7 @@
         {
           "id": "internal.security.assessment-restart",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     },
@@ -429,7 +429,31 @@
         {
           "id": "internal.security.assessment-interrupted",
           "source": "tests/contract/src/security_internal_contracts.rs",
-          "report": "ROOT_REPORT"
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/security/assessment.test.ts:125:3",
+      "status": "verified",
+      "parity_review": "Injects a failure after the initial assessment-run write, as the original fixture does. Rust checks partial status, all four retained observations, the explicit persistence gap and omission of private storage error text.",
+      "rust_cases": [
+        {
+          "id": "internal.security.assessment-persistence-failure",
+          "source": "tests/contract/src/security_internal_contracts.rs",
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/security/assessment.test.ts:168:3",
+      "status": "verified",
+      "parity_review": "Uses a real ephemeral loopback TCP listener and the production default AssessmentService probe. Rust checks open before shutdown, refused afterward, identical scope id and vantage, and completed after status. No remote network is contacted.",
+      "rust_cases": [
+        {
+          "id": "internal.security.assessment-tcp-before-after",
+          "source": "tests/contract/src/security_internal_contracts.rs",
+          "report": ".jait/artifacts/contracts/aab942fc-a2f0-4585-b887-94e82eb299aa/report.json"
         }
       ]
     }
