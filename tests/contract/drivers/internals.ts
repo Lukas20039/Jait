@@ -48,6 +48,13 @@ for (const call of input.calls) {
         fixtures: () => import('./fixtures.ts'),
         provider: () => import('./provider.ts'),
         storage: () => import('./storage.ts'),
+        storage2: () => import('./storage2.ts'),
+        tools: () => import('./tools.ts'),
+        toolsb: () => import('./toolsb.ts'),
+        services: () => import('./services.ts'),
+        db: () => import('./db.ts'),
+        providers: () => import('./providers.ts'),
+        routes: () => import('./routes.ts'),
       };
       if (!(prefix in adapters)) throw new Error('unknown driver operation');
       const adapter = await adapters[prefix as keyof typeof adapters]();

@@ -10,6 +10,13 @@ pub fn cases() -> Result<Vec<Value>> {
         include_str!("../vectors/fixtures.json"),
         include_str!("../vectors/provider.json"),
         include_str!("../vectors/storage.json"),
+        include_str!("../vectors/storage2.json"),
+        include_str!("../vectors/tools.json"),
+        include_str!("../vectors/toolsb.json"),
+        include_str!("../vectors/services.json"),
+        include_str!("../vectors/db.json"),
+        include_str!("../vectors/providers.json"),
+        include_str!("../vectors/routes.json"),
     ] {
         cases.extend(serde_json::from_str::<Vec<Value>>(source)?);
     }

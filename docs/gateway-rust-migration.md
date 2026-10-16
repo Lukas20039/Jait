@@ -32,6 +32,16 @@ Test work may proceed in parallel after harness interfaces are agreed:
 
 Each worker owns separate Rust scenario/fixture modules and maps exact existing assertions plus missing behaviors; shared harness changes require coordination. These lanes are parallel test reconstruction, not parallel gateway ports. R00–R08 are incomplete until these lanes and the strict inventory gate pass. A separate branch/contract inventory, mutation checks and supported-platform evidence remain required in addition to declaration mapping.
 
+### Declarative vector lanes
+
+`tests/contract/verify-vectors.mjs` replays one Rust-owned vector file through the test-only TypeScript reference adapter using the same assertion semantics as `src/fixture_internal_contracts.rs::validate`:
+
+```
+node tests/contract/verify-vectors.mjs vectors/<lane>.json --json
+```
+
+One lane is one `vectors/<lane>.json` plus one `drivers/<lane>.ts`, so lanes share no files and can be filled concurrently. `fixtures`, `storage`, `provider`, `security` and `internals` carry reviewed cases. `db`, `providers`, `routes`, `services`, `storage2`, `tools` and `toolsb` are pre-registered placeholders: their vector files are `[]` and their drivers throw on every operation until Rust authoring lands for that domain. Do not write expected values on the TypeScript side; a lane with hand-authored expectations is no longer a parity check. Rust owns the vectors and expected results, and the verifier has no write path.
+
 ## Execution rules
 
 - Add every route/tool/schema/event/config/CLI/database contract to an executable inventory before porting it. Include non-TypeScript bridges, root entrypoints, assets and package/runtime dependencies.
