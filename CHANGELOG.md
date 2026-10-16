@@ -4,6 +4,16 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.941](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.941) — 2026-10-16
+
+- fix(web): improve browser controls, sidebar overflow and agent graph layout — 6b1fd823
+
+Let clicks and scrolling reach the browser page by default, add an explicit Adjust view mode with scoped keyboard shortcuts, and keep the address bar and live session available in fullscreen. Move excess sidebar navigation and tools into accessible menus on short windows. Compute a stable agent reporting layout before the first visible frame and preserve manual placement during live updates.
+
+Validation: all 8 targeted Chromium UI regressions and 7 graph layout unit tests pass. Workspace typechecks, lint, release version checks and artifact-path checks pass.
+
+Package versions: gateway 0.1.941, web 0.1.451. No database migration or application configuration change.
+
 ## [v0.1.940](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.940) — 2026-10-15
 
 - fix(ci): isolate browser smoke ports and clean up server processes — 0561f4b4

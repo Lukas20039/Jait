@@ -45,7 +45,7 @@
     },
     "apps/web": {
       "name": "@jait/web",
-      "version": "0.1.450",
+      "version": "0.1.451",
       "dependencies": {
         "@capacitor/app": "^6.0.3",
         "@capacitor/core": "^6.2.2",
@@ -145,7 +145,7 @@
     },
     "packages/gateway": {
       "name": "@jait/gateway",
-      "version": "0.1.940",
+      "version": "0.1.941",
       "bin": {
         "jait": "./bin/jait.mjs",
         "jait-matrix": "./bin/matrix-stack.mjs",
