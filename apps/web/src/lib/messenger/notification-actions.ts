@@ -2,7 +2,7 @@ import { toast } from 'sonner'
 import { safeNotificationLink, type NotificationActivation } from '@jait/shared'
 import { getApiUrl } from '@/lib/gateway-url'
 import { openNotification, retryNotificationNavigation, pendingNotificationLink, androidNotificationBridge } from '@/lib/notification-navigation'
-import type { MessengerStore } from './store'
+import type { MessengerStoreApi } from './store'
 
 type ReadAction = { roomId: string; eventId: string; account: string; homeserver: string }
 let roomHandler: ((roomId: string) => void) | null = null
@@ -44,7 +44,7 @@ export async function handleMessengerNotification(activation: NotificationActiva
 }
 
 /** Lives with the authenticated Matrix store, across Jait page changes. */
-export function bindMessengerNotifications(store: MessengerStore): () => void {
+export function bindMessengerNotifications(store: MessengerStoreApi): () => void {
   const handler = async (action: ReadAction) => {
     const snapshot = store.getSnapshot()
     if (snapshot.status !== 'ready' || snapshot.session?.userId !== action.account || snapshot.session.homeserver !== action.homeserver) return false

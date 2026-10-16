@@ -1,3 +1,4 @@
+import { registerMessengerRoutes } from './routes/messenger.js';
 import { TeamChatService } from "./services/team-chat.js";
 import { registerTeamChatRoutes } from "./routes/team-chat.js";
 import { createTeamChatTool } from "./tools/team-chat-tools.js";
@@ -256,6 +257,7 @@ export async function createServer(config: AppConfig, deps: ServerDeps = {}) {
     });
   }
 
+  registerMessengerRoutes(app, config, deps.ws?.messenger);
   registerHealthRoutes(app, config, {
     getDeviceCount: () => deps.deviceRegistry?.count() ?? 0,
     getSchemaVersion: () => deps.sqlite ? getSchemaVersion(deps.sqlite) : 0,

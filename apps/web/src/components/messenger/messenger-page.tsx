@@ -84,7 +84,7 @@ function ConnectionForm() {
     </form>
     {snapshot.error && <p role="alert" className="text-sm text-destructive">{snapshot.error}</p>}
     {(busy || snapshot.error) && <Button variant="outline" size="sm" onClick={() => void store.disconnect().catch(() => {})}>{busy ? 'Cancel connection' : 'Clear saved connection'}</Button>}
-    <p className="text-xs text-muted-foreground">Your password is never saved. The session stays in this browser tab; encryption keys stay in this browser. Messages are not sent to AI unless you enable assistant access in Connections.</p>
+    <p className="text-xs text-muted-foreground">Your password is never saved. Your gateway keeps one Matrix connection and its encryption keys for all your signed-in Jait devices. Messages are not sent to AI unless you enable assistant access in Connections.</p>
     <details className="rounded-lg border p-4 text-sm">
       <summary className="cursor-pointer font-medium">Need a Matrix server?</summary>
       <p className="mt-3 text-muted-foreground">Use an existing homeserver, or run Jait’s optional Synapse deployment. It runs separately and keeps working when Jait is closed.</p>
@@ -225,7 +225,7 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
         </div>
         <div className="space-y-2 rounded-md border p-3">
           <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={snapshot.assistantAccess} disabled={!ready} onChange={event => store.setAssistantAccess(event.target.checked)} />Allow assistant access</label>
-          <p className="text-xs text-muted-foreground">While this tab is connected, tools can read and search messages and send with consent. Requested message text is shared with the gateway and your AI provider. Matrix credentials and encryption keys stay in this browser. Access resets when you reload or disconnect.</p>
+          <p className="text-xs text-muted-foreground">When enabled, tools can read and search messages through the gateway and send with consent. Requested message text is shared with the gateway and your AI provider. Matrix credentials and encryption keys stay on the gateway. Assistant access resets when the gateway restarts or you disconnect.</p>
         </div>
         <details className="text-sm"><summary className="cursor-pointer">Recover encrypted history</summary>
           <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => { event.preventDefault(); const key = recoveryKey; setRecoveryKey(''); void act(async () => { await store.restoreKeys(key); setNotice('Encryption keys restored.') }, 'Could not restore keys. Check the recovery key and that this account has a server key backup.') }}>

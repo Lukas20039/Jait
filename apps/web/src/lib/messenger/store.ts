@@ -566,3 +566,5 @@ export class MessengerStore {
     this.update({ status: 'disconnected', session: null, rooms: [], messages: [], selectedRoomId: null, error: null, notifications: false, assistantAccess: false })
   }
 }
+
+export type MessengerStoreApi = Pick<MessengerStore, keyof MessengerStore>

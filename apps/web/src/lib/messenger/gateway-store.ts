@@ -1,0 +1,283 @@
+import type { MessengerStoreApi, MessengerLogin } from './store';
+import { getApiUrl } from '@/lib/gateway-url';
+import { getAuthToken } from '@/lib/auth-token';
+import { triggerSystemNotification } from '@/lib/system-notifications';
+import { messengerReadLink } from './notification-actions';
+import type { MessengerSnapshot, MessengerMessage } from './model';
+
+/** Thin authenticated view of a gateway-owned Matrix device. Disposing a view never logs Matrix out. */
+export class GatewayMessengerStore implements MessengerStoreApi {
+  private remoteSnapshot: MessengerSnapshot = {
+    status: 'disconnected',
+    error: null,
+    session: null,
+    rooms: [],
+    messages: [],
+    selectedRoomId: null,
+    notifications: false,
+    assistantAccess: false,
+  };
+  private remoteListeners = new Set<() => void>();
+  private stopped = false;
+  private pollTimer?: ReturnType<typeof setTimeout>;
+  private roomCache = new Map<string, MessengerMessage[]>();
+  private requestGeneration = 0;
+  private visible: string | null = null;
+  private started = false;
+  private loaded = false;
+  private pausedReads = new Set<string>();
+  private activeSearch = '';
+  private searchResults: Array<{
+    roomId: string;
+    roomName: string;
+    message: MessengerMessage;
+  }> = [];
+  private async refreshSearch(query: string) {
+    const result = await this.request(
+      '/search?query=' + encodeURIComponent(query),
+    );
+    if (query === this.activeSearch) {
+      this.searchResults = result.results;
+      this.publish({});
+    }
+  }
+  constructor(_owner: string) {}
+  subscribe = (listener: () => void) => {
+    this.remoteListeners.add(listener);
+    return () => {
+      this.remoteListeners.delete(listener);
+    };
+  };
+  getSnapshot = () => this.remoteSnapshot;
+  private publish(patch: Partial<MessengerSnapshot>) {
+    if (this.stopped) return;
+    this.remoteSnapshot = { ...this.remoteSnapshot, ...patch };
+    this.remoteListeners.forEach((listener) => listener());
+  }
+  private async request(path: string, method = 'GET', body?: unknown) {
+    const token = getAuthToken();
+    if (!token) throw new Error('Sign in to Jait to use Messenger.');
+    const response = await fetch(getApiUrl() + '/api/messenger' + path, {
+      method,
+      credentials: 'include',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok)
+      throw new Error(
+        'The gateway could not complete the Matrix request. Check your connection and credentials.',
+      );
+    return response.json();
+  }
+  private async refreshRemote() {
+    const generation = ++this.requestGeneration;
+    const roomId = this.remoteSnapshot.selectedRoomId;
+    const result = await this.request(
+      roomId ? '?roomId=' + encodeURIComponent(roomId) : '',
+    );
+    if (this.stopped || generation !== this.requestGeneration) return;
+    const snapshot: MessengerSnapshot = result.snapshot;
+    if (this.loaded && this.remoteSnapshot.notifications) {
+      for (const room of snapshot.rooms) {
+        const old = this.remoteSnapshot.rooms.find((r) => r.id === room.id);
+        if (
+          !old ||
+          room.timestamp <= old.timestamp ||
+          !room.unread ||
+          (this.visible === room.id &&
+            document.visibilityState === 'visible' &&
+            document.hasFocus())
+        )
+          continue;
+        const message = snapshot.messages.at(-1);
+        void triggerSystemNotification({
+          id: 'matrix-room:' + room.id,
+          title: room.name,
+          body: 'New message',
+          link: '/messenger?roomId=' + encodeURIComponent(room.id),
+          ...(message && snapshot.selectedRoomId === room.id && snapshot.session
+            ? {
+                markReadLink: messengerReadLink(
+                  room.id,
+                  message.id,
+                  snapshot.session.userId,
+                  snapshot.session.homeserver,
+                ),
+              }
+            : {}),
+        }).catch(() => {});
+      }
+    }
+    if (this.activeSearch)
+      void this.refreshSearch(this.activeSearch).catch(() => {});
+    this.loaded = true;
+    if (roomId) this.roomCache.set(roomId, snapshot.messages);
+    this.publish({
+      ...snapshot,
+      selectedRoomId: roomId,
+      notifications: this.remoteSnapshot.notifications,
+    });
+  }
+  async resume() {
+    if (this.started) return;
+    this.started = true;
+    const poll = async () => {
+      try {
+        await this.refreshRemote();
+      } catch {
+        this.publish({
+          status: 'reconnecting',
+          error: 'Gateway connection interrupted. Retrying.',
+        });
+      }
+      if (!this.stopped) this.pollTimer = setTimeout(() => void poll(), 2000);
+    };
+    await poll();
+  }
+  async connect(input: MessengerLogin) {
+    this.publish({ status: 'connecting', error: null });
+    try {
+      await this.request('', 'POST', input);
+      await this.refreshRemote();
+    } catch (error) {
+      this.publish({
+        status: 'error',
+        error:
+          'Matrix sign-in failed. Check credentials and homeserver availability.',
+      });
+      throw error;
+    }
+  }
+  private async action(body: unknown) {
+    const result = await this.request('/command', 'POST', body);
+    await this.refreshRemote();
+    return result;
+  }
+  selectRoom(id: string | null) {
+    ++this.requestGeneration;
+    if (id) this.pausedReads.delete(id);
+    this.publish({
+      selectedRoomId: id,
+      messages: id ? (this.roomCache.get(id) ?? []) : [],
+    });
+    void this.refreshRemote().catch(() => {});
+  }
+  async send(roomId: string, text: string) {
+    if (text.trim()) await this.action({ action: 'send', roomId, text });
+  }
+  async join(roomId: string) {
+    await this.action({ action: 'join', roomId });
+  }
+  async leave(roomId: string) {
+    await this.action({ action: 'leave', roomId });
+  }
+  async openDirect(userId: string, select = true) {
+    const result = await this.action({ action: 'open', userId });
+    if (select) this.selectRoom(result.roomId);
+    return result.roomId as string;
+  }
+  async loadEarlier() {
+    if (this.remoteSnapshot.selectedRoomId)
+      await this.action({
+        action: 'earlier',
+        roomId: this.remoteSnapshot.selectedRoomId,
+      });
+  }
+  async markRead(
+    roomId = this.remoteSnapshot.selectedRoomId,
+    eventId?: string,
+    _automatic = false,
+  ) {
+    if (!roomId || (_automatic && this.pausedReads.has(roomId))) return;
+    if (eventId) this.pausedReads.add(roomId);
+    await this.action({
+      action: 'read',
+      roomId,
+      ...(eventId ? { eventId } : {}),
+    });
+  }
+  async markUnread(roomId: string) {
+    this.pausedReads.add(roomId);
+    await this.action({ action: 'unread', roomId });
+  }
+  setVisibleRoom(id: string | null) {
+    this.visible = id;
+  }
+  setAssistantAccess(enabled: boolean) {
+    void this.action({ action: 'assistantAccess', enabled }).catch(() => {});
+  }
+  async assistantCommand(): Promise<
+    import('@jait/shared').MessengerToolResponse
+  > {
+    return {
+      ok: false,
+      message: 'Assistant commands are executed by the gateway.',
+    };
+  }
+  searchLoadedMessages(query: string) {
+    if (query !== this.activeSearch) {
+      this.activeSearch = query;
+      this.searchResults = [];
+      if (query.trim()) void this.refreshSearch(query).catch(() => {});
+    }
+    return this.searchResults;
+  }
+  async enableNotifications(enabled: boolean) {
+    if (
+      enabled &&
+      'Notification' in window &&
+      !window.jaitDesktop?.notify &&
+      (await Notification.requestPermission()) !== 'granted'
+    )
+      throw new Error('Allow notifications in your device settings first.');
+    this.publish({ notifications: enabled });
+  }
+  async sendAttachment(roomId: string, file: File) {
+    if (file.size > 20 * 1024 * 1024)
+      throw new Error('Attachments must be 20 MB or smaller.');
+    const data = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]!);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    await this.action({
+      action: 'attachment',
+      roomId,
+      data,
+      name: file.name,
+      mime: file.type,
+    });
+  }
+  async attachmentBlob(
+    attachment: NonNullable<MessengerMessage['attachment']>,
+  ) {
+    const result = await this.request('/media', 'POST', {
+      url: attachment.url,
+      file: attachment.file,
+    });
+    const bytes = Uint8Array.from(atob(result.data), (c) => c.charCodeAt(0));
+    return new Blob([bytes], { type: attachment.mime });
+  }
+  async restoreKeys(recoveryKey: string) {
+    await this.request('/keys', 'POST', { recoveryKey });
+    await this.refreshRemote();
+  }
+  async disconnect() {
+    ++this.requestGeneration;
+    await this.request('', 'DELETE');
+    this.roomCache.clear();
+    await this.refreshRemote();
+  }
+  dispose() {
+    this.stopped = true;
+    ++this.requestGeneration;
+    clearTimeout(this.pollTimer);
+    this.roomCache.clear();
+    this.remoteListeners.clear();
+  }
+}

@@ -30,6 +30,11 @@
     "build": "bun run --filter '!@jait/web' build",
     "dev": "bun run --filter '*' dev",
     "test": "vitest run",
+    "test:contract": "node tests/contract/run.mjs run",
+    "test:contract:internal": "node tests/contract/run.mjs internal",
+    "test:contract:unit": "node tests/contract/run.mjs test",
+    "test:contract:fmt": "node tests/contract/run.mjs fmt",
+    "test:contract:lint": "node tests/contract/run.mjs clippy --all-targets -- -D warnings",
     "test:e2e": "npm --prefix tests/e2e test --",
     "test:e2e:ui": "npm --prefix tests/e2e test -- --config playwright.ui.config.ts",
     "test:smoke": "npm --prefix tests/e2e test -- core-basics.spec.ts manager-pages.spec.ts chat-streaming-auth.spec.ts message-attachment-regressions.spec.ts security-workbench.spec.ts",
@@ -42,7 +47,8 @@
     "release:check": "node scripts/check-release-version-source.js",
     "check:artifacts": "node scripts/check-artifact-paths.mjs",
     "healthcheck": "bun run release:check && bun run check:artifacts && bun run typecheck && bun run build && bun run test && bun run lint",
-    "clean": "rm -rf packages/*/dist apps/*/dist node_modules/.cache"
+    "clean": "rm -rf packages/*/dist apps/*/dist node_modules/.cache",
+    "test:contract:coverage": "node tests/contract/run.mjs coverage"
   },
   "devDependencies": {
     "react": "19.2.8",
@@ -52,9 +58,11 @@
     "vitest": "^3.2.7"
   },
   "trustedDependencies": [
-    "node-pty"
+    "node-pty",
+    "@matrix-org/matrix-sdk-crypto-nodejs"
   ],
   "overrides": {
-    "@types/node": "^26.4.1"
+    "@types/node": "^26.4.1",
+    "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.1"
   }
 }

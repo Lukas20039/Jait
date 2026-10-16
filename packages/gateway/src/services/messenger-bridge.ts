@@ -7,8 +7,10 @@ interface BrowserClient {
   active: () => boolean;
 }
 
-/** Ephemeral, owner-scoped RPC to an explicitly enabled browser Matrix client. */
+/** Owner-scoped assistant dispatch. The gateway handler takes precedence over legacy browser RPC. */
 export class MessengerBridge {
+  private gatewayHandler?: (owner: string, command: MessengerCommand, signal?: AbortSignal) => Promise<MessengerToolResponse>;
+  setGatewayHandler(handler: typeof this.gatewayHandler) { this.gatewayHandler = handler; }
   private clients = new Map<string, BrowserClient>();
   private pending = new Map<string, { clientId: string; finish: (result: MessengerToolResponse) => void }>();
 
@@ -41,6 +43,7 @@ export class MessengerBridge {
     if (!parsed.success) return { ok: false, message: "Invalid Messenger command." };
     if (!userId) return { ok: false, message: "An authenticated Jait user is required." };
     if (signal?.aborted) return { ok: false, message: "Cancelled." };
+    if (this.gatewayHandler) return this.gatewayHandler(userId, parsed.data, signal);
     const clients = [...this.clients].filter(([, client]) => client.userId === userId && client.active());
     if (clients.length !== 1) return {
       ok: false,

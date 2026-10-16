@@ -2,34 +2,21 @@ import { createContext, useContext, useEffect, useMemo, useSyncExternalStore, ty
 import { useAuth } from '@/hooks/useAuth'
 import { getApiUrl } from '@/lib/gateway-url'
 import { bindMessengerNotifications } from '@/lib/messenger/notification-actions'
-import { MessengerStore } from '@/lib/messenger/store'
-import { bindMessengerAssistant } from '@/lib/messenger/assistant-transport'
+import type { MessengerStoreApi } from '@/lib/messenger/store'
+import { GatewayMessengerStore } from '@/lib/messenger/gateway-store'
 
-export const MessengerContext = createContext<MessengerStore | null>(null)
+export const MessengerContext = createContext<MessengerStoreApi | null>(null)
 
 export function MessengerProvider({ children }: { children: ReactNode }) {
-  const { user, token } = useAuth()
+  const { user } = useAuth()
   const owner = user ? getApiUrl() + '|' + user.id : null
-  const store = useMemo(() => owner ? new MessengerStore(owner) : null, [owner])
+  const store = useMemo(() => owner ? new GatewayMessengerStore(owner) : null, [owner])
   useEffect(() => {
     if (!store) return
     const unbind = bindMessengerNotifications(store)
     void store.resume().catch(() => {})
     return () => { unbind(); store.dispose() }
   }, [store])
-  useEffect(() => {
-    if (!store || !token) return
-    let stop: (() => void) | undefined
-    const sync = () => {
-      const snapshot = store.getSnapshot()
-      const enabled = snapshot.assistantAccess && snapshot.status === 'ready'
-      if (enabled && !stop) stop = bindMessengerAssistant(store, token)
-      if (!enabled && stop) { stop(); stop = undefined }
-    }
-    const unsubscribe = store.subscribe(sync)
-    sync()
-    return () => { unsubscribe(); stop?.() }
-  }, [store, token])
   return <MessengerContext.Provider value={store}>{children}</MessengerContext.Provider>
 }
 

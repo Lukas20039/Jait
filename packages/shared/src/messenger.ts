@@ -33,3 +33,64 @@ export function messengerConnectionLink(homeserver: string, username?: string): 
   if (username) params.set("username", username);
   return "/messenger?" + params;
 }
+
+export interface MessengerSession {
+  homeserver: string
+  userId: string
+  deviceId: string
+  accessToken: string
+  cryptoStore: string
+}
+
+export interface MessengerReadReceipt {
+  userId: string
+  name: string
+  timestamp: number | null
+  /** False means this is a later read watermark, not the exact first-read time. */
+  exact: boolean
+}
+
+export interface MessengerMessage {
+  id: string
+  sender: string
+  body: string
+  timestamp: number
+  own: boolean
+  encrypted: boolean
+  unableToDecrypt: boolean
+  pending: boolean
+  failed: boolean
+  readBy?: MessengerReadReceipt[]
+  attachment?: {
+    url: string
+    name: string
+    mime: string
+    image: boolean
+    size?: number
+    file?: Record<string, unknown>
+  }
+}
+
+export interface MessengerRoom {
+  id: string
+  name: string
+  service: string
+  network: string
+  unread: number
+  markedUnread?: boolean
+  membership: string
+  encrypted: boolean
+  timestamp: number
+  preview: string
+}
+
+export interface MessengerSnapshot {
+  status: 'disconnected' | 'connecting' | 'syncing' | 'ready' | 'reconnecting' | 'error'
+  error: string | null
+  session: Pick<MessengerSession, 'homeserver' | 'userId' | 'deviceId'> | null
+  rooms: MessengerRoom[]
+  selectedRoomId: string | null
+  messages: MessengerMessage[]
+  notifications: boolean
+  assistantAccess: boolean
+}

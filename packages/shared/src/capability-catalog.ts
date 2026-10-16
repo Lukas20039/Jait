@@ -40,7 +40,7 @@ export const JAIT_PAGES = {
     title: "Messenger", path: "/messenger", mode: "developer",
     description: "Read and reply to personal conversations through a Matrix homeserver and installed bridges. This inbox is independent of AI chat and assistant channels.",
     examples: ["Open my messenger", "Connect a Matrix account", "Read bridged conversations"],
-    features: [{ id: "inbox", description: "Browser Matrix client with encrypted messages, attachments, invitations, URL-backed search, bridge setup conversations, and optional assistant tools while Jait is open. Assistant access explicitly shares requested messages with the configured model; credentials and keys remain in the browser. Bridge coverage depends on the installed adapter; Teams tenant support is not guaranteed.", toolRefs: ["messenger.connect", "messenger.status", "messenger.rooms", "messenger.messages", "messenger.search", "messenger.send", "messenger.open"] }],
+    features: [{ id: "inbox", description: "Gateway-owned Matrix connection shared across signed-in Jait devices, with encrypted messages, attachments, invitations, search, and bridge setup conversations. Login, sync, and encryption keys persist on the gateway. Assistant access explicitly shares requested messages with the configured model. Bridge coverage depends on the installed adapter; Teams tenant support is not guaranteed.", toolRefs: ["messenger.connect", "messenger.status", "messenger.rooms", "messenger.messages", "messenger.search", "messenger.send", "messenger.open"] }],
     toolPrefixes: ["messenger."],
   },
   agents: {

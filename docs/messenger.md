@@ -1,10 +1,10 @@
 # Personal Messenger
 
-Jait includes a browser Matrix client at **Messenger** (`/messenger`). It is separate from AI Chat and Settings → Channels. It sends and receives messages as your Matrix account; personal-account bridges translate them to other services.
+Jait includes a gateway-owned Matrix connection at **Messenger** (`/messenger`). It is separate from AI Chat and Settings → Channels. It sends and receives messages as your Matrix account; personal-account bridges translate them to other services.
 
 ## Packaging
 
-The client is built into Jait; a plugin is not required. The Matrix SDK, encryption module and UI load on demand. Synapse and bridges run as separate, optional processes. Normal Jait startup and npm installs do not pull images or start them.
+The client is built into Jait; a plugin is not required. The gateway owns the Matrix SDK and encryption store; the browser loads only the inbox UI. Synapse and bridges run as separate, optional processes. Normal Jait startup and npm installs do not pull images or start them.
 
 The included Docker helper runs a small single-user, non-federated Synapse server with SQLite. Production multi-user deployments should use an independently managed homeserver with PostgreSQL. See [Synapse deployment instructions](https://element-hq.github.io/synapse/latest/setup/installation.html).
 
@@ -22,7 +22,7 @@ The included Docker helper runs a small single-user, non-federated Synapse serve
 - Dictation through the shared composer microphone control, using Settings → speech-to-text provider. Click **Dictate**, speak, then **Done**; review the draft before sending. A delayed transcript stays with its original conversation.
 - Responsive conversation navigation on narrow screens.
 
-One Matrix account can be connected per Jait user/browser tab. It can aggregate multiple upstream bridge logins if those bridges support them. WhatsApp, Telegram, Signal and Teams require installed/configured bridges and separate account authorization. Service buttons help address setup conversations; they do not claim a service is connected.
+One Matrix account can be connected per Jait user, shared across all signed-in Jait clients. It can aggregate multiple upstream bridge logins if those bridges support them. WhatsApp, Telegram, Signal and Teams require installed/configured bridges and separate account authorization. Service buttons help address setup conversations; they do not claim a service is connected.
 
 Not included: automatic bridge installation, provisioning APIs, simultaneous Matrix accounts, calls, reactions UI, message editing, native Teams activity feeds, guaranteed Teams guest-tenant coverage, push after Jait closes, interactive device verification or cross-signing setup. New direct conversations are encrypted by default. Configure bridge encryption support before opening their setup conversations. Use another Matrix client such as Element for device verification and recovery setup. Bridges requiring verified devices may need that step.
 
@@ -30,9 +30,9 @@ Not included: automatic bridge installation, provisioning APIs, simultaneous Mat
 
 The discoverable tools are `messenger.connect`, `messenger.status`, `messenger.rooms`, `messenger.messages`, `messenger.search`, `messenger.send`, and `messenger.open`. They operate on this personal inbox, separately from assistant bot channels.
 
-`messenger.connect` prepares a sign-in link for an existing homeserver and optional username. Enter passwords or device tokens only in the private Messenger form. It does not sign in, install bridges, or complete upstream account authorization. After connecting, enable **Allow assistant access** in **Connections**. Access is off by default and resets on reload/disconnect. Exactly one tab per Jait user should have access enabled; leave it open while using tools.
+`messenger.connect` prepares a sign-in link for an existing homeserver and optional username. Enter passwords or device tokens only in the private Messenger form. It does not sign in, install bridges, or complete upstream account authorization. After connecting, enable **Allow assistant access** in **Connections**. Access is off by default and resets when the gateway restarts or the Matrix connection is disconnected. Tools continue to work when browser tabs close.
 
-Requested room/message data passes through the gateway into the assistant conversation and may reach your configured AI provider. Matrix tokens, encryption keys and attachment decryption keys stay in the browser. Read tools do not select rooms or mark messages read. Sending and opening direct conversations use the normal tool consent path. Verify an exact recipient/room ID before sending. A timeout can leave delivery uncertain; inspect the room before retrying.
+Requested room/message data passes through the gateway into the assistant conversation and may reach your configured AI provider. Matrix tokens and encryption keys stay on the gateway. Attachment bytes are decrypted there and delivered only to the authenticated owner. Read tools do not select rooms or mark messages read. Sending and opening direct conversations use the normal tool consent path. Verify an exact recipient/room ID before sending. A timeout can leave delivery uncertain; inspect the room before retrying.
 
 Search is literal and case insensitive, over loaded decrypted timelines only: up to 50 joined rooms, 2000 events per room and 50 results. It does not establish that a message is absent from all server history. `messenger.messages` with `earlier=true` loads one additional page of up to 40 events in a specified room. Undecryptable messages remain a coverage gap. Bridge bot IDs vary; use a verified full Matrix user ID with `messenger.open` to prepare its encrypted setup conversation, then complete private login/QR steps there.
 
@@ -53,7 +53,7 @@ For example: `/messenger?service=WhatsApp&q=Homelab&messageQ=firewall&roomId=%21
 3. Rooms appear during synchronization. Accept bridge invitations as appropriate.
 4. Open Connections for bridge setup conversations, notifications or backup-key recovery.
 
-The server must allow browser client access (CORS). Matrix requests go directly from the browser, without a Jait gateway proxy. Encryption and Web Locks require a secure browser context: HTTPS remotely or loopback HTTP locally.
+The gateway must be able to reach the Matrix homeserver. Browser CORS access to Matrix is unnecessary. All inbox requests use authenticated Jait routes. Loopback homeserver addresses refer to the gateway machine, including when using Jait on a phone.
 
 ## Run the included server
 
@@ -108,22 +108,23 @@ Trust a bridge before installing its appservice registration: it handles upstrea
 
 Dictation explicitly sends recorded microphone audio to Jait’s configured speech-to-text service (which may be a remote provider). It does not include conversation history or Matrix credentials. It requires Jait authentication and microphone access.
 
-Matrix credentials/messages are not stored in Jait settings, AI chat history, memory or prompts. No agent tools expose this inbox. Password and recovery-key input are cleared after submission. Access tokens live in memory and tab-scoped sessionStorage, partitioned by Jait gateway/user; refresh resumes that tab session. Per-owner/per-device encryption keys persist in browser IndexedDB.
+Matrix credentials/messages are not placed in Jait settings, AI chat history, or memory. Requested messages reach AI only after assistant access is enabled. Password and recovery-key inputs are cleared after submission. The access token is encrypted using a key derived from the gateway JWT secret; native Rust encryption state lives in an owner-specific private directory under `JAIT_STATE_DIR/messenger`. Back up that directory and the stable JWT secret together. The gateway uses the native Matrix Rust crypto store for live encryption. A separate official Rust WASM machine imports recovered history keys in memory because the native binding does not expose room-key import; its exported keys are encrypted before saving.
 
-The provider remains mounted across Jait pages, preserving synchronization and notifications. Disconnect stops synchronization, clears local session/conversations and attempts token revocation. Jait logout stops the client and clears the tab session. Browser key stores remain; clear site data to remove them. Keep an independent recovery path before signing out of your only working Matrix device.
+Closing a browser, reloading, navigating, or signing out of Jait disposes the UI view and leaves gateway syncing active. Gateway startup restores saved Matrix sessions without a browser. **Disconnect** logs the Matrix account out for all this user's Jait devices. Other Jait users have independent connections. Existing browser IndexedDB keys are retained during migration; sign in once through the new private form and recover history from a Matrix server backup where necessary. No token is silently copied from a browser device with a different crypto store.
 
-Web Locks prevent simultaneous use of a crypto store. Remote messages render as React text. Media tokens go only to the configured homeserver; redirects are rejected, with a 30-second timeout and streamed 20 MB cap. No existing gateway path/SSRF protection is changed. Connection success does not prove any external account or tenant is connected.
+Remote messages render as React text. Tokens go only to the configured homeserver; redirects are rejected. Media requests are bounded to 20 MB. Connection success does not prove that an upstream messaging account or tenant is connected. Interactive device verification still requires a compatible Matrix client.
 
 ## Validation
 
 ~~~sh
+node tests/contract/run.mjs run
 bun run typecheck
 bun run test
 bun run test:e2e -- messenger.spec.ts
 bun run check:artifacts
 ~~~
 
-For the opt-in real-Synapse browser test, use an isolated runtime:
+The Rust HTTP contracts exercise two independent Jait clients, owner isolation, encrypted send/decrypt, syncing without a browser, restart persistence, and recovery of history encrypted by an independent device. The Matrix protocol peer is local; cryptography runs through the real Rust SDK. The existing opt-in browser-only Synapse fixture remains a legacy client check, not a gateway migration proof. To run that legacy fixture in isolation:
 
 ~~~sh
 node scripts/matrix-stack.mjs init --server-name messenger.test --port 18008 --data-dir .jait/artifacts/matrix-validation
@@ -134,4 +135,4 @@ node scripts/matrix-stack.mjs stop --data-dir .jait/artifacts/matrix-validation
 
 This creates synthetic local accounts, verifies encrypted delivery in both directions and ciphertext on the server, transfers an encrypted attachment, accepts an invitation, checks filters/mobile layout, and resumes a session after refresh. Real messenger accounts are not connected. Keep local test credentials and raw browser traces private. With an HTTP proxy, include localhost and 127.0.0.1 in NO_PROXY for Playwright.
 
-The inbox reuses Jait’s `Conversation`, `Message`, `PromptInput`, `ChatComposerSurface`, and attachment components. Their messenger mode keeps the shared scrolling, keyboard, mobile, and copy behavior while omitting AI controls and project reference chips. File selection, paste, and drop send attachments directly through the Matrix client. Personal conversation text is rendered literally.
+The inbox reuses Jait’s `Conversation`, `Message`, `PromptInput`, `ChatComposerSurface`, and attachment components. Their messenger mode keeps the shared scrolling, keyboard, mobile, and copy behavior while omitting AI controls and project reference chips. File selection, paste, and drop upload through the authenticated gateway, which encrypts and sends them to Matrix. Personal conversation text is rendered literally.
