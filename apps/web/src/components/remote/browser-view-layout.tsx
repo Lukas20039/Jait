@@ -9,7 +9,7 @@ export function BrowserViewLayout({ addressBar, children }: {
   const [toolsOpen, setToolsOpen] = useState(false)
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-col">
+    <div data-browser-layout className="flex h-full min-h-0 min-w-0 flex-col bg-background">
       {addressBar && <BrowserAddressBar {...addressBar} toolsOpen={toolsOpen} onToggleTools={() => setToolsOpen(!toolsOpen)} />}
       <div className="flex min-h-0 min-w-0 flex-1">
         <div className="relative min-h-0 min-w-0 flex-1">{children}</div>

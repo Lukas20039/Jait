@@ -9,7 +9,10 @@ export default defineConfig({
   optimizeDeps: {
     ...base.optimizeDeps,
     entries: [
+      'src/e2e-fixtures/browser-controls.tsx',
       'src/e2e-fixtures/agent-controls.tsx',
+      'src/e2e-fixtures/agents-graph-layout.tsx',
+      'src/e2e-fixtures/sidebar-overflow.tsx',
       'src/e2e-fixtures/message-attachment-regressions.tsx',
       'src/e2e-fixtures/queue-edit-workspace.tsx',
       'src/e2e-fixtures/queue-selection.tsx',

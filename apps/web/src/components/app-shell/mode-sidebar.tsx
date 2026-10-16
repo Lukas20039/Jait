@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { OverflowSidebarNavigation } from './overflow-sidebar-navigation'
 import { UsageModal } from '@/components/app-shell/usage-modal'
 import { CatalogueModal } from '@/components/app-shell/catalogue-modal'
 import { JaitIcon } from '@/components/icons/model-icons'
@@ -67,8 +68,8 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
         <span className="relative shrink-0">
           <Icon className="h-4 w-4" />
           {!!item.badge && (
-            <span className="absolute -right-2 -top-2 z-10 min-w-[14px] rounded-full bg-primary px-1 text-2xs font-bold leading-[14px] text-primary-foreground">
-              {item.badge > 99 ? '99+' : item.badge}
+            <span className="absolute -right-2 -top-2 z-10 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-2xs font-bold leading-none tabular-nums text-primary-foreground">
+              <span className="relative top-px">{item.badge > 99 ? '99+' : item.badge}</span>
             </span>
           )}
         </span>
@@ -103,8 +104,8 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
         <JaitIcon size={22} className="shrink-0" />
       </div>
       {header && <div className={collapsed ? 'flex shrink-0 flex-col items-center gap-1 pb-3' : 'shrink-0 px-1 pb-3'}>{header(collapsed)}</div>}
-      {navigationItems.length > 0 && <nav aria-label="Main navigation" className="flex min-h-0 flex-col gap-1 overflow-y-auto border-b pb-3">{navigationItems.map(renderItem)}</nav>}
-      <nav aria-label="Workspace tools" className="flex min-h-0 flex-col gap-1 overflow-y-auto py-3">{items.map(renderItem)}</nav>
+      {navigationItems.length > 0 && <OverflowSidebarNavigation label="Main navigation" moreLabel="More navigation options" items={navigationItems} collapsed={collapsed} renderItem={renderItem} separated />}
+      {items.length > 0 && <OverflowSidebarNavigation label="Workspace tools" moreLabel="More workspace tools" items={items} collapsed={collapsed} renderItem={renderItem} />}
       <div className="flex-1" />
       <div className="flex shrink-0 flex-col gap-1 border-t pt-2">
         {account?.updateControl?.(collapsed)}

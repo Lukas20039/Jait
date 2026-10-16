@@ -9,7 +9,10 @@ const frontend = process.env.UI_FRONTEND_URL || 'http://127.0.0.1:3150'
 export default defineConfig({
   ...base,
   testMatch: [
+    'browser-controls.spec.ts',
     'agent-controls.spec.ts',
+    'agents-graph-layout.spec.ts',
+    'sidebar-overflow.spec.ts',
     'message-attachment-regressions.spec.ts',
     'queue-edit-workspace.spec.ts',
     'queue-selection.spec.ts',
