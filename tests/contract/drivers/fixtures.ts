@@ -9,7 +9,8 @@ import { isValidCronExpression } from '../../../packages/gateway/src/scheduler/c
 // Compact fixture descriptions let Rust request oversize inputs within transport limits.
 function materialize(value: any): any {
   if (!value || typeof value !== 'object') return value;
-  if ('$repeat' in value) return value.$repeat[0].repeat(value.$repeat[1]);
+  if ('$repeat' in value) return String(value.$repeat[0]).repeat(value.$repeat[1]);
+  if ('$concat' in value) return value.$concat.map((part: any) => materialize(part)).join('');
   if (Array.isArray(value)) return value.map(materialize);
   return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, materialize(item)]));
 }
@@ -35,6 +36,39 @@ export async function dispatch(call: any): Promise<unknown> {
     case 'fixtures.strip': return stripSubAgentPayloads(call.raw ? input : JSON.stringify(input)) ?? null;
     case 'fixtures.persisted': return serializePersistedToolCalls(call.raw ? input : JSON.stringify(input), call.options);
     case 'fixtures.cron': return isValidCronExpression(input);
+    case 'fixtures.matches-minute': {
+      const { matchesCronMinute } = await import('../../../packages/gateway/src/scheduler/service.ts');
+      return matchesCronMinute(input.cron, new Date(input.now));
+    }
+    case 'fixtures.scheduler-guard': {
+      // Exercise the create/update cron validation guards against an in-memory database.
+      const { openDatabase, migrateDatabase } = await import('../../../packages/gateway/src/db/index.ts');
+      const { SchedulerService } = await import('../../../packages/gateway/src/scheduler/service.ts');
+      const { db, sqlite } = await openDatabase(':memory:');
+      migrateDatabase(sqlite);
+      const scheduler = new SchedulerService({ db, executeTool: async () => ({ ok: true } as any) });
+      const result: Record<string, unknown> = {
+        createThrew: false, createMessage: null, listLength: 0, updateThrew: false, updateMessage: null, job: null,
+      };
+      try {
+        scheduler.create({ name: 'Invalid health review', cron: 'not-a-cron', toolName: 'gateway.status' });
+      } catch (error) {
+        result.createThrew = true;
+        result.createMessage = (error as Error).message;
+      }
+      result.listLength = scheduler.list().length;
+      const job = scheduler.create({ name: 'Weekly health review', cron: '0 9 * * 1', toolName: 'gateway.status', enabled: false });
+      try {
+        scheduler.update(job.id, { name: 'Changed', cron: 'not-a-cron' });
+      } catch (error) {
+        result.updateThrew = true;
+        result.updateMessage = (error as Error).message;
+      }
+      const after = scheduler.get(job.id)!;
+      result.job = { name: after.name, cron: after.cron, enabled: after.enabled };
+      sqlite.close();
+      return result;
+    }
     default: throw new Error('unknown fixtures operation');
   }
 }
