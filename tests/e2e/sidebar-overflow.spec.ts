@@ -72,3 +72,26 @@ for (const collapsed of [false, true]) {
     await expect(sidebar.getByRole('button', { name: 'Account menu' })).toBeInViewport()
   })
 }
+
+test('collapsed update button aligns with the other sidebar controls', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('jait.navigationSidebarCollapsed', 'true'))
+  await page.goto('/src/e2e-fixtures/index.html')
+  await page.evaluate(() => import('/src/e2e-fixtures/sidebar-overflow.tsx'))
+  const sidebar = page.getByRole('complementary', { name: 'Workspace sidebar' })
+  const update = sidebar.getByRole('button', { name: 'Update to v99.0.0' })
+  const trajectory = sidebar.getByRole('button', { name: 'Trajectory', exact: true })
+  const account = sidebar.getByRole('button', { name: 'Account menu' })
+  await expect(update).toBeVisible()
+  const centerX = async (locator: typeof update) => {
+    const bounds = (await locator.boundingBox())!
+    return bounds.x + bounds.width / 2
+  }
+  for (const width of [1280, 640]) {
+    await page.setViewportSize({ width, height: 900 })
+    await expect.poll(async () => Math.abs(await centerX(update) - await centerX(trajectory))).toBeLessThan(0.5)
+    await expect.poll(async () => Math.abs(await centerX(update) - await centerX(account))).toBeLessThan(0.5)
+  }
+  await sidebar.screenshot({ path: path.resolve(__dirname, '../../.jait/shots/sidebar-update-alignment.png') })
+  await update.click()
+  await expect(page.getByLabel('Last action')).toHaveText('Update')
+})

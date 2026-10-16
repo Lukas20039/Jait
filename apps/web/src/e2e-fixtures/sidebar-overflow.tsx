@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Bug, FolderOpen, Folders, GitBranch, Globe, Terminal, Boxes } from 'lucide-react'
 import { AppNavigationSidebar } from '@/components/app-shell/app-navigation-sidebar'
+import { UpdateButton } from '@/components/app-shell/update-button'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import type { AppView } from '@/lib/app-view'
 import '@/index.css'
@@ -15,7 +16,10 @@ function Harness() {
     <AppNavigationSidebar
       account={{ username: 'Jakob', initial: 'J', loading: false, onLogin: () => {}, onLogout: () => {},
         themeMode: 'system', onThemeModeChange: () => {},
-        updateControl: () => <button className="h-9 shrink-0">Update</button>,
+        updateControl: collapsed => <UpdateButton appPlatform="web" collapsed={collapsed}
+          updateInfo={{ currentVersion: '1.0.0', latestVersion: '99.0.0', hasUpdate: true }}
+          releases={[]} updateApplying={false} updateAwaitingRestart={false}
+          onApplyUpdate={async () => { setLastAction('Update') }} />,
         agentControl: () => <button className="h-9 shrink-0">Agents</button> }}
       currentView={currentView} viewMode={viewMode}
       onNavigate={view => { setCurrentView(view); setLastAction(view) }}
