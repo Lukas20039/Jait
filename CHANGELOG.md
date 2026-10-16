@@ -4,6 +4,19 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.944](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.944) — 2026-10-16
+
+- test(contracts): add the storage lane vectors and scheduler fixture operations — 83872826
+- test(contracts): expand the storage lane driver and provider vectors — ab7d9938
+- test(contracts): pre-register seven placeholder contract lanes — c922dc86
+- docs(changelog): record the 0.1.943 contract lane verifier — 5e5ad239
+
+Add 177 declarative storage-lane vectors and replay them through the TypeScript reference adapter, extend the fixtures driver with cron-minute matching plus scheduler create/update guard operations, expand the provider vectors, and pre-register the remaining contract lanes as explicit placeholders so the Rust binary reports them instead of silently skipping them.
+
+Validation: 5,174 unit/integration tests passed (78 skipped); 93 managed HTTP/SSE contract scenarios and 281 internal reference scenarios passed, and 177 storage vectors matched the TypeScript reference adapter. Typechecks, Rust unit tests, formatting, clippy, lint, release version and artifact checks passed.
+
+Package versions: gateway 0.1.944, web 0.1.453, shared 0.1.103.
+
 ## [v0.1.943](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.943) — 2026-10-16
 
 - fix(threads): allow cross-provider delegation — fe34ef1f
