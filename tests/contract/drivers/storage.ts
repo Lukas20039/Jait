@@ -3,37 +3,106 @@ import { openDatabase, migrateDatabase } from '../../../packages/gateway/src/db/
 import type { SqliteDatabase } from '../../../packages/gateway/src/db/sqlite-shim.ts';
 import { SessionSqlService } from '../../../packages/gateway/src/services/session-sql.ts';
 import { createSessionSqlTool } from '../../../packages/gateway/src/tools/session-sql-tools.ts';
+import { ToolRegistry } from '../../../packages/gateway/src/tools/registry.ts';
+import { ToolName } from '../../../packages/gateway/src/tools/tool-names.ts';
 export async function dispatch(call: any): Promise<unknown> {
   if (call.op !== 'storage.run' || !Array.isArray(call.actions) || call.actions.length > 64) throw new Error('unsupported storage operation');
-  const { sqlite } = await openDatabase(':memory:');
+  // `migrateDatabase` prints progress with console.log. stdout must remain a
+  // single valid JSON document, so redirect those diagnostics to stderr for the
+  // duration of the call and restore afterwards.
+  const stdoutLog = console.log;
+  console.log = (...args: unknown[]) => { console.error(...args); };
   try {
-    migrateDatabase(sqlite);
-    if (call.fixture === 'adversarial') {
-      seedAdversarialFixtures(sqlite);
-      sqlite.exec("CREATE TABLE updated_messages (id INTEGER PRIMARY KEY, note TEXT)");
-      sqlite.prepare("INSERT INTO updated_messages VALUES (1, 'probe')").run();
-    } else seedFixtures(sqlite);
-    const service = new SessionSqlService(sqlite);
-    const tool = createSessionSqlTool(service);
-    const results = [];
-    for (const action of call.actions) {
-      switch (action.kind) {
-        case 'query': {
-          const input = {...action.input};
-          if (action.maxRowsSpecial === 'NaN') input.maxRows = Number.NaN;
-          if (action.maxRowsSpecial === 'Infinity') input.maxRows = Number.POSITIVE_INFINITY;
-          results.push(service.query(input)); break;
+    const { sqlite } = await openDatabase(':memory:');
+    try {
+      migrateDatabase(sqlite);
+      if (call.fixture === 'adversarial') {
+        seedAdversarialFixtures(sqlite);
+        sqlite.exec("CREATE TABLE updated_messages (id INTEGER PRIMARY KEY, note TEXT)");
+        sqlite.prepare("INSERT INTO updated_messages VALUES (1, 'probe')").run();
+      } else seedFixtures(sqlite);
+      const service = new SessionSqlService(sqlite);
+      const tool = createSessionSqlTool(service);
+      const results = [];
+      for (const action of call.actions) {
+        // A throw from one action must not abort the whole call: record it so
+        // its shape can be asserted (successful result shapes are unchanged).
+        try {
+          switch (action.kind) {
+            case 'query': {
+              const input = {...action.input};
+              if (action.maxRowsSpecial === 'NaN') input.maxRows = Number.NaN;
+              if (action.maxRowsSpecial === 'Infinity') input.maxRows = Number.POSITIVE_INFINITY;
+              results.push(service.query(input)); break;
+            }
+            case 'schema': results.push(service.schema()); break;
+            case 'tool': results.push(await tool.execute(action.input, undefined as never)); break;
+            case 'tool-name': results.push(tool.name); break;
+            case 'count-messages': results.push(sqlite.prepare('SELECT COUNT(*) AS n FROM messages').get()); break;
+            // Derived value: run one probe query and report, per requested name,
+            // whether it appears in the queryable-table list the service
+            // attaches to a first query. Mirrors `names).toContain(x)` /
+            // `names).not.toContain(x)` using the existing boolean `eq` kind.
+            case 'tables-includes': {
+              const probe = service.query({sql: 'SELECT 1 AS one'});
+              const names = probe.ok && 'tables' in probe.data ? (probe.data.tables ?? []) : [];
+              const flags: Record<string, boolean> = {};
+              for (const name of action.names) flags[name] = names.includes(name);
+              results.push(flags); break;
+            }
+            // Derived value: run one probe query and report whether it attached
+            // the table list. Mirrors `"tables" in data`.
+            case 'tables-attached': {
+              const probe = service.query({sql: 'SELECT 1 AS one'});
+              results.push(probe.ok && 'tables' in probe.data); break;
+            }
+            // Derived value: locate one table in the schema summary and report
+            // its column names / types. Mirrors
+            // `byName.get(t).columns.map(c => c.name)` / `...type` lookups.
+            case 'schema-table': {
+              const schema = service.schema();
+              const tables = schema.ok && 'tables' in schema.data ? (schema.data.tables ?? []) : [];
+              const hit = tables.find((t) => t.table === action.table);
+              results.push(hit
+                ? { found: true, names: hit.columns.map((c) => c.name), types: Object.fromEntries(hit.columns.map((c) => [c.name, c.type])) }
+                : { found: false, names: [], types: {} });
+              break;
+            }
+            // Derived value: run the tool wrapper and report array-shape facts
+            // about `data.tables`. Mirrors `Array.isArray(data.tables)` and
+            // `data.tables.length`.
+            case 'tool-shape': {
+              const result = await tool.execute(action.input, undefined as never);
+              const data = result && typeof result === 'object' && 'data' in result
+                ? (result as { data?: { tables?: unknown } }).data : undefined;
+              const tables = data?.tables;
+              results.push({
+                tablesIsArray: Array.isArray(tables),
+                tablesLength: Array.isArray(tables) ? tables.length : -1,
+              });
+              break;
+            }
+            // Route through the real ToolRegistry so schema-driven coercion and
+            // input validation match the production code path.
+            case 'registry': {
+              const registry = new ToolRegistry();
+              registry.register(tool);
+              results.push(await registry.execute(ToolName.SessionSql, action.input, {
+                sessionId: 'storage-contract', actionId: 'storage-action',
+                projectRoot: '/home/jakob/jait', requestedBy: 'tester',
+              }));
+              break;
+            }
+            case 'broken-schema': results.push(new SessionSqlService({exec() {}, close() {}, transaction() {}, prepare() {throw new Error('boom');}} as never).schema()); break;
+            default: throw new Error('unsupported storage action');
+          }
+        } catch (err) {
+          results.push({thrown: err instanceof Error ? err.message : String(err)});
         }
-        case 'schema': results.push(service.schema()); break;
-        case 'tool': results.push(await tool.execute(action.input, undefined as never)); break;
-        case 'tool-name': results.push(tool.name); break;
-        case 'count-messages': results.push(sqlite.prepare('SELECT COUNT(*) AS n FROM messages').get()); break;
-        case 'broken-schema': results.push(new SessionSqlService({exec() {}, close() {}, transaction() {}, prepare() {throw new Error('boom');}} as never).schema()); break;
-        default: throw new Error('unsupported storage action');
       }
-    }
-    return results;
-  } finally { sqlite.close(); }
+      return results;
+    } finally { sqlite.close(); }
+  } finally { console.log = stdoutLog; }
 }
 function seedFixtures(db: SqliteDatabase): void {
   const insert = (sql: string, ...params: unknown[]) => db.prepare(sql).run(...params);
