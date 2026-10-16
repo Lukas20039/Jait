@@ -9,9 +9,10 @@ newest-first; each release links back to the commits that shipped in it.
 - fix(threads): allow cross-provider delegation — fe34ef1f
 - test(threads): cover cross-provider delegation and model isolation — d16d07f4
 - test(contracts): expand security parity coverage inventory — 12cb001d
+- test(contracts): add lane verifier for Rust-owned declarative vectors — ebc1ab85
 - feat(messenger): share gateway Matrix state and add Rust contracts — 009ae4cc
 
-Move Matrix login, syncing, encryption state and encrypted history recovery into the gateway so clients share a persistent device. Add Rust HTTP and internal acceptance contracts and a migration coverage inventory. Let chat threads delegate work to agents that run on a different provider, and cover the resulting thread's model isolation with tests.
+Move Matrix login, syncing, encryption state and encrypted history recovery into the gateway so clients share a persistent device. Add Rust HTTP and internal acceptance contracts and a migration coverage inventory. Add declarative contract vectors and a lane verifier that replays them through the TypeScript reference adapter. Let chat threads delegate work to agents that run on a different provider, and cover the resulting thread's model isolation with tests.
 
 Validation: 5,174 unit/integration tests passed (78 skipped); 93 HTTP and 50 internal contract scenarios passed. Typechecks, Rust unit tests, formatting, lint and artifact checks passed.
 
