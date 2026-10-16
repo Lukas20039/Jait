@@ -379,7 +379,6 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
 
   const resolveStoredThreadProvider = (
     threadProviderId: unknown,
-    context: ToolContext,
   ): ProviderResolution => {
     const storedProvider = normalizeThreadProviderId(threadProviderId);
     if (!storedProvider) {
@@ -387,12 +386,12 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
         error: `Thread provider '${String(threadProviderId)}' is not supported for agent threads.`,
       };
     }
-    const contextProvider = normalizeThreadProviderId(context.providerId);
-    if (contextProvider && contextProvider !== storedProvider) {
-      return {
-        error: `Thread provider '${storedProvider}' does not match the calling agent provider '${contextProvider}'.`,
-      };
-    }
+    // A thread always runs on the provider it was created with. That provider
+    // is allowed to differ from the provider of the agent that starts the
+    // turn: cross-provider delegation (e.g. a Codex/Claude chat driving Jait
+    // workers, or a Jait coordinator driving CLI swarm workers) is supported.
+    // The only hard requirement is that the stored provider is registered and
+    // available on this gateway, which `startThread` verifies next.
     return deps.providerRegistry.get(storedProvider)
       ? { providerId: storedProvider }
       : { error: `Provider '${storedProvider}' is not registered on this gateway.` };
@@ -502,11 +501,16 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
       return { ok: false, message: "start requires non-empty `prompt`." };
     }
 
-    const resolvedProvider = resolveStoredThreadProvider(thread.providerId, context);
+    const resolvedProvider = resolveStoredThreadProvider(thread.providerId);
     if (!resolvedProvider.providerId) {
       return { ok: false, message: resolvedProvider.error ?? "Unable to resolve a provider for this thread." };
     }
     const effectiveProviderId = resolvedProvider.providerId;
+    // Only inherit the caller's model when the caller runs on the same
+    // provider as the thread; otherwise a cross-provider start would leak an
+    // incompatible model id into the thread's provider.
+    const callerProviderId = normalizeThreadProviderId(context.providerId);
+    const inheritedModel = callerProviderId === effectiveProviderId ? context.model : undefined;
     const effectiveThread = thread;
     const autoFinishAfterFirstTurn =
       effectiveThread.kind === "delegation" ||
@@ -542,7 +546,7 @@ export function createThreadControlTool(deps: ThreadControlToolDeps): ToolDefini
         threadId: effectiveThread.id,
         workingDirectory: effectiveThread.workingDirectory ?? process.cwd(),
         mode: (effectiveThread.runtimeMode as "full-access" | "supervised") ?? "full-access",
-        model: effectiveThread.model ?? context.model ?? undefined,
+        model: effectiveThread.model ?? inheritedModel ?? undefined,
         reasoningEffort: effectiveThread.reasoningEffort ?? undefined,
         mcpServers,
       });
