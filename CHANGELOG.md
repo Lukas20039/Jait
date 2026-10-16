@@ -4,6 +4,18 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.942](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.942) — 2026-10-16
+
+- feat: expand email and messenger workflows and chat navigation — d75b530e
+- perf(build): add bounded local production build — ba325ca7
+- fix(web): center update button in collapsed sidebar — bcf52f8d
+
+Expand email account setup, signatures, IMAP/SMTP support and sandboxed HTML previews; add messenger assistant controls and tools, searchable page links, and a personal/project selector for new chats. Prevent redundant screenshot display instructions. Add a bounded Linux local build command to avoid terminal memory throttling: the fresh workspace build completed in 46.69 seconds, with the Vite bundle taking 29.70 seconds.
+
+Validation: full unit/integration suite passes (5,171 passed, 78 skipped). Workspace typechecks, production build, lint, release guard and artifact checks pass. Targeted browser checks pass for email previews (2), messenger tools (3), and agent controls (6). The corrected email privacy check distinguishes CSP-blocked attempts from actual requests; deliberately allowing external styles makes it fail, and restoring CSP makes it pass.
+
+Package versions: gateway 0.1.942, web 0.1.452, shared 0.1.102. No database migration. `bun run build:local` requires Linux with a user systemd manager; its temporary memory budget and timeout do not change ordinary terminal defaults.
+
 ## [v0.1.941](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.941) — 2026-10-16
 
 - fix(web): improve browser controls, sidebar overflow and agent graph layout — 6b1fd823
