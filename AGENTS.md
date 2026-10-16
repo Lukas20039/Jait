@@ -30,6 +30,7 @@ Run from repository root unless noted.
 - `bun install --frozen-lockfile`: install workspace dependencies.
 - `bun run dev`: start workspace dev processes.
 - `bun run build`: build all workspaces.
+- `bun run build:local`: Linux/systemd production build with a temporary 6 GiB soft / 8 GiB hard memory budget, 6 GiB Node heap, and 10-minute timeout. Prefer this inside Jait terminals; the scope disappears on exit and terminal defaults remain unchanged.
 - `bun run typecheck`: strict TypeScript checks.
 - `bun run test`: run Vitest unit/integration tests.
 - `bun run lint`: run `oxlint` across repo.

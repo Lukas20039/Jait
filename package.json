@@ -26,6 +26,7 @@
     "skills/*"
   ],
   "scripts": {
+    "build:local": "bash scripts/build-local.sh",
     "build": "bun run --filter '!@jait/web' build",
     "dev": "bun run --filter '*' dev",
     "test": "vitest run",
