@@ -42,32 +42,41 @@ export async function dispatch(call: any): Promise<unknown> {
     }
     case 'fixtures.scheduler-guard': {
       // Exercise the create/update cron validation guards against an in-memory database.
-      const { openDatabase, migrateDatabase } = await import('../../../packages/gateway/src/db/index.ts');
-      const { SchedulerService } = await import('../../../packages/gateway/src/scheduler/service.ts');
-      const { db, sqlite } = await openDatabase(':memory:');
-      migrateDatabase(sqlite);
-      const scheduler = new SchedulerService({ db, executeTool: async () => ({ ok: true } as any) });
-      const result: Record<string, unknown> = {
-        createThrew: false, createMessage: null, listLength: 0, updateThrew: false, updateMessage: null, job: null,
-      };
+      // `migrateDatabase` prints progress with console.log. stdout must remain a
+      // single valid JSON document, so redirect those diagnostics to stderr for the
+      // duration of the call and restore afterwards.
+      const stdoutLog = console.log;
+      console.log = (...args: unknown[]) => { console.error(...args); };
       try {
-        scheduler.create({ name: 'Invalid health review', cron: 'not-a-cron', toolName: 'gateway.status' });
-      } catch (error) {
-        result.createThrew = true;
-        result.createMessage = (error as Error).message;
+        const { openDatabase, migrateDatabase } = await import('../../../packages/gateway/src/db/index.ts');
+        const { SchedulerService } = await import('../../../packages/gateway/src/scheduler/service.ts');
+        const { db, sqlite } = await openDatabase(':memory:');
+        migrateDatabase(sqlite);
+        const scheduler = new SchedulerService({ db, executeTool: async () => ({ ok: true } as any) });
+        const result: Record<string, unknown> = {
+          createThrew: false, createMessage: null, listLength: 0, updateThrew: false, updateMessage: null, job: null,
+        };
+        try {
+          scheduler.create({ name: 'Invalid health review', cron: 'not-a-cron', toolName: 'gateway.status' });
+        } catch (error) {
+          result.createThrew = true;
+          result.createMessage = (error as Error).message;
+        }
+        result.listLength = scheduler.list().length;
+        const job = scheduler.create({ name: 'Weekly health review', cron: '0 9 * * 1', toolName: 'gateway.status', enabled: false });
+        try {
+          scheduler.update(job.id, { name: 'Changed', cron: 'not-a-cron' });
+        } catch (error) {
+          result.updateThrew = true;
+          result.updateMessage = (error as Error).message;
+        }
+        const after = scheduler.get(job.id)!;
+        result.job = { name: after.name, cron: after.cron, enabled: after.enabled };
+        sqlite.close();
+        return result;
+      } finally {
+        console.log = stdoutLog;
       }
-      result.listLength = scheduler.list().length;
-      const job = scheduler.create({ name: 'Weekly health review', cron: '0 9 * * 1', toolName: 'gateway.status', enabled: false });
-      try {
-        scheduler.update(job.id, { name: 'Changed', cron: 'not-a-cron' });
-      } catch (error) {
-        result.updateThrew = true;
-        result.updateMessage = (error as Error).message;
-      }
-      const after = scheduler.get(job.id)!;
-      result.job = { name: after.name, cron: after.cron, enabled: after.enabled };
-      sqlite.close();
-      return result;
     }
     default: throw new Error('unknown fixtures operation');
   }

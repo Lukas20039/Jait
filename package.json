@@ -48,9 +48,13 @@
     "check:artifacts": "node scripts/check-artifact-paths.mjs",
     "healthcheck": "bun run release:check && bun run check:artifacts && bun run typecheck && bun run build && bun run test && bun run lint",
     "clean": "rm -rf packages/*/dist apps/*/dist node_modules/.cache",
-    "test:contract:coverage": "node tests/contract/run.mjs coverage"
+    "test:contract:coverage": "node tests/contract/run.mjs coverage",
+    "test:contract:translated": "node tests/contract/run.mjs translated-report",
+    "test:contract:matcher-differential": "node tests/contract/tooling/matcher-differential.mjs"
   },
   "devDependencies": {
+    "@vitest/coverage-istanbul": "3.2.7",
+    "@vitest/coverage-v8": "3.2.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tsx": "^4.23.15",

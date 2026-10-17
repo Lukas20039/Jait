@@ -28,7 +28,12 @@ fn collect(root: &Path, directory: &Path, files: &mut BTreeMap<String, String>) 
                 .and_then(|ext| ext.to_str())
                 .is_some_and(|ext| {
                     ["rs", "ts", "tsx", "js", "mjs", "cjs", "toml", "lock"].contains(&ext)
-                        || (ext == "json" && path.starts_with(root.join("tests/contract/vectors")))
+                        || (ext == "json"
+                            && (path.starts_with(root.join("tests/contract/vectors"))
+                                || path.starts_with(root.join("tests/contract/corpus"))
+                                || path == root.join("tests/contract/interfaces.json")))
+                        || (ext == "txt"
+                            && path.starts_with(root.join("tests/contract/tooling/sources")))
                 })
         {
             let bytes = fs::read(&path)?;
@@ -48,6 +53,15 @@ fn collect(root: &Path, directory: &Path, files: &mut BTreeMap<String, String>) 
 
 pub fn snapshot(root: &Path) -> Result<Value> {
     let mut files = BTreeMap::new();
+    // Root manifests pin the complete workspace dependency resolution. Changes
+    // must invalidate reference evidence just like Rust's local Cargo.lock.
+    for relative in ["package.json", "bun.lock"] {
+        let bytes = fs::read(root.join(relative))?;
+        let hash = bytes.iter().fold(0xcbf29ce484222325_u64, |hash, byte| {
+            (hash ^ u64::from(*byte)).wrapping_mul(0x100000001b3)
+        });
+        files.insert(relative.to_owned(), format!("{hash:016x}"));
+    }
     collect(root, &root.join("packages/gateway"), &mut files)?;
     collect(root, &root.join("packages/shared/src"), &mut files)?;
     collect(root, &root.join("tests/contract"), &mut files)?;

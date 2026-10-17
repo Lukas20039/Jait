@@ -32,7 +32,7 @@ fn run() -> Result<bool> {
     let source_fingerprints = evidence::snapshot(&root)?;
     let started = Instant::now();
     let mut cases: Vec<Value> = Vec::new();
-    let vector_cases = fixture_internal_contracts::cases()?;
+    let vector_cases = fixture_internal_contracts::cases(&root)?;
     let static_cases = internal_contracts::CASES
         .iter()
         .chain(security_internal_contracts::CASES.iter());
@@ -40,7 +40,7 @@ fn run() -> Result<bool> {
     for id in static_cases
         .clone()
         .map(|(id, _)| *id)
-        .chain(vector_cases.iter().map(|case| case["id"].as_str().unwrap()))
+        .chain(vector_cases.iter().map(|case| case.id()))
     {
         anyhow::ensure!(ids.insert(id), "duplicate internal scenario id: {id}");
     }
@@ -69,7 +69,7 @@ fn run() -> Result<bool> {
             Ok(()) => ("passed", Value::Null),
             Err(error) => ("failed", json!(format!("{error:#}"))),
         };
-        let id = &case["id"];
+        let id = case.id();
         println!("{status}: {id}");
         if error != Value::Null {
             eprintln!("{error}");

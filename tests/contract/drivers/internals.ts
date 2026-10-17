@@ -43,21 +43,15 @@ for (const call of input.calls) {
     case 'command.classify': results.push(classifyIrreversibleCommand(call.command)); break;
     default: {
       const prefix = typeof call.op === 'string' ? call.op.split('.')[0] : '';
-      const adapters = {
-        security: () => import('./security.ts'),
-        fixtures: () => import('./fixtures.ts'),
-        provider: () => import('./provider.ts'),
-        storage: () => import('./storage.ts'),
-        storage2: () => import('./storage2.ts'),
-        tools: () => import('./tools.ts'),
-        toolsb: () => import('./toolsb.ts'),
-        services: () => import('./services.ts'),
-        db: () => import('./db.ts'),
-        providers: () => import('./providers.ts'),
-        routes: () => import('./routes.ts'),
-      };
-      if (!(prefix in adapters)) throw new Error('unknown driver operation');
-      const adapter = await adapters[prefix as keyof typeof adapters]();
+      // Lane-owned drivers are resolved by prefix so adding a lane never edits this bridge.
+      if (!/^[a-z][a-z0-9]{0,23}$/.test(prefix)) throw new Error('unknown driver operation');
+      let adapter: { dispatch?: (call: unknown) => unknown };
+      try {
+        adapter = await import(`./${prefix}.ts`);
+      } catch {
+        throw new Error('unknown driver operation');
+      }
+      if (typeof adapter.dispatch !== 'function') throw new Error('unknown driver operation');
       results.push(await adapter.dispatch(call));
     }
   }

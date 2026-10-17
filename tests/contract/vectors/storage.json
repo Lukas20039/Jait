@@ -2438,7 +2438,7 @@
     ]
   },
   {
-    "id": "internal.storage.adv.blocked-table-blocked-table-as-bare-cte-name",
+    "id": "internal.storage.adv.blocked-table-as-bare-cte-name",
     "calls": [
       {
         "op": "storage.run",

@@ -79,6 +79,38 @@ fn safe_path(root: &Path, relative: &str, prefix: &str) -> Result<PathBuf> {
     Ok(canonical)
 }
 
+fn validate_inventory_file(root: &Path, file: &Value, current: &BTreeSet<String>) -> Result<()> {
+    let original = file["path"].as_str().context("missing file path")?;
+    let path = if let Some(archive) = file["retained_source"].as_str() {
+        ensure!(
+            original.starts_with("packages/gateway/")
+                && !Path::new(original).is_absolute()
+                && Path::new(original)
+                    .components()
+                    .all(|c| matches!(c, Component::Normal(_))),
+            "invalid retained original path"
+        );
+        ensure!(
+            !current.contains(original) && !root.join(original).exists(),
+            "retained contract has an active source; reconcile explicitly: {original}"
+        );
+        ensure!(
+            file["retained_reason"]
+                .as_str()
+                .is_some_and(|s| !s.trim().is_empty()),
+            "retained contract needs a reason"
+        );
+        safe_path(root, archive, "tests/contract/tooling/sources/")?
+    } else {
+        safe_path(root, original, "packages/gateway/")?
+    };
+    ensure!(
+        file["fingerprint"] == fingerprint(&fs::read(path)?),
+        "changed source; refresh behavior inventory: {original}"
+    );
+    Ok(())
+}
+
 fn passing_report(report: &Value, id: &str) -> bool {
     report["backend_label"] == "typescript"
         && report["success"] == true
@@ -215,6 +247,7 @@ fn run() -> Result<()> {
     let mut current = BTreeSet::new();
     inventory_files(&root, &root.join("packages/gateway"), &mut current)?;
     let mut recorded = BTreeSet::new();
+    let mut all_recorded = BTreeSet::new();
     let mut declarations = BTreeSet::new();
     let mut errors = Vec::<String>::new();
     let mut pending = Vec::<String>::new();
@@ -225,20 +258,21 @@ fn run() -> Result<()> {
     let source_files = manifest["source_files"]
         .as_array()
         .context("missing source_files")?;
-    for file in test_files.iter().chain(source_files) {
+    let retained = manifest["retained_test_files"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
+    for file in test_files.iter().chain(source_files).chain(&retained) {
         let path = file["path"].as_str().context("missing file path")?;
         ensure!(
-            recorded.insert(path.to_owned()),
+            all_recorded.insert(path.to_owned()),
             "duplicate inventory path {path}"
         );
-        match safe_path(&root, path, "packages/gateway/")
-            .and_then(|p| Ok(fingerprint(&fs::read(p)?)))
-        {
-            Ok(actual) if file["fingerprint"] == actual => {}
-            Ok(_) => errors.push(format!(
-                "changed source; refresh behavior inventory: {path}"
-            )),
-            Err(error) => errors.push(format!("{error:#}")),
+        if file["retained_source"].is_null() {
+            recorded.insert(path.to_owned());
+        }
+        if let Err(error) = validate_inventory_file(&root, file, &current) {
+            errors.push(format!("{error:#}"));
         }
         if let Some(cases) = file["cases"].as_array() {
             if cases.is_empty() {
@@ -280,7 +314,7 @@ fn run() -> Result<()> {
     let output = json!({
         "schema_version":1,"inventory_consistent":errors.is_empty(),
         "parity_complete":errors.is_empty() && pending.is_empty(),
-        "test_files":test_files.len(),"test_declarations":declarations.len(),
+        "test_files":test_files.len(),"retained_test_files":retained.len(),"test_declarations":declarations.len(),
         "source_files":source_files.len(),"verified_declarations":verified,
         "pending_requirements":pending.len(),"errors":errors,"pending":pending,
         "limits":["Source fingerprints detect drift, not behavior coverage.","Declared verified evidence requires assertion review; this audit cannot prove equivalent assertions.","Parameterized and generated tests require explicit expansion review."]
@@ -325,6 +359,35 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn retained_contracts_require_unchanged_bounded_archives_and_absent_originals() {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .canonicalize()
+            .unwrap();
+        let fixture = root
+            .join(".jait/artifacts")
+            .join(format!("retained-audit-{}", uuid::Uuid::new_v4()));
+        let archive = "tests/contract/tooling/sources/deleted.test.ts.txt";
+        fs::create_dir_all(fixture.join("tests/contract/tooling/sources")).unwrap();
+        fs::create_dir_all(fixture.join("packages/gateway/src")).unwrap();
+        fs::write(fixture.join(archive), b"original assertions").unwrap();
+        let mut file = json!({"path":"packages/gateway/src/deleted.test.ts", "retained_source":archive,
+            "retained_reason":"Deleted contract still requires review", "fingerprint":fingerprint(b"original assertions")});
+        assert!(validate_inventory_file(&fixture, &file, &BTreeSet::new()).is_ok());
+        fs::write(fixture.join(archive), b"weakened assertions").unwrap();
+        assert!(validate_inventory_file(&fixture, &file, &BTreeSet::new()).is_err());
+        fs::write(fixture.join(archive), b"original assertions").unwrap();
+        let active = BTreeSet::from(["packages/gateway/src/deleted.test.ts".to_owned()]);
+        assert!(validate_inventory_file(&fixture, &file, &active).is_err());
+        file["retained_reason"] = json!("");
+        assert!(validate_inventory_file(&fixture, &file, &BTreeSet::new()).is_err());
+        file["retained_reason"] = json!("preserve");
+        file["retained_source"] = json!("tests/contract/tooling/sources/../../../../package.json");
+        assert!(validate_inventory_file(&fixture, &file, &BTreeSet::new()).is_err());
+        fs::remove_dir_all(fixture).unwrap();
+    }
 
     #[test]
     fn fingerprints_detect_source_edits() {

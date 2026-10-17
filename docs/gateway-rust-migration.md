@@ -6,7 +6,47 @@ Status: Rust test-suite reconstruction first; no gateway implementation has been
 
 Replace all Jait-owned TypeScript/JavaScript gateway runtime orchestration with a native Rust gateway. TypeScript web/mobile/API clients remain supported through compatible versioned HTTP, WebSocket, SSE and tool schemas. External engines, browsers and agent executables remain separately declared dependencies; retaining a Jait TypeScript worker/bridge does not satisfy completion. Run the Rust gateway with Node/Bun absent to prove that boundary.
 
-The Rust acceptance suite in `tests/contract` currently passes 93/93 managed HTTP/restart scenarios and 50/50 TypeScript internal-reference scenarios. The reviewed inventory credits 74 declarations (38 added in the latest security batch), with 3,020 declaration/source requirements pending in the existing inventory. Formatting, Clippy and all 16 Rust unit/runner checks pass. The inventory audit remains blocked by concurrent Messenger source changes and a removed regression test; that removed requirement has been retained pending review rather than counted as completed. Three DeepSeek Flash reconstruction batches are prepared, but Jait rejected their launch because autonomous agents are globally halted. A Rust migration is complete only when every inventoried component has passing unit/protocol/integration/acceptance evidence, full client parity, supported-platform results, measured memory gains and a verified backup/rollback path. Disabled or skipped required integrations remain unresolved.
+The Rust acceptance suite in `tests/contract` currently passes 93/93 managed HTTP/restart scenarios and 395/395 TypeScript internal-reference scenarios. The full translated suite also runs through a Rust evidence runner that rejects missing/duplicate results, records skipped tests separately and fingerprints sources before and after execution. Passing execution alone does not establish reviewed assertion parity.
+
+The previous reviewed checkpoint included 2,748 active declarations, one retained Messenger regression declaration and 359 runtime source requirements. The inventory audit is consistent; the removed Messenger test remains executable from its archived source and cannot disappear from the prerequisite gate. That checkpoint credited 116 declarations, including eight UUID declarations added in the latest batch and the earlier 34 across 82 assertion sites, with independent checks of original test bodies and repeated assertions. The latest utility batch adds 41 boundary cases and 13 source-mutation checks, verifies command-timeout source coverage, and adds eight reviewed UUID mappings, and leaves 2,991 declaration/source requirements pending. Current batch results and the strict pending count are recorded in `.jait/artifacts/rust-boundary-contracts/summary.md`; the command-timeout source review is in `tests/contract/reviews/command-timeout.md`.
+
+The 2026-10-17 test parity checkpoint credits 186 additional declarations after individual assertion and variant review plus a fresh, source-bound TypeScript-backend run. The current Rust audit reports **302 / 2,755 verified declarations (10.96%)**, with 2,812 declaration/source requirements still pending and no inventory drift. The translated profile passed 3,040 cases, failed none and skipped 50; internal and managed profiles passed 395/395 and 93/93. Review proposals and the supplemental matcher regression are under `.jait/artifacts/parity-ten-percent/`; the applied mapping is `tests/contract/fragments/parity-ten-percent-reviewed.json`. One model-fetcher declaration remains uncredited because its original empty-header call expectation needs a separate post-fix review. This checkpoint measures reconstructed test declarations only; no Rust gateway runtime implementation has been ported.
+
+R00–R08 remain incomplete. Next work is reviewed assertion/variant coverage for the remaining declarations, explicit branch coverage for runtime sources, resolution of skipped integration gates, mutation checks and supported-platform evidence. A Rust migration is complete only when every inventoried component has passing unit/protocol/integration/acceptance evidence, full client parity, supported-platform results, measured memory gains and a verified backup/rollback path. Disabled or skipped required integrations remain unresolved.
+
+## Continuation checkpoint — 2026-10-17
+
+R00–R08 remain open. The continuation repairs assertion semantics, conditional platform gates, result parsing and descendant cleanup; adds an owned argv/restart adapter with disposable home/config/temp and Git boundaries; introduces a pending interface candidate inventory with a Rust drift auditor; and adds real loopback SSE lifecycle and versioned SQLite recovery tests. Reviews under `tests/contract/reviews/` state their exact limits.
+
+Local execution observed 3,034 translated-target passes with 50 retained source/environment skips, 9/9 explicit Docker integrations and 33/33 Chromium integrations. The recovery corpus executes all 76 current-definition migration prefixes, and the active-stream scenario verifies incremental UTF-8, tool order, durable event replay, cancellation and restart. These checks do not establish complete branch, interface, populated-domain or platform parity. Eleven CLI registrations with 34 original literal assertions are reviewed proposals; no new parity credit is applied without fresh matching evidence.
+
+Concurrent Messenger changes invalidated the global source-bound report. A private source checkpoint was prepared for independent validation, with a static component-coverage gate under bounded-memory review. Continuation threads subsequently stopped because their configured provider workspace exhausted credits; validation and gate stabilization remain unfinished. Current progress, active thread ownership and frozen-source provenance are saved under `.jait/artifacts/rust-continuation/`. The earlier inventory totals above are historical until reviewed recapture; do not use them as a current readiness verdict. Platform runner choice and executed macOS/Windows evidence remain unresolved. No R09 implementation port has begun.
+
+## Reviewed parity continuation — 2026-10-17
+
+The latest source-bound audit credits **2,124 / 2,761 declarations (76.93%)**,
+including the retained regression declaration. This supersedes the historical
+10.96% checkpoint above. The current batch adds 156 reviewed declarations with
+574 live comparisons and 1,148 agreeing Vitest/Rust pass/counterexample verdicts.
+A conservative lexical reachability check distinguishes unused shared helper
+assertions from missing reachable assertions; its scope and limits are recorded
+in `tests/contract/reviews/unused-assertion-helpers.md`.
+
+Fresh validation passes 3,040 translated cases (zero failures, 50 retained skips),
+395 internal contracts, 93 managed scenarios, all 9 selected Docker integrations,
+and all 33 selected Chromium integrations. The independent consent, tenant/crash
+recovery, active-stream and migration-corpus targets pass 18 tests. The normal
+source-bound inventory audit passes; strict parity intentionally fails with
+**996 pending requirements: 637 declarations and 359 runtime-source coverage
+requirements**. The interface inventory separately reports source drift for
+`packages/gateway/src/routes/messenger.ts`; it has not been recaptured or granted
+behavioral parity. Platform and remaining integration evidence still need review.
+
+The applied mapping is `tests/contract/fragments/parity-resume-reviewed.json`.
+Current reports, comparison artifacts and the ranked remaining declaration list
+are under `.jait/artifacts/parity-resume/`. This is progress on the Rust-owned
+reference test prerequisite. R00–R08 remain open and no R09 gateway implementation
+port has begun.
 
 ## Rust-first prerequisite and parallel test lanes
 
@@ -16,7 +56,7 @@ The complete gateway test suite must be reconstructed in Rust and pass against t
 
 Run `bun run test:contract:coverage` (or `cargo run --locked --manifest-path tests/contract/Cargo.toml --bin coverage`) for the Rust-only inventory drift audit. It fails on new, changed or removed gateway files and invalid parity claims. `-- --require-parity` additionally fails while any test declaration or source coverage requirement is pending. The initial seed scenarios are intentionally not credited as full replacements. Reports are saved under `.jait/artifacts/gateway-rust-readiness/coverage-audit.json`.
 
-CI uses `bun run test:contract:coverage --evidence-dir .jait/artifacts/contracts` after generating both profiles. This mode requires reports bound to the current gateway/shared/contract sources and selects the newest report per profile; it does not fall back to historical successes. A run fails if its sources change during execution.
+CI uses `bun run test:contract:coverage --evidence-dir .jait/artifacts/contracts` after generating gateway, internal-reference and translated-reference profiles. This mode requires reports bound to the current gateway/shared/contract sources and selects the newest report per profile; it does not fall back to historical successes. A run fails if its sources change during execution.
 
 A verified mapping needs a `parity_review` explaining equivalent assertions and one or more `rust_cases` entries containing `id`, project-relative Rust `source`, and project-relative passing TypeScript-backend `report` under `.jait/artifacts/`. No skipped case counts as passing. Evidence and review must cover each parameterized variant and source branch; this audit checks the recorded evidence, not the correctness of the review. To recapture after reviewing gateway changes, run `bun tests/contract/tooling/capture-coverage.mjs`. This inventory-only helper uses the installed TypeScript compiler AST, preserves mappings for byte-identical files, and resets changed files to pending; it executes no tests. Inventory capture uses TypeScript as a read-only aid; running the Rust audit itself requires no TypeScript/Node/Bun. Source fingerprints fail closed if the inventory needs recapturing; do not refresh fingerprints without reviewing changed assertions and preserving existing mappings.
 
@@ -181,7 +221,7 @@ Depends on: R05, R06, R13, R14. Priority: high.
 
 Source areas: `packages/gateway/src/tools/agent-loop.ts`, `packages/gateway/src/tools/agent-acp-runner.ts`, `packages/gateway/src/services/execution-guard.ts`.
 
-Acceptance: Implement agent turns, provider streams, tool-call validation/execution, checkpoints, compaction, retries/repetition recovery, steering/queued input, attachments, usage and cancellation in Rust. Demonstrate fail-then-pass assertions for lost/duplicated events and recovery after interruption; no gateway TypeScript worker fallback.
+Acceptance: Implement agent turns, provider streams, tool-call validation/execution, checkpoints, compaction, retries/repetition recovery, steering/queued input, attachments, usage and cancellation in Rust. Demonstrate fail-then-pass assertions for lost/duplicated events and recovery after interruption; no gateway TypeScript worker fallback. Preserve the 13 Rust-owned `internal.agentloop.*` cases in `tests/contract/vectors/agentloop.json` for DeepSeek prompt selection, batch/progress behavior, reasoning continuity, mutation barriers, failures and cancellation; replace their reference bridge with Rust execution while retaining the same expected outcomes. See `tests/contract/reviews/agent-loop-cadence.md`.
 
 ### R16: Port tool registry discovery and user interactions
 

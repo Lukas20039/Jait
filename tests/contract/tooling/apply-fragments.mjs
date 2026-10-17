@@ -11,7 +11,11 @@ const fragments = fs.existsSync(fragmentDir)
   ? fs.readdirSync(fragmentDir).filter(name => name.endsWith('.json')).sort()
   : [];
 const byId = new Map();
-for (const file of manifest.test_files) for (const test of file.cases ?? []) byId.set(test.id, test);
+const testFiles = [...manifest.test_files, ...(manifest.retained_test_files ?? [])];
+for (const file of testFiles) for (const test of file.cases ?? []) {
+  if (byId.has(test.id)) throw new Error(`duplicate inventory declaration ${test.id}`);
+  byId.set(test.id, test);
+}
 let applied = 0;
 let unchanged = 0;
 const reviewedIds = new Set();
@@ -43,7 +47,7 @@ for (const name of fragments) {
     applied += 1;
   }
 }
-manifest.summary.rust_verified_declarations = manifest.test_files
+manifest.summary.rust_verified_declarations = testFiles
   .reduce((sum, file) => sum + (file.cases ?? []).filter(test => test.status === 'verified').length, 0);
 if (errors.length) {
   for (const error of errors) console.error(`error: ${error}`);

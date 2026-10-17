@@ -34,13 +34,26 @@ fn reader(stream: impl Read + Send + 'static) -> mpsc::Receiver<std::io::Result<
     receive
 }
 
+/// Sends a programmatically built request. Object key order follows `serde_json`'s
+/// ordering, so prefer [`call_request`] whenever vector-authored key order is observable.
 pub fn call(
     root: &Path,
     directory: &Path,
     input: Value,
     cancelled: &dyn Fn() -> bool,
 ) -> Result<Value> {
+    call_request(root, directory, &serde_json::to_string(&input)?, cancelled)
+}
+
+/// Sends the request body verbatim so adapter-visible key order matches the vector source.
+pub fn call_request(
+    root: &Path,
+    directory: &Path,
+    request: &str,
+    cancelled: &dyn Fn() -> bool,
+) -> Result<Value> {
     ensure!(!cancelled(), "internal driver cancelled");
+    let input: Value = serde_json::from_str(request).context("driver request must be JSON")?;
     let calls = input["calls"]
         .as_array()
         .context("driver calls must be an array")?;
@@ -49,7 +62,7 @@ pub fn call(
         "unsupported driver protocol or call count"
     );
     let expected_count = calls.len();
-    let request = serde_json::to_vec(&input)?;
+    let request = request.as_bytes();
     ensure!(request.len() <= INPUT_LIMIT, "driver input exceeds 64 KiB");
     let work = directory.join(format!("driver-{}", uuid::Uuid::new_v4()));
     fs::create_dir_all(work.join("home"))?;

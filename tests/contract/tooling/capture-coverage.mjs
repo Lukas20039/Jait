@@ -56,6 +56,10 @@ for(const p of testPaths) {
 }
 const sourceFiles=paths.filter(p => !testPaths.includes(p)).map(p=>({path:p,fingerprint:fingerprint(fs.readFileSync(path.join(root,p),'utf8')),lane:lane(p),direct_test_references:[...new Set(references.get(p)??[])].sort(),status:'pending',rust_cases:[],gap:references.has(p)?'Existing direct imports do not establish Rust behavioral parity.':'No direct static import from inventoried test files; inspect indirect/integration coverage.'}));
 const manifest={schema_version:1,policy:'Rust suite first: every declaration and source gap requires explicit behavior mapping and passing evidence against the TypeScript gateway before R09+.',fingerprint_algorithm:'fnv1a64-utf8',inventory_method:'TypeScript compiler AST: it/test declarations (including aliases, chained modifiers and parameterized declarations); source fingerprints detect drift.',limits:['Declarations inside loops/each are recorded once; runtime expansions and branch coverage require explicit Rust cases.','Static direct imports are triage hints only; unreferenced files are coverage-review gaps, not proof of absent TypeScript tests.','Pending does not claim parity. Merely registering a Rust scenario cannot establish equivalent assertions.','This inventory does not enumerate route/tool/schema/event contracts or prove gateway behavior.'],summary:{test_files:testFiles.length,test_declarations:testFiles.reduce((n,f)=>n+f.cases.length,0),runtime_source_files:sourceFiles.length,source_files_without_direct_test_import:sourceFiles.filter(f=>!f.direct_test_references.length).length,rust_verified_declarations:0},test_files:testFiles,source_files:sourceFiles};
+// Deleted contracts are retained explicitly and cannot disappear during recapture.
+manifest.retained_test_files=previous?.retained_test_files??[];
+manifest.summary.retained_test_files=manifest.retained_test_files.length;
+manifest.summary.retained_test_declarations=manifest.retained_test_files.reduce((n,f)=>n+(f.cases?.length??0),0);
 // Only preserve reviewed mappings for byte-identical files. Changed sources reset to pending.
 for (const field of ['test_files','source_files']) for (const file of manifest[field]) {
  const old=previous?.[field]?.find(item=>item.path===file.path && item.fingerprint===file.fingerprint);
@@ -64,6 +68,6 @@ for (const field of ['test_files','source_files']) for (const file of manifest[f
  if(file.cases) for(const test of file.cases) preserve(test,old.cases?.find(item=>item.id===test.id));
  else preserve(file,old);
 }
-manifest.summary.rust_verified_declarations=manifest.test_files.reduce((sum,file)=>sum+file.cases.filter(test=>test.status==='verified').length,0);
+manifest.summary.rust_verified_declarations=[...manifest.test_files,...manifest.retained_test_files].reduce((sum,file)=>sum+file.cases.filter(test=>test.status==='verified').length,0);
 fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2)+'\n');
 console.log(JSON.stringify(manifest.summary));

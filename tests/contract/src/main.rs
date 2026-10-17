@@ -25,17 +25,25 @@ fn options() -> Result<(Option<String>, String)> {
     let mut base = None;
     let mut disposable = false;
     let mut label = "typescript".to_owned();
+    let mut label_supplied = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--base-url" => base = Some(args.next().context("--base-url requires an origin")?),
             "--disposable" => disposable = true,
-            "--label" => label = args.next().context("--label requires a name")?,
+            "--label" => {
+                label = args.next().context("--label requires a name")?;
+                label_supplied = true;
+            }
             _ => bail!("Usage: jait-contract [--base-url ORIGIN --disposable] [--label NAME]"),
         }
     }
     ensure!(
         base.is_none() || disposable,
         "external testing creates accounts and sessions; supply --disposable only for a fresh test backend"
+    );
+    ensure!(
+        std::env::var_os("JAIT_CONTRACT_BACKEND_ARGV").is_none() || label_supplied,
+        "custom backend argv requires an explicit --label to identify the measured backend"
     );
     Ok((base, label))
 }
@@ -83,11 +91,15 @@ fn run() -> Result<bool> {
     let mut results = Vec::new();
     let mut setup_error = None;
     let mut cleanup_error = None;
+    let mut launch_profile = None;
+    let mut owned_process = None;
     let managed = base.is_none();
     let prepared =
         fixture::Gateway::start(&root, &directory, base.as_deref()).and_then(scenarios::Suite::new);
     match prepared {
         Ok(mut suite) => {
+            launch_profile = Some(suite.gateway.launch_profile());
+            owned_process = suite.gateway.process_id();
             for &case in &cases {
                 execute(&mut results, &mut suite, case);
             }
@@ -118,7 +130,7 @@ fn run() -> Result<bool> {
     let report = json!({
         "source_fingerprints":source_fingerprints,"sources_unchanged":sources_unchanged,
         "schema_version":1, "contract_version":env!("CARGO_PKG_VERSION"),
-        "backend_label":label, "profile":if managed {"managed-http-and-restart"} else {"external-http"},
+        "backend_label":label, "backend_launch":launch_profile, "owned_process_id":owned_process, "profile":if managed {"managed-http-and-restart"} else {"external-http"},
         "started_unix_ms":started_unix_ms, "duration_ms":started.elapsed().as_millis(),
         "success":success, "setup_error":setup_error, "cleanup_error":cleanup_error,
         "summary":{"passed":passed,"required":results.len()}, "cases":results,

@@ -1,0 +1,516 @@
+//! Source-bound evidence for the existing native Rust translation tests.
+//! This runner does not translate, review, or evaluate application assertions.
+#[path = "../evidence.rs"]
+mod evidence;
+
+use anyhow::{Context, Result, bail, ensure};
+use serde_json::{Value, json};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs::{self, File},
+    io::Read,
+    path::{Path, PathBuf},
+    process::{Child, Command, ExitStatus, Stdio},
+    sync::atomic::{AtomicBool, Ordering},
+    thread,
+    time::{Duration, Instant},
+};
+
+static CANCELLED: AtomicBool = AtomicBool::new(false);
+const MAX_LOG_BYTES: u64 = 16 * 1024 * 1024;
+
+struct OwnedChild(Child);
+impl Drop for OwnedChild {
+    fn drop(&mut self) {
+        if self.0.try_wait().ok().flatten().is_some() {
+            return;
+        }
+        // Descendant Bun/Node peers share this child's process group.
+        #[cfg(unix)]
+        let _ = Command::new("/bin/kill")
+            .args(["-TERM", "--", &format!("-{}", self.0.id())])
+            .status();
+        #[cfg(windows)]
+        let _ = Command::new("taskkill")
+            .args(["/PID", &self.0.id().to_string(), "/T", "/F"])
+            .status();
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
+fn execute(
+    mut command: Command,
+    directory: &Path,
+    label: &str,
+    timeout: Duration,
+) -> Result<(ExitStatus, String)> {
+    let stdout = directory.join(format!("{label}.stdout.log"));
+    let stderr = directory.join(format!("{label}.stderr.log"));
+    command
+        .stdout(Stdio::from(File::create(&stdout)?))
+        .stderr(Stdio::from(File::create(&stderr)?));
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        command.process_group(0);
+    }
+    let mut child = OwnedChild(command.spawn().with_context(|| format!("start {label}"))?);
+    let deadline = Instant::now() + timeout;
+    loop {
+        ensure!(
+            !CANCELLED.load(Ordering::SeqCst),
+            "translated run cancelled during {label}"
+        );
+        ensure!(
+            Instant::now() < deadline,
+            "translated run deadline exceeded during {label}"
+        );
+        for path in [&stdout, &stderr] {
+            ensure!(
+                fs::metadata(path)?.len() <= MAX_LOG_BYTES,
+                "{label} log exceeds 16 MiB"
+            );
+        }
+        if let Some(status) = child.0.try_wait()? {
+            let mut output = String::new();
+            File::open(stdout)?
+                .take(MAX_LOG_BYTES + 1)
+                .read_to_string(&mut output)?;
+            ensure!(
+                output.len() as u64 <= MAX_LOG_BYTES,
+                "{label} log exceeds 16 MiB"
+            );
+            return Ok((status, output));
+        }
+        thread::sleep(Duration::from_millis(50));
+    }
+}
+
+fn compiled_test(output: &str) -> Result<PathBuf> {
+    let mut paths = BTreeSet::new();
+    for line in output.lines().filter(|line| !line.trim().is_empty()) {
+        let row: Value = serde_json::from_str(line).context("Cargo build output is not JSON")?;
+        if row["reason"] == "compiler-artifact"
+            && row["target"]["name"] == "tail_static"
+            && row["profile"]["test"] == true
+            && let Some(executable) = row["executable"].as_str()
+        {
+            paths.insert(PathBuf::from(executable));
+        }
+    }
+    ensure!(
+        paths.len() == 1,
+        "expected exactly one tail_static test executable"
+    );
+    Ok(paths.into_iter().next().unwrap())
+}
+
+fn test_inventory(output: &str) -> Result<BTreeSet<String>> {
+    let mut ids = BTreeSet::new();
+    for line in output.lines() {
+        if let Some(id) = line.strip_suffix(": test") {
+            ensure!(
+                !id.is_empty() && ids.insert(id.to_owned()),
+                "empty or duplicate listed test"
+            );
+        }
+    }
+    ensure!(!ids.is_empty(), "translated binary listed no tests");
+    Ok(ids)
+}
+
+fn observed_cases(output: &str, expected: &BTreeSet<String>) -> Result<Vec<Value>> {
+    let mut observed = BTreeMap::new();
+    for line in output.lines() {
+        let Some(line) = line.strip_prefix("test ") else {
+            continue;
+        };
+        let Some((id, outcome)) = line.split_once(" ... ") else {
+            continue;
+        };
+        // libtest decorates pretty should-panic results, but --list gives bare IDs.
+        // Prefer an exact registered ID and strip only this known suffix once.
+        let id = if expected.contains(id) {
+            id
+        } else if let Some(registered) = id.strip_suffix(" - should panic")
+            && expected.contains(registered)
+        {
+            registered
+        } else {
+            bail!("unregistered test result: {id}");
+        };
+        let status = match outcome {
+            "ok" => "passed",
+            "FAILED" => "failed",
+            ignored if ignored == "ignored" || ignored.starts_with("ignored,") => "skipped",
+            _ => bail!("unknown result for {id}"),
+        };
+        ensure!(
+            observed.insert(id.to_owned(), status).is_none(),
+            "duplicate result: {id}"
+        );
+    }
+    ensure!(
+        observed.len() == expected.len(),
+        "incomplete test results: {}/{}",
+        observed.len(),
+        expected.len()
+    );
+    Ok(observed
+        .into_iter()
+        .map(|(id, status)| json!({"id":id,"status":status}))
+        .collect())
+}
+
+fn full_results(cases: &[Value], process_succeeded: bool, sources_unchanged: bool) -> bool {
+    process_succeeded
+        && sources_unchanged
+        && !cases.is_empty()
+        && cases.iter().any(|case| case["status"] == "passed")
+        && cases
+            .iter()
+            .all(|case| case["status"] == "passed" || case["status"] == "skipped")
+}
+
+const DOCKER_TESTS: [&str; 9] = [
+    "tailstatic_packages_gateway_src_security_sandbox_ownership_integration_test_ts_46_3",
+    "tailstatic_packages_gateway_src_security_sandbox_ownership_integration_test_ts_56_3",
+    "tailstatic_packages_gateway_src_security_sandbox_ownership_integration_test_ts_66_3",
+    "tailstatic_packages_gateway_src_security_agent_sandbox_lifecycle_integration_test_ts_9_3",
+    "tailstatic_packages_gateway_src_security_worktree_sandbox_test_ts_33_3",
+    "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_30_3",
+    "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_60_3",
+    "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_74_3",
+    "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3",
+];
+
+fn docker_inventory(available: &BTreeSet<String>) -> Result<BTreeSet<String>> {
+    let required: BTreeSet<_> = DOCKER_TESTS.iter().map(|id| (*id).to_owned()).collect();
+    ensure!(
+        required.is_subset(available),
+        "required Docker integration is absent from the compiled inventory"
+    );
+    Ok(required)
+}
+
+fn chromium_inventory(available: &BTreeSet<String>) -> Result<BTreeSet<String>> {
+    let selected: BTreeSet<_> = available
+        .iter()
+        .filter(|id| {
+            id.starts_with(
+                "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_",
+            )
+        })
+        .cloned()
+        .collect();
+    ensure!(
+        selected.len() == 33,
+        "Chromium profile requires all 33 original three-runtime integration variants"
+    );
+    Ok(selected)
+}
+
+fn suite(
+    root: &Path,
+    directory: &Path,
+    docker: bool,
+    chromium: bool,
+) -> Result<(Vec<Value>, bool)> {
+    let mut build = Command::new(env!("CARGO"));
+    build
+        .current_dir(root)
+        .env(
+            "CARGO_TARGET_DIR",
+            root.join(".jait/artifacts/rust-contract-target"),
+        )
+        .args([
+            "test",
+            "--locked",
+            "--manifest-path",
+            "tests/contract/Cargo.toml",
+            "--test",
+            "tail_static",
+            "--no-run",
+            "--message-format=json",
+        ]);
+    let (built, output) = execute(build, directory, "build", Duration::from_secs(300))?;
+    ensure!(
+        built.success(),
+        "translated test build failed; see build logs"
+    );
+    let executable = compiled_test(&output)?;
+    let mut list = Command::new(&executable);
+    list.current_dir(root).args(["--list", "--format", "terse"]);
+    let (listed, listing) = execute(list, directory, "list", Duration::from_secs(30))?;
+    ensure!(listed.success(), "translated test listing failed");
+    let available = test_inventory(&listing)?;
+    let expected = if docker {
+        docker_inventory(&available)?
+    } else if chromium {
+        chromium_inventory(&available)?
+    } else {
+        available
+    };
+    let mut tests = Command::new(executable);
+    tests
+        .current_dir(root)
+        .args(["--format", "pretty", "--color", "never"]);
+    if docker || chromium {
+        tests
+            .args(["--include-ignored", "--exact", "--test-threads=1"])
+            .args(&expected);
+    } else {
+        tests.arg("--test-threads=4");
+    }
+    let (status, output) = execute(tests, directory, "tests", Duration::from_secs(1200))?;
+    Ok((observed_cases(&output, &expected)?, status.success()))
+}
+
+fn run() -> Result<bool> {
+    let arguments: Vec<_> = std::env::args().skip(1).collect();
+    let docker = arguments == ["--profile", "docker"];
+    let chromium = arguments == ["--profile", "chromium"];
+    ensure!(
+        arguments.is_empty() || docker || chromium,
+        "Usage: translated-contract [--profile docker|chromium] (no arbitrary filters)"
+    );
+    ctrlc::set_handler(|| CANCELLED.store(true, Ordering::SeqCst))?;
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()?;
+    let directory = root
+        .join(".jait/artifacts/contracts")
+        .join(uuid::Uuid::new_v4().to_string());
+    fs::create_dir_all(&directory)?;
+    println!("Artifacts: {}", directory.display());
+    let source_fingerprints = evidence::snapshot(&root)?;
+    let started = Instant::now();
+    let result = suite(&root, &directory, docker, chromium);
+    let (cases, process_succeeded, error) = match result {
+        Ok((cases, succeeded)) => (cases, succeeded, Value::Null),
+        Err(error) => (Vec::new(), false, json!(format!("{error:#}"))),
+    };
+    let sources_unchanged = source_fingerprints == evidence::snapshot(&root)?;
+    let success = full_results(&cases, process_succeeded, sources_unchanged)
+        && (!(docker || chromium) || cases.iter().all(|case| case["status"] == "passed"));
+    let passed = cases
+        .iter()
+        .filter(|case| case["status"] == "passed")
+        .count();
+    let failed = cases
+        .iter()
+        .filter(|case| case["status"] == "failed")
+        .count();
+    let skipped: Vec<_> = cases
+        .iter()
+        .filter(|case| case["status"] == "skipped")
+        .map(|case| case["id"].clone())
+        .collect();
+    let report = json!({
+        "schema_version":1,"contract_version":env!("CARGO_PKG_VERSION"),
+        "profile":if docker { "translated-docker-typescript-reference" } else if chromium { "translated-chromium-typescript-reference" } else { "translated-enabled-typescript-reference" },"backend_label":"typescript",
+        "success":success,"sources_unchanged":sources_unchanged,"source_fingerprints":source_fingerprints,
+        "duration_ms":started.elapsed().as_millis(),"summary":{"passed":passed,"failed":failed,"skipped":skipped.len(),"total":cases.len()},
+        "cases":cases,"not_covered":skipped,"error":error,
+        "limitations":["Reference TypeScript implementation executed through test-only Bun/Node peers; no Rust runtime parity claim.","Skipped source/environment gates receive no passing evidence.","Execution does not establish assertion equivalence; each credited declaration requires a separate parity review."]
+    });
+    let report_path = directory.join("report.json");
+    fs::write(&report_path, serde_json::to_vec_pretty(&report)?)?;
+    println!(
+        "{passed} passed; {failed} failed; {} skipped. Report: {}",
+        skipped.len(),
+        report_path.display()
+    );
+    if !success {
+        eprintln!("Translated evidence failed: {}", report["error"]);
+    }
+    Ok(success)
+}
+
+fn main() {
+    match run() {
+        Ok(true) => {}
+        Ok(false) => std::process::exit(1),
+        Err(error) => {
+            eprintln!("{error:#}");
+            std::process::exit(2);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn chromium_profile_requires_the_complete_runtime_matrix() {
+        let mut inventory: BTreeSet<_> = (0..33)
+            .map(|i| {
+                format!(
+                    "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_{i}"
+                )
+            })
+            .collect();
+        inventory.insert("unrelated_paid_provider_case".into());
+        assert_eq!(chromium_inventory(&inventory).unwrap().len(), 33);
+        inventory
+            .remove("tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_0");
+        assert!(chromium_inventory(&inventory).is_err());
+    }
+
+    #[test]
+    fn docker_profile_requires_every_declared_integration_and_excludes_other_cases() {
+        let mut available: BTreeSet<String> =
+            DOCKER_TESTS.iter().map(|id| (*id).to_owned()).collect();
+        available.insert("unrelated_paid_provider_case".into());
+        let selected = docker_inventory(&available).unwrap();
+        assert_eq!(selected.len(), 9);
+        assert!(!selected.contains("unrelated_paid_provider_case"));
+        available.remove(DOCKER_TESTS[0]);
+        assert!(docker_inventory(&available).is_err());
+    }
+
+    use super::*;
+    fn expected() -> BTreeSet<String> {
+        BTreeSet::from(["one".into(), "two".into()])
+    }
+    #[test]
+    fn cargo_artifact_requires_unique_named_test_executable() {
+        let artifact = json!({"reason":"compiler-artifact","target":{"name":"tail_static"},"profile":{"test":true},"executable":"/build/tests"});
+        assert_eq!(
+            compiled_test(&artifact.to_string()).unwrap(),
+            PathBuf::from("/build/tests")
+        );
+        assert!(compiled_test("{}").is_err());
+        assert!(compiled_test("not-json").is_err());
+        let mut second = artifact.clone();
+        second["executable"] = json!("/another/tests");
+        assert!(compiled_test(&format!("{artifact}\n{second}")).is_err());
+    }
+    #[test]
+    fn listing_rejects_duplicates_and_empty_suites() {
+        assert_eq!(
+            test_inventory("one: test\ntwo: test\n2 tests, 0 benchmarks").unwrap(),
+            expected()
+        );
+        assert!(test_inventory("one: test\none: test").is_err());
+        assert!(test_inventory("0 tests").is_err());
+    }
+    #[test]
+    fn results_require_every_registered_test_once() {
+        assert!(observed_cases("test one ... ok\n", &expected()).is_err());
+        assert!(
+            observed_cases(
+                "test one ... ok\ntest one ... ok\ntest two ... ok",
+                &expected()
+            )
+            .is_err()
+        );
+        assert!(observed_cases("test other ... ok\ntest two ... ok", &expected()).is_err());
+        assert!(observed_cases("test one ... unknown\ntest two ... ok", &expected()).is_err());
+    }
+    #[test]
+    fn standard_should_panic_result_uses_registered_identity() {
+        let id = "tail_assertions::tests::identity_without_reference_metadata_is_rejected";
+        let expected = test_inventory(&format!("{id}: test\none: test")).unwrap();
+        let cases = observed_cases(
+            &format!("running 2 tests\ntest {id} - should panic ... ok\ntest one ... ok\n\ntest result: ok. 2 passed; 0 failed"),
+            &expected,
+        )
+        .unwrap();
+        assert_eq!(
+            cases,
+            vec![
+                json!({"id":"one","status":"passed"}),
+                json!({"id":id,"status":"passed"})
+            ]
+        );
+        assert!(full_results(&cases, true, true));
+    }
+
+    #[test]
+    fn should_panic_failure_reason_does_not_turn_failure_into_pass() {
+        let cases = observed_cases(
+            "test one - should panic ... FAILED\ntest two ... ok\n\nfailures:\n\n---- one stdout ----\nnote: test did not panic as expected at source.rs:1:1\n\nfailures:\n    one\n\ntest result: FAILED. 1 passed; 1 failed",
+            &expected(),
+        )
+        .unwrap();
+        assert_eq!(cases[0], json!({"id":"one","status":"failed"}));
+        assert!(!full_results(&cases, false, true));
+        assert!(!full_results(&cases, true, true));
+    }
+
+    #[test]
+    fn result_decorations_are_exact_and_must_resolve_to_registered_ids() {
+        for id in [
+            "other - should panic",
+            "one - unknown",
+            "one - should panic extra",
+            "one - should panic - should panic",
+            "one - should panic ",
+        ] {
+            let error = observed_cases(&format!("test {id} ... ok\ntest two ... ok"), &expected())
+                .unwrap_err();
+            assert_eq!(error.to_string(), format!("unregistered test result: {id}"));
+        }
+        assert!(
+            observed_cases(
+                "test one - should panic ... ok extra\ntest two ... ok",
+                &expected(),
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn registered_ids_are_matched_before_suffix_normalization() {
+        let expected = BTreeSet::from(["one".into(), "one - should panic".into()]);
+        let cases = observed_cases(
+            "test one ... ok\ntest one - should panic ... FAILED",
+            &expected,
+        )
+        .unwrap();
+        assert_eq!(cases[0], json!({"id":"one","status":"passed"}));
+        assert_eq!(
+            cases[1],
+            json!({"id":"one - should panic","status":"failed"})
+        );
+    }
+
+    #[test]
+    fn decorated_results_reject_duplicate_and_incomplete_runs() {
+        for results in [
+            "test one ... ok\ntest one - should panic ... ok\ntest two ... ok",
+            "test one - should panic ... ok\ntest one ... ok\ntest two ... ok",
+            "test one - should panic ... ok\ntest one - should panic ... FAILED\ntest two ... ok",
+        ] {
+            assert_eq!(
+                observed_cases(results, &expected())
+                    .unwrap_err()
+                    .to_string(),
+                "duplicate result: one"
+            );
+        }
+        assert_eq!(
+            observed_cases("test one - should panic ... ok", &expected())
+                .unwrap_err()
+                .to_string(),
+            "incomplete test results: 1/2"
+        );
+    }
+
+    #[test]
+    fn ignored_and_failed_results_cannot_be_reported_as_passed() {
+        let cases = observed_cases(
+            "test one ... ok\ntest two ... ignored, source gate",
+            &expected(),
+        )
+        .unwrap();
+        assert_eq!(cases[1]["status"], "skipped");
+        assert!(full_results(&cases, true, true));
+        assert!(!full_results(&cases, false, true));
+        assert!(!full_results(&cases, true, false));
+        let failed = observed_cases("test one ... ok\ntest two ... FAILED", &expected()).unwrap();
+        assert!(!full_results(&failed, true, true));
+        assert!(!full_results(&[json!({"status":"skipped"})], true, true));
+    }
+}

@@ -1,3 +1,5 @@
+#[path = "backend.rs"]
+mod backend;
 use crate::client::Api;
 use anyhow::{Context, Result, bail, ensure};
 use std::{
@@ -25,10 +27,32 @@ pub struct Gateway {
     run_dir: PathBuf,
     secret: String,
     pub managed: bool,
+    backend: backend::BackendCommand,
 }
 
 impl Gateway {
     pub fn start(root: &Path, run_dir: &Path, external: Option<&str>) -> Result<Self> {
+        let backend = backend::BackendCommand::from_json(
+            std::env::var("JAIT_CONTRACT_BACKEND_ARGV").ok().as_deref(),
+            std::env::var("JAIT_CONTRACT_BUN").unwrap_or_else(|_| "bun".into()),
+        )?;
+        Self::start_with_backend(root, run_dir, external, backend)
+    }
+
+    // Fixture-specific drivers pass argv directly, without mutating the test
+    // executable's process-wide environment while other tests are running.
+    #[allow(dead_code)]
+    pub fn start_owned_command(root: &Path, run_dir: &Path, argv: &str) -> Result<Self> {
+        let backend = backend::BackendCommand::from_json(Some(argv), "bun".into())?;
+        Self::start_with_backend(root, run_dir, None, backend)
+    }
+
+    fn start_with_backend(
+        root: &Path,
+        run_dir: &Path,
+        external: Option<&str>,
+        backend: backend::BackendCommand,
+    ) -> Result<Self> {
         let mut gateway = Self {
             child: None,
             api: Api::new(external.unwrap_or("http://127.0.0.1"))?,
@@ -36,6 +60,7 @@ impl Gateway {
             run_dir: run_dir.into(),
             secret: uuid::Uuid::new_v4().to_string(),
             managed: external.is_none(),
+            backend,
         };
         if gateway.managed {
             gateway.launch()?;
@@ -48,6 +73,10 @@ impl Gateway {
     fn launch(&mut self) -> Result<()> {
         let state = self.run_dir.join("state");
         fs::create_dir_all(&state)?;
+        let home = self.run_dir.join("home");
+        let temporary = self.run_dir.join("tmp");
+        fs::create_dir_all(&home)?;
+        fs::create_dir_all(&temporary)?;
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
@@ -61,14 +90,22 @@ impl Gateway {
             .create(true)
             .append(true)
             .open(self.run_dir.join("gateway.log"))?;
-        let bun = std::env::var("JAIT_CONTRACT_BUN").unwrap_or_else(|_| "bun".into());
-        let bootstrap = "import {main} from './src/index.ts'; import {writeFileSync} from 'node:fs'; await main({evaluation:true,onReady(port){writeFileSync(process.env.JAIT_CONTRACT_READY_FILE,String(port))}});";
-        let mut command = Command::new(bun);
+        let mut command = self.backend.command();
         command
-            .args(["--eval", bootstrap])
             .current_dir(self.root.join("packages/gateway"))
             .env_clear()
             .env("PATH", std::env::var_os("PATH").unwrap_or_default())
+            .env("HOME", &home)
+            .env("USERPROFILE", &home)
+            .env("XDG_CONFIG_HOME", home.join(".config"))
+            .env("TMPDIR", &temporary)
+            .env("TEMP", &temporary)
+            .env("TMP", &temporary)
+            .env("GIT_TERMINAL_PROMPT", "0")
+            .env("GIT_ASKPASS", "false")
+            .env("GIT_CONFIG_NOSYSTEM", "1")
+            .env("GIT_CONFIG_GLOBAL", home.join(".gitconfig"))
+            .env("GIT_CEILING_DIRECTORIES", self.root.join(".jait/artifacts"))
             .env("__JAIT_CLI", "1")
             .env("NODE_ENV", "test")
             .env("HOST", "127.0.0.1")
@@ -90,17 +127,22 @@ impl Gateway {
             .stdin(Stdio::null())
             .stdout(Stdio::from(log.try_clone()?))
             .stderr(Stdio::from(log));
-        // Preserve the real home only for ordinary executable/runtime resolution.
-        // All Jait state is explicitly redirected; no provider credentials are inherited.
-        for key in ["HOME", "USERPROFILE", "SYSTEMROOT", "TEMP", "TMP"] {
+        // Windows runtime resolution still requires the system installation path.
+        // Home, credentials, config and temporary state stay in this owned fixture.
+        for key in ["SYSTEMROOT"] {
             if let Some(value) = std::env::var_os(key) {
                 command.env(key, value);
             }
         }
+        #[cfg(unix)]
+        {
+            use std::os::unix::process::CommandExt;
+            command.process_group(0);
+        }
         self.child = Some(
             command
                 .spawn()
-                .context("could not start disposable gateway (install Bun)")?,
+                .context("could not start owned disposable backend")?,
         );
         let deadline = Instant::now() + Duration::from_secs(60);
         while Instant::now() < deadline {
@@ -121,6 +163,14 @@ impl Gateway {
         bail!("gateway startup exceeded 60 seconds; inspect gateway.log")
     }
 
+    pub fn process_id(&self) -> Option<u32> {
+        self.child.as_ref().map(Child::id)
+    }
+
+    pub fn launch_profile(&self) -> &'static str {
+        self.backend.profile()
+    }
+
     pub fn restart(&mut self) -> Result<()> {
         ensure!(self.managed, "restart requires an owned disposable gateway");
         self.stop()?;
@@ -129,6 +179,20 @@ impl Gateway {
 
     pub fn stop(&mut self) -> Result<()> {
         if let Some(mut child) = self.child.take() {
+            // A peer may have exited while descendants still hold ports/pipes.
+            // Terminate only this owned process group, never the caller's group.
+            #[cfg(unix)]
+            let _ = Command::new("/bin/kill")
+                .args(["-KILL", "--", &format!("-{}", child.id())])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status();
+            #[cfg(windows)]
+            let _ = Command::new("taskkill")
+                .args(["/PID", &child.id().to_string(), "/T", "/F"])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status();
             if child.try_wait()?.is_none() {
                 child.kill()?;
             }

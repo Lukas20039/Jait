@@ -43,6 +43,31 @@ function checkAssertion(actual, assertion) {
     case 'contains':
       if (typeof value !== 'string' || !value.includes(assertion.value)) throw new Error(`substring absent at ${assertion.path}`)
       return
+    case 'array-contains':
+      if (!Object.hasOwn(assertion, 'value') || !Array.isArray(value) || !value.some((item) => JSON.stringify(item) === JSON.stringify(assertion.value))) throw new Error(`array member absent at ${assertion.path}`)
+      return
+    case 'sum-paths-eq': {
+      if (!Array.isArray(assertion.paths) || !assertion.paths.length) throw new Error('sum requires operand paths')
+      let sum = 0
+      for (const path of assertion.paths) {
+        if (typeof path !== 'string') throw new Error('expected sum path')
+        const operand = pointer(actual, path)
+        if (typeof operand !== 'number' || !Number.isFinite(operand)) throw new Error('missing numeric sum operand')
+        sum += operand
+        if (!Number.isFinite(sum)) throw new Error('non-finite sum')
+      }
+      if (typeof value !== 'number' || value !== sum) throw new Error(`sum assertion failed at ${assertion.path}`)
+      return
+    }
+    case 'difference-ge': {
+      if (typeof assertion.other !== 'string') throw new Error('missing other path')
+      const other = pointer(actual, assertion.other)
+      if (typeof value !== 'number' || typeof other !== 'number' || typeof assertion.value !== 'number' || !Number.isFinite(value - other) || !(value - other >= assertion.value)) throw new Error(`difference assertion failed at ${assertion.path}`)
+      return
+    }
+    case 'not-contains':
+      if (typeof value !== 'string' || value.includes(assertion.value)) throw new Error(`substring present at ${assertion.path}`)
+      return
     case 'bytes-le':
       if (Buffer.byteLength(value, 'utf8') > assertion.value) throw new Error(`byte limit exceeded at ${assertion.path}`)
       return
@@ -55,6 +80,11 @@ function checkAssertion(actual, assertion) {
     case 'gt-path': {
       const other = pointer(actual, assertion.other)
       if (!(value > other * (assertion.factor ?? 1))) throw new Error(`relative score assertion failed at ${assertion.path}`)
+      return
+    }
+    case 'lt-path': {
+      const other = pointer(actual, assertion.other)
+      if (!(value < other * (assertion.factor ?? 1))) throw new Error(`relative score assertion failed at ${assertion.path}`)
       return
     }
     case 'each-fields-absent':

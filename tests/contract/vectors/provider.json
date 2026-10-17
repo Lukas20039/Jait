@@ -22,6 +22,32 @@
     ]
   },
   {
+    "id": "internal.provider.reset.no-evidence-reset-after-now",
+    "calls": [
+      { "op": "provider.reset-millis", "input": { "windowDurationMins": 300, "utilization": 0.42, "anchorIso": "2026-03-11T09:37:00.000Z", "now": "2026-03-11T09:37:00.000Z" } }
+    ],
+    "assertions": [
+      { "path": "/0/resetsAtMs", "kind": "gt-path", "other": "/0/nowMs", "factor": 1 },
+      { "path": "/0/resetsAtMs", "kind": "eq", "value": 1773223200000 },
+      { "path": "/0/resetsAtHourUtc", "kind": "eq", "value": 10 },
+      { "path": "/0/windowStartMs", "kind": "eq", "value": 1773205200000 },
+      { "path": "/0/source", "kind": "eq", "value": "window-grid" }
+    ]
+  },
+  {
+    "id": "internal.provider.reset.session-grid-hour-stable",
+    "calls": [
+      { "op": "provider.reset-millis", "input": { "windowDurationMins": 300, "utilization": 0.4, "anchorIso": "2026-03-09T00:00:00.000Z", "now": "2026-03-11T09:37:00.000Z" } },
+      { "op": "provider.reset-millis", "input": { "windowDurationMins": 300, "utilization": 0.4, "anchorIso": "2026-03-16T00:00:00.000Z", "now": "2026-03-18T09:37:00.000Z" } }
+    ],
+    "assertions": [
+      { "path": "/0/resetsAtHourUtc", "kind": "eq", "value": 10 },
+      { "path": "/1/resetsAtHourUtc", "kind": "eq", "value": 10 },
+      { "path": "/0/resetsAtMs", "kind": "eq", "value": 1773223200000 },
+      { "path": "/1/resetsAtMs", "kind": "eq", "value": 1773828000000 }
+    ]
+  },
+  {
     "id": "internal.provider.reset.weekly-window-anchor",
     "calls": [
       { "op": "provider.reset", "input": { "windowDurationMins": 10080, "utilization": 0.2, "anchorIso": "2026-03-09T00:00:00.000Z", "now": "2026-03-11T09:37:00.000Z" } }

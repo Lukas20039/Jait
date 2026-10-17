@@ -1,65 +1,71 @@
 //! Rust-owned assertion interpreter for declarative reference vectors.
 use crate::internal_driver;
 use anyhow::{Context, Result, bail, ensure};
-use serde_json::{Value, json};
-use std::path::Path;
+use serde::Deserialize;
+use serde_json::{Value, value::RawValue};
+use std::{fs, path::Path};
 
-pub fn cases() -> Result<Vec<Value>> {
-    let mut cases = Vec::new();
-    for source in [
-        include_str!("../vectors/fixtures.json"),
-        include_str!("../vectors/provider.json"),
-        include_str!("../vectors/storage.json"),
-        include_str!("../vectors/storage2.json"),
-        include_str!("../vectors/tools.json"),
-        include_str!("../vectors/toolsb.json"),
-        include_str!("../vectors/services.json"),
-        include_str!("../vectors/db.json"),
-        include_str!("../vectors/providers.json"),
-        include_str!("../vectors/routes.json"),
-    ] {
-        cases.extend(serde_json::from_str::<Vec<Value>>(source)?);
+/// One reference vector. `calls` stays raw so authored key order reaches the adapter verbatim.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Case {
+    id: String,
+    calls: Box<RawValue>,
+    assertions: Vec<Value>,
+}
+
+impl Case {
+    pub fn id(&self) -> &str {
+        &self.id
     }
-    for case in &cases {
-        ensure!(
-            case["id"]
-                .as_str()
-                .is_some_and(|id| id.starts_with("internal.")),
-            "invalid vector id"
-        );
-        ensure!(
-            case["calls"]
-                .as_array()
-                .is_some_and(|calls| !calls.is_empty() && calls.len() <= 64),
-            "invalid vector calls"
-        );
-        ensure!(
-            case["assertions"]
-                .as_array()
-                .is_some_and(|assertions| !assertions.is_empty()),
-            "vector requires assertions"
-        );
+}
+
+pub fn cases(root: &Path) -> Result<Vec<Case>> {
+    let vectors = root.join("tests/contract/vectors");
+    let mut paths: Vec<_> = fs::read_dir(&vectors)
+        .with_context(|| format!("read vectors directory {}", vectors.display()))?
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| path.extension().is_some_and(|ext| ext == "json"))
+        .collect();
+    paths.sort();
+    let mut cases = Vec::new();
+    for path in paths {
+        let source = fs::read_to_string(&path)
+            .with_context(|| format!("read vectors {}", path.display()))?;
+        let parsed: Vec<Case> = serde_json::from_str(&source)
+            .with_context(|| format!("parse vectors {}", path.display()))?;
+        for (index, case) in parsed.into_iter().enumerate() {
+            let location = format!("{} case {index}", path.display());
+            ensure!(
+                case.id.starts_with("internal."),
+                "invalid vector id at {location}: {}",
+                case.id
+            );
+            ensure!(
+                serde_json::from_str::<Vec<Value>>(case.calls.get())
+                    .is_ok_and(|calls| !calls.is_empty() && calls.len() <= 64),
+                "invalid vector calls at {location}"
+            );
+            ensure!(
+                !case.assertions.is_empty(),
+                "vector requires assertions at {location}"
+            );
+            cases.push(case);
+        }
     }
     Ok(cases)
 }
+
 pub fn check(
     root: &Path,
     directory: &Path,
     cancelled: &dyn Fn() -> bool,
-    case: &Value,
+    case: &Case,
 ) -> Result<()> {
-    let actual = internal_driver::call(
-        root,
-        directory,
-        json!({"version":1,"calls":case["calls"]}),
-        cancelled,
-    )?;
-    validate(
-        &actual,
-        case["assertions"]
-            .as_array()
-            .context("assertions missing")?,
-    )
+    let request = format!("{{\"version\":1,\"calls\":{}}}", case.calls.get());
+    let actual = internal_driver::call_request(root, directory, &request, cancelled)?;
+    validate(&actual, &case.assertions)
 }
 fn validate(actual: &Value, assertions: &[Value]) -> Result<()> {
     ensure!(!assertions.is_empty(), "case requires assertions");
@@ -97,6 +103,56 @@ fn validate(actual: &Value, assertions: &[Value]) -> Result<()> {
                     .contains(assertion["value"].as_str().context("expected substring")?),
                 "substring absent at {pointer}"
             ),
+            "array-contains" => {
+                let expected = assertion.get("value").context("missing array member")?;
+                ensure!(
+                    value
+                        .as_array()
+                        .context("expected array")?
+                        .contains(expected),
+                    "array member absent at {pointer}"
+                );
+            }
+            "sum-paths-eq" => {
+                let paths = assertion["paths"]
+                    .as_array()
+                    .context("expected sum paths")?;
+                ensure!(!paths.is_empty(), "sum requires operands");
+                let mut sum = 0.0;
+                for path in paths {
+                    sum += actual
+                        .pointer(path.as_str().context("expected sum path")?)
+                        .and_then(Value::as_f64)
+                        .context("missing numeric sum operand")?;
+                    ensure!(sum.is_finite(), "non-finite sum");
+                }
+                ensure!(
+                    value.as_f64().context("expected total")? == sum,
+                    "sum assertion failed at {pointer}"
+                );
+            }
+            "difference-ge" => {
+                let other = actual
+                    .pointer(assertion["other"].as_str().context("missing other path")?)
+                    .and_then(Value::as_f64)
+                    .context("missing numeric difference operand")?;
+                let difference = value.as_f64().context("expected number")? - other;
+                ensure!(
+                    difference.is_finite()
+                        && difference
+                            >= assertion["value"]
+                                .as_f64()
+                                .context("expected minimum difference")?,
+                    "difference assertion failed at {pointer}"
+                );
+            }
+            "not-contains" => ensure!(
+                !value
+                    .as_str()
+                    .context("expected text")?
+                    .contains(assertion["value"].as_str().context("expected substring")?),
+                "substring present at {pointer}"
+            ),
             "bytes-le" => ensure!(
                 value.as_str().context("expected text")?.len()
                     <= assertion["value"].as_u64().context("expected limit")? as usize,
@@ -123,6 +179,17 @@ fn validate(actual: &Value, assertions: &[Value]) -> Result<()> {
                     "relative score assertion failed"
                 );
             }
+            "lt-path" => {
+                let other = actual
+                    .pointer(assertion["other"].as_str().context("missing other path")?)
+                    .and_then(Value::as_f64)
+                    .context("missing comparison score")?;
+                ensure!(
+                    value.as_f64().context("expected score")?
+                        < other * assertion["factor"].as_f64().unwrap_or(1.0),
+                    "relative score assertion failed"
+                );
+            }
             "each-fields-absent" => {
                 for item in value.as_array().context("expected array")? {
                     for field in assertion["value"].as_array().context("expected fields")? {
@@ -144,6 +211,106 @@ fn validate(actual: &Value, assertions: &[Value]) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
+    fn helper_assertions(name: &str) -> Vec<Value> {
+        let cases: Vec<Value> =
+            serde_json::from_str(include_str!("../vectors/tailhelpers.json")).unwrap();
+        cases
+            .into_iter()
+            .find(|case| case["id"] == format!("internal.tailhelpers.{name}"))
+            .unwrap()["assertions"]
+            .as_array()
+            .unwrap()
+            .clone()
+    }
+
+    #[test]
+    fn helper_relations_accept_alternate_totals_and_reject_broken_sums() {
+        let rules = helper_assertions("usage-summed-categories");
+        // Deliberately different from today's implementation-derived totals.
+        let good = json!([{"system":2,"history":3,"toolResults":4,"tools":5,"total":14,"limit":10,"ratio":1}]);
+        assert!(validate(&good, &rules).is_ok());
+        for (field, value) in [
+            ("total", 15),
+            ("system", 0),
+            ("history", 2),
+            ("toolResults", 0),
+            ("tools", 0),
+            ("limit", 11),
+            ("ratio", 0),
+        ] {
+            let mut bad = good.clone();
+            bad[0][field] = json!(value);
+            if ["system", "history", "toolResults", "tools"].contains(&field) {
+                bad[0]["total"] = json!(
+                    ["system", "history", "toolResults", "tools"]
+                        .iter()
+                        .map(|key| bad[0][*key].as_i64().unwrap())
+                        .sum::<i64>()
+                );
+            }
+            assert!(validate(&bad, &rules).is_err(), "accepted invalid {field}");
+        }
+    }
+
+    #[test]
+    fn helper_thinking_checks_difference_with_unpinned_baseline() {
+        let rules = helper_assertions("hidden-thinking");
+        for (baseline, thinking) in [(100, 115), (1, 16), (6, 21)] {
+            assert!(validate(&json!([baseline, thinking]), &rules).is_ok());
+        }
+        for actual in [json!([100, 114]), json!([100, 100]), json!([100, 99])] {
+            assert!(validate(&actual, &rules).is_err());
+        }
+    }
+
+    #[test]
+    fn helper_errors_allow_additional_members_but_require_exact_message() {
+        for name in ["nested-required-path", "invalid-array-item"] {
+            let rules = helper_assertions(name);
+            let message = rules[1]["value"].as_str().unwrap();
+            let good =
+                json!([{"result":{"valid":false,"errors":["another error",message,"last error"]}}]);
+            assert!(validate(&good, &rules).is_ok());
+            for errors in [
+                json!([]),
+                json!([format!("prefix {message}")]),
+                json!(message),
+                json!([42]),
+            ] {
+                let mut bad = good.clone();
+                bad[0]["result"]["errors"] = errors;
+                assert!(validate(&bad, &rules).is_err());
+            }
+            let mut bad = good.clone();
+            bad[0]["result"]["valid"] = json!(true);
+            assert!(validate(&bad, &rules).is_err());
+        }
+    }
+
+    #[test]
+    fn helper_relations_reject_malformed_operands() {
+        let actual = json!([10, 25, "10", null]);
+        for rule in [
+            json!({"path":"/1","kind":"sum-paths-eq","paths":[]}),
+            json!({"path":"/1","kind":"sum-paths-eq","paths":["/missing"]}),
+            json!({"path":"/1","kind":"sum-paths-eq","paths":["/2"]}),
+            json!({"path":"/1","kind":"sum-paths-eq","paths":[null]}),
+            json!({"path":"/1","kind":"sum-paths-eq"}),
+            json!({"path":"/1","kind":"difference-ge","other":"/missing","value":15}),
+            json!({"path":"/1","kind":"difference-ge","other":"/2","value":15}),
+            json!({"path":"/2","kind":"difference-ge","other":"/0","value":15}),
+            json!({"path":"/1","kind":"difference-ge","other":"/0","value":"15"}),
+            json!({"path":"/1","kind":"difference-ge","value":15}),
+            json!({"path":"","kind":"array-contains"}),
+        ] {
+            assert!(
+                validate(&actual, std::slice::from_ref(&rule)).is_err(),
+                "accepted {rule}"
+            );
+        }
+    }
+
     #[test]
     fn rejects_mutated_outputs_and_empty_assertions() {
         assert!(

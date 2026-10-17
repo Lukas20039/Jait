@@ -5,6 +5,19 @@ import { normalizeReasoningEffort, resolveThreadSelectionDefaults } from '../../
 export async function dispatch(call: any): Promise<any> {
   switch (call.op) {
     case 'provider.reset': return deriveOllamaResetWindow({ ...call.input, now: new Date(call.input.now) });
+    case 'provider.reset-millis': {
+      // Numeric projection of the same derivation: the original tests compare
+      // instants (toBeGreaterThan / getUTCHours), which ISO strings cannot express.
+      const now = new Date(call.input.now);
+      const window = deriveOllamaResetWindow({ ...call.input, now });
+      return {
+        resetsAtMs: typeof window.resetsAt === 'string' ? Date.parse(window.resetsAt) : null,
+        windowStartMs: typeof window.windowStartAt === 'string' ? Date.parse(window.windowStartAt) : null,
+        nowMs: now.getTime(),
+        resetsAtHourUtc: typeof window.resetsAt === 'string' ? new Date(window.resetsAt).getUTCHours() : null,
+        source: window.source,
+      };
+    }
     case 'provider.reset-parse': return parseOllamaResetSource(call.value);
     case 'provider.reset-describe': return describeOllamaResetSource(call.value);
     case 'provider.effort': return normalizeReasoningEffort(call.value) ?? null;

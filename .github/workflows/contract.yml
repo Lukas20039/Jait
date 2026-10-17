@@ -13,9 +13,12 @@ permissions:
 jobs:
   gateway-contracts:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.10"
@@ -28,16 +31,36 @@ jobs:
         run: |
           bun run --filter @jait/shared build
           bun run --filter @jait/screen-share build
+          bun run --filter @jait/gateway build
       - name: Check Rust formatting and lint
         run: |
           bun run test:contract:fmt
           bun run test:contract:lint
+      - name: Test parity tooling and identity transport
+        run: node --test tests/contract/tooling/*.test.mjs
       - name: Test contract parser and runner failure handling
-        run: bun run test:contract:unit
+        run: node tests/contract/run.mjs test --bins --test runner --test compaction --test notification_sync --test boundaries --test consent_invariants --test tenant_recovery --test backend_launch --test tail_stream_cleanup --test active_stream --test recovery_corpus
       - name: Test the isolated TypeScript gateway from Rust
         run: bun run test:contract
       - name: Test TypeScript internals with Rust assertions
         run: bun run test:contract:internal
+      - name: Test translated assertions and record source-bound evidence
+        run: bun run test:contract:translated
+      - name: Prepare owned Docker and Chromium integrations
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.jait/artifacts/playwright-browsers
+        run: |
+          docker build --file docker/Dockerfile.sandbox --tag jait/sandbox:latest docker
+          node packages/gateway/node_modules/playwright/cli.js install --with-deps chromium
+          docker image inspect --format '{{.Id}}' jait/sandbox:latest > .jait/artifacts/contracts/native-docker-image.txt
+      - name: Test explicit native integrations without skipped cases
+        run: |
+          node tests/contract/run.mjs translated-report --profile docker
+          node tests/contract/run.mjs translated-report --profile chromium
+      - name: Audit external interface inventory
+        run: |
+          node tests/contract/tooling/capture-interfaces.mjs --check
+          node tests/contract/run.mjs interfaces
       - name: Audit source inventory and current parity evidence
         run: bun run test:contract:coverage --evidence-dir .jait/artifacts/contracts
       - name: Upload contract reports
@@ -47,6 +70,7 @@ jobs:
           name: gateway-contract-reports
           path: |
             .jait/artifacts/contracts/*/report.json
+            .jait/artifacts/contracts/native-docker-image.txt
             .jait/artifacts/gateway-rust-readiness/coverage-audit.json
           if-no-files-found: warn
           retention-days: 7

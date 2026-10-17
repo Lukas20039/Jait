@@ -10,12 +10,17 @@ mkdirSync(artifacts, { recursive: true })
 const localCargo = join(homedir(), '.cargo/bin', process.platform === 'win32' ? 'cargo.exe' : 'cargo')
 const cargo = process.env.CARGO || (existsSync(localCargo) ? localCargo : 'cargo')
 const [mode = 'run', ...args] = process.argv.slice(2)
-if (!['run', 'internal', 'coverage', 'test', 'fmt', 'clippy'].includes(mode)) throw new Error('Expected run, internal, coverage, test, fmt or clippy')
+const binaryModes = { internal: 'internal-contract', coverage: 'coverage', 'translated-report': 'translated-contract', 'resource-baseline': 'resource-baseline', interfaces: 'interfaces' }
+if (!['run', 'internal', 'coverage', 'test', 'translated', 'translated-report', 'resource-baseline', 'interfaces', 'fmt', 'clippy'].includes(mode)) throw new Error('Expected run, internal, coverage, test, translated, translated-report, resource-baseline, interfaces, fmt or clippy')
 const manifest = fileURLToPath(new URL('./Cargo.toml', import.meta.url))
-const cargoArgs = mode === 'fmt'
+// Four peers retain subprocess isolation without saturating the host.
+const cargoArgs = mode === 'translated'
+  ? ['test', '--locked', '--manifest-path', manifest, '--test', 'tail_static', '--',
+    ...(args.some(arg => arg.startsWith('--test-threads')) ? [] : ['--test-threads=4']), ...args]
+  : mode === 'fmt'
   ? ['fmt', '--manifest-path', manifest, '--', '--check']
-  : [['internal', 'coverage'].includes(mode) ? 'run' : mode, '--locked', '--manifest-path', manifest,
-    ...(['internal', 'coverage'].includes(mode) ? ['--bin', mode === 'internal' ? 'internal-contract' : 'coverage', '--', ...args]
+  : [Object.hasOwn(binaryModes, mode) ? 'run' : mode, '--locked', '--manifest-path', manifest,
+    ...(Object.hasOwn(binaryModes, mode) ? ['--bin', binaryModes[mode], '--', ...args]
       : mode === 'run' ? ['--', ...args] : args)]
 const child = spawn(cargo, cargoArgs, {
   cwd: root,
