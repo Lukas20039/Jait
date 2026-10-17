@@ -10,8 +10,8 @@
     "This inventory does not enumerate route/tool/schema/event contracts or prove gateway behavior."
   ],
   "summary": {
-    "test_files": 330,
-    "test_declarations": 2765,
+    "test_files": 331,
+    "test_declarations": 2767,
     "runtime_source_files": 360,
     "source_files_without_direct_test_import": 94,
     "rust_verified_declarations": 2123,
@@ -27179,6 +27179,45 @@
           ],
           "boundary": "public-behavior-or-isolated-protocol-fixture",
           "parity_review": "Construct ExecutionGuard(undefined,120). For i=0..119, capture each beforeCall and require undefined (120 executions of slot 0), then record read with ok=true and dynamic `fact ${i}`. Afterwards require an additional beforeCall return to contain 120 tool calls and require snapshot().calls=120. Counts [120,1,1] retain 122 assertion executions and the stopped 121st attempt. Both progress inputs and the explicit finite hard limit survive. Ordered assertions: slot 0 (120 executions): actual guard.beforeCall(); toBeUndefined; expected undefined (implicit matcher operand) | slot 1 (1 execution): actual guard.beforeCall(); toContain; expected \"120 tool calls\" | slot 2 (1 execution): actual guard.snapshot().calls; toBe; expected 120. Mock boundary: no vi mocks or timers; real ExecutionGuard constructors, beforeCall, record, stopReason and snapshot execute. ToolResult records are synthetic inputs in both tests, so this is guard behavior, not execution of the named external tools. Lifecycle: no before/after hooks, teardown, parameterization or skip gates; local guards and snapshots are reconstructed for this case. toBeUndefined is a typeof-based check; captureType need not serialize object contents because every non-undefined type must fail. Null remains distinct from undefined. toContain sites in this batch use ordinary ASCII message strings; Rust UTF-16 substring containment gives the original unanchored substring comparison for these operands. toBe compares the captured primitive type and value with the exact operand; none of these sites compares object/function identity. Numeric operands are bounded finite integer counts/caps, and the only zero toBe operand uses the explicit nullish +0 fallback reviewed above. The dynamic content operand is separately captured from the source local variable. Rust ownership/counts: 3 mandatory comparison sites, 122 expected assertion executions; per-slot multiplicities [120, 1, 1]. The unchanged callback preserves input and call order. No optional/conditional/synthetic completion-only rule occurs. Each observed false verdict is synchronously returned by Rust and thrown by tailtransport.observe; these declarations do not catch assertion failures or retry them. Mandatory-slot and peer-exit checks prevent skipped assertions from counting as a pass. Rust does not independently impose an exact repetition count, so counts are established by the reviewed unchanged loop bounds, not inferred from the number of static rules. This is an individual source-equivalence proposal awaiting the final source-bound translated execution report; it grants no Rust gateway implementation or integration behavior beyond the original assertions."
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/services/git-diff-fixtures.test.ts",
+      "fingerprint": "5f2e1f0ce689fe30",
+      "lane": "http-tools-config",
+      "direct_source_imports": [
+        "packages/gateway/src/services/git.ts"
+      ],
+      "declaration_count": 2,
+      "cases": [
+        {
+          "id": "packages/gateway/src/services/git-diff-fixtures.test.ts:34:3",
+          "line": 34,
+          "column": 3,
+          "name": "counts untracked files alongside tracked edits without inventing insertion counts",
+          "suite": [
+            "Git diff statistics on isolated repositories"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/services/git-diff-fixtures.test.ts:43:3",
+          "line": 43,
+          "column": 3,
+          "name": "reports no changes when the branch equals the merge base without merge history",
+          "suite": [
+            "Git diff statistics on isolated repositories"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
         }
       ]
     },
@@ -60684,6 +60723,7 @@
         "packages/gateway/src/pr-state.test.ts",
         "packages/gateway/src/routes/projects.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
+        "packages/gateway/src/services/git-diff-fixtures.test.ts",
         "packages/gateway/src/services/git-diff-stats.test.ts",
         "packages/gateway/src/services/git-stacked.test.ts",
         "packages/gateway/src/services/git-status.test.ts",
