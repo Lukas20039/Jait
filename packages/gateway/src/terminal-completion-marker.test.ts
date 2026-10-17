@@ -36,7 +36,9 @@ it("treats a shell completion marker with no exit status as success", async () =
     const env = setup();
     const run = env.run(false);
     await vi.advanceTimersByTimeAsync(20);
-    env.emit("completed output\r\n\x1b]633;D;\x07\x1b]633;B\x07");
+    env.emit("completed output\r\n\x1b]633;D;\x07");
+    env.emit("trailing output\r\n");
+    env.emit("\x1b]633;B\x07");
     await vi.advanceTimersByTimeAsync(100);
     expect((await run).data).toMatchObject({ exitCode: 0, output: expect.stringContaining("completed output") });
     expect(env.notify).not.toHaveBeenCalled();

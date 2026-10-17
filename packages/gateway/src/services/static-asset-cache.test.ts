@@ -23,6 +23,7 @@ it("serves an immutable asset from cache after its backing file disappears", asy
     const second = await app.inject({ url: "/assets/app-abcdefgh.js?version=1" });
     expect(second.body).toBe("cached asset");
     expect((await app.inject({ url: "/assets/missing-abcdefgh.js" })).body).toBe("fallback");
+    expect((await app.inject({ url: "/index.html" })).body).toBe("fallback");
     expect((await app.inject({ url: "/assets/app-abcdefgh.js", headers: { range: "bytes=0-1" } })).body).toBe("fallback");
   } finally {
     await app.close();

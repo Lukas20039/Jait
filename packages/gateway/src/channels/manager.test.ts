@@ -1191,7 +1191,7 @@ describe("progress updates", () => {
     await mgr.start("fake");
 
     connector.emit({ text: "find something", isSelfChat: true });
-    await new Promise((r) => setTimeout(r, 40));
+    const deadline = Date.now() + 2_000; while (!connector.sent.some(m => m.text === "found it") || !connector.live.some(m => m.text.includes("✅ Done"))) { if (Date.now() >= deadline) throw new Error("Progress reply did not complete"); await new Promise(r => setTimeout(r, 5)); }
 
     expect(connector.live).toHaveLength(1);
     expect(connector.live[0]!.text).toContain("• search");

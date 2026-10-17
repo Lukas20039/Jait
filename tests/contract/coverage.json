@@ -14,7 +14,7 @@
     "test_declarations": 2765,
     "runtime_source_files": 360,
     "source_files_without_direct_test_import": 94,
-    "rust_verified_declarations": 2124,
+    "rust_verified_declarations": 2123,
     "retained_test_files": 1,
     "retained_test_declarations": 1
   },
@@ -361,7 +361,7 @@
     },
     {
       "path": "packages/gateway/src/channels/manager.test.ts",
-      "fingerprint": "0216f997ef902750",
+      "fingerprint": "0802b7ec9beed8c1",
       "lane": "native-integrations",
       "direct_source_imports": [
         "packages/gateway/src/channels/manager.ts",
@@ -1852,16 +1852,9 @@
           ],
           "declaration": "it",
           "parameterized": false,
-          "status": "verified",
-          "rust_cases": [
-            {
-              "id": "tailstatic_packages_gateway_src_channels_manager_test_ts_1189_3",
-              "source": "tests/contract/tests/tail_static.rs",
-              "report": ".jait/artifacts/contracts/26143582-1bfe-489e-8306-bab5b86776e3/report.json"
-            }
-          ],
-          "boundary": "public-behavior-or-isolated-protocol-fixture",
-          "parity_review": "Reviewed declaration: mirrors tool calls into a live message and marks it done.\nThe original execution body and referenced lexical helper/hook bodies match the fixture after replacing comparisons with semantic assertion signatures. Each original comparison is bound to the same matcher, negation, actual expression and literal/original expected expression. Normalized body SHA-256: c5be96a898f8e1ed818aae2b7438a4f54797da52d9bfc2b267f5358b0530199f.\n4 source assertion site(s); observed repetition counts by Rust slot: [1, 1, 1, 1]. Every site executed at least once, every repeated comparison passed, and peer completion was observed. Repetitions follow unchanged original loops/callbacks; no new fixed repetition requirement replaces an original predicate.\nOriginal comparisons:\n[0] expect(connector.live).toHaveLength(1)\n[1] expect(connector.live[0]!.text).toContain(\"• search\")\n[2] expect(connector.live[0]!.text).toContain(\"✅ Done\")\n[3] expect(connector.sent.map((m) => m.text)).toContain(\"found it\")\nSetup consists of 7 preserved lexical declaration/effect(s), in matched initialization order. 1 hook(s) retain their original callbacks, awaited setup order and finally cleanup. beforeAll/afterAll run once for this isolated declaration. Original setup text and hashes are in the structural review. Module imports and bindings match; bare package imports resolve from the original test workspace. Type-only imports are distinguished from runtime imports. Every expected operand is a source literal preserved in Rust; the peer captures actual operands only.\nTransport/domain review: structural comparisons are exercised on guarded plain data, ordered dense arrays and primitives; unsupported prototypes, getters, custom JSON, marker collisions and symbol keys are excluded. Dynamic identity cases remain pending. Static object/array/string-containing and primitive-constructor predicates preserve their source asymmetric matcher expressions; constructors cannot be locally shadowed. Promise resolution/rejection mode and original module location are retained. Simple regex literals are separately checked against their finite ASCII text-pattern language, with flags preserved; broader regex operators remain pending. Exception comparisons in this batch are limited to observed throwing/message semantics; unsupported exception representations remain pending. Type/definedness-only captures retain only the information their source predicate needs.\nReal Vitest and the Rust comparator agree on every observation and reject an opposing counterexample per observation (wire-summary.json). Fixture mocks reuse @vitest/spy, clocks use the shared Sinon adapter, and no module mocks/hoisted factories receive blanket credit. The existing injected-response shim supplies Node-compatible Fastify writableEnded semantics.\nEvidence: .jait/artifacts/parity-setup/focused-runs/tailstatic_packages_gateway_src_channels_manager_test_ts_1189_3/result.json and fresh full source-bound translated report. This is reference-test predicate equivalence for reviewed fixture domains, not independent application correctness or a Rust gateway runtime port."
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
           "id": "packages/gateway/src/channels/manager.test.ts:1203:3",
@@ -34678,7 +34671,7 @@
     },
     {
       "path": "packages/gateway/src/services/static-asset-cache.test.ts",
-      "fingerprint": "ff5da01441c2fcff",
+      "fingerprint": "d746aec4a7044972",
       "lane": "http-tools-config",
       "direct_source_imports": [
         "packages/gateway/src/services/static-asset-cache.ts"
@@ -41827,7 +41820,7 @@
     },
     {
       "path": "packages/gateway/src/terminal-completion-marker.test.ts",
-      "fingerprint": "c1f886245206e57d",
+      "fingerprint": "d96096ae2948e768",
       "lane": "native-integrations",
       "direct_source_imports": [
         "packages/gateway/src/services/background-command-monitor.ts",
