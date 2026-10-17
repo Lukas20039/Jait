@@ -24,6 +24,9 @@ mod tail_stream {
                 .args(["--exact", FIXTURE, "--nocapture"])
                 .env("JAIT_CLEANUP_FIXTURE", role)
                 .env("JAIT_CLEANUP_DIRECTORY", directory);
+            if role == "delayed" {
+                command.env("JAIT_CLEANUP_DELAY_BRANCH_READY", "1");
+            }
             command
         }
 
@@ -58,7 +61,13 @@ mod tail_stream {
                     command.process_group(0);
                 }
                 let _descendant = command.spawn().unwrap();
-                await_file(&directory.join("leaf.pid"));
+                // A leaf can be ready while its parent is still initializing.
+                // Publish readiness only after our direct child is ready.
+                await_file(&directory.join(format!("{next}.pid")));
+            }
+            // Model a child that has started its leaf but has not published readiness.
+            if role == "branch" && std::env::var_os("JAIT_CLEANUP_DELAY_BRANCH_READY").is_some() {
+                thread::sleep(Duration::from_millis(200));
             }
             fs::write(
                 directory.join(format!("{role}.pid")),
@@ -159,6 +168,19 @@ mod tail_stream {
         }
         #[cfg(not(target_os = "linux"))]
         fn descendants_stopped(_: &Path) {} // Pipe EOF is still checked on every platform.
+
+        #[test]
+        fn peer_readiness_waits_for_intermediate_child() {
+            let directory = directory();
+            let (mut child, _rescue, receive) = peer(&directory, "delayed");
+            assert!(
+                fs::read(directory.join("branch.pid")).is_ok_and(|bytes| !bytes.is_empty()),
+                "peer reported readiness before the intermediate child"
+            );
+            assert!(child.cleanup());
+            pipes_closed(&receive);
+            descendants_stopped(&directory);
+        }
 
         #[test]
         fn panic_cleans_tree_and_inherited_pipes_without_touching_other_group() {
