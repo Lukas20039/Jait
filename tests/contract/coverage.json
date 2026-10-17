@@ -10,10 +10,10 @@
     "This inventory does not enumerate route/tool/schema/event contracts or prove gateway behavior."
   ],
   "summary": {
-    "test_files": 325,
-    "test_declarations": 2760,
+    "test_files": 330,
+    "test_declarations": 2765,
     "runtime_source_files": 360,
-    "source_files_without_direct_test_import": 95,
+    "source_files_without_direct_test_import": 94,
     "rust_verified_declarations": 2124,
     "retained_test_files": 1,
     "retained_test_declarations": 1
@@ -11071,6 +11071,29 @@
       ]
     },
     {
+      "path": "packages/gateway/src/providers/provider-auth-command.test.ts",
+      "fingerprint": "92a4df495f475bce",
+      "lane": "security-execution",
+      "direct_source_imports": [
+        "packages/gateway/src/providers/provider-auth.ts"
+      ],
+      "declaration_count": 1,
+      "cases": [
+        {
+          "id": "packages/gateway/src/providers/provider-auth-command.test.ts:4:1",
+          "line": 4,
+          "column": 1,
+          "name": "reports auth subprocess completion: $code / $output",
+          "suite": [],
+          "declaration": "it.each([\n  { code: 0, output: \"signed out\", ok: true, message: \"Logout completed.\" },\n  { code: 7, output: \"logout refused\", ok: false, message: \"Command exited with code 7.\" },\n  { code: 0, output: \"\", ok: true, message: \"Logout completed.\" },\n])",
+          "parameterized": true,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        }
+      ]
+    },
+    {
       "path": "packages/gateway/src/providers/provider-auth.test.ts",
       "fingerprint": "ecb4ddce164bf865",
       "lane": "security-execution",
@@ -19542,6 +19565,35 @@
           ],
           "boundary": "http-or-websocket-contract",
           "parity_review": "Reviewed declaration: does not expose thread approval to an anonymous caller.\nThe original execution body and referenced lexical helper/hook bodies match the fixture after replacing comparisons with semantic assertion signatures. Each original comparison is bound to the same matcher, negation, actual expression and literal/original expected expression. Normalized body SHA-256: e18b50ca7d0073581b73bf06b83ac5469cb9ac30bb58418f765cbaf24d168ef4.\n2 source assertion site(s); observed repetition counts by Rust slot: [1, 1]. Every site executed at least once, every repeated comparison passed, and peer completion was observed. Repetitions follow unchanged original loops/callbacks; no new fixed repetition requirement replaces an original predicate.\nOriginal comparisons:\n[0] expect((await app.inject({ method: \"POST\", url: `/api/consent/${id}/approve` })).statusCode).toBe(401)\n[1] expect(manager.listPending()).toHaveLength(1)\nSetup consists of 6 preserved lexical declaration/effect(s), in matched initialization order. 2 hook(s) retain their original callbacks, awaited setup order and finally cleanup. beforeAll/afterAll run once for this isolated declaration. Original setup text and hashes are in the structural review. Module imports and bindings match; bare package imports resolve from the original test workspace. Type-only imports are distinguished from runtime imports. Every expected operand is a source literal preserved in Rust; the peer captures actual operands only.\nTransport/domain review: structural comparisons are exercised on guarded plain data, ordered dense arrays and primitives; unsupported prototypes, getters, custom JSON, marker collisions and symbol keys are excluded. Dynamic identity cases remain pending. Static object/array/string-containing and primitive-constructor predicates preserve their source asymmetric matcher expressions; constructors cannot be locally shadowed. Promise resolution/rejection mode and original module location are retained. Simple regex literals are separately checked against their finite ASCII text-pattern language, with flags preserved; broader regex operators remain pending. Exception comparisons in this batch are limited to observed throwing/message semantics; unsupported exception representations remain pending. Type/definedness-only captures retain only the information their source predicate needs.\nReal Vitest and the Rust comparator agree on every observation and reject an opposing counterexample per observation (wire-summary.json). Fixture mocks reuse @vitest/spy, clocks use the shared Sinon adapter, and no module mocks/hoisted factories receive blanket credit. The existing injected-response shim supplies Node-compatible Fastify writableEnded semantics.\nEvidence: .jait/artifacts/parity-expanded/focused-runs/tailstatic_packages_gateway_src_routes_thread_consent_test_ts_65_3/result.json and fresh full source-bound translated report. This is reference-test predicate equivalence for reviewed fixture domains, not independent application correctness or a Rust gateway runtime port."
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/routes/threads-diff-stats.test.ts",
+      "fingerprint": "2abc43402942f018",
+      "lane": "providers-streams-coordination",
+      "direct_source_imports": [
+        "packages/gateway/src/config.ts",
+        "packages/gateway/src/db/index.ts",
+        "packages/gateway/src/providers/contracts.ts",
+        "packages/gateway/src/providers/registry.ts",
+        "packages/gateway/src/routes/threads.ts",
+        "packages/gateway/src/security/http-auth.ts",
+        "packages/gateway/src/services/threads.ts"
+      ],
+      "declaration_count": 1,
+      "cases": [
+        {
+          "id": "packages/gateway/src/routes/threads-diff-stats.test.ts:90:1",
+          "line": 90,
+          "column": 1,
+          "name": "persists completed thread diff stats with no configured base or branch",
+          "suite": [],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "http-or-websocket-contract"
         }
       ]
     },
@@ -34625,6 +34677,29 @@
       ]
     },
     {
+      "path": "packages/gateway/src/services/static-asset-cache.test.ts",
+      "fingerprint": "ff5da01441c2fcff",
+      "lane": "http-tools-config",
+      "direct_source_imports": [
+        "packages/gateway/src/services/static-asset-cache.ts"
+      ],
+      "declaration_count": 1,
+      "cases": [
+        {
+          "id": "packages/gateway/src/services/static-asset-cache.test.ts:7:1",
+          "line": 7,
+          "column": 1,
+          "name": "serves an immutable asset from cache after its backing file disappears",
+          "suite": [],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        }
+      ]
+    },
+    {
       "path": "packages/gateway/src/services/subscription-usage-fetchers.test.ts",
       "fingerprint": "efa77e7fcbc2b9f8",
       "lane": "http-tools-config",
@@ -36604,6 +36679,30 @@
           ],
           "boundary": "public-behavior-or-isolated-protocol-fixture",
           "parity_review": "Reviewed declaration: throws instead of returning empty when the reasoning budget is exhausted.\nThe original execution body and referenced lexical helper/hook bodies match the fixture after replacing comparisons with semantic assertion signatures. Each original comparison is bound to the same matcher, negation, actual expression and literal/original expected expression. Normalized body SHA-256: ed8bae316ff83da3e3f16f779efac80cf8171a2f00546ce33ce7952401013986.\n1 source assertion site(s); observed repetition counts by Rust slot: [1]. Every reachable site executed at least once, every observed comparison passed, and peer completion was observed. Zero-count optional slots belong exclusively to lexically unreferenced helpers, proven by unused-assertion-helpers.mjs: identifier references retain aliases, callback arguments, lifecycle hooks, initialization effects and exports; ambiguous scopes and dynamic lookup fail closed. Each omitted slot and its enclosing helper source range are recorded in combined-selected.json. This does not certify an unexecuted conditional assertion in a reachable function. Repetitions follow unchanged original loops/callbacks; no new fixed repetition requirement replaces an original predicate.\nOriginal comparisons:\n[0] expect(\n      generateTitleViaApi({\n        task: \"some longer opening message\",\n        config: {\n          port: 0,\n          wsPort: 0,\n          host: \"127.0.0.1\",\n          logLevel: \"silent\",\n          corsOrigin: \"*\",\n          nodeEnv: \"test\",\n          jwtSecret: \"test\",\n          llmProvider: \"ollama\",\n          ollamaUrl: \"http://localhost:11434\",\n          ollamaModel: \"dummy\",\n          openaiApiKey: \"\",\n          openaiModel: \"gpt-4o\",\n          openaiBaseUrl: \"https://api.openai.com/v1\",\n          contextWindow: 128000,\n          hookSecret: \"test\",\n          heartbeatCron: \"* * * * *\",\n          whisperUrl: \"http://localhost:8178\",\n        },\n        model: \"glm-5.3-flash:cloud\",\n        jaitBackend: \"ollama\",\n      }),\n    ).rejects.toThrow(/spent its whole token budget reasoning|max_tokens/)\nSetup consists of 1 preserved lexical declaration/effect(s), in matched initialization order. 1 hook(s) retain their original callbacks, awaited setup order and finally cleanup. beforeAll/afterAll run once for this isolated declaration. Original setup text and hashes are in the structural review. Module imports and bindings match; bare package imports resolve from the original test workspace. Type-only imports are distinguished from runtime imports. Every expected operand is a source literal preserved in Rust; the peer captures actual operands only.\nTransport/domain review: structural comparisons are exercised on guarded plain data, ordered dense arrays and primitives; unsupported prototypes, getters, custom JSON, marker collisions and symbol keys are excluded. Dynamic object identity cases remain pending. Type-only declarations have no runtime execution. Temporary-root substitutions are allowed only for unshadowed node:os tmpdir() calls in unshadowed node:path join/resolve positions; the peer fixture root is verified to be the project artifact fixture directory. This review preserves filesystem behavior relative to the disposable root; it does not establish equivalence of distinct filesystems or host-wide temporary-directory permissions. Static object/array/string-containing and primitive-constructor predicates preserve their source asymmetric matcher expressions; constructors cannot be locally shadowed. Promise resolution/rejection mode and original module location are retained. Simple regex literals are separately checked against their finite ASCII text-pattern language, with flags preserved; broader regex operators remain pending. Exception comparisons in this batch are limited to observed throwing/message semantics; unsupported exception representations remain pending. Type/definedness-only captures retain only the information their source predicate needs.\nReal Vitest and the Rust comparator agree on every observation and reject an opposing counterexample per observation (wire-summary.json). Fixture mocks reuse @vitest/spy, clocks use the shared Sinon adapter, and no module mocks/hoisted factories receive blanket credit. The existing injected-response shim supplies Node-compatible Fastify writableEnded semantics.\nEvidence: .jait/artifacts/parity-resume/focused-runs/tailstatic_packages_gateway_src_services_thread_title_test_ts_142_3/result.json and fresh full source-bound translated report. This is reference-test predicate equivalence for reviewed fixture domains, not independent application correctness or a Rust gateway runtime port."
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/services/threads-diff-stats.test.ts",
+      "fingerprint": "3555342d77565c93",
+      "lane": "providers-streams-coordination",
+      "direct_source_imports": [
+        "packages/gateway/src/db/index.ts",
+        "packages/gateway/src/services/threads.ts"
+      ],
+      "declaration_count": 1,
+      "cases": [
+        {
+          "id": "packages/gateway/src/services/threads-diff-stats.test.ts:5:1",
+          "line": 5,
+          "column": 1,
+          "name": "persists and resets all diff counters without losing other metadata",
+          "suite": [],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
         }
       ]
     },
@@ -41723,6 +41822,32 @@
           ],
           "boundary": "public-behavior-or-isolated-protocol-fixture",
           "parity_review": "Reviewed declaration: stops an already exited surface.\nThe original execution body and referenced lexical helper/hook bodies match the fixture after replacing comparisons with semantic assertion signatures. Each original comparison is bound to the same matcher, negation, actual expression and literal/original expected expression. Normalized body SHA-256: 2cf0410bad5236375d424283ac581da39f09bb5d10faf1f4ee823dec687232b8.\n1 source assertion site(s); observed repetition counts by Rust slot: [1]. Every site executed at least once, every repeated comparison passed, and peer completion was observed. Repetitions follow unchanged original loops/callbacks; no new fixed repetition requirement replaces an original predicate.\nOriginal comparisons:\n[0] expect(terminal.state).toBe(\"stopped\")\nSetup consists of 1 preserved lexical declaration/effect(s), in matched initialization order. 1 hook(s) retain their original callbacks, awaited setup order and finally cleanup. beforeAll/afterAll run once for this isolated declaration. Original setup text and hashes are in the structural review. Module imports and bindings match; bare package imports resolve from the original test workspace. Type-only imports are distinguished from runtime imports. Every expected operand is a source literal preserved in Rust; the peer captures actual operands only.\nTransport/domain review: structural comparisons are exercised on guarded plain data, ordered dense arrays and primitives; unsupported prototypes, getters, custom JSON, marker collisions and symbol keys are excluded. Dynamic identity cases remain pending. Static object/array/string-containing and primitive-constructor predicates preserve their source asymmetric matcher expressions; constructors cannot be locally shadowed. Promise resolution/rejection mode and original module location are retained. Simple regex literals are separately checked against their finite ASCII text-pattern language, with flags preserved; broader regex operators remain pending. Exception comparisons in this batch are limited to observed throwing/message semantics; unsupported exception representations remain pending. Type/definedness-only captures retain only the information their source predicate needs.\nReal Vitest and the Rust comparator agree on every observation and reject an opposing counterexample per observation (wire-summary.json). Fixture mocks reuse @vitest/spy, clocks use the shared Sinon adapter, and no module mocks/hoisted factories receive blanket credit. The existing injected-response shim supplies Node-compatible Fastify writableEnded semantics.\nEvidence: .jait/artifacts/parity-next/focused-runs/tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3/result.json and fresh full source-bound translated report. This is reference-test predicate equivalence for reviewed fixture domains, not independent application correctness or a Rust gateway runtime port."
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/terminal-completion-marker.test.ts",
+      "fingerprint": "c1f886245206e57d",
+      "lane": "native-integrations",
+      "direct_source_imports": [
+        "packages/gateway/src/services/background-command-monitor.ts",
+        "packages/gateway/src/surfaces/registry.ts",
+        "packages/gateway/src/surfaces/terminal.ts",
+        "packages/gateway/src/tools/terminal-tools.ts"
+      ],
+      "declaration_count": 1,
+      "cases": [
+        {
+          "id": "packages/gateway/src/terminal-completion-marker.test.ts:33:1",
+          "line": 33,
+          "column": 1,
+          "name": "treats a shell completion marker with no exit status as success",
+          "suite": [],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
         }
       ]
     },
@@ -58300,6 +58425,7 @@
         "packages/gateway/src/routes/terminals-execute.test.ts",
         "packages/gateway/src/routes/terminals-remote.test.ts",
         "packages/gateway/src/routes/thread-consent.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/routes/update.test.ts",
         "packages/gateway/src/security/control-access.test.ts",
@@ -58406,6 +58532,7 @@
         "packages/gateway/src/routes/team-chat.test.ts",
         "packages/gateway/src/routes/team-execution.e2e.test.ts",
         "packages/gateway/src/routes/terminals-remote.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/scheduler/cron.test.ts",
         "packages/gateway/src/scheduler/disk-space.test.ts",
@@ -58430,6 +58557,7 @@
         "packages/gateway/src/services/team-chat-stopped-thread.test.ts",
         "packages/gateway/src/services/team-chat.test.ts",
         "packages/gateway/src/services/thread-checkpoint.test.ts",
+        "packages/gateway/src/services/threads-diff-stats.test.ts",
         "packages/gateway/src/services/threads.test.ts",
         "packages/gateway/src/sprint12.test.ts",
         "packages/gateway/src/sprint4.test.ts",
@@ -58980,6 +59108,7 @@
         "packages/gateway/src/routes/plans-provider.test.ts",
         "packages/gateway/src/routes/repo-proposals-generate.test.ts",
         "packages/gateway/src/routes/team-chat.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/threads.test.ts",
         "packages/gateway/src/tools/agent-acp-runner.test.ts",
@@ -59065,6 +59194,7 @@
       "fingerprint": "b9c8475ed4f4de64",
       "lane": "security-execution",
       "direct_test_references": [
+        "packages/gateway/src/providers/provider-auth-command.test.ts",
         "packages/gateway/src/providers/provider-auth.test.ts"
       ],
       "status": "pending",
@@ -59107,6 +59237,7 @@
         "packages/gateway/src/routes/repo-proposals-generate.test.ts",
         "packages/gateway/src/routes/team-chat.test.ts",
         "packages/gateway/src/routes/team-execution.e2e.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/services/provider-accounts.test.ts",
         "packages/gateway/src/threads.test.ts",
@@ -59632,6 +59763,7 @@
       "direct_test_references": [
         "packages/gateway/src/routes/ownership.test.ts",
         "packages/gateway/src/routes/remote-threads.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts"
       ],
       "status": "pending",
@@ -59894,6 +60026,7 @@
         "packages/gateway/src/routes/terminal-project-routing.test.ts",
         "packages/gateway/src/routes/terminals-execute.test.ts",
         "packages/gateway/src/routes/thread-consent.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/routes/update.test.ts",
         "packages/gateway/src/security/control-access.test.ts",
@@ -60215,6 +60348,7 @@
       "lane": "http-tools-config",
       "direct_test_references": [
         "packages/gateway/src/services/background-command-monitor.test.ts",
+        "packages/gateway/src/terminal-completion-marker.test.ts",
         "packages/gateway/src/terminal-tools.test.ts",
         "packages/gateway/src/terminal-waiting.test.ts",
         "packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts",
@@ -61152,10 +61286,12 @@
       "path": "packages/gateway/src/services/static-asset-cache.ts",
       "fingerprint": "e9267690e006a3d6",
       "lane": "http-tools-config",
-      "direct_test_references": [],
+      "direct_test_references": [
+        "packages/gateway/src/services/static-asset-cache.test.ts"
+      ],
       "status": "pending",
       "rust_cases": [],
-      "gap": "No direct static import from inventoried test files; inspect indirect/integration coverage."
+      "gap": "Existing direct imports do not establish Rust behavioral parity."
     },
     {
       "path": "packages/gateway/src/services/subscription-usage-fetchers.ts",
@@ -61268,6 +61404,7 @@
         "packages/gateway/src/routes/team-chat.test.ts",
         "packages/gateway/src/routes/team-execution.e2e.test.ts",
         "packages/gateway/src/routes/thread-consent.test.ts",
+        "packages/gateway/src/routes/threads-diff-stats.test.ts",
         "packages/gateway/src/routes/threads.test.ts",
         "packages/gateway/src/services/database-retention.test.ts",
         "packages/gateway/src/services/disk-janitor.test.ts",
@@ -61276,6 +61413,7 @@
         "packages/gateway/src/services/team-chat.test.ts",
         "packages/gateway/src/services/thread-checkpoint.test.ts",
         "packages/gateway/src/services/thread-history.test.ts",
+        "packages/gateway/src/services/threads-diff-stats.test.ts",
         "packages/gateway/src/services/threads.test.ts",
         "packages/gateway/src/thread-review-sync.test.ts",
         "packages/gateway/src/threads.test.ts",
@@ -61517,6 +61655,7 @@
         "packages/gateway/src/sprint5.test.ts",
         "packages/gateway/src/sprint7.test.ts",
         "packages/gateway/src/surfaces/registry.test.ts",
+        "packages/gateway/src/terminal-completion-marker.test.ts",
         "packages/gateway/src/terminal-tools.test.ts",
         "packages/gateway/src/terminal-waiting.test.ts",
         "packages/gateway/src/tools/browser-tools-integration.test.ts",
@@ -61595,6 +61734,7 @@
         "packages/gateway/src/surfaces/shell-integration-assets.test.ts",
         "packages/gateway/src/surfaces/terminal-isolation.test.ts",
         "packages/gateway/src/surfaces/terminal-stop.test.ts",
+        "packages/gateway/src/terminal-completion-marker.test.ts",
         "packages/gateway/src/terminal-tools.test.ts",
         "packages/gateway/src/terminal-waiting.test.ts"
       ],
@@ -62635,6 +62775,7 @@
       "lane": "native-integrations",
       "direct_test_references": [
         "packages/gateway/src/sprint13.test.ts",
+        "packages/gateway/src/terminal-completion-marker.test.ts",
         "packages/gateway/src/terminal-tools.test.ts",
         "packages/gateway/src/terminal-waiting.test.ts",
         "packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts",
