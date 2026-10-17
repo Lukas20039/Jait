@@ -4,6 +4,17 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.946](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.946) — 2026-10-17
+
+- test(contracts): expand Rust acceptance and component coverage gates — 40afb1a3
+- feat: improve messenger actions, notification sync, and agent output — a0dcfa73
+
+Improve Messenger message actions, image display and history loading; synchronize chat completion/read notifications across web and Android; improve project todo interactions, model-facing command output, compaction and DeepSeek prompting. Expand Rust acceptance tests against the TypeScript reference, source-bound parity evidence and interface inventories, and add an Istanbul component coverage baseline and CI gate. The native Rust gateway remains planned work.
+
+Validation: 3,517 gateway/shared/API-client tests and 1,705 client tests passed in isolated application state (78 integration tests skipped); 9 browser checks, 37 contract-tooling tests, 93 Rust regression tests, 93 gateway scenarios and 395 internal scenarios passed. Production build, workspace typechecks, lint, Rust formatting/clippy, component coverage, release version and artifact checks passed.
+
+Package versions: gateway 0.1.946, web 0.1.454, shared 0.1.104, mobile 0.1.29. No database migration. Command output filtering is enabled by default; `JAIT_COMMAND_OUTPUT_FILTERS=0` disables it.
+
 ## [v0.1.945](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.945) — 2026-10-17
 
 - test(contracts): refresh inventory for messenger and worktree changes — 5ac6d8d3
