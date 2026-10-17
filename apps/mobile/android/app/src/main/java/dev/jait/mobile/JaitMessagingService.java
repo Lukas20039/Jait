@@ -62,6 +62,10 @@ public class JaitMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage message) {
         String type = message.getData().get("type");
+        if ("chat.notification-read".equals(type)) {
+            ChatNotifications.clear(this, message.getData().get("replaceId"), message.getData().get("id"));
+            return;
+        }
         if ("chat.completed".equals(type)) {
             String id = message.getData().get("id");
             if (id != null) ChatNotifications.show(this, id,

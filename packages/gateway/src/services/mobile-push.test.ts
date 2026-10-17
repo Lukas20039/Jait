@@ -38,6 +38,35 @@ describe("MobilePushService", () => {
     } finally { sqlite.close(); }
   });
 
+  it("clears the exact completion on only the owner's devices, even if one push fails", async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const send = vi.fn(async (_url: unknown, init?: RequestInit) => {
+        const token = JSON.parse(init!.body as string).message.token;
+        return new Response("{}", { status: token === "bad-token" ? 503 : 200 });
+      });
+      const service = new MobilePushService(db, {
+        project_id: "test", client_email: "test@example.com", private_key: "unused",
+      }, send as typeof fetch);
+      Object.assign(service, { accessToken: { value: "test-token", expiresAt: Date.now() + 3600_000 } });
+      service.register("stale", "user-a", "bad-token");
+      service.register("phone-a", "user-a", "token-a");
+      service.register("phone-b", "user-b", "token-b");
+      await service.sendChatNotificationRead("user-a", {
+        id: "completion-1", sessionId: "s", replaceId: "chat-complete:s", read: true,
+      });
+      const messages = send.mock.calls.map((call) => JSON.parse(call[1]!.body as string).message);
+      expect(messages).toHaveLength(2);
+      expect(messages.map((message) => message.token).sort()).toEqual(["bad-token", "token-a"]);
+      expect(messages.find((message) => message.token === "token-a")).toEqual({ token: "token-a", data: {
+        type: "chat.notification-read", id: "completion-1", sessionId: "s", replaceId: "chat-complete:s",
+      }, android: { priority: "high", ttl: "3600s" } });
+      expect(warn).toHaveBeenCalledOnce();
+    } finally { warn.mockRestore(); sqlite.close(); }
+  });
+
   it("sends questions without an expiry or push TTL override", async () => {
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);

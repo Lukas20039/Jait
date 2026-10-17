@@ -13,6 +13,20 @@ final class ChatNotifications {
     private static final String CHANNEL = "jait-chat-completions";
     private ChatNotifications() {}
 
+    static synchronized void clear(Context context, String cardId, String eventId) {
+        if (cardId == null || cardId.isEmpty() || eventId == null || eventId.isEmpty()) return;
+        // A late FCM completion must not resurrect an event already read elsewhere.
+        context.getSharedPreferences(CHANNEL, Context.MODE_PRIVATE).edit()
+            .putLong(eventId, System.currentTimeMillis()).apply();
+        NotificationManager manager = context.getSystemService(NotificationManager.class);
+        for (android.service.notification.StatusBarNotification posted : manager.getActiveNotifications()) {
+            if (cardId.equals(posted.getTag()) && eventId.equals(posted.getNotification().extras.getString("jait.eventId"))) {
+                manager.cancel(cardId, 0);
+            }
+        }
+        PhoneWearListenerService.pushSnapshot(context);
+    }
+
     static void show(Context context, String id, String title, String body) {
         show(context, id, title, body, id, "/chat", NotificationNavigation.scope(context), "", false);
     }
@@ -22,7 +36,7 @@ final class ChatNotifications {
         show(context, id, title, body, replaceId, link, scope, sessionId, completion, null);
     }
 
-    static void show(Context context, String id, String title, String body, String replaceId,
+    static synchronized void show(Context context, String id, String title, String body, String replaceId,
                      String link, String scope, String sessionId, boolean completion, String markReadLink) {
         NotificationManager manager = context.getSystemService(NotificationManager.class);
         NotificationChannel channel = new NotificationChannel(CHANNEL, "Chat completions", NotificationManager.IMPORTANCE_HIGH);
@@ -67,6 +81,9 @@ final class ChatNotifications {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             builder.addAction(R.drawable.ic_jait_notification, "Mark as read", read);
         }
+        android.os.Bundle extras = new android.os.Bundle();
+        extras.putString("jait.eventId", id);
+        builder.addExtras(extras);
         manager.notify(cardId, 0, builder.build());
         PhoneWearListenerService.pushSnapshot(context);
     }

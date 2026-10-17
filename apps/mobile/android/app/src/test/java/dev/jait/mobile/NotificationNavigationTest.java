@@ -61,6 +61,38 @@ public class NotificationNavigationTest {
         show("beta:1", "beta", "Other chat");
         assertEquals(1, manager.getActiveNotifications().length);
     }
+    @Test public void readRevokesOnlyTheExactCardAndDelayedDeliveryCannotResurrectIt() {
+        show("alpha:1", "alpha", "First");
+        show("beta:1", "beta", "Other chat");
+        ChatNotifications.clear(context, "chat:alpha", "alpha:1");
+        assertEquals(1, manager.getActiveNotifications().length);
+        assertEquals("chat:beta", manager.getActiveNotifications()[0].getTag());
+        show("alpha:1", "alpha", "Late push");
+        assertEquals(1, manager.getActiveNotifications().length);
+        show("alpha:2", "alpha", "New reply");
+        ChatNotifications.clear(context, "chat:alpha", "alpha:1");
+        assertEquals(2, manager.getActiveNotifications().length);
+    }
+    @Test public void readBeforeCompletionPushSuppressesItsFirstDelivery() {
+        ChatNotifications.clear(context, "chat:alpha", "alpha:1");
+        show("alpha:1", "alpha", "Delayed first delivery");
+        assertEquals(0, manager.getActiveNotifications().length);
+        show("alpha:2", "alpha", "New reply");
+        assertEquals(1, manager.getActiveNotifications().length);
+    }
+    @Test public void backgroundPushUsesTheSameExactEventRevocation() {
+        show("alpha:1", "alpha", "Ready");
+        org.robolectric.android.controller.ServiceController<JaitMessagingService> controller =
+            org.robolectric.Robolectric.buildService(JaitMessagingService.class).create();
+        try {
+            controller.get().onMessageReceived(new com.google.firebase.messaging.RemoteMessage.Builder("test")
+                .addData("type", "chat.notification-read").addData("id", "alpha:1")
+                .addData("replaceId", "chat:alpha").build());
+            assertEquals(0, manager.getActiveNotifications().length);
+            show("alpha:1", "alpha", "Late completion");
+            assertEquals(0, manager.getActiveNotifications().length);
+        } finally { controller.destroy(); }
+    }
     private void show(String event, String session, String body) {
         ChatNotifications.show(context, event, "Response ready", body, "chat:" + session,
             "/chat?sessionId=" + session, "https://gateway.test", session, true);

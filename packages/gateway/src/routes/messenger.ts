@@ -32,6 +32,8 @@ const login = z
   .strict()
   .refine((v) => v.accessToken || (v.username && v.password));
 const command = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('edit'), roomId, eventId: z.string().min(1).max(512), text: z.string().trim().min(1).max(10000) }).strict(),
+  z.object({ action: z.literal('react'), roomId, eventId: z.string().min(1).max(512), key: z.string().trim().min(1).max(64) }).strict(),
   z
     .object({ action: z.literal('assistantAccess'), enabled: z.boolean() })
     .strict(),
@@ -51,7 +53,7 @@ const command = z.discriminatedUnion('action', [
         .regex(/^@[^:\s]+:[^\s]+$/),
     })
     .strict(),
-  ...(['join', 'leave', 'earlier', 'unread'] as const).map((action) =>
+  ...(['join', 'leave', 'earlier', 'unread', 'remove'] as const).map((action) =>
     z.object({ action: z.literal(action), roomId }).strict(),
   ),
   z

@@ -7,6 +7,7 @@ const mock = vi.hoisted(() => ({ createClient: vi.fn(), notify: vi.fn(), revoke:
 vi.mock('@/lib/system-notifications', () => ({ triggerSystemNotification: mock.notify, revokeSystemNotification: mock.revoke }))
 vi.mock('./crypto', () => ({ initializeCrypto: (client: Client) => client.initRustCrypto() }))
 vi.mock('matrix-js-sdk', () => ({
+  Direction: { Backward: 'b', Forward: 'f' },
   createClient: mock.createClient,
   ClientEvent: { Sync: 'sync', Room: 'Room' },
   SyncState: { Prepared: 'PREPARED', Syncing: 'SYNCING', Error: 'ERROR', Reconnecting: 'RECONNECTING' },
@@ -176,7 +177,7 @@ describe('personal Matrix client lifecycle', () => {
     await store.connect(input)
     await store.enableNotifications(true)
     const client = clients.at(-1)!
-    const room = { name: 'Personal', roomId: '!room:matrix.test', getLiveTimeline: () => ({ getEvents: () => [] }) }
+    const room = { name: 'Personal', roomId: '!room:matrix.test', getLiveTimeline: () => ({ getEvents: () => [], getPaginationToken: () => null }) }
     const event = {
       getId: () => '$message', getRoomId: () => room.roomId, getType: () => 'm.room.message',
       isDecryptionFailure: () => false, getSender: () => '@bob:matrix.test', status: null,
@@ -202,7 +203,7 @@ function readRoom(client: Client) {
   const room = {
     roomId: '!room:matrix.test', name: 'Personal',
     getMyMembership: () => 'join', getMember: () => ({ name: 'Bob' }), getMembers: () => [],
-    getLiveTimeline: () => ({ getEvents: () => events }),
+    getLiveTimeline: () => ({ getEvents: () => events, getPaginationToken: () => null }),
     findEventById: (id: string) => events.find(event => event.getId() === id),
     getUnfilteredTimelineSet: () => ({ compareEventOrdering: (a: string, b: string) => events.findIndex(event => event.getId() === a) - events.findIndex(event => event.getId() === b) }),
     getReadReceiptForUserId: vi.fn(() => null as unknown),

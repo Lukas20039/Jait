@@ -25,6 +25,10 @@ import type { TerminalExecutionPayload } from "@jait/shared";
 import type { SecretInputService } from "../services/secret-input.js";
 import { backgroundCommandMonitor, extractCompletionOutput } from "../services/background-command-monitor.js";
 import { isShellPromptLine } from "./shell-prompt.js";
+import {
+  commandOutputFilteringEnabled,
+  compressCommandOutput,
+} from "./command-output-filters.js";
 import { resolveCommandTimeoutMs } from "../lib/command-timeout.js";
 import { writeFileSync, unlinkSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
@@ -951,7 +955,7 @@ function executeInTerminal(
   signal?: AbortSignal,
   requestInteractiveSecret?: (prompt: string) => Promise<string | null>,
   onWaitTimeout?: (state: { raw: string; completionToken?: string; cleanup: () => void }) => boolean,
-): Promise<{ output: string; exitCode: number | null; timedOut: boolean; interactionRequired?: boolean; pagerEscaped?: boolean }> {
+): Promise<{ output: string; exitCode: number | null; timedOut: boolean; interactionRequired?: boolean; pagerEscaped?: boolean; outputFilter?: string | null }> {
   return new Promise((resolve) => {
     let raw = "";
     let settled = false;
@@ -987,6 +991,9 @@ function executeInTerminal(
     // occasional `q` typed into a shell prompt (no pager) is harmless — it
     // just echoes or starts an incremental search that immediately ends.
     let pagerEscaped = false;
+    // Set when a command-aware output filter rewrote the captured text (see
+    // command-output-filters.ts).  Surfaced on the tool result as provenance.
+    let outputFilterNote: string | null = null;
     let watchdogTimer: ReturnType<typeof setInterval> | null = null;
     const stopPagerWatchdog = () => {
       if (watchdogTimer) {
@@ -1179,9 +1186,22 @@ function executeInTerminal(
         }
       }
 
-      output = truncateTerminalToolOutput(lines.join("\n").trim());
+      // Command-aware compression runs *before* the generic bounding step so a
+      // recognized command (git/ls/grep/tests) can replace its verbose output
+      // with a faithful summary that still keeps failures.  Anything it cannot
+      // safely shrink falls through unchanged to the bounding path below.
+      let body = lines.join("\n").trim();
+      const filtered = commandOutputFilteringEnabled()
+        ? compressCommandOutput(command, body)
+        : null;
+      if (filtered) {
+        body = filtered.output;
+        outputFilterNote = filtered.note;
+      }
 
-      resolve({ output: output || "(no output)", exitCode, timedOut, interactionRequired, pagerEscaped });
+      output = truncateTerminalToolOutput(body);
+
+      resolve({ output: output || "(no output)", exitCode, timedOut, interactionRequired, pagerEscaped, outputFilter: outputFilterNote });
     };
 
     // Listen BEFORE writing so we don't miss fast output
@@ -1642,6 +1662,7 @@ export function createTerminalRunTool(
             terminalOutput: modelTerminalOutput,
             terminalOutputAnsi: uiTerminalOutputAnsi,
             outputStats: outputStats ?? undefined,
+            outputFilter: result.outputFilter ?? undefined,
             exitCode: result.exitCode,
             timedOut: result.timedOut,
             terminalId,

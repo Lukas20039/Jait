@@ -80,6 +80,9 @@ export class ConsentAwareExecutor {
     input: unknown,
     context: ToolContext,
   ): Promise<ToolResult> {
+    // Consent can resolve after cancellation; check at the effect boundary too.
+    if (context.signal?.aborted) return Promise.resolve({ ok: false, message: "Cancelled" });
+
     if (this.delegate) {
       return this.delegate(toolName, input, context, this.audit);
     }
@@ -95,6 +98,9 @@ export class ConsentAwareExecutor {
     context: ToolContext,
     options: ExecuteOptions = {},
   ): Promise<ToolResult> {
+    // A cancelled turn must not enqueue another approval or begin a tool call.
+    if (context.signal?.aborted) return { ok: false, message: "Cancelled" };
+
     const permission = resolveToolPermission(toolName, this.permissions);
     const trustLevel = this.trustEngine.getLevel(toolName);
 

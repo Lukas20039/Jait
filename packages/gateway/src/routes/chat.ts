@@ -4983,7 +4983,13 @@ export function registerChatRoutes(
         const injectedMemoryMessage: ChatMessage | null = memoryBlock
           ? { role: "system", content: memoryBlock }
           : null;
-        if (injectedMemoryMessage) history.push(injectedMemoryMessage);
+        if (injectedMemoryMessage) {
+          // Keep retrieved context before the current user request, so the
+          // final input remains the instruction the assistant must answer.
+          let latestUserIndex = history.length - 1;
+          while (latestUserIndex >= 0 && history[latestUserIndex]?.role !== "user") latestUserIndex -= 1;
+          history.splice(latestUserIndex < 0 ? history.length : latestUserIndex, 0, injectedMemoryMessage);
+        }
         let result: Awaited<ReturnType<typeof runAgentLoop>>;
         try {
           // A provider can ignore AbortSignal and leave its request pending forever.
@@ -5417,9 +5423,7 @@ export function registerChatRoutes(
           level: "success" as const,
           includeToast: false,
         };
-        ws?.broadcastToUser(authUser.id, {
-          type: "notification", sessionId, timestamp: new Date().toISOString(), payload: notification,
-        });
+        ws?.publishChatNotification(authUser.id, notification);
         void mobilePush?.sendChatCompleted(authUser.id, notification).catch(() => { /* best effort */ });
       }
     }

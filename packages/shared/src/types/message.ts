@@ -106,6 +106,8 @@ export type WsEventType =
   | "chat.deleted"
   | "chat.moved"
   | "notification"
+  | "notification.cleared"
+  | "notification.snapshot"
   | "fs.changes"
   // Owner-wide autonomous-execution kill switch. Broadcast after every
   // halt/resume so every surface can render the banner from server state

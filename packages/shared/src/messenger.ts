@@ -60,6 +60,8 @@ export interface MessengerMessage {
   unableToDecrypt: boolean
   pending: boolean
   failed: boolean
+  edited?: boolean
+  reactions?: { key: string; count: number; own: boolean; senders: string[] }[]
   readBy?: MessengerReadReceipt[]
   attachment?: {
     url: string
@@ -91,6 +93,8 @@ export interface MessengerSnapshot {
   rooms: MessengerRoom[]
   selectedRoomId: string | null
   messages: MessengerMessage[]
+  hasEarlier?: boolean
+  historyLimited?: boolean
   notifications: boolean
   assistantAccess: boolean
 }

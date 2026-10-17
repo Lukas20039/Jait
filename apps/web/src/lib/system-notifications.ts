@@ -37,7 +37,11 @@ function hashCode(s: string): number {
  */
 let nativeNotificationsEnabled = true
 let visibleSessionId: string | null = null
-export function setVisibleNotificationSession(sessionId: string | null): void { visibleSessionId = sessionId }
+export function getVisibleNotificationSession(): string | null { return visibleSessionId }
+export function setVisibleNotificationSession(sessionId: string | null): void {
+  visibleSessionId = sessionId
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('jait:notification-visibility'))
+}
 const seenEvents = new Set<string>()
 
 export function setNativeNotificationsEnabled(enabled: boolean): void {
@@ -127,7 +131,11 @@ function trackBrowserNotification(id: string, notification: Notification, link?:
  * request was answered on another device. Best-effort on every transport —
  * a notification the user already dismissed is simply not there to close.
  */
-export async function revokeSystemNotification(id: string): Promise<void> {
+export async function revokeSystemNotification(id: string, eventId?: string): Promise<void> {
+  if (eventId) {
+    seenEvents.add(eventId)
+    if (seenEvents.size > 256) seenEvents.delete(seenEvents.values().next().value!)
+  }
   void closeMessengerBrowserNotification(id).catch(() => {})
   const browserNotification = liveBrowserNotifications.get(id)
   if (browserNotification) {
@@ -135,7 +143,7 @@ export async function revokeSystemNotification(id: string): Promise<void> {
     try { browserNotification.close() } catch { /* already gone */ }
   }
 
-  try { await androidNotificationBridge()?.cancelNotification?.({ id }) } catch { /* already gone */ }
+  try { await androidNotificationBridge()?.cancelNotification?.({ id, ...(eventId ? { eventId } : {}) }) } catch { /* already gone */ }
   const desktop = window.jaitDesktop
   if (desktop?.closeNotification) {
     try { await desktop.closeNotification(id) } catch { /* already gone */ }

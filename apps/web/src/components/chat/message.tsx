@@ -979,10 +979,7 @@ function MessageInner({
                       )}
                       onClick={handleUserBubbleClick}
                     >
-                      <div className={cn('min-w-0 space-y-3',
-                        // Keep the inset controls clear of text without changing bubble padding.
-                        canCopyMessage && messageActionItems.length > 0 && (isMobile ? 'pr-3' : 'pr-20'),
-                      )}>
+                      <div className="min-w-0 space-y-3">
                         <AttachmentList attachments={userAttachments.filter(item => !item.mimeType.startsWith('image/'))} />
                         <div className="min-w-0 whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                           {(optimisticUserDisplaySegments ?? userDisplaySegments).length > 0

@@ -19,12 +19,14 @@ import {
 import { desktopOperationError } from '@/lib/desktop-operation-error'
 import { applyTerminalExecutionEvent } from '@/lib/tool-terminal-live'
 import { invalidateTerminalSnapshot } from '@/lib/terminal-snapshot'
+import { ChatNotificationSync } from '@/lib/chat-notification-sync'
 
 import { Filesystem, Directory } from '@capacitor/filesystem'
 import { getWsUrl } from '@/lib/gateway-url'
 import { detectPlatform, initDeviceId } from '@/lib/device-id'
 import {
   revokeSystemNotification,
+  getVisibleNotificationSession,
   setNativeNotificationsEnabled,
   triggerSystemNotification,
   type SystemNotificationInput,
@@ -257,6 +259,19 @@ export function useUICommands(opts: UseUICommandsOptions) {
   const onConnectionStateChangeRef = useRef(onConnectionStateChange)
   onConnectionStateChangeRef.current = onConnectionStateChange
   const wsRef = useRef<WebSocket | null>(null)
+  const notificationSyncRef = useRef<ChatNotificationSync | null>(null)
+  if (!notificationSyncRef.current) {
+    notificationSyncRef.current = new ChatNotificationSync(
+      getVisibleNotificationSession,
+      (state) => {
+        const ws = wsRef.current
+        if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({
+          type: 'notification.read', sessionId: state.sessionId, payload: { id: state.id },
+        }))
+      },
+      (state) => { void revokeSystemNotification(state.replaceId, state.id) },
+    )
+  }
   const currentSessionRef = useRef<string | null>(null)
   const mountedRef = useRef(true)
   const hasConnectedRef = useRef(false)
@@ -286,7 +301,14 @@ export function useUICommands(opts: UseUICommandsOptions) {
   // ── Cross-platform notification handler ──────────────────────────
 
   const handleGatewayNotification = useCallback(async (notif: SystemNotificationInput) => {
+    if (notif.kind === 'completion' && notif.sessionId) {
+      notificationSyncRef.current?.receive({
+        id: notif.id, sessionId: notif.sessionId,
+        replaceId: notif.replaceId ?? notif.id, read: false,
+      })
+    }
     await triggerSystemNotification({ ...notif, includeToast: notif.includeToast ?? notif.kind !== 'completion' })
+    if (notif.sessionId) notificationSyncRef.current?.afterShow(notif.id, notif.sessionId)
   }, [])
 
   // Handle incoming messages — extracted so it's stable across reconnects
@@ -389,6 +411,11 @@ export function useUICommands(opts: UseUICommandsOptions) {
         void handleGatewayNotification(msg.payload as {
           id: string; title: string; body: string; level: 'info' | 'success' | 'warning' | 'error'; link?: string
         })
+      } else if (msg.type === 'notification.cleared') {
+        notificationSyncRef.current?.receive(msg.payload)
+      } else if (msg.type === 'notification.snapshot') {
+        const states = (msg.payload as { notifications?: unknown[] })?.notifications
+        if (Array.isArray(states)) for (const state of states) notificationSyncRef.current?.receive(state)
       } else if (msg.type === 'attention.raised') {
         // The gateway decides which surface owns the OS notification for this
         // machine. When Desktop is connected it takes the toast and this tab
@@ -717,6 +744,7 @@ export function useUICommands(opts: UseUICommandsOptions) {
 
       ws.onopen = () => {
         invalidateTerminalSnapshot()
+        ws.send(JSON.stringify({ type: 'resource.subscribe', payload: { resource: 'root:/chat-notifications' } }))
         const reconnected = hasConnectedRef.current
         hasConnectedRef.current = true
         onConnectionStateChangeRef.current?.({ connected: true, reconnected })
@@ -858,6 +886,8 @@ export function useUICommands(opts: UseUICommandsOptions) {
       connect()
     }
 
+    const readVisibleNotification = () => notificationSyncRef.current?.readVisible()
+    window.addEventListener('jait:notification-visibility', readVisibleNotification)
     connect()
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', handleVisibilityChange)
@@ -911,6 +941,8 @@ export function useUICommands(opts: UseUICommandsOptions) {
 
     return () => {
       mountedRef.current = false
+      notificationSyncRef.current?.reset()
+      window.removeEventListener('jait:notification-visibility', readVisibleNotification)
       clearReconnectTimer()
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', handleVisibilityChange)

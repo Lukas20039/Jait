@@ -1,4 +1,4 @@
-import type { NotificationContext } from "@jait/shared";
+import type { ChatNotificationState, NotificationContext } from "@jait/shared";
 import { and, eq } from "drizzle-orm";
 import { SignJWT, importPKCS8 } from "jose";
 import type { JaitDB } from "../db/index.js";
@@ -149,6 +149,21 @@ export class MobilePushService {
       }
     }));
     return targets.length;
+  }
+
+  /** WebSockets carry reads live; data push also reaches a sleeping Android app. */
+  async sendChatNotificationRead(userId: string, state: ChatNotificationState): Promise<void> {
+    if (!this.serviceAccount) return;
+    await Promise.all(this.list(userId).map(async (registration) => {
+      try {
+        await this.sendData(registration, {
+          type: "chat.notification-read", id: state.id,
+          sessionId: state.sessionId, replaceId: state.replaceId,
+        }, "3600s");
+      } catch (error) {
+        console.warn("[mobile-push] chat read push failed for", registration.deviceId, error);
+      }
+    }));
   }
 
   private async sendData(

@@ -1,7 +1,8 @@
 import { WebSocketServer, type WebSocket } from "ws";
 import { MessengerBridge } from "./services/messenger-bridge.js";
+import { ChatNotificationsService } from "./services/chat-notifications.js";
 import type { MessengerToolResponse } from "@jait/shared";
-import type { WsEvent } from "@jait/shared";
+import type { WsEvent, ChatNotificationState, NotificationContext } from "@jait/shared";
 import type { UICommandPayload } from "@jait/shared";
 import type {
   ScreenShareOffer,
@@ -124,6 +125,19 @@ export function resolveSessionScopedClientTarget(
 
 export class WsControlPlane {
   readonly messenger = new MessengerBridge();
+  private chatNotifications: ChatNotificationsService;
+  onChatNotificationRead?: (state: ChatNotificationState, userId: string) => void;
+
+  publishChatNotification(userId: string, notification: { id: string; title: string; body: string } & NotificationContext) {
+    if (!notification.sessionId) return;
+    const sessionId = notification.sessionId;
+    this.chatNotifications.set(userId, {
+      id: notification.id, sessionId, replaceId: notification.replaceId ?? notification.id, read: false,
+    });
+    this.broadcastToUser(userId, {
+      type: "notification", sessionId, timestamp: new Date().toISOString(), payload: notification,
+    });
+  }
   private wss: WebSocketServer | null = null;
   private clients = new Map<string, ConnectedClient>();
   private jwtSecret: Uint8Array;
@@ -211,6 +225,7 @@ export class WsControlPlane {
   constructor(private config: AppConfig, db?: JaitDB) {
     if (!config.jwtSecret.trim()) throw new Error("JWT secret is not configured");
     this.jwtSecret = new TextEncoder().encode(config.jwtSecret);
+    this.chatNotifications = new ChatNotificationsService(db);
     this.nodePermissions = new NodePermissionsService(db ?? null);
     this.nodeCredentials = new NodeCredentialsService(db ?? null);
     this.canAccessNode = (id, userId) => Boolean(userId && (id === "gateway"
@@ -444,6 +459,28 @@ export class WsControlPlane {
         }
         break;
       }
+      case "notification.read": {
+        const sessionId = msg.sessionId;
+        const id = (msg.payload as { id?: unknown } | null)?.id;
+        if (typeof sessionId !== "string" || !sessionId || sessionId.length > 256
+            || typeof id !== "string" || !id || id.length > 512) {
+          this.denyControl(client, "BAD_REQUEST");
+          return;
+        }
+        if (!client.userId || !this.canAccessSession?.(sessionId, client.userId)) {
+          this.denyControl(client, "SESSION_FORBIDDEN");
+          return;
+        }
+        const entry = this.chatNotifications.get(sessionId);
+        if (!entry || entry.userId !== client.userId || entry.state.id !== id || entry.state.read) return;
+        entry.state = { ...entry.state, read: true };
+        this.chatNotifications.set(client.userId, entry.state);
+        this.broadcastToUser(client.userId, {
+          type: "notification.cleared", sessionId, timestamp: new Date().toISOString(), payload: entry.state,
+        });
+        this.onChatNotificationRead?.(entry.state, client.userId);
+        return;
+      }
       case "subscribe": {
         if (!client.authenticated) {
           this.send(client.ws, {
@@ -494,6 +531,15 @@ export class WsControlPlane {
           return;
         }
         const resource = (msg.payload as { resource?: string } | undefined)?.resource;
+        if (resource === "root:/chat-notifications") {
+          const notifications = this.chatNotifications.list(client.userId!)
+            .filter((state) => this.canAccessSession?.(state.sessionId, client.userId));
+          this.send(client.ws, {
+            type: "notification.snapshot", sessionId: "", timestamp: new Date().toISOString(),
+            payload: { notifications },
+          });
+          return;
+        }
         if (resource === "root:/nodes") {
           this.sendNodeRegistrySnapshot(client.ws);
           return;
@@ -1304,7 +1350,7 @@ export class WsControlPlane {
    */
   broadcastToUser(userId: string, event: WsEvent) {
     for (const client of this.clients.values()) {
-      if (this.hasAuthority(client) && client.userId === userId && client.ws.readyState === 1) {
+      if (this.hasAuthority(client) && !client.pairedNodeId && client.userId === userId && client.ws.readyState === 1) {
         this.send(client.ws, event);
       }
     }

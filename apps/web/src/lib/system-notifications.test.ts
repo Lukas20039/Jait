@@ -211,7 +211,7 @@ describe('normalizeSystemNotification', () => {
 
 it('deduplicates the same completion but replaces the card for the next turn', async () => {
   const notify = vi.fn(async (_input: unknown) => {})
-  vi.stubGlobal('window', { jaitDesktop: { notify } })
+  vi.stubGlobal('window', { dispatchEvent: vi.fn(), jaitDesktop: { notify } })
   try {
     const input = { id: 'completion:dedupe:1', replaceId: 'chat:dedupe', kind: 'completion' as const, sessionId: 'dedupe', title: 'Response ready', body: 'Done', link: '/chat?sessionId=dedupe', includeToast: false }
     await triggerSystemNotification(input)
@@ -224,7 +224,7 @@ it('deduplicates the same completion but replaces the card for the next turn', a
 
 it('suppresses only the visible focused chat completion', async () => {
   const notify = vi.fn(async (_input: unknown) => {})
-  vi.stubGlobal('window', { jaitDesktop: { notify } })
+  vi.stubGlobal('window', { dispatchEvent: vi.fn(), jaitDesktop: { notify } })
   vi.stubGlobal('document', { visibilityState: 'visible', hasFocus: () => true })
   setVisibleNotificationSession('visible-chat')
   try {

@@ -35,11 +35,13 @@ import {
 import type { MessengerHistory } from './messenger-history.js';
 import { getStateDirectory } from '../state-directory.js';
 
+const MAX_EVENTS = 10000;
 const MAX_MEDIA = 20 * 1024 * 1024;
 const enc = encodeURIComponent;
 type Event = {
   event_id?: string;
   type: string;
+  redacts?: string;
   state_key?: string;
   sender?: string;
   origin_server_ts?: number;
@@ -50,7 +52,7 @@ type Room = {
   summary: MessengerRoom;
   events: Event[];
   states: Event[];
-  previous?: string;
+  previous?: string | null;
   receipts: Record<string, Record<string, { ts?: number }>>;
 };
 interface Saved {
@@ -259,13 +261,33 @@ class Connection {
         .sort((a, b) => b.timestamp - a.timestamp),
       selectedRoomId: roomId,
       messages: roomId ? this.messages(roomId) : [],
+      hasEarlier: !!roomId && !!this.rooms.get(roomId)?.previous && (this.rooms.get(roomId)?.events.length ?? 0) < MAX_EVENTS,
+      historyLimited: !!roomId && !!this.rooms.get(roomId)?.previous && (this.rooms.get(roomId)?.events.length ?? 0) >= MAX_EVENTS,
       notifications: false,
       assistantAccess: this.assistantAccess,
     };
   }
   messages(roomId: string): MessengerMessage[] {
     const room = this.rooms.get(roomId);
-    return (room?.events ?? [])
+    const redacted = new Set((room?.events ?? []).filter(e => e.type === 'm.room.redaction').map(e => e.redacts ?? e.content?.redacts));
+    const active = (room?.events ?? []).filter(e => !e.unsigned?.redacted_because && !redacted.has(e.event_id));
+    const edits = new Map<string, Event>();
+    const reactions = new Map<string, Map<string, Set<string>>>();
+    const originals = new Map(active.map(e => [e.event_id, e]));
+    for (const e of active) {
+      const relation = e.content?.['m.relates_to'];
+      if (relation?.rel_type === 'm.replace' && e.type === 'm.room.message'
+          && e.sender === originals.get(relation.event_id)?.sender && typeof e.content?.['m.new_content']?.body === 'string') {
+        const old = edits.get(relation.event_id);
+        if (!old || (e.origin_server_ts ?? 0) >= (old.origin_server_ts ?? 0)) edits.set(relation.event_id, e);
+      }
+      if (e.type === 'm.reaction' && relation?.rel_type === 'm.annotation' && typeof relation.key === 'string' && e.sender) {
+        const keys = reactions.get(relation.event_id) ?? new Map<string, Set<string>>();
+        const users = keys.get(relation.key) ?? new Set<string>();
+        users.add(e.sender); keys.set(relation.key, users); reactions.set(relation.event_id, keys);
+      }
+    }
+    return active
       .filter(
         (e) =>
           e.event_id &&
@@ -274,7 +296,8 @@ class Connection {
           !e.unsigned?.redacted_because,
       )
       .map((e) => {
-        const c = e.content ?? {};
+        const edit = edits.get(e.event_id!);
+        const c = edit?.content['m.new_content'] ?? e.content ?? {};
         const failed = e.type === 'm.room.encrypted';
         const attachment = c.file?.url ?? c.url;
         const mime =
@@ -319,6 +342,8 @@ class Connection {
           unableToDecrypt: failed,
           pending: false,
           failed: false,
+          edited: !!edit,
+          reactions: [...(reactions.get(e.event_id!) ?? [])].map(([key, users]) => ({ key, count: users.size, own: users.has(this.session?.userId ?? ''), senders: [...users] })),
           readBy,
           ...(typeof attachment === 'string' && attachment.startsWith('mxc://')
             ? {
@@ -450,6 +475,7 @@ class Connection {
   private async sync(raw: any) {
     for (const [membership, rooms] of Object.entries(raw.rooms ?? {})) {
       for (const [id, data] of Object.entries(rooms as Record<string, any>)) {
+        if (membership === 'leave' && !this.rooms.has(id)) continue;
         const room = this.rooms.get(id) ?? {
           summary: {
             id,
@@ -532,7 +558,7 @@ class Connection {
                 ...room.receipts[eventId],
                 ...types['m.read'],
               };
-        if (!room.previous) room.previous = data.timeline?.prev_batch;
+        if (room.previous === undefined) room.previous = data.timeline?.prev_batch;
         for (const event of data.timeline?.events ?? []) {
           if (!event.event_id) continue;
           const index = room.events.findIndex(
@@ -549,7 +575,7 @@ class Connection {
         for (let i = 0; i < room.events.length; i++)
           if (room.events[i]!.type === 'm.room.encrypted')
             room.events[i] = await this.decrypt(id, room.events[i]!);
-        room.events = room.events.slice(-2000);
+        room.events = room.events.slice(-MAX_EVENTS);
         this.rooms.set(id, room);
         const latest = this.messages(id).at(-1);
         room.summary.timestamp = latest?.timestamp ?? 0;
@@ -567,18 +593,27 @@ class Connection {
   async earlier(roomId: string) {
     const room = this.rooms.get(roomId);
     if (!room?.previous) return;
-    const data = await this.connected().doRequest(
-      'GET',
-      `/_matrix/client/v3/rooms/${enc(roomId)}/messages`,
-      { from: room.previous, dir: 'b', limit: 40 },
-    );
-    room.previous = data.end;
-    const events: Event[] = [];
-    for (const event of (data.chunk ?? []).reverse())
-      if (!room.events.some((e) => e.event_id === event.event_id))
-        events.push(await this.decrypt(roomId, event));
-    room.events = [...events, ...room.events].slice(-2000);
+    // Relation/state-only pages must not look like a dead Load earlier button.
+    const count = this.messages(roomId).length;
+    for (let page = 0; page < 5 && room.previous && room.events.length < MAX_EVENTS; page++) {
+      const from: string = room.previous;
+      const data = await this.connected().doRequest(
+        'GET', `/_matrix/client/v3/rooms/${enc(roomId)}/messages`,
+        { from, dir: 'b', limit: Math.min(100, MAX_EVENTS - room.events.length) },
+      );
+      room.previous = data.chunk?.length && data.end && data.end !== from ? data.end : null;
+      const ids = new Set(room.events.map(e => e.event_id));
+      const events: Event[] = [];
+      for (const event of [...(data.chunk ?? [])].reverse()) {
+        if (event.event_id && !ids.has(event.event_id)) {
+          ids.add(event.event_id); events.push(await this.decrypt(roomId, event));
+        }
+      }
+      room.events = [...events, ...room.events];
+      if (this.messages(roomId).length > count) break;
+    }
   }
+
   async command(body: any): Promise<any> {
     if (body.action === 'assistantAccess') {
       this.assistantAccess = body.enabled === true;
@@ -588,7 +623,7 @@ class Connection {
     const id = body.roomId;
     const room = this.rooms.get(id);
     if (
-      ['send', 'read', 'unread', 'earlier', 'attachment'].includes(
+      ['send', 'read', 'unread', 'earlier', 'attachment', 'edit', 'react'].includes(
         body.action,
       ) &&
       room?.summary.membership !== 'join'
@@ -596,12 +631,50 @@ class Connection {
       throw new Error('Join the conversation first.');
     if (body.action === 'send')
       return { eventId: await client.sendText(id, body.text) };
+    if (body.action === 'edit' || body.action === 'react') {
+      const original = room!.events.find(e => e.event_id === body.eventId);
+      if (!original || !this.messages(id).some(m => m.id === body.eventId && !m.unableToDecrypt)) throw new Error('Message is unavailable.');
+      if (body.action === 'edit') {
+        if (original.sender !== this.session?.userId || !['m.text', 'm.notice'].includes(original.content.msgtype)) throw new Error('Only your own text messages can be edited.');
+        const content = { msgtype: original.content.msgtype, body: '* ' + body.text,
+          'm.new_content': { msgtype: original.content.msgtype, body: body.text },
+          'm.relates_to': { rel_type: 'm.replace', event_id: body.eventId } };
+        const eventId = await client.sendMessage(id, content);
+        room!.events.push({ event_id: eventId, type: 'm.room.message', sender: this.session!.userId, origin_server_ts: Date.now(), content });
+        return { eventId };
+      }
+      const removed = new Set(room!.events.filter(e => e.type === 'm.room.redaction').map(e => e.redacts ?? e.content?.redacts));
+      const own = room!.events.filter(e => e.type === 'm.reaction' && e.sender === this.session?.userId && !e.unsigned?.redacted_because && !removed.has(e.event_id)
+        && e.content?.['m.relates_to']?.event_id === body.eventId && e.content?.['m.relates_to']?.key === body.key);
+      if (own.length) {
+        for (const e of own) {
+          await client.redactEvent(id, e.event_id!);
+          e.unsigned = { ...e.unsigned, redacted_because: {} };
+        }
+        return {};
+      }
+      const content = { 'm.relates_to': { rel_type: 'm.annotation', event_id: body.eventId, key: body.key } };
+      const eventId = await client.sendEvent(id, 'm.reaction', content);
+      room!.events.push({ event_id: eventId, type: 'm.reaction', sender: this.session!.userId, origin_server_ts: Date.now(), content });
+      return { eventId };
+    }
+    if (body.action === 'remove') {
+      if (!room) throw new Error('Conversation is unavailable.');
+      if (room.summary.membership !== 'leave') {
+        await client.leaveRoom(id);
+        room.summary.membership = 'leave';
+      }
+      await client.doRequest('POST', `/_matrix/client/v3/rooms/${enc(id)}/forget`, undefined, {});
+      this.rooms.delete(id);
+      return {};
+    }
     if (body.action === 'join') {
       await client.joinRoom(id);
       return {};
     }
     if (body.action === 'leave') {
       await client.leaveRoom(id);
+      this.rooms.delete(id);
       return {};
     }
     if (body.action === 'earlier') {

@@ -49,7 +49,7 @@ export interface NotificationBridge {
   acknowledgeNotification?: (input: { id: string }) => NativeResult<unknown>
   addListener?: (name: string, callback: (activation: NotificationActivation) => void) => NativeResult<{ remove(): NativeResult<void> }>
   setNotificationContext?: (input: { sessionId: string; visible: boolean }) => NativeResult<unknown>
-  cancelNotification?: (input: { id: string }) => NativeResult<unknown>
+  cancelNotification?: (input: { id: string; eventId?: string }) => NativeResult<unknown>
 }
 
 /** Keep native bridge methods that return synchronously from crashing notification setup. */

@@ -169,6 +169,18 @@ export class GatewayMessengerStore implements MessengerStoreApi {
   async send(roomId: string, text: string) {
     if (text.trim()) await this.action({ action: 'send', roomId, text });
   }
+  async edit(roomId: string, eventId: string, text: string) {
+    await this.action({ action: 'edit', roomId, eventId, text });
+  }
+  async react(roomId: string, eventId: string, key: string) {
+    await this.action({ action: 'react', roomId, eventId, key });
+  }
+  async remove(roomId: string) {
+    await this.request('/command', 'POST', { action: 'remove', roomId });
+    this.roomCache.delete(roomId);
+    if (this.remoteSnapshot.selectedRoomId === roomId) this.selectRoom(null);
+    await this.refreshRemote();
+  }
   async join(roomId: string) {
     await this.action({ action: 'join', roomId });
   }

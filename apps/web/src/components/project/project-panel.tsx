@@ -1,10 +1,11 @@
 import { useGitChangeCounts, refreshGitChangeCounts } from '@/lib/git-service'
-import { useEffect, useLayoutEffect, useMemo, useState, useCallback, useRef, forwardRef, useImperativeHandle, memo, type Dispatch, type SetStateAction } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useState, useCallback, useRef, forwardRef, useImperativeHandle, memo, type Dispatch, type SetStateAction } from 'react'
 import Editor, { loader } from '@monaco-editor/react'
 import { AlertCircle, Bot, Boxes, ChevronDown, ChevronRight, CloudUpload, Copy, Download, Edit3, ExternalLink, EyeOff, Expand, FilePlus, FolderOpen, FolderPlus, FolderTree, GitBranch, GitCommit, Globe, List, Loader2, MessageSquare, Minimize2, Minus, MoreVertical, Play, Plus, RefreshCw, Save, Search, Settings2, Sparkles, Square, Trash2, Undo2, Upload, X } from 'lucide-react'
 import { gitApi as gitApiImport, type FileDiffEntry, type GitStackedAction } from '@/lib/git-api'
 import type { ProviderId } from '@/lib/agents-api'
 import { ArchitectureWorkspace } from './architecture-workspace'
+import { canDetachTab, closeTodosTab, hasTodosTab, TODOS_TAB_ID, TODOS_TAB_PATH, upsertTodosTab } from './project-todos-tab'
 import { Button } from '@/components/ui/button'
 import { useConfirmDialog } from '@/components/ui/confirm-dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -43,6 +44,29 @@ import {
   ProjectPreviewInspectPanel,
   type PreviewInspectRenderState,
 } from './project-preview-inspect-panel'
+
+/*
+ * The Todos page is a large subtree (task lists, provider icons, editors) that the
+ * project panel — and everything importing it, such as the chat diff view — only needs
+ * once the Todos tab is actually opened. Loading it lazily keeps it out of the eager
+ * module graph of the editor/chat bundles and of their unit tests.
+ */
+const TodoPage = lazy(() => import('@/components/todo').then((module) => ({ default: module.TodoPage })))
+
+function TodosTabContent() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-full items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading...
+        </div>
+      }
+    >
+      <TodoPage />
+    </Suspense>
+  )
+}
 
 /* ------------------------------------------------------------------ */
 /*  Public types                                                       */
@@ -175,6 +199,10 @@ export interface ProjectPanelHandle {
   openArchitectureTab: () => void
   /** Close the architecture tab, if any. */
   closeArchitectureTab: () => void
+  /** Open (or focus) the embedded Todos tab. */
+  openTodosTab: () => void
+  /** Close the embedded Todos tab, if any. */
+  closeTodosTab: () => void
   /** Lazily search the entire directory for files matching a query. Cancellable via AbortSignal. */
   searchFiles: (query: string, limit: number, signal?: AbortSignal) => Promise<{ path: string; name: string }[]>
 }
@@ -697,6 +725,7 @@ function isEditableProjectTab(tab: EditorTab | null): boolean {
 
 function getEditorTabTitle(tab: EditorTab): string {
   if (tab.type === 'architecture') return tab.label || 'Architecture'
+  if (tab.type === 'todos') return tab.label || 'Todos'
   if (tab.type === 'preview') return tab.label || 'Preview'
   if (tab.type !== 'diff') return tab.label
   const baseLabel = tab.label || (tab.path.split(/[\\/]/).pop() ?? tab.path)
@@ -709,7 +738,7 @@ function getEditorTabTitle(tab: EditorTab): string {
 
 interface EditorTab {
   id: string
-  type: 'file' | 'diff' | 'preview' | 'architecture'
+  type: 'file' | 'diff' | 'preview' | 'architecture' | 'todos'
   path: string
   label: string
   version?: number
@@ -3918,6 +3947,67 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
     })
   }, [activeTabId])
 
+  const handleOpenTodosTab = useCallback(() => {
+    const nextTab: EditorTab = {
+      id: TODOS_TAB_ID,
+      type: 'todos',
+      path: TODOS_TAB_PATH,
+      label: 'Todos',
+    }
+
+    setOpenTabs((prev) => upsertTodosTab(prev, nextTab))
+    setActiveTabId(TODOS_TAB_ID)
+    setScDiffFile(null)
+    setActiveNativePath(null)
+    setPreviewContent(null)
+    setPreviewPath(TODOS_TAB_PATH)
+    setPreviewLanguage('plaintext')
+    onActiveFileChange('')
+  }, [onActiveFileChange])
+
+  const handleCloseTodosTab = useCallback(() => {
+    setOpenTabs((prev) => {
+      const closed = closeTodosTab(prev, activeTabId)
+      if (!closed.wasActive) return closed.tabs
+      const neighbor = closed.neighbor
+      setTimeout(() => {
+        setActiveTabId(closed.activeTabId)
+        if (!closed.activeTabId) {
+          setActiveNativePath(null)
+          setPreviewContent(null)
+          setScDiffFile(null)
+        } else if (neighbor?.type === 'file') {
+          setActiveNativePath(neighbor.path)
+          setPreviewContent(neighbor.content ?? null)
+          setPreviewLanguage(neighbor.language ?? 'plaintext')
+          setPreviewPath(neighbor.path)
+          setScDiffFile(null)
+        } else if (neighbor?.type === 'preview') {
+          setActiveNativePath(null)
+          setPreviewContent(null)
+          setPreviewLanguage('plaintext')
+          setPreviewPath(neighbor.previewTarget ?? neighbor.path)
+          setScDiffFile(null)
+        } else if (neighbor?.type === 'architecture') {
+          setActiveNativePath(null)
+          setPreviewContent(null)
+          setPreviewLanguage('plaintext')
+          setPreviewPath('__architecture__')
+          setScDiffFile(null)
+        } else if (neighbor?.type === 'todos') {
+          setActiveNativePath(null)
+          setPreviewContent(null)
+          setPreviewLanguage('plaintext')
+          setPreviewPath(TODOS_TAB_PATH)
+          setScDiffFile(null)
+        } else if (neighbor?.type === 'diff') {
+          setScDiffFile(neighbor.diffMode === 'git' ? (neighbor.diffEntry ?? null) : null)
+        }
+      }, 0)
+      return closed.tabs
+    })
+  }, [activeTabId])
+
   const handleClosePreviewTarget = useCallback(() => {
     // The editor can unmount immediately after this callback. Stop the managed
     // browser now; removing its tab alone leaves the browser and dev server alive.
@@ -4103,8 +4193,10 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
     refreshPreviewTarget: handleRefreshPreviewTarget,
     openArchitectureTab: handleOpenArchitectureTab,
     closeArchitectureTab: handleCloseArchitectureTab,
+    openTodosTab: handleOpenTodosTab,
+    closeTodosTab: handleCloseTodosTab,
     searchFiles: handleSearchFiles,
-  }), [handleOpenDirectory, handleOpenRemoteProject, handleOpenFileByPath, handleReadFileByPath, handleReadReferencePath, handleOpenReviewDiff, handleOpenPreviewTarget, handleClosePreviewTarget, handleRefreshPreviewTarget, handleOpenArchitectureTab, handleCloseArchitectureTab, handleSearchFiles])
+  }), [handleOpenDirectory, handleOpenRemoteProject, handleOpenFileByPath, handleReadFileByPath, handleReadReferencePath, handleOpenReviewDiff, handleOpenPreviewTarget, handleClosePreviewTarget, handleRefreshPreviewTarget, handleOpenArchitectureTab, handleCloseArchitectureTab, handleOpenTodosTab, handleCloseTodosTab, handleSearchFiles])
 
   useEffect(() => {
     if (!previewRequest) return
@@ -4364,7 +4456,7 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
   const handleDetachTab = useCallback(async (tabId: string) => {
     const tab = openTabs.find((entry) => entry.id === tabId) ?? null
     if (!tab) return false
-    if (tab.type === 'preview') return false
+    if (!canDetachTab(tab.type)) return false
 
     const detachedId = `detached-${tab.id}-${Date.now()}`
     const payload: DetachedProjectTabPayload = {
@@ -4461,6 +4553,13 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
       setPreviewContent(null)
       setPreviewLanguage('plaintext')
       setPreviewPath('__architecture__')
+      setScDiffFile(null)
+      onActiveFileChange('')
+    } else if (tab.type === 'todos') {
+      setActiveNativePath(null)
+      setPreviewContent(null)
+      setPreviewLanguage('plaintext')
+      setPreviewPath(TODOS_TAB_PATH)
       setScDiffFile(null)
       onActiveFileChange('')
     } else if (tab.type === 'diff') {
@@ -5145,6 +5244,8 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
                         <GitStatusBadge status={tab.diffEntry.status} className="text-2xs" />
                       ) : tab.type === 'architecture' ? (
                         <Boxes className="h-3.5 w-3.5 shrink-0" />
+                      ) : tab.type === 'todos' ? (
+                        <List className="h-3.5 w-3.5 shrink-0" />
                       ) : tab.type === 'preview' ? (
                         <Globe className="h-3.5 w-3.5 shrink-0" />
                       ) : (
@@ -5183,6 +5284,26 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
               )}
             </button>
           )
+          )}
+          {showEditorProp && (
+          <TooltipHint content={openTabs.some((tab) => tab.type === 'todos') ? 'Close Todos' : 'Open Todos'}>
+          <button
+            type="button"
+            onClick={() => {
+              if (openTabs.some((tab) => tab.type === 'todos')) handleCloseTodosTab()
+              else { handleOpenTodosTab(); selectMobileTab('editor') }
+            }}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium transition-colors shrink-0 ${
+              activeTab?.type === 'todos' ? 'bg-primary/15 text-primary' : 'text-muted-foreground'
+            }`}
+            aria-label="Toggle Todos"
+            aria-pressed={activeTab?.type === 'todos'}
+            data-testid="mobile-project-tabbar-todos-toggle"
+          >
+            <List className="h-3.5 w-3.5" />
+            <span>Todos</span>
+          </button>
+          </TooltipHint>
           )}
           {effectiveMobileTab === 'editor' && activeTab?.type === 'preview' && (
             <>
@@ -5594,6 +5715,10 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
                   theme={resolvedTheme}
                   onRenderResult={onArchitectureRenderResult}
                 />
+              ) : activeTab?.type === 'todos' ? (
+                <div className="h-full overflow-auto bg-background">
+                  <TodosTabContent />
+                </div>
               ) : loadingFile ? (
                 <div className="h-full flex items-center justify-center text-sm text-muted-foreground gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -6250,7 +6375,7 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
             {openTabs.map((tab) => {
               const isActive = tab.id === activeTabId
               const gitStatus4tab = tab.type === 'diff' && tab.diffMode === 'git' && tab.diffEntry ? tab.diffEntry.status : undefined
-              const canDetachTab = tab.type !== 'preview'
+              const isDetachableTab = canDetachTab(tab.type)
               return (
                 <TooltipHint key={tab.id} content={tab.path}>
                 <div
@@ -6266,9 +6391,9 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
                     setTabContextMenu({ tabId: tab.id, x: e.clientX, y: e.clientY })
                   }}
                   onMouseDown={(e) => { if (e.button === 1) { e.preventDefault(); handleCloseTab(tab.id) } }}
-                  draggable={canDetachTab}
+                  draggable={isDetachableTab}
                   onDragStart={(e) => {
-                    if (!canDetachTab) {
+                    if (!isDetachableTab) {
                       e.preventDefault()
                       return
                     }
@@ -6280,7 +6405,7 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
                     }
                   }}
                   onDragEnd={(e) => {
-                    if (!canDetachTab) return
+                    if (!isDetachableTab) return
                     handleDetachedTabDragEnd(e, tab.id)
                   }}
                   onDragOver={(e) => {
@@ -6310,6 +6435,8 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
                     <GitStatusBadge status={gitStatus4tab} className="text-2xs" />
                   ) : tab.type === 'architecture' ? (
                     <Boxes className="h-3.5 w-3.5 shrink-0" />
+                  ) : tab.type === 'todos' ? (
+                    <List className="h-3.5 w-3.5 shrink-0" />
                   ) : tab.type === 'preview' ? (
                     <Globe className="h-3.5 w-3.5 shrink-0" />
                   ) : (
@@ -6334,6 +6461,23 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
               )
             })}
           </div>
+          <TooltipHint content={hasTodosTab(openTabs) ? 'Close Todos' : 'Open Todos'}>
+          <button
+            type="button"
+            onClick={() => { if (hasTodosTab(openTabs)) handleCloseTodosTab(); else handleOpenTodosTab() }}
+            className={`flex items-center gap-1.5 text-xs transition-colors rounded px-2 py-0.5 shrink-0 ml-1 mr-1 ${
+              activeTab?.type === 'todos'
+                ? 'bg-primary/15 text-primary'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+            aria-label="Toggle Todos"
+            aria-pressed={activeTab?.type === 'todos'}
+            data-testid="project-tabbar-todos-toggle"
+          >
+            <List className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Todos</span>
+          </button>
+          </TooltipHint>
           {(activeTabEditable || activeTab?.type === 'preview' || onToggleEditor || canMaximizeActiveTab) && (
             <div className="flex items-center shrink-0">
               {canMaximizeActiveTab && (
@@ -6459,6 +6603,10 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
             theme={resolvedTheme}
             onRenderResult={onArchitectureRenderResult}
           />
+        ) : activeTab?.type === 'todos' ? (
+          <div className="h-full overflow-auto bg-background">
+            <TodosTabContent />
+          </div>
         ) : loadingFile && activeTab?.id === activeTabId ? (
           <div className="h-full flex items-center justify-center text-sm text-muted-foreground gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -6569,7 +6717,7 @@ export const ProjectPanel = forwardRef<ProjectPanelHandle, ProjectPanelProps>(fu
         </button>
         <button
           className="ui-menu-item"
-          disabled={openTabs.find((tab) => tab.id === tabContextMenu.tabId)?.type === 'preview'}
+          disabled={(() => { const t = openTabs.find((tab) => tab.id === tabContextMenu.tabId)?.type; return t === 'preview' || t === 'todos' })()}
           onClick={() => { void handleDetachTab(tabContextMenu.tabId) }}
         >
           Move to New Window

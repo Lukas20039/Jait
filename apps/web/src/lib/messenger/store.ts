@@ -250,7 +250,7 @@ export class MessengerStore {
       const receipts = roomReadReceipts(selected, this.session.userId)
       for (const message of messages) if (message.own) message.readBy = receipts.get(message.id) ?? []
     }
-    this.update({ rooms, messages })
+    this.update({ rooms, messages, hasEarlier: !!selected?.getLiveTimeline().getPaginationToken(this.sdk!.Direction.Backward) })
   }
 
   selectRoom(id: string | null) {
@@ -567,4 +567,9 @@ export class MessengerStore {
   }
 }
 
-export type MessengerStoreApi = Pick<MessengerStore, keyof MessengerStore>
+/** The production gateway adds message actions; older browser fixtures can omit them. */
+export type MessengerStoreApi = Pick<MessengerStore, keyof MessengerStore> & {
+  edit?: (roomId: string, eventId: string, text: string) => Promise<void>
+  react?: (roomId: string, eventId: string, key: string) => Promise<void>
+  remove?: (roomId: string) => Promise<void>
+}

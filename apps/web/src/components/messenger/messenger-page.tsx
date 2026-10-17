@@ -1,56 +1,25 @@
 import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { automaticReadAllowed } from '@/lib/messenger/notification-actions'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { ArrowLeft, Bell, Link2, Loader2, LockKeyhole, LogOut, MessageCircle, Plus, Search, Settings2, X } from 'lucide-react'
+import { ArrowLeft, Bell, Link2, Loader2, LockKeyhole, LogOut, MessageCircle, MoreHorizontal, Plus, Search, Settings2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Conversation } from '@/components/chat/conversation'
-import { Message } from '@/components/chat/message'
+import { MessengerBubble } from './messenger-message'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import { useConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PromptInput, type PromptInputHandle } from '@/components/chat/prompt-input'
 import { ChatComposerSurface } from '@/components/chat/chat-composer-surface'
-import { AttachmentList } from '@/components/chat/attachment-list'
 import { useVoiceRecording } from '@/hooks/useVoiceRecording'
 import type { SttProvider } from '@/hooks/useAuth'
 import { appendTranscript } from '@/lib/transcript-merge'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { useMessenger } from './messenger-provider'
-import { MAX_ATTACHMENT_BYTES, messengerError, type MessengerMessage } from '@/lib/messenger/model'
+import { MAX_ATTACHMENT_BYTES, messengerError, type MessengerRoom } from '@/lib/messenger/model'
 
 const BRIDGES = [
   ['WhatsApp', 'whatsappbot'], ['Telegram', 'telegrambot'], ['Signal', 'signalbot'], ['Teams', 'teamsbot'],
 ] as const
-
-function Attachment({ message }: { message: MessengerMessage }) {
-  const { store } = useMessenger()
-  const [url, setUrl] = useState<string | null>(null)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  const objectUrl = useRef<string | null>(null)
-  const mounted = useRef(true)
-  useEffect(() => {
-    mounted.current = true
-    return () => { mounted.current = false; if (objectUrl.current) URL.revokeObjectURL(objectUrl.current) }
-  }, [])
-  if (!message.attachment) return null
-  const attachment = message.attachment
-  const load = async () => {
-    setBusy(true)
-    setError('')
-    try {
-      const blob = await store.attachmentBlob(attachment)
-      if (!mounted.current) return
-      const url = URL.createObjectURL(blob)
-      objectUrl.current = url
-      setUrl(url)
-    } catch { if (mounted.current) setError('Could not load attachment. It may be unavailable or exceed 20 MB.') }
-    finally { if (mounted.current) setBusy(false) }
-  }
-  return <div className="mt-2 space-y-2">
-    {url ? <AttachmentList attachments={[{ name: attachment.name, mimeType: attachment.image ? attachment.mime : 'application/octet-stream', data: '', preview: url }]} />
-      : <Button size="sm" variant="outline" disabled={busy || !!attachment.size && attachment.size > MAX_ATTACHMENT_BYTES} onClick={() => void load()}>{busy ? 'Loading…' : (attachment.image ? 'Show image' : 'Load attachment')}</Button>}
-    {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
-  </div>
-}
 
 function ConnectionForm() {
   const { store, snapshot } = useMessenger()
@@ -95,6 +64,9 @@ function ConnectionForm() {
 
 export default function MessengerPage({ token = null, sttProvider = 'whisper' }: { token?: string | null; sttProvider?: SttProvider }) {
   const { store, snapshot } = useMessenger()
+  const confirm = useConfirmDialog()
+  const historyBusy = useRef(false)
+  const [loadingHistory, setLoadingHistory] = useState(false)
   const [connectionsOpen, setConnectionsOpen] = useState(false)
   const [search, setSearch] = useUrlSearchState('messenger')
   const [serviceValue, setService] = useUrlSearchState('messenger', 'service')
@@ -199,6 +171,31 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
     }, 'Message was not sent. Your draft has been kept; try again when connected.')
   }
 
+  const loadEarlier = async () => {
+    if (historyBusy.current || !ready) return
+    historyBusy.current = true
+    setLoadingHistory(true)
+    try { await store.loadEarlier() }
+    catch { setActionError('Could not load earlier messages. Please try again.') }
+    finally { historyBusy.current = false; setLoadingHistory(false) }
+  }
+  const roomMenu = (item: MessengerRoom, label: string) => <DropdownMenu>
+    <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="mr-1 h-8 w-8 shrink-0" aria-label={label} disabled={!ready || busy}><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      {item.membership === 'join' && <DropdownMenuItem onSelect={() => void act(async () => {
+        if (item.unread > 0 || item.markedUnread) await store.markRead(item.id)
+        else { await store.markUnread(item.id); if (roomId === item.id) selectRoom(null) }
+      })}>Mark as {item.unread > 0 || item.markedUnread ? 'read' : 'unread'}</DropdownMenuItem>}
+      <DropdownMenuItem onSelect={() => { selectRoom(mobile ? null : item.id); requestAnimationFrame(() => document.querySelector<HTMLInputElement>('[aria-label="Search loaded messages"]')?.focus()) }}>Search messages</DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => void act(() => navigator.clipboard.writeText(item.id))}>Copy conversation ID</DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem disabled={!store.remove} className="text-destructive" onSelect={() => { void (async () => {
+        if (!await confirm({ title: 'Remove conversation?', description: 'This will leave this Matrix conversation and remove it from your inbox. Other participants keep their messages. You may need a new invitation to rejoin.', confirmLabel: 'Remove', variant: 'destructive' })) return
+        await act(async () => { await store.remove!(item.id); if (roomId === item.id) selectRoom(null) })
+      })() }}>Remove conversation</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+
   return <section aria-label="Messenger" className="flex h-full min-h-0 w-full flex-col bg-background">
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
       <div className="flex min-w-0 items-center gap-2"><MessageCircle className="h-5 w-5 shrink-0 text-primary" /><h1 className="font-semibold">Messenger</h1><span role="status" className="truncate text-xs text-muted-foreground">{snapshot.status === 'ready' ? 'Connected' : snapshot.status === 'disconnected' ? 'Matrix' : snapshot.status}</span></div>
@@ -256,19 +253,13 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
             {rooms.map(item => <div key={item.id} role="group" aria-label={'Conversation ' + item.name} className="group/room flex min-w-0 items-center border-b border-border/50"><button onClick={() => selectRoom(item.id)} aria-pressed={item.id === roomId} className={'flex min-w-0 flex-1 gap-3 p-3 text-left hover:bg-muted/60 ' + (item.id === roomId ? 'bg-secondary' : '')}>
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">{item.name.slice(0, 2).toUpperCase()}</span>
               <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{item.name}</span>{(item.unread > 0 || item.markedUnread) && <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">{item.unread || <span aria-label="Unread">•</span>}</span>}</span><span className="block truncate text-2xs text-muted-foreground">{item.service}{item.network ? ' · ' + item.network : ''}{item.membership === 'invite' ? ' · Invitation' : ''}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.preview}</span></span>
-            </button><Button variant="ghost" size="sm" className="mr-1 h-8 shrink-0 px-2 text-2xs" disabled={!ready || busy || item.membership !== 'join'} aria-label={`Mark as ${item.unread > 0 || item.markedUnread ? 'read' : 'unread'}`} onClick={() => void act(async () => {
-              if (item.unread > 0 || item.markedUnread) await store.markRead(item.id)
-              else { await store.markUnread(item.id); if (roomId === item.id) selectRoom(null) }
-            })}>{item.unread > 0 || item.markedUnread ? 'Read' : 'Unread'}</Button></div>)}
+            </button>{roomMenu(item, 'Options for ' + item.name)}</div>)}
             {rooms.length === 0 && <div className="space-y-2 p-5 text-sm text-muted-foreground"><p>{snapshot.rooms.length ? 'No matching conversations.' : 'Your conversations will appear here as Matrix syncs.'}</p>{!snapshot.rooms.length && <Button variant="outline" size="sm" onClick={() => setConnectionsOpen(true)}>Connect a bridge</Button>}</div>}
           </div>
         </aside>
         <main onPointerDown={() => { if (roomId && document.hasFocus()) void store.markRead(roomId).catch(() => {}) }} onKeyDown={() => { if (roomId && document.hasFocus()) void store.markRead(roomId).catch(() => {}) }} className={(roomId ? 'flex ' : 'hidden md:flex ') + 'min-h-0 min-w-0 flex-1 flex-col'}>
           {!room ? <div className="m-auto max-w-sm space-y-2 p-6 text-center text-muted-foreground"><MessageCircle className="mx-auto h-10 w-10 text-primary/60" /><h2 className="font-medium text-foreground">Your personal inbox</h2><p className="text-sm">{roomId ? 'Waiting for this conversation to sync. Use Back to choose another.' : 'Choose a conversation to read and reply as yourself.'}</p>{roomId && <Button variant="outline" size="sm" onClick={() => selectRoom(null)}>Back to conversations</Button>}</div> : <>
-            <div className="flex h-14 shrink-0 items-center gap-3 border-b px-3"><Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => selectRoom(null)} aria-label="Back to conversations"><ArrowLeft className="h-4 w-4" /></Button><div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold">{room.name}</h2><p className="truncate text-xs text-muted-foreground">{room.service}{room.network ? ' · ' + room.network : ''}</p></div>{room.membership === 'join' && <Button variant="ghost" size="sm" disabled={!ready || busy} aria-label={room.markedUnread ? 'Mark as read' : 'Mark as unread'} onClick={() => void act(async () => {
-              if (room.markedUnread) await store.markRead(room.id)
-              else { await store.markUnread(room.id); selectRoom(null) }
-            })}>{room.markedUnread ? 'Mark as read' : 'Mark as unread'}</Button>}{room.encrypted && <span title="Encrypted Matrix room"><LockKeyhole className="h-4 w-4 text-muted-foreground" aria-label="Encrypted room" /></span>}</div>
+            <div className="flex h-14 shrink-0 items-center gap-3 border-b px-3"><Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => selectRoom(null)} aria-label="Back to conversations"><ArrowLeft className="h-4 w-4" /></Button><div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold">{room.name}</h2><p className="truncate text-xs text-muted-foreground">{room.service}{room.network ? ' · ' + room.network : ''}</p></div>{roomMenu(room, 'Conversation options')}{room.encrypted && <span title="Encrypted Matrix room"><LockKeyhole className="h-4 w-4 text-muted-foreground" aria-label="Encrypted room" /></span>}</div>
             {room.membership === 'invite' ? <div className="m-auto space-y-4 p-6 text-center"><p>You have been invited to this conversation.</p><div className="flex justify-center gap-2"><Button disabled={!ready || busy} onClick={() => void act(() => store.join(room.id))}>Accept invitation</Button><Button variant="outline" disabled={!ready || busy} onClick={() => void act(() => store.leave(room.id))}>Decline</Button></div></div> : <>
               <Conversation
                 key={room.id}
@@ -276,25 +267,13 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
                 mobile={mobile}
                 messageContents={messages.map(message => message.body)}
                 messageEstimateInputs={messages.map(message => ({ content: message.body, role: message.own ? 'user' : 'assistant' }))}
-                hasMore={ready && snapshot.messages.length > 0}
-                onLoadMore={() => { if (!busy) void act(() => store.loadEarlier()) }}
+                hasMore={ready && !loadingHistory && !!snapshot.hasEarlier}
+                onLoadMore={() => void loadEarlier()}
               >
-                {messages.map(message => <Message
-                  key={message.id}
-                  messageId={message.id}
-                  role={message.own ? 'user' : 'assistant'}
-                  content={message.body}
-                  messenger={{
-                    sender: message.own ? 'You' : message.sender,
-                    timestamp: message.timestamp,
-                    pending: message.pending,
-                    failed: message.failed,
-                    readBy: message.readBy,
-                    unableToDecrypt: message.unableToDecrypt,
-                    attachment: <Attachment message={message} />,
-                  }}
-                />)}
+                {messages.map(message => <MessengerBubble key={message.id} messageId={message.id} message={message} roomId={room.id} disabled={!ready || busy} />)}
               </Conversation>
+              {loadingHistory && <p role="status" className="px-3 py-1 text-xs text-muted-foreground">Loading earlier messages…</p>}
+              {snapshot.historyLimited && <p role="status" className="px-3 py-1 text-xs text-muted-foreground">10,000 events loaded. Open WhatsApp for older history.</p>}
               <ChatComposerSurface className="shrink-0 px-3 pb-3">
                 <div className="mx-auto max-w-4xl">
                   <PromptInput

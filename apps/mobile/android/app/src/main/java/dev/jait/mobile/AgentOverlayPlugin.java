@@ -241,7 +241,9 @@ public class AgentOverlayPlugin extends Plugin {
     @PluginMethod
     public void cancelNotification(PluginCall call) {
         String id = call.getString("id", "");
-        ((NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(id, 0);
+        String eventId = call.getString("eventId", "");
+        if (!eventId.isEmpty()) ChatNotifications.clear(getContext(), id, eventId);
+        else ((NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(id, 0);
         call.resolve();
     }
 
