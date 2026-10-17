@@ -34,6 +34,10 @@ jobs:
             git show "$BASE_SHA:$baseline" > .jait/artifacts/rust-continuation/component-baseline/base-branch.json
             node tests/contract/tooling/component-coverage-gate.mjs compare .jait/artifacts/rust-continuation/component-baseline/base-branch.json "$baseline"
           fi
+      - name: Build gateway runtime workspace dependencies
+        run: |
+          bun run --filter @jait/shared build
+          bun run --filter @jait/screen-share build
       - name: Typecheck the three baseline components
         run: bun run --filter @jait/gateway --filter @jait/shared --filter @jait/api-client typecheck
       - name: Run all original component tests with Istanbul coverage

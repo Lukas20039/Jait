@@ -30,6 +30,7 @@ jobs:
       - name: Build gateway workspace dependencies
         run: |
           bun run --filter @jait/shared build
+          bun run --filter @jait/api-client build
           bun run --filter @jait/screen-share build
           bun run --filter @jait/gateway build
       - name: Check Rust formatting and lint
