@@ -4,6 +4,19 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.945](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.945) — 2026-10-17
+
+- test(contracts): refresh inventory for messenger and worktree changes — 5ac6d8d3
+- fix(ci): build gateway workspace dependencies before contract checks — 7c193b17
+- fix(gateway): resolve an existing base when creating delivery worktrees (#260) (#261) — 88ac47ae
+- fix(e2e): write team-avatar screenshots into the project .jait/shots (#256) — b094d917
+
+Resolve delivery worktree bases in detached and shallow checkouts, and create delivery branches without inheriting the default branch as upstream. Keep team-avatar screenshots under the project .jait/shots directory. Build gateway workspace dependencies before contract CI starts the gateway, and refresh the behavior inventory for the committed messenger and worktree changes.
+
+Validation: 5,178 unit/integration tests passed across isolated and default-state runs (78 skipped); 93 managed gateway scenarios and 281 internal reference scenarios passed. Production build, workspace typechecks, lint, release version and artifact-path checks passed. A clean checkout reproduced the contract startup failure before the dependency build and passed afterward; the refreshed inventory passes the evidence audit.
+
+Package versions: gateway 0.1.945, web 0.1.453, shared 0.1.103. No database migration or application configuration change.
+
 ## [v0.1.944](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.944) — 2026-10-16
 
 - test(contracts): add the storage lane vectors and scheduler fixture operations — 83872826
