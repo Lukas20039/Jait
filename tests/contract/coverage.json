@@ -11,9 +11,9 @@
   ],
   "summary": {
     "test_files": 322,
-    "test_declarations": 2740,
-    "runtime_source_files": 354,
-    "source_files_without_direct_test_import": 91,
+    "test_declarations": 2746,
+    "runtime_source_files": 357,
+    "source_files_without_direct_test_import": 94,
     "rust_verified_declarations": 74
   },
   "test_files": [
@@ -11773,33 +11773,6 @@
       ]
     },
     {
-      "path": "packages/gateway/src/routes/messenger-regression.test.ts",
-      "fingerprint": "859b5020e5d517a3",
-      "lane": "http-tools-config",
-      "direct_source_imports": [
-        "packages/gateway/src/config.ts",
-        "packages/gateway/src/security/http-auth.ts",
-        "packages/gateway/src/server.ts"
-      ],
-      "declaration_count": 1,
-      "cases": [
-        {
-          "id": "packages/gateway/src/routes/messenger-regression.test.ts:7:3",
-          "line": 7,
-          "column": 3,
-          "name": "exposes the connection to a second authenticated client without a Matrix browser",
-          "suite": [
-            "gateway Messenger ownership"
-          ],
-          "declaration": "it",
-          "parameterized": false,
-          "status": "pending",
-          "rust_cases": [],
-          "boundary": "http-or-websocket-contract"
-        }
-      ]
-    },
-    {
       "path": "packages/gateway/src/routes/mobile.test.ts",
       "fingerprint": "9e9699c6addabd7f",
       "lane": "http-tools-config",
@@ -21016,6 +20989,73 @@
           "name": "uses rename destinations and reads originals from the old path",
           "suite": [
             "Git status as the canonical file list"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/services/git-worktree-base.test.ts",
+      "fingerprint": "483e75487760ca22",
+      "lane": "http-tools-config",
+      "direct_source_imports": [
+        "packages/gateway/src/services/git.ts"
+      ],
+      "declaration_count": 4,
+      "cases": [
+        {
+          "id": "packages/gateway/src/services/git-worktree-base.test.ts:65:3",
+          "line": 65,
+          "column": 3,
+          "name": "resolves the remote-tracking ref when only refs/remotes/origin/main exists",
+          "suite": [
+            "createWorktree without a local default branch"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/services/git-worktree-base.test.ts:101:3",
+          "line": 101,
+          "column": 3,
+          "name": "fetches the base branch when no local or remote-tracking ref exists",
+          "suite": [
+            "createWorktree without a local default branch"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/services/git-worktree-base.test.ts:118:3",
+          "line": 118,
+          "column": 3,
+          "name": "still uses the local branch when it exists",
+          "suite": [
+            "createWorktree without a local default branch"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/services/git-worktree-base.test.ts:132:3",
+          "line": 132,
+          "column": 3,
+          "name": "reports an actionable error when the base branch cannot be resolved",
+          "suite": [
+            "createWorktree without a local default branch"
           ],
           "declaration": "it",
           "parameterized": false,
@@ -40862,7 +40902,7 @@
     },
     {
       "path": "packages/gateway/src/tools/thread-tools.test.ts",
-      "fingerprint": "026acaaed06332c7",
+      "fingerprint": "9367027ca81011d3",
       "lane": "providers-streams-coordination",
       "direct_source_imports": [
         "packages/gateway/src/db/index.ts",
@@ -40876,7 +40916,7 @@
         "packages/gateway/src/tools/index.ts",
         "packages/gateway/src/tools/thread-tools.ts"
       ],
-      "declaration_count": 36,
+      "declaration_count": 39,
       "cases": [
         {
           "id": "packages/gateway/src/tools/thread-tools.test.ts:133:3",
@@ -41148,6 +41188,48 @@
           "id": "packages/gateway/src/tools/thread-tools.test.ts:963:3",
           "line": 963,
           "column": 3,
+          "name": "starts a thread stored on a provider that differs from the calling chat (codex chat -> jait thread)",
+          "suite": [
+            "thread.control tool"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1010:3",
+          "line": 1010,
+          "column": 3,
+          "name": "starts a thread stored on a CLI provider from a Jait chat (jait chat -> codex thread)",
+          "suite": [
+            "thread.control tool"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1054:3",
+          "line": 1054,
+          "column": 3,
+          "name": "still inherits the caller model when provider matches the thread",
+          "suite": [
+            "thread.control tool"
+          ],
+          "declaration": "it",
+          "parameterized": false,
+          "status": "pending",
+          "rust_cases": [],
+          "boundary": "public-behavior-or-isolated-protocol-fixture"
+        },
+        {
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1093:3",
+          "line": 1093,
+          "column": 3,
           "name": "inherits the selected provider model from session state",
           "suite": [
             "thread.control tool"
@@ -41159,8 +41241,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:999:3",
-          "line": 999,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1129:3",
+          "line": 1129,
           "column": 3,
           "name": "uses the selected jait provider literally",
           "suite": [
@@ -41173,8 +41255,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1033:3",
-          "line": 1033,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1163:3",
+          "line": 1163,
           "column": 3,
           "name": "uses the selected jait provider and model for thread creation",
           "suite": [
@@ -41187,8 +41269,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1069:3",
-          "line": 1069,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1199:3",
+          "line": 1199,
           "column": 3,
           "name": "requires the calling agent to provide a supported thread provider",
           "suite": [
@@ -41201,8 +41283,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1099:3",
-          "line": 1099,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1229:3",
+          "line": 1229,
           "column": 3,
           "name": "inherits provider, model, and runtime mode from the live tool context",
           "suite": [
@@ -41215,8 +41297,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1134:3",
-          "line": 1134,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1264:3",
+          "line": 1264,
           "column": 3,
           "name": "inherits the selected provider, model, and runtime mode from user/session state",
           "suite": [
@@ -41229,8 +41311,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1177:3",
-          "line": 1177,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1307:3",
+          "line": 1307,
           "column": 3,
           "name": "keeps the stored thread provider when starting an existing thread",
           "suite": [
@@ -41243,8 +41325,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1215:3",
-          "line": 1215,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1345:3",
+          "line": 1345,
           "column": 3,
           "name": "creates multiple threads in one call",
           "suite": [
@@ -41257,8 +41339,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1262:3",
-          "line": 1262,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1392:3",
+          "line": 1392,
           "column": 3,
           "name": "waits for create_many started threads to finish before returning",
           "suite": [
@@ -41271,8 +41353,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1342:3",
-          "line": 1342,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1472:3",
+          "line": 1472,
           "column": 3,
           "name": "defaults create_many threads to the selected provider",
           "suite": [
@@ -41285,8 +41367,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1379:3",
-          "line": 1379,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1509:3",
+          "line": 1509,
           "column": 3,
           "name": "defaults create_many threads to the live caller context provider and model",
           "suite": [
@@ -41299,8 +41381,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1418:3",
-          "line": 1418,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1548:3",
+          "line": 1548,
           "column": 3,
           "name": "defaults create_many threads to the active project directory",
           "suite": [
@@ -41313,8 +41395,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1454:3",
-          "line": 1454,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1584:3",
+          "line": 1584,
           "column": 3,
           "name": "creates a PR and returns a direct link while updating thread metadata",
           "suite": [
@@ -41327,8 +41409,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1513:3",
-          "line": 1513,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1643:3",
+          "line": 1643,
           "column": 3,
           "name": "allows a running delivery to publish its own work: %s",
           "suite": [
@@ -41341,8 +41423,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1535:3",
-          "line": 1535,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1665:3",
+          "line": 1665,
           "column": 3,
           "name": "uses the saved agent App for publication and refuses personal fallback: connected=%s",
           "suite": [
@@ -41355,8 +41437,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1562:3",
-          "line": 1562,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1692:3",
+          "line": 1692,
           "column": 3,
           "name": "rejects PR creation until the thread is completed",
           "suite": [
@@ -41369,8 +41451,8 @@
           "boundary": "public-behavior-or-isolated-protocol-fixture"
         },
         {
-          "id": "packages/gateway/src/tools/thread-tools.test.ts:1614:3",
-          "line": 1614,
+          "id": "packages/gateway/src/tools/thread-tools.test.ts:1744:3",
+          "line": 1744,
           "column": 3,
           "name": "is registered in the tool registry when thread deps are provided",
           "suite": [
@@ -43328,6 +43410,15 @@
       "gap": "Existing direct imports do not establish Rust behavioral parity."
     },
     {
+      "path": "packages/gateway/scripts/bundle-messenger-runtime.mjs",
+      "fingerprint": "dcb6e57abf3a0d28",
+      "lane": "http-tools-config",
+      "direct_test_references": [],
+      "status": "pending",
+      "rust_cases": [],
+      "gap": "No direct static import from inventoried test files; inspect indirect/integration coverage."
+    },
+    {
       "path": "packages/gateway/scripts/bundle-web.mjs",
       "fingerprint": "869d8848a30f3f28",
       "lane": "http-tools-config",
@@ -43530,7 +43621,6 @@
         "packages/gateway/src/routes/environment.test.ts",
         "packages/gateway/src/routes/jobs.test.ts",
         "packages/gateway/src/routes/mcp-server.test.ts",
-        "packages/gateway/src/routes/messenger-regression.test.ts",
         "packages/gateway/src/routes/mobile.test.ts",
         "packages/gateway/src/routes/ownership.test.ts",
         "packages/gateway/src/routes/plans-provider.test.ts",
@@ -44577,7 +44667,7 @@
     },
     {
       "path": "packages/gateway/src/routes/messenger.ts",
-      "fingerprint": "c800487d6863e376",
+      "fingerprint": "a3880ce53d34d7d1",
       "lane": "http-tools-config",
       "direct_test_references": [],
       "status": "pending",
@@ -45048,7 +45138,6 @@
         "packages/gateway/src/routes/environment.test.ts",
         "packages/gateway/src/routes/jobs.test.ts",
         "packages/gateway/src/routes/mcp-server.test.ts",
-        "packages/gateway/src/routes/messenger-regression.test.ts",
         "packages/gateway/src/routes/mobile.test.ts",
         "packages/gateway/src/routes/ownership.test.ts",
         "packages/gateway/src/routes/plans-provider.test.ts",
@@ -45274,7 +45363,6 @@
         "packages/gateway/src/routes/chat-trajectory.test.ts",
         "packages/gateway/src/routes/chat.external-providers.test.ts",
         "packages/gateway/src/routes/environment.test.ts",
-        "packages/gateway/src/routes/messenger-regression.test.ts",
         "packages/gateway/src/routes/project-image.test.ts",
         "packages/gateway/src/routes/project-open.test.ts",
         "packages/gateway/src/routes/project-reveal.test.ts",
@@ -45723,7 +45811,7 @@
     },
     {
       "path": "packages/gateway/src/services/git.ts",
-      "fingerprint": "19ed183ba3d05d7d",
+      "fingerprint": "15f66f1e61599ced",
       "lane": "http-tools-config",
       "direct_test_references": [
         "packages/gateway/src/git-provider.test.ts",
@@ -45733,6 +45821,7 @@
         "packages/gateway/src/services/git-diff-stats.test.ts",
         "packages/gateway/src/services/git-stacked.test.ts",
         "packages/gateway/src/services/git-status.test.ts",
+        "packages/gateway/src/services/git-worktree-base.test.ts",
         "packages/gateway/src/services/project-repositories.test.ts",
         "packages/gateway/src/thread-review-sync.test.ts",
         "packages/gateway/src/tools/thread-tools.test.ts"
@@ -45819,7 +45908,7 @@
     },
     {
       "path": "packages/gateway/src/services/messenger-bridge.ts",
-      "fingerprint": "8105406b80a672b6",
+      "fingerprint": "67f3c31dcb6b9813",
       "lane": "http-tools-config",
       "direct_test_references": [
         "packages/gateway/src/services/messenger-bridge.test.ts",
@@ -45830,8 +45919,26 @@
       "gap": "Existing direct imports do not establish Rust behavioral parity."
     },
     {
+      "path": "packages/gateway/src/services/messenger-history.ts",
+      "fingerprint": "6e91fbd2803e8822",
+      "lane": "http-tools-config",
+      "direct_test_references": [],
+      "status": "pending",
+      "rust_cases": [],
+      "gap": "No direct static import from inventoried test files; inspect indirect/integration coverage."
+    },
+    {
+      "path": "packages/gateway/src/services/messenger-matrix-runtime.ts",
+      "fingerprint": "1d4e1d5e6da23475",
+      "lane": "http-tools-config",
+      "direct_test_references": [],
+      "status": "pending",
+      "rust_cases": [],
+      "gap": "No direct static import from inventoried test files; inspect indirect/integration coverage."
+    },
+    {
       "path": "packages/gateway/src/services/messenger-service.ts",
-      "fingerprint": "5af75d851dbfce06",
+      "fingerprint": "c8da1403b537ef94",
       "lane": "http-tools-config",
       "direct_test_references": [],
       "status": "pending",
@@ -47263,7 +47370,7 @@
     },
     {
       "path": "packages/gateway/src/tools/messenger-tools.ts",
-      "fingerprint": "8ede75a5580a26ec",
+      "fingerprint": "9b6fdce8bf814fd1",
       "lane": "http-tools-config",
       "direct_test_references": [
         "packages/gateway/src/tools/messenger-tools.test.ts"
@@ -47777,7 +47884,7 @@
     },
     {
       "path": "packages/gateway/src/tools/thread-tools.ts",
-      "fingerprint": "13431d44df51d93a",
+      "fingerprint": "8905f1981ed1866e",
       "lane": "providers-streams-coordination",
       "direct_test_references": [
         "packages/gateway/src/routes/agent-control.test.ts",
