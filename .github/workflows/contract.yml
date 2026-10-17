@@ -24,6 +24,10 @@ jobs:
           components: rustfmt, clippy
       - name: Install gateway dependencies
         run: bun install --frozen-lockfile
+      - name: Build gateway workspace dependencies
+        run: |
+          bun run --filter @jait/shared build
+          bun run --filter @jait/screen-share build
       - name: Check Rust formatting and lint
         run: |
           bun run test:contract:fmt
