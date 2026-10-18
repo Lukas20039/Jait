@@ -4,6 +4,25 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.947](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.947) — 2026-10-18
+
+- feat(gateway-rust): add the native gateway port with contract parity coverage — bf004545
+- feat(usage): cache provider usage refresh and persist the usage summary in web — ad911912
+- fix(gateway): salvage truncated conversation checkpoints — 24b41a7e
+- fix(gateway): reject malformed password digests and race-safe session binding — 6171a13e
+- test(ci): exercise pending prewarm with a controlled startup gate — 9bcd3562
+- test(ci): isolate Git diff coverage from checkout state — 67f05978
+- test(ci): wait for channel progress completion deterministically — 2c9e6734
+- test(ci): cover environment-dependent gateway branches explicitly — e91ca49b
+- fix(contracts): wait for direct child fixture readiness — bc5d05d9
+- fix(ci): build workspace dependencies before gateway checks — c91e3cf3
+
+Add the native Rust gateway under `packages/gateway-rust` (auth, users, sessions, projects, terminal, storage, recall, replay, scheduler, memory and the contract surface) with a `run.mjs` toolchain wrapper and root `dev:gateway:rust` / `build:gateway:rust` / `test:gateway:rust` scripts, plus per-lane Rust contract parity suites, reviewed parity fragments and tailstatic driver fixtures, and a CI lane that builds and checks the native target. Cache provider usage refresh behind a short-lived per-user cache so the usage modal paints from the last summary and reconciles after refresh, and persist that summary in the web store across reloads. Raise the conversation checkpoint output budget and keep partial text when a provider truncates it instead of degrading to the structured fallback. Reject malformed stored password digests and make session ownership claims atomic.
+
+Validation: workspace typechecks passed for all eight packages, and the release version-source and artifact-path checks passed. 5,235 of 5,238 unit/integration tests passed (78 skipped); the three failures are confined to the pre-existing `parallel-sessions` E2E file, which passes 12/12 in isolation and touches no file in this release. The native Rust lane was not built on the release host (no Rust toolchain installed), so CI performs its first `cargo fmt`/clippy/build/test run.
+
+Package versions: gateway 0.1.947, web 0.1.455, shared 0.1.105, mobile 0.1.30. No database migration or application configuration change.
+
 ## [v0.1.946](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.946) — 2026-10-17
 
 - test(contracts): expand Rust acceptance and component coverage gates — 40afb1a3
