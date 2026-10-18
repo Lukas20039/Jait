@@ -4,6 +4,27 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.948](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.948) — 2026-10-18
+
+- fix(gateway): stop the project watcher from stalling file I/O — c3e35516
+- feat(gateway-rust): port the surface registry with ownership and lifecycle parity — 51309b97
+
+The recursive project watcher now ignores the gateway's own state tree and other
+high-volume generated trees by default: `**/.jait/**`, `**/target/**`, `.turbo`,
+`.nx`, `.angular`, `.svelte-kit`, `.gradle`, `.terraform`, `.venv`, `coverage`,
+`.pytest_cache`, `.mypy_cache` and `.ruff_cache`, on top of the existing
+`node_modules`/`dist`/`build` defaults. A project whose generated artifacts
+outgrew the kernel watch budget (`fs.inotify.max_user_watches`) used to leave the
+scan retrying forever, occupying libuv's four async fs threads; every
+file-backed response, including the web UI assets, then queued behind it and
+hung indefinitely while `/health` still answered in about 1 ms. Exhausting the
+watch table is now reported as such instead of surfacing `ENOSPC` as "No space
+left on device", and the generated systemd unit exports `UV_THREADPOOL_SIZE=16`
+so a heavy scan cannot starve unrelated file I/O.
+
+Validation: gateway typecheck passed and the new `project-watcher` unit tests
+pass 5/5. The full suite was not re-run on the release host; CI runs it.
+
 ## [v0.1.947](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.947) — 2026-10-18
 
 - feat(gateway-rust): add the native gateway port with contract parity coverage — bf004545
