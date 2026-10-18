@@ -139,7 +139,7 @@ storage and credentials. Session HTTP APIs, providers, tools, scheduler, fronten
 serving, WebSocket and SSE remain unported.
 
 The `test:gateway:rust` command checks format, strict native Clippy, native unit
-tests and all seventeen credited contract targets, then records source hashes before/after execution.
+tests and all twenty-one credited contract targets, then records source hashes before/after execution.
 All inventoried gateway and shared sources are fingerprinted to bind indirect
 dependencies as well. Reviewed component reference drift fails the check. Reports are saved to
 `.jait/artifacts/gateway-rust/native-progress/report.json`; failed or changing-source
@@ -176,9 +176,9 @@ installed gateway have not been switched over.
 ## Continuing toward 50%
 
 The requested milestone is **181/361 verified native components (50.14%)**.
-The current passing checkpoint is **31/361 (8.59%)**; the milestone remains open.
+The current passing checkpoint is **40/361 (11.08%)**; the milestone remains open.
 The source-bound report covers formatting, strict Clippy, seven native tests and
-180 contract tests across seventeen targets (including repeated driver checks). Focused cases expand into multiple
+221 contract tests across twenty-one targets (including repeated driver checks). Focused cases expand into multiple
 requests and value matrices; they do not establish full application parity.
 
 The former auth HTTP timeout was fixture teardown: all responses were consumed,

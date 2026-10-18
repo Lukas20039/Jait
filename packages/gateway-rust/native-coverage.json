@@ -612,7 +612,7 @@
       "targets": [
         "gateway_rust_terminal"
       ],
-      "review": "Retained-buffer offsets, partial-line prefix recovery, bounded command output bypassing live tail limits, end-marker trimming, empty buffers, fractional/nonfinite offsets and line limits across 218 cases. Removing command end bounds fails the same contract; restoration passes. Chunk-count input is the native nonnegative integer invariant."
+      "review": "Retained-buffer offsets, partial-line prefix recovery, bounded command output bypassing live tail limits, end-marker trimming, empty buffers, fractional/nonfinite offsets and line limits across 223 cases. Removing command end bounds fails the same contract; restoration passes. Chunk-count input is the native nonnegative integer invariant."
     },
     {
       "reference": "packages/gateway/src/tools/shell-prompt.ts",
@@ -678,6 +678,38 @@
         "gateway_rust_persisted"
       ],
       "review": "Exact raw JSON retention, malformed/nonarray rejection, field type/default/optional metadata rules, three compaction passes, byte limits and floored minimum budgets, Unicode byte boundaries, metadata-only fallback and prefix truncation. Focused contracts use finite-number, well-formed Unicode JSON; JS-specific nonfinite overflow and unpaired surrogate parsing remain compatibility limits."
+    },
+    {
+      "reference": "packages/gateway/src/surfaces/registry.ts",
+      "reference_sha256": "a25e28761dd54bfbf9408e8a9bab29c45f1f92ef2e2eca7826c3c16be6040aa0",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/surfaces/registry.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_surfaces.rs",
+        "tests/contract/drivers/nativesurfaces.ts"
+      ],
+      "targets": [
+        "gateway_rust_surfaces"
+      ],
+      "review": "Factory registration/replacement order, external instances, ownership, session lookup, start/stop callbacks, frozen pre-stop snapshots, failures at creation/start/snapshot/stop/callback boundaries, retained failed surfaces, unregister and all-settled shutdown. Async fixture compares intermediate starting/stopping ownership to production TypeScript. Callbacks run outside metadata locks and can query registry ownership. Real registry with typed fixture surface adapters; PTY/filesystem/browser processes remain unported. Replacing frozen stop snapshots with current snapshots fails the same contract; restoration passes."
+    },
+    {
+      "reference": "packages/gateway/src/surfaces/project-ui-sync.ts",
+      "reference_sha256": "52f22844a2b4f82ca4a8fc2ac38ff481f23581833ad296e917bfc0a723f6c0c9",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/surfaces/registry.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_surfaces.rs",
+        "tests/contract/drivers/nativesurfaces.ts"
+      ],
+      "targets": [
+        "gateway_rust_surfaces"
+      ],
+      "review": "Filesystem and remote-filesystem surface type selection, boolean true/false panel metadata, rejection of null/number/string state, and no snapshot call for unrelated surface types. Uses real native registry/snapshots and production TypeScript predicate."
     }
   ]
 }
