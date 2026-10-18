@@ -42,11 +42,12 @@ export function AgentControlButton({ state, runningCount, avatars = [], pending,
                 data-agent-control={state.halted ? 'halted' : 'ready'}
                 className={cn('w-full gap-2 rounded-lg px-2', compactSidebar ? 'h-auto min-h-20 justify-center px-0 py-2' : collapsed ? 'h-10 justify-center px-0' : 'h-11 justify-start', state.halted && 'bg-amber-500/5 text-amber-700 dark:text-amber-300')}
               >
-                <span className="inline-flex shrink-0 items-center gap-0.5" aria-hidden="true">
+                <span className={cn('inline-flex shrink-0 items-center gap-0.5', compactSidebar && 'justify-center')} aria-hidden="true">
                   <TeamAvatar members={members} layout="stack" size={header ? 24 : 32} className={cn('agent-control-avatars', compactSidebar && 'agent-control-avatars-vertical')} />
-                  <span className="flex h-2 w-1.5 shrink-0 items-center justify-center">
+                  {/* The compact vertical form is icon-only and narrow; a status dot there cannot sit inline without pushing the faces off-center. */}
+                  {!compactSidebar && <span className="flex h-2 w-1.5 shrink-0 items-center justify-center">
                     {pending ? <Loader2 className="h-1.5 w-1.5 animate-spin" /> : <span className={cn('h-1.5 w-1.5 rounded-full', state.halted ? 'bg-amber-500' : 'bg-red-500/80')} />}
-                  </span>
+                  </span>}
                 </span>
                 {!collapsed && <span className="min-w-0 text-left leading-tight"><span className="block truncate text-xs font-medium">Agent controls</span><span className="block text-2xs font-normal text-muted-foreground">{status}</span></span>}
               </Button>

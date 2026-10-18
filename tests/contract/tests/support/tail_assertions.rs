@@ -514,7 +514,7 @@ pub(crate) fn matches(observation: &Value, rule: &Value) -> bool {
     }
 }
 
-pub fn check(file: usize, name: &str, rules_source: &str) {
+pub fn check(file: &str, name: &str, rules_source: &str) {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .expect("tests directory")

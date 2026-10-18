@@ -208,7 +208,7 @@ impl FixtureInput {
 
 pub fn run(
     root: &Path,
-    file: usize,
+    file: &str,
     name: &str,
     rules: &[Value],
     compare: impl Fn(&Value, &Value) -> bool,

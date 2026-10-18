@@ -566,3 +566,60 @@ async fn list_row_cap_and_title_word_boundaries_are_exercised() {
         {"method":"POST","path":"/api/sessions/s0/generate-title","user":"owner","body":{"prompt":"Long title","model":"m"}}
     ]),json!({"title":"longword ".repeat(12)})).await;
 }
+#[test]
+fn title_normalization_matches_reference_utf16_and_word_boundaries() {
+    let mut inputs = vec![];
+    for prefix in [
+        "",
+        "Title: ",
+        "TITLE :\u{feff}",
+        "- ",
+        "*\t",
+        "• ",
+        "1. ",
+        "12) ",
+        "\"",
+        "'",
+        "`",
+        "Title: - ",
+        "01. ",
+        "-Title:",
+    ] {
+        for text in [
+            "One task...",
+            "\r\nFirst line\nignored",
+            "\n  \n",
+            "a   b\t c\u{feff}d\u{0085}e",
+            "...;;:--––",
+            "\"quoted\"",
+            "`backticks`",
+        ] {
+            inputs.push(json!([format!("{prefix}{text}"), "Fallback"]));
+        }
+    }
+    for len in [23, 24, 25, 78, 79, 80, 81, 82, 100] {
+        inputs.push(json!(["a".repeat(len), ""]));
+        inputs.push(json!([
+            format!("{} 🦀 trailing", "a".repeat(len)),
+            "fallback"
+        ]));
+        inputs.push(json!([
+            format!("{} {}", "x".repeat(len), "word ".repeat(20)),
+            "fallback"
+        ]));
+    }
+    for chunk in inputs.chunks(40) {
+        let expected = reference(json!({"op":"nativesessionhttp.normalize","inputs":chunk}));
+        let actual = json!(
+            chunk
+                .iter()
+                .map(|v| normalize_generated_thread_title(
+                    v[0].as_str().unwrap(),
+                    v[1].as_str().unwrap()
+                )
+                .0)
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(actual, expected);
+    }
+}

@@ -84,10 +84,10 @@ fn normalize(value: &mut Value) {
                 }
             }
             Value::Object(values) => {
-                if let Some(Value::String(raw)) = values.get("metadata") {
-                    if let Ok(v) = serde_json::from_str::<Value>(raw) {
-                        values.insert("metadata".into(), v);
-                    }
+                if let Some(Value::String(raw)) = values.get("metadata")
+                    && let Ok(v) = serde_json::from_str::<Value>(raw)
+                {
+                    values.insert("metadata".into(), v);
                 }
                 for value in values.values_mut() {
                     visit(value, ids)

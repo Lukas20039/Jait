@@ -25,3 +25,5 @@ pub mod transport;
 // Preserve the public API used by the existing native acceptance suite.
 pub use runtime::Gateway;
 pub const VERSION: &str = env!("JAIT_GATEWAY_VERSION");
+
+pub mod tools;

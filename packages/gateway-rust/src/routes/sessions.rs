@@ -5,10 +5,10 @@ use crate::{
     security::http_auth::AuthUser,
     services::{
         audit::{AuditEntry, AuditWriter},
+        json_state::SessionStateService,
         projects::{CreateProject, ProjectService},
         sessions::{CreateSession, SessionFilter, SessionRecord, SessionService},
         thread_title::normalize_generated_thread_title,
-        ui_state::SessionStateService,
         users::{UserService, UserSettings},
     },
 };
@@ -310,6 +310,12 @@ fn dispatch(
     Ok(match (method.as_str(), operation) {
         ("GET", "") => response(200, json!(session)),
         ("PATCH", "") => {
+            if !matches!(body, Value::Null | Value::Object(_) | Value::Array(_)) {
+                return Ok(response(
+                    500,
+                    json!({"statusCode":500,"error":"Internal Server Error","message":"body is not an Object. (evaluating '\"nodeId\" in body')"}),
+                ));
+            }
             if body.get("nodeId").is_some() {
                 if state.runtime.turn_active(&id) {
                     return Ok(response(

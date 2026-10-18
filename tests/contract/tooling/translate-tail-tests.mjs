@@ -1,6 +1,7 @@
 // Source-to-source authoring only: never imports or executes gateway/tests.
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -8,6 +9,20 @@ import { homedir } from 'node:os';
 import { sourceGates } from './source-gates.mjs';
 const root=fileURLToPath(new URL('../../../',import.meta.url));
 process.chdir(root);
+/**
+ * Fixture files are named after their source test file, never after their
+ * position in the discovery list. Positional names (`fixture0.ts`, `fixture1.ts`)
+ * meant that inserting one test file reassigned the content of every later
+ * fixture, so a regeneration rewrote ~97% of the directory (138 files, ~97k
+ * lines) even when almost nothing changed, and `git log` on a fixture was
+ * meaningless. The hash suffix keeps the name stable and unique when two source
+ * paths slugify identically.
+ */
+const fixtureId=sourcePath=>{
+ const slug=sourcePath.replace(/^packages\//,'').replace(/\.[^./]+$/,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-+|-+$/g,'').toLowerCase();
+ const digest=createHash('sha256').update(sourcePath).digest('hex').slice(0,8);
+ return `${slug}-${digest}`;
+};
 const require=createRequire(path.join(root,'package.json'));
 const ts=require('typescript');
 const inventory=JSON.parse(fs.readFileSync('tests/contract/coverage.json','utf8'));
@@ -431,14 +446,22 @@ for(const f of files){
 const shared=`const __jait_symbols=new Map<symbol,number>();\n// Fixture transport only. Rust owns all comparison semantics.\nfunction __jait_boxed(value: any): any {\n const type=typeof value;\n if(type==='symbol'){let id=__jait_symbols.get(value);if(!id){id=__jait_symbols.size+1;__jait_symbols.set(value,id)}return {type,value:id};}\n if(type==='function')return {type,name:value.name};\n if(type==='undefined')return {type};\n if(type==='bigint')return {type,value:String(value)};\n if(type==='number'&&!Number.isFinite(value))return {type:'nonfinite',value:String(value)};\n const prototype=type==='object'&&value!==null?(Object.getPrototypeOf(value)?.constructor?.name??null):null;\n if(value instanceof Error)value={...value,name:value.name,message:value.message,...('cause' in value?{cause:value.cause}:{})};\n return JSON.parse(JSON.stringify({type,value,prototype},function(this:any,_key:string,child:any){const original=Object.getOwnPropertyDescriptor(this,_key)?.value;if(original instanceof Date)return {__jait_type:'date',value:Number.isNaN(original.getTime())?'NaN':original.toISOString()};if(typeof child==='string'&&!child.isWellFormed())return {__jait_type:'utf16',units:Array.from({length:child.length},(_,i)=>child.charCodeAt(i))};if(typeof AbortSignal!=='undefined'&&child instanceof AbortSignal)return {__jait_type:'AbortSignal',aborted:child.aborted};if(child instanceof Map)return {__jait_type:'map',entries:[...child]};if(child instanceof Set)return {__jait_type:'set',values:[...child]};if(child instanceof RegExp)return {__jait_type:'regexp',source:child.source,flags:child.flags};if(ArrayBuffer.isView(child)&&!(child instanceof DataView))return {__jait_type:child.constructor.name,values:Array.from(child as any)};if(typeof child==='number'&&!Number.isFinite(child))return {__jait_type:'nonfinite',value:String(child)};return typeof child==='bigint'?{__jait_type:'bigint',value:String(child)}:typeof child==='undefined'?{__jait_type:'undefined'}:typeof child==='function'?{__jait_type:'function'}:child;}));\n}\n`;
 for(let i=0;i<groups.length;i++){
  const group=groups[i];
+ const id=fixtureId(group.path);
  let code=`// Translated fixture from ${group.path}; expected literals are in tail_static.rs.\n${group.imports.join('\n')}\nimport { createRequire as __jait_createRequire } from 'node:module';\nimport { observe as __jait_observe } from '../tailtransport.ts';\nimport { mkdir as __jait_mkdir } from 'node:fs/promises';\nimport { fileURLToPath as __jait_fileURLToPath } from 'node:url';\nconst __jait_original_url=new URL(${JSON.stringify(group.originalModule)},import.meta.url).href;\nconst __jait_require=__jait_createRequire(__jait_original_url);\nconst __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));\nconst __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));\n${shared}\nexport async function run(name: string): Promise<unknown> {\n await __jait_mkdir(__jait_fixture_dir,{recursive:true});\n const __jait_observations: any[]=[];\n const __jait_record=(row:any)=>{__jait_observations.push(row);__jait_observe(row)};\n const __jait_refs=new WeakMap<object,number>(); let __jait_nextRef=1;\n const __jait_ref=(v:any)=>{if((typeof v!=='object'||v===null)&&typeof v!=='function')return null;let n=__jait_refs.get(v);if(!n){n=__jait_nextRef++;__jait_refs.set(v,n)}return n};\n const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};\n const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});\n const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);\n const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};\n const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};\n const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};\n const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};\n const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};\n const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};\n switch(name){\n`;
- for(const c of group.cases){code+=`case ${JSON.stringify(c.id)}: {\n${c.body}\nbreak;\n}\n`;c.group=i;}
+ for(const c of group.cases){code+=`case ${JSON.stringify(c.id)}: {\n${c.body}\nbreak;\n}\n`;c.group=id;}
  code+=`default: throw new Error('unknown tailstatic fixture');\n }\n return __jait_observations;\n}\n`;
- fs.writeFileSync(`tests/contract/drivers/tailstatic/fixture${i}.ts`,code);
+ fs.writeFileSync(`tests/contract/drivers/tailstatic/fixture-${id}.ts`,code);
 }
-fs.writeFileSync('tests/contract/drivers/tailstatic.ts',`/** Isolated fixtures; all comparisons execute in Rust. */\nexport async function dispatch(call: any): Promise<unknown> {\n const log=console.log; console.log=(...args:unknown[])=>console.error(...args);\n try { switch(call.file){\n${groups.map((g,i)=>`case ${i}: return await (await import('./tailstatic/fixture${i}.ts')).run(call.name);`).join('\n')}\n default: throw new Error('unknown tailstatic file');\n } } finally { console.log=log; }\n}\n`);
+// Drop fixtures whose source test disappeared, so the directory always mirrors
+// the current source set exactly.
+const fixtureNames=new Set(groups.map(group=>`fixture-${fixtureId(group.path)}.ts`));
+for(const name of fs.readdirSync('tests/contract/drivers/tailstatic')){
+ if(/^fixture.*\.ts$/.test(name)&&!fixtureNames.has(name))fs.rmSync(path.join('tests/contract/drivers/tailstatic',name));
+}
+const dispatch=[...fixtureNames].sort().map(name=>`case ${JSON.stringify(name.slice('fixture-'.length,-'.ts'.length))}: return await (await import('./tailstatic/${name}')).run(call.name);`).join('\n');
+fs.writeFileSync('tests/contract/drivers/tailstatic.ts',`/** Isolated fixtures; all comparisons execute in Rust. */\nexport async function dispatch(call: any): Promise<unknown> {\n const log=console.log; console.log=(...args:unknown[])=>console.error(...args);\n try { switch(call.file){\n${dispatch}\n default: throw new Error('unknown tailstatic file');\n } } finally { console.log=log; }\n}\n`);
 let rust=`//! Gateway assertion translations; Rust evaluates every verdict.\n#![allow(non_snake_case)]\n#[path = "support/tail_assertions.rs"]\nmod tail_assertions;\n`;
-for(const g of groups)for(const c of g.cases)rust+=`\n// ${c.report.original}: ${c.report.name.replace(/\n/g,' ')}\n#[test]\n${c.attributes.length?c.attributes.join('\n')+'\n':''}fn ${c.id.toLowerCase()}() {\n tail_assertions::check(${c.group}, ${rustString(c.id)}, ${rustString(JSON.stringify(c.rules))});\n}\n`;
+for(const g of groups)for(const c of g.cases)rust+=`\n// ${c.report.original}: ${c.report.name.replace(/\n/g,' ')}\n#[test]\n${c.attributes.length?c.attributes.join('\n')+'\n':''}fn ${c.id.toLowerCase()}() {\n tail_assertions::check(${rustString(c.group)}, ${rustString(c.id)}, ${rustString(JSON.stringify(c.rules))});\n}\n`;
 fs.writeFileSync('tests/contract/tests/tail_static.rs',rust);
 const localRustfmt=path.join(homedir(),'.cargo/bin',process.platform==='win32'?'rustfmt.exe':'rustfmt');
 const formatted=spawnSync(process.env.RUSTFMT??(fs.existsSync(localRustfmt)?localRustfmt:'rustfmt'),['--edition','2024','tests/contract/tests/tail_static.rs'],{cwd:root,encoding:'utf8'});

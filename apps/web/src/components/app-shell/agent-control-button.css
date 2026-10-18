@@ -28,15 +28,20 @@
   box-shadow: none;
 }
 
+/* Collapsed sidebar: overlap only the trailing faces so the stack keeps a
+   symmetric box and therefore centers inside the icon-only button. */
 .team-avatar-stack.agent-control-avatars-vertical {
   flex-direction: column;
+  align-items: center;
   width: var(--team-avatar-size);
   height: auto;
   padding-left: 0;
-  padding-top: calc(var(--team-avatar-size) * 0.4);
 }
 
 .team-avatar-stack.agent-control-avatars-vertical .team-avatar-member {
   margin-left: 0;
+}
+
+.team-avatar-stack.agent-control-avatars-vertical .team-avatar-member ~ .team-avatar-member {
   margin-top: calc(var(--team-avatar-size) * -0.4);
 }

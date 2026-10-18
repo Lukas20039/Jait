@@ -23,6 +23,24 @@ bun run test:contract:lint
 bun run test:contract:coverage --evidence-dir .jait/artifacts/contracts
 ```
 
+The explicit real-scanner profile runs exactly four installed Nmap, Nuclei and
+Trivy checks against disposable loopback/filesystem fixtures:
+
+```sh
+node tests/contract/run.mjs translated-report --profile scanners
+```
+
+The engines must already be on PATH. Set JAIT_TEST_TRIVY_CACHE to the prepared
+fixture database inside this project's .jait directory; symlink escapes are
+rejected. The runner installs nothing and retains a failed report if any required
+case fails. Chromium's packaged runtime also requires the normal gateway build,
+including the bridge assets copied by copy-shell-integration.mjs.
+
+The coverage audit reads each shared Rust source/report once per invocation and
+checks its exact bytes again before saving the verdict. Cached evidence cannot
+hide a report or source changed during the audit; case IDs and passing statuses
+are still checked independently for every declaration.
+
 The managed run starts an isolated loopback gateway on an OS-assigned port, with a
 fresh database, random signing secret and no inherited provider credentials.
 It uses the existing evaluation startup mode, which disables scheduled work,

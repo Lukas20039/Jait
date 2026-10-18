@@ -121,7 +121,67 @@ fn passing_report(report: &Value, id: &str) -> bool {
         })
 }
 
-fn parity_evidence(root: &Path, item: &Value, reports: Option<&[Value]>) -> Result<()> {
+// A declaration batch normally shares a handful of large Rust sources and reports.
+// Cache only within this audit, and reject mutation before writing the verdict.
+#[derive(Default)]
+struct EvidenceCache {
+    sources: BTreeMap<PathBuf, String>,
+    reports: BTreeMap<PathBuf, BTreeSet<String>>,
+    contents: BTreeMap<PathBuf, Vec<u8>>,
+}
+
+impl EvidenceCache {
+    fn source_contains(&mut self, path: &Path, id: &str) -> Result<bool> {
+        if !self.sources.contains_key(path) {
+            let bytes = fs::read(path)?;
+            self.contents.insert(path.to_owned(), bytes.clone());
+            self.sources
+                .insert(path.to_owned(), String::from_utf8(bytes)?);
+        }
+        Ok(self.sources[path].contains(id))
+    }
+
+    fn report_passes(&mut self, path: &Path, id: &str) -> Result<bool> {
+        if !self.reports.contains_key(path) {
+            let bytes = fs::read(path)?;
+            let report: Value = serde_json::from_slice(&bytes)?;
+            let mut passed = BTreeSet::new();
+            if report["backend_label"] == "typescript"
+                && report["success"] == true
+                && let Some(cases) = report["cases"].as_array()
+            {
+                for case in cases {
+                    if case["status"] == "passed"
+                        && let Some(id) = case["id"].as_str()
+                    {
+                        passed.insert(id.to_owned());
+                    }
+                }
+            }
+            self.contents.insert(path.to_owned(), bytes.clone());
+            self.reports.insert(path.to_owned(), passed);
+        }
+        Ok(self.reports[path].contains(id))
+    }
+
+    fn verify_unchanged(&self) -> Result<()> {
+        for (path, before) in &self.contents {
+            ensure!(
+                fs::read(path)? == *before,
+                "parity evidence changed during audit: {}",
+                path.display()
+            );
+        }
+        Ok(())
+    }
+}
+
+fn parity_evidence(
+    root: &Path,
+    item: &Value,
+    reports: Option<&[Value]>,
+    cache: &mut EvidenceCache,
+) -> Result<()> {
     ensure!(item["status"] == "verified", "status is not verified");
     ensure!(
         item["parity_review"]
@@ -147,7 +207,7 @@ fn parity_evidence(root: &Path, item: &Value, reports: Option<&[Value]>) -> Resu
             "case source must be Rust"
         );
         ensure!(
-            fs::read_to_string(source)?.contains(id),
+            cache.source_contains(&source, id)?,
             "Rust source does not contain case id {id}"
         );
         if let Some(reports) = reports {
@@ -161,9 +221,8 @@ fn parity_evidence(root: &Path, item: &Value, reports: Option<&[Value]>) -> Resu
                 case["report"].as_str().context("missing report path")?,
                 ".jait/artifacts/",
             )?;
-            let report: Value = serde_json::from_slice(&fs::read(report_path)?)?;
             ensure!(
-                passing_report(&report, id),
+                cache.report_passes(&report_path, id)?,
                 "no successful TypeScript-backend report for {id}"
             );
         }
@@ -262,6 +321,7 @@ fn run() -> Result<()> {
         .as_array()
         .cloned()
         .unwrap_or_default();
+    let mut evidence_cache = EvidenceCache::default();
     for file in test_files.iter().chain(source_files).chain(&retained) {
         let path = file["path"].as_str().context("missing file path")?;
         ensure!(
@@ -286,10 +346,15 @@ fn run() -> Result<()> {
                 );
                 match case["status"].as_str().unwrap_or("pending") {
                     "pending" => pending.push(id.to_owned()),
-                    "verified" => match parity_evidence(&root, case, reports.as_deref()) {
-                        Ok(()) => verified += 1,
-                        Err(error) => errors.push(format!("invalid parity claim {id}: {error:#}")),
-                    },
+                    "verified" => {
+                        match parity_evidence(&root, case, reports.as_deref(), &mut evidence_cache)
+                        {
+                            Ok(()) => verified += 1,
+                            Err(error) => {
+                                errors.push(format!("invalid parity claim {id}: {error:#}"))
+                            }
+                        }
+                    }
                     other => errors.push(format!("unknown case status {other}: {id}")),
                 }
             }
@@ -297,7 +362,9 @@ fn run() -> Result<()> {
             match file["status"].as_str().unwrap_or("pending") {
                 "pending" => pending.push(format!("source coverage review: {path}")),
                 "verified" => {
-                    if let Err(error) = parity_evidence(&root, file, reports.as_deref()) {
+                    if let Err(error) =
+                        parity_evidence(&root, file, reports.as_deref(), &mut evidence_cache)
+                    {
                         errors.push(format!("invalid source parity {path}: {error:#}"));
                     }
                 }
@@ -310,6 +377,9 @@ fn run() -> Result<()> {
     }
     for path in recorded.difference(&current) {
         errors.push(format!("removed gateway file: {path}"));
+    }
+    if let Err(error) = evidence_cache.verify_unchanged() {
+        errors.push(format!("{error:#}"));
     }
     let output = json!({
         "schema_version":1,"inventory_consistent":errors.is_empty(),
@@ -359,6 +429,69 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn shared_evidence_fixture() -> (PathBuf, Value) {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../.jait/artifacts/coverage-cache")
+            .join(uuid::Uuid::new_v4().to_string());
+        fs::create_dir_all(root.join("tests/contract")).unwrap();
+        fs::create_dir_all(root.join(".jait/artifacts")).unwrap();
+        fs::write(
+            root.join("tests/contract/checks.rs"),
+            "fn first_case() {} fn second_case() {} fn missing_case() {}",
+        )
+        .unwrap();
+        fs::write(root.join(".jait/artifacts/report.json"), json!({
+            "backend_label":"typescript", "success":true,
+            "cases":[{"id":"first_case","status":"passed"},{"id":"second_case","status":"passed"}]
+        }).to_string()).unwrap();
+        let item = json!({"status":"verified","parity_review":"two independently passing cases",
+        "rust_cases":[
+            {"id":"first_case","source":"tests/contract/checks.rs","report":".jait/artifacts/report.json"},
+            {"id":"second_case","source":"tests/contract/checks.rs","report":".jait/artifacts/report.json"}
+        ]});
+        (root, item)
+    }
+
+    #[test]
+    fn shared_reports_keep_case_membership_and_failure_checks() {
+        let (root, mut item) = shared_evidence_fixture();
+        let mut cache = EvidenceCache::default();
+        parity_evidence(&root, &item, None, &mut cache).unwrap();
+        item["rust_cases"][1]["id"] = json!("missing_case");
+        assert!(parity_evidence(&root, &item, None, &mut cache).is_err());
+        cache.verify_unchanged().unwrap();
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn report_edits_during_an_audit_fail_closed() {
+        let (root, item) = shared_evidence_fixture();
+        let mut cache = EvidenceCache::default();
+        parity_evidence(&root, &item, None, &mut cache).unwrap();
+        fs::write(root.join(".jait/artifacts/report.json"), json!({
+            "backend_label":"typescript","success":false,
+            "cases":[{"id":"first_case","status":"passed"},{"id":"second_case","status":"passed"}]
+        }).to_string()).unwrap();
+        assert!(cache.verify_unchanged().is_err());
+        assert!(parity_evidence(&root, &item, None, &mut EvidenceCache::default()).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn rust_source_edits_during_an_audit_fail_closed() {
+        let (root, item) = shared_evidence_fixture();
+        let mut cache = EvidenceCache::default();
+        parity_evidence(&root, &item, None, &mut cache).unwrap();
+        fs::write(
+            root.join("tests/contract/checks.rs"),
+            "fn unrelated_case() {}",
+        )
+        .unwrap();
+        assert!(cache.verify_unchanged().is_err());
+        assert!(parity_evidence(&root, &item, None, &mut EvidenceCache::default()).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
 
     #[test]
     fn retained_contracts_require_unchanged_bounded_archives_and_absent_originals() {
@@ -437,9 +570,11 @@ mod tests {
         });
         let passed = json!({"backend_label":"typescript","success":true,
             "cases":[{"id":"coverage.fixture-case","status":"passed"}]});
-        assert!(parity_evidence(&root, &item, Some(&[passed])).is_ok());
-        assert!(parity_evidence(&root, &item, Some(&[])).is_err());
-        assert!(parity_evidence(&root, &item, None).is_err());
+        assert!(
+            parity_evidence(&root, &item, Some(&[passed]), &mut EvidenceCache::default()).is_ok()
+        );
+        assert!(parity_evidence(&root, &item, Some(&[]), &mut EvidenceCache::default()).is_err());
+        assert!(parity_evidence(&root, &item, None, &mut EvidenceCache::default()).is_err());
     }
 
     #[test]

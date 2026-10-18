@@ -27,6 +27,5 @@ pub mod chat_traces;
 pub mod project_repositories;
 pub mod session_search;
 
-pub mod ui_state;
 
 pub mod thread_title;

@@ -2,7 +2,7 @@
 mod internal_driver;
 use jait_gateway::{
     db,
-    services::ui_state::{ProjectStateService, SessionStateService},
+    services::json_state::{ProjectStateService, SessionStateService},
 };
 use serde_json::{Value, json};
 use std::{
@@ -311,5 +311,25 @@ fn state_survives_reopening_real_database() {
             .unwrap()
             .get("project.panel")
             .is_none()
+    );
+}
+#[test]
+fn existing_project_store_migrates_inherited_legacy_data() {
+    let db = db::open_database(Path::new(":memory:")).unwrap();
+    db::migrate_database(&db).unwrap();
+    db.execute_batch(&raw(
+        "project",
+        "a",
+        "__proto__",
+        Some("{\"project.panel\":{\"inherited\":true}}"),
+    ))
+    .unwrap();
+    let actual = jait_gateway::services::json_state::ProjectStateService::new(&db)
+        .get("a", None)
+        .unwrap();
+    let expected=internal_driver::call(&root(),&directory(),json!({"version":1,"calls":[{"op":"nativeuistate.run","scope":"project","seed":raw("project","a","__proto__",Some("{\"project.panel\":{\"inherited\":true}}")),"steps":[{"id":"a"}],"now":NOW}]}),&||false).unwrap();
+    assert_eq!(
+        actual.get("project.ui"),
+        expected[0]["results"][0].get("project.ui")
     );
 }

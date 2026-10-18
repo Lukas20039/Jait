@@ -9,6 +9,10 @@ import { AuditWriter } from '../../../packages/gateway/src/services/audit.ts';
 import { signAuthToken } from '../../../packages/gateway/src/security/http-auth.ts';
 import { loadConfig } from '../../../packages/gateway/src/config.ts';
 export async function dispatch(call:any) {
+  if(call.op==='nativesessionhttp.normalize') {
+    const {normalizeGeneratedThreadTitle}=await import('../../../packages/gateway/src/services/thread-title.ts');
+    return call.inputs.map((v:any)=>{const title=normalizeGeneratedThreadTitle(v[0],v[1]);return Array.from({length:title.length},(_,i)=>title.charCodeAt(i));});
+  }
   const log=console.log;console.log=(...a)=>console.error(...a);
   const RealDate=Date; const realFetch=fetch;
   globalThis.Date=class extends RealDate {constructor(...args:any[]){super(...(args.length?args:[call.now]) as [any]);} static now(){return new RealDate(call.now).getTime();}} as DateConstructor;
