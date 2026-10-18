@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { compactActiveTurnHistory, generateLLMConversationSummary, pruneHistory, type AgentMessage, type LLMConfig } from "./agent-loop.js";
+import { __testUtils, compactActiveTurnHistory, generateLLMConversationSummary, pruneHistory, type AgentMessage, type LLMConfig } from "./agent-loop.js";
 
 const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
 afterEach(() => vi.unstubAllGlobals());
@@ -14,6 +14,60 @@ function model() {
   }));
   return requests;
 }
+
+describe("multimodal context compaction", () => {
+  function imageRequest(): AgentMessage {
+    // Match the content-part array created by routes/chat.ts for attachments.
+    return { role: "user", content: [
+      { type: "text", text: "Remove the orange dot and center the Agents button" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
+      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
+    ] as unknown as string };
+  }
+
+  it("preserves attachment text in the structured fallback without exposing image bytes", () => {
+    const summary = __testUtils.buildStructuredConversationSummary([imageRequest()]);
+    expect(summary).toContain("Remove the orange dot and center the Agents button");
+    expect(summary).toContain("preserve the label");
+    expect(summary).toContain("[image attached]");
+    expect(summary).not.toContain("PRIVATE_IMAGE_BYTES");
+    expect(summary).not.toContain("[object Object]");
+  });
+
+  it("sends readable attachment text to the model summarizer", async () => {
+    const requests = model();
+    await generateLLMConversationSummary([imageRequest()], llm);
+    const input = JSON.stringify(requests[0].messages);
+    expect(input).toContain("Remove the orange dot and center the Agents button");
+    expect(input).toContain("[image attached]");
+    expect(input).not.toContain("PRIVATE_IMAGE_BYTES");
+    expect(input).not.toContain("[object Object]");
+  });
+
+  it("uses the same attachment-safe fallback when the model summary fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 503 })));
+    const summary = await generateLLMConversationSummary([imageRequest()], llm);
+    expect(summary).toContain("Degraded checkpoint");
+    expect(summary).toContain("Remove the orange dot and center the Agents button");
+    expect(summary).toContain("[image attached]");
+    expect(summary).not.toContain("PRIVATE_IMAGE_BYTES");
+  });
+
+  it("prunes attachment history and restores its task after a bare continuation", async () => {
+    const request = imageRequest();
+    const original = structuredClone(request);
+    const history: AgentMessage[] = [
+      { role: "system", content: "base" },
+      request,
+      { role: "assistant", content: "x".repeat(18000) },
+      { role: "user", content: "continue" },
+    ];
+    expect(await pruneHistory(history, 2000, [])).toBe(true);
+    expect(history.some(m => m.role === "user" && m.content.includes("Remove the orange dot"))).toBe(true);
+    expect(history.at(-1)?.content).toBe("continue");
+    expect(request).toEqual(original);
+  });
+});
 
 describe("context checkpoint handoff", () => {
   it("carries prior summaries through repeated real pruning", async () => {
@@ -43,7 +97,8 @@ describe("context checkpoint handoff", () => {
     const input = JSON.stringify(requests[0].messages);
     expect(input).not.toContain("unnecessary-internal-narrative");
     expect(input).toContain("FINAL: 7 passed");
-    expect(requests[0].options.num_predict).toBe(2048);
+    // A generous cap costs nothing when unused and leaves reasoning headroom.
+    expect(requests[0].options.num_predict).toBe(8192);
     expect(input).not.toContain("Use this EXACT format");
   });
 
@@ -91,13 +146,49 @@ describe("active turn handoff", () => {
     await expect(compactActiveTurnHistory(messages, [], 1000, { summaryGenerator: async () => { throw new Error("cancelled"); } })).rejects.toThrow("cancelled");
     expect(messages).toEqual(original);
   });
-  it("preserves the old checkpoint on model failure or truncated output", async () => {
-    for (const response of [new Response("unavailable", { status: 503 }), Response.json({ message: { content: "incomplete" }, done_reason: "length" })]) {
-      vi.stubGlobal("fetch", vi.fn(async () => response));
+  it("preserves the old checkpoint when the model is unavailable", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("unavailable", { status: 503 })));
+    const result = await generateLLMConversationSummary(history(), llm);
+    expect(result).toContain("scope-expires-at-18:00");
+    expect(result).toContain("Degraded checkpoint");
+  });
+
+  it("salvages a checkpoint that hit the output cap instead of discarding it", async () => {
+    // Reasoning models can consume the whole budget before emitting content, so
+    // a capped-but-non-empty handoff must survive in both wire formats.
+    for (const body of [
+      { message: { content: "Objective: verify rollback. Next: re-run probe." }, done_reason: "length" },
+      { choices: [{ message: { content: "Objective: verify rollback. Next: re-run probe." }, finish_reason: "length" }] },
+    ]) {
+      vi.stubGlobal("fetch", vi.fn(async () => Response.json(body)));
       const result = await generateLLMConversationSummary(history(), llm);
-      expect(result).toContain("scope-expires-at-18:00");
-      expect(result).toContain("Degraded checkpoint");
-      expect(result).not.toContain("incomplete");
+      expect(result).toContain("[conversation-summary]");
+      expect(result).toContain("Objective: verify rollback");
+      expect(result).toContain("stopped at the output token budget");
+      expect(result).not.toContain("Degraded checkpoint");
     }
+  });
+
+  it("falls back when the cap was hit before any content was emitted", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ message: { content: "   " }, done_reason: "length" })));
+    const result = await generateLLMConversationSummary(history(), llm);
+    expect(result).toContain("scope-expires-at-18:00");
+    expect(result).toContain("Degraded checkpoint");
+  });
+
+  it("retries at the conservative budget when the provider rejects the raised cap", async () => {
+    // A budget above a model's output limit is refused, not clamped, so the
+    // raised cap must not cost the model-written handoff outright.
+    const budgets: unknown[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body));
+      budgets.push(body.max_tokens);
+      if (body.max_tokens === 8192) return new Response("max_tokens too large", { status: 400 });
+      return Response.json({ choices: [{ message: { content: "Objective: verify rollback." }, finish_reason: "stop" }] });
+    }));
+    const result = await generateLLMConversationSummary(history(), { ...llm, backend: "openai" });
+    expect(budgets).toEqual([8192, 2048]);
+    expect(result).toContain("Objective: verify rollback.");
+    expect(result).not.toContain("Degraded checkpoint");
   });
 });
