@@ -1,4 +1,4 @@
-import { and, eq, sql, asc, gt } from "drizzle-orm";
+import { and, eq, sql, asc, gt, or, isNull } from "drizzle-orm";
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { JaitBackend } from "@jait/shared/types";
 import type { JaitDB } from "../db/connection.js";
@@ -91,6 +91,9 @@ function hashPassword(password: string): string {
 function verifyPasswordHash(password: string, encoded: string): boolean {
   const [prefix, salt, digest] = encoded.split("$");
   if (prefix !== HASH_PREFIX || !salt || !digest) return false;
+  // Buffer.from(hex) silently truncates malformed hex, including to zero bytes.
+  // Only complete 64-byte digests emitted by hashPassword are valid credentials.
+  if (!/^[a-f0-9]{128}$/i.test(digest)) return false;
   const expected = Buffer.from(digest, "hex");
   const actual = scryptSync(password, salt, expected.length);
   if (expected.length !== actual.length) return false;
@@ -332,14 +335,18 @@ export class UserService {
   }
 
   bindSessionToUser(userId: string, sessionId: string): boolean {
-    const session = this.db.select().from(sessions).where(eq(sessions.id, sessionId)).get();
-    if (!session) return false;
-    this.db
+    // Claim legacy unowned sessions or keep the current owner's binding.
+    // Check in the UPDATE so concurrent claims cannot transfer ownership.
+    const updated = this.db
       .update(sessions)
       .set({ userId })
-      .where(eq(sessions.id, sessionId))
-      .run();
-    return true;
+      .where(and(
+        eq(sessions.id, sessionId),
+        or(isNull(sessions.userId), eq(sessions.userId, userId)),
+      ))
+      .returning({ id: sessions.id })
+      .get();
+    return Boolean(updated);
   }
 
   clearArchivedSessions(userId: string): number {
