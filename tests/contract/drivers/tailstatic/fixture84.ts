@@ -1,29 +1,16 @@
-// Translated fixture from packages/gateway/src/routes/mcp-server.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/routes/jobs.test.ts; expected literals are in tail_static.rs.
 
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
 import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { matchesCronMinute, SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { SessionStateService } from "../../../../packages/gateway/src/services/session-state.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { TeamChatService } from "../../../../packages/gateway/src/services/team-chat.js";
-import { createTeamChatTool } from "../../../../packages/gateway/src/tools/team-chat-tools.js";
-import type { AppConfig } from "../../../../packages/gateway/src/config.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createTodoTool } from "../../../../packages/gateway/src/tools/core/todo.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import {
-  handleMcpRequest,
-  listToolsForMcp,
-  registerMcpRoutes,
-  resolveMcpBaseUrl,
-} from "../../../../packages/gateway/src/routes/mcp-server.js";
+import { registerJobRoutes } from "../../../../packages/gateway/src/routes/jobs.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/mcp-server.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/jobs.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -50,871 +37,284 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_30_3": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_15_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    for (const [name, tier] of [
-      ["todo", "core"],
-      ["user.ask", "core"],
-      ["tools.search", "core"],
-      ["jait.terminal", "standard"],
-      ["terminal.run", "standard"],
-    ] as const) {
-      registry.register({
-        name,
-        description: name,
-        tier,
-        category: tier === "core" ? "meta" : "terminal",
-        source: "builtin",
-        parameters: { type: "object", properties: {} },
-        async execute() {
-          return { ok: true, message: "ok" };
-        },
-      });
-    }
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const executeTool = vi.fn(async () => ({ ok: true, data: { content: "done" } }));
+    const scheduler = new SchedulerService({ db, executeTool });
 
     const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: { host: "127.0.0.1", port: 3000 } as any,
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "agent-user");
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/jobs",
+      headers,
+      payload: {
+        name: "daily codex automation",
+        cron_expression: "0 9 * * *",
+        job_type: "agent_task",
+        description: "create daily summary",
+        prompt: "Lies den Repo-Status und schreibe ein Daily.",
+        provider: "codex",
+        model: "gpt-5-codex",
+        payload: { allowedTools: "file.list,file.read", title: "fixed cron title", personaAgentId: "agent-1", skillIds: ["research"], runtimeMode: "supervised" },
+      },
     });
 
-    const listTools = async (toolSet: string) => {
-      const response = await app.inject({
-        method: "POST",
-        url: `/mcp?toolSet=${toolSet}`,
-        payload: { jsonrpc: "2.0", id: 1, method: "tools/list", params: {} },
-      });
-      return response.json().result.tools.map((tool: { name: string }) => tool.name);
+    __jait_capture(0, (createResponse.statusCode));
+    const created = createResponse.json() as { id: string; tool_name: string; prompt: string | null; payload: Record<string, unknown> | null };
+    __jait_capture(1, (created.tool_name));
+    __jait_capture(2, (created.prompt));
+    __jait_capture(3, (created.payload));
+
+    const triggerResponse = await app.inject({
+      method: "POST",
+      url: `/api/jobs/${created.id}/trigger`,
+      headers,
+    });
+
+    __jait_capture(4, (triggerResponse.statusCode));
+    __jait_capture(5, (executeTool.mock.calls));
+    __jait_capture(6, (executeTool.mock.calls[0]?.[0]));
+    __jait_capture(7, ((executeTool.mock.calls[0]?.[0] as { input?: Record<string, unknown> }).input));
+
+    const clearedModel = await app.inject({
+      method: "PATCH", url: `/api/jobs/${created.id}`, headers,
+      payload: { model: null },
+    });
+    __jait_capture(8, (clearedModel.statusCode));
+    __jait_capture(9, (clearedModel.json()));
+
+    await app.close();
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_85_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
+
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "agent-user");
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/jobs",
+      headers,
+      payload: {
+        name: "broken agent task",
+        cron_expression: "* * * * *",
+        job_type: "agent_task",
+      },
+    });
+
+    __jait_capture(0, (createResponse.statusCode));
+    __jait_capture(1, (createResponse.json()));
+
+    await app.close();
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_116_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
+
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "user-1");
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/jobs",
+      headers,
+      payload: {
+        name: "status automation",
+        cron_expression: "* * * * *",
+        job_type: "system_job",
+        payload: {
+          command: "gateway_status",
+          args: { source: "tests" },
+        },
+      },
+    });
+
+    __jait_capture(0, (createResponse.statusCode));
+    const created = createResponse.json() as { id: string; tool_name: string };
+    __jait_capture(1, (created.tool_name));
+
+    const triggerResponse = await app.inject({
+      method: "POST",
+      url: `/api/jobs/${created.id}/trigger`,
+      headers,
+    });
+    __jait_capture(2, (triggerResponse.statusCode));
+    __jait_capture(3, (executeTool.mock.calls));
+
+    const runsResponse = await app.inject({
+      method: "GET",
+      url: `/api/jobs/${created.id}/runs`,
+      headers,
+    });
+    __jait_capture(4, (runsResponse.statusCode));
+    const runsPayload = runsResponse.json() as { total: number; items: Array<{ status: string }> };
+    __jait_capture(5, (runsPayload.total));
+    __jait_capture(6, (runsPayload.items[0]?.status));
+
+    await app.close();
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_170_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const executeTool = vi.fn(async () => ({ ok: true, message: "scheduled", data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
+
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "user-1");
+    const job = scheduler.create({
+      userId: "user-1",
+      name: "scheduled status automation",
+      cron: "* * * * *",
+      toolName: "gateway.status",
+      input: {},
+      sessionId: "default",
+      projectRoot: process.cwd(),
+    });
+
+    await scheduler.tick(new Date("2026-05-12T12:34:00.000Z"));
+
+    const runsResponse = await app.inject({
+      method: "GET",
+      url: `/api/jobs/${job.id}/runs`,
+      headers,
+    });
+
+    __jait_capture(0, (runsResponse.statusCode));
+    const runsPayload = runsResponse.json() as {
+      total: number;
+      items: Array<{ status: string; triggered_by: string; result: string | null }>;
     };
-
-    __jait_capture(0, (await listTools("core")));
-    __jait_capture(1, (await listTools("deferred")));
-
-    const crossCatalogCall = await app.inject({
-      method: "POST",
-      url: "/mcp?toolSet=core&sessionId=session-1",
-      payload: {
-        jsonrpc: "2.0",
-        id: 2,
-        method: "tools/call",
-        params: { name: "terminal_run", arguments: {} },
-      },
-    });
-    __jait_capture(2, (crossCatalogCall.json()));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_89_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "read",
-      description: "Core read tool",
-      tier: "core",
-      category: "filesystem",
-      source: "builtin",
-      parameters: { type: "object", properties: {} },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-    registry.register({
-      name: "jait.todos",
-      description: "Manage global Jait todo items",
-      tier: "core",
-      category: "gateway",
-      source: "builtin",
-      parameters: {
-        type: "object",
-        properties: {
-          action: { type: "string", enum: ["list", "add", "update", "remove"] },
-          todoId: { type: "string" },
-        },
-        required: ["action"],
-      },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-    registry.register({
-      name: "user.ask",
-      description: "Ask the user one or more structured questions",
-      tier: "core",
-      category: "gateway",
-      source: "builtin",
-      risk: "low",
-      parameters: {
-        type: "object",
-        properties: {
-          questions: { type: "array" },
-        },
-        required: ["questions"],
-      },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-    registry.register({
-      name: "cron.add",
-      description: "Create a cron job",
-      tier: "standard",
-      category: "scheduler",
-      source: "builtin",
-      parameters: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-        },
-        required: ["name"],
-      },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-    registry.register({
-      name: "mcp.github.create_issue",
-      description: "External MCP tool",
-      tier: "external",
-      category: "external",
-      source: "mcp",
-      parameters: { type: "object", properties: {} },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-
-    __jait_capture(0, (listToolsForMcp(registry).map((tool) => tool.name)));
-
-    const response = await handleMcpRequest({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/list",
-    }, registry);
-
-    __jait_capture(1, (response));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_231_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register(createTodoTool());
-    registry.register({
-      name: "jait.terminal",
-      displayName: "Terminal",
-      description: "Run a command",
-      tier: "standard",
-      category: "terminal",
-      source: "builtin",
-      parameters: { type: "object", properties: { command: { type: "string" } }, required: ["command"] },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-
-    const response = await handleMcpRequest({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/list",
-    }, registry);
-
-    __jait_capture(0, ((response.result as { tools: Array<Record<string, unknown>> }).tools));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_259_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (resolveMcpBaseUrl({
-      headers: {
-        "x-forwarded-proto": "https",
-        "x-forwarded-host": "gateway.example.com",
-        host: "ignored.local:3000",
-      },
-      protocol: "http",
-      hostname: "ignored.local",
-    }, { host: "0.0.0.0", port: 3000 })));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_271_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (resolveMcpBaseUrl({
-      headers: {
-        host: "127.0.0.1:4111",
-      },
-      protocol: "http",
-      hostname: "127.0.0.1",
-    }, { host: "0.0.0.0", port: 3000 })));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_281_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-      } as any,
-    });
-
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp",
-      headers: {
-        "content-type": "application/json",
-        "mcp-protocol-version": "2025-03-26",
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "initialize",
-        params: {
-          protocolVersion: "2025-03-26",
-        },
-      },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (response.headers["mcp-protocol-version"]));
-    __jait_capture(2, (response.json()));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_329_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-      } as any,
-    });
-
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp/sse",
-      headers: {
-        "content-type": "application/json",
-        "mcp-protocol-version": "2025-03-26",
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "initialize",
-        params: {
-          protocolVersion: "2025-03-26",
-        },
-      },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (response.json()));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_371_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "jait.terminal",
-      description: "Run a command",
-      tier: "standard",
-      category: "terminal",
-      source: "builtin",
-      parameters: { type: "object", properties: { command: { type: "string" } }, required: ["command"] },
-      async execute(_input, context) {
-        context.onOutputChunk?.("first\n");
-        context.onOutputChunk?.("second\n");
-        return { ok: true, message: "done" };
-      },
-    });
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: { host: "127.0.0.1", port: 3000 } as any,
-    });
-
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp?sessionId=session-1&projectRoot=%2Ftmp%2Fproject",
-      headers: {
-        accept: "application/json, text/event-stream",
-        "content-type": "application/json",
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "jait_terminal",
-          arguments: { command: "bun test" },
-          _meta: { progressToken: "progress-1" },
-        },
-      },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (response.headers["content-type"]));
-    __jait_capture(2, (response.body));
-    __jait_capture(3, (response.body));
-    __jait_capture(4, (response.body));
-    __jait_capture(5, (response.body));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_420_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const directExecute = vi.fn(async () => ({ ok: true, message: "direct execution" }));
-    registry.register({
-      name: "jait.terminal",
-      description: "Run a command",
-      tier: "standard",
-      category: "terminal",
-      source: "builtin",
-      parameters: { type: "object", properties: { command: { type: "string" } }, required: ["command"] },
-      execute: directExecute,
-    });
-    const toolExecutor = vi.fn(async () => ({ ok: true, message: "remote execution" }));
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      toolExecutor,
-      config: { host: "127.0.0.1", port: 3000 } as any,
-    });
-
-    const projectRoot = "E:\\TimeToAct\\EVN\\FSM.FunctionApps";
-    const response = await app.inject({
-      method: "POST",
-      url: `/mcp?sessionId=remote-session&projectRoot=${encodeURIComponent(projectRoot)}`,
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: { name: "jait_terminal", arguments: { command: "pwd" } },
-      },
-    });
-
-    __jait_capture(0, (response.json()));
-    __jait_capture(1, (toolExecutor.mock.calls), ([projectRoot]));
-    __jait_capture(2, (directExecute.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_471_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-      } as any,
-    });
-
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp",
-      headers: {
-        "content-type": "application/json",
-      },
-      payload: {
-        jsonrpc: "2.0",
-        method: "notifications/initialized",
-        params: {},
-      },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (response.body));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_500_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    let capturedContext: {
-      sessionId: string;
-      projectRoot: string;
-      userId?: string;
-      providerId?: string;
-      model?: string;
-      runtimeMode?: string;
-    } | null = null;
-
-    registry.register({
-      name: "surfaces.list",
-      description: "List surfaces",
-      tier: "standard",
-      category: "surfaces",
-      source: "builtin",
-      parameters: { type: "object", properties: {} },
-      async execute(_input, context) {
-        capturedContext = {
-          sessionId: context.sessionId,
-          projectRoot: context.projectRoot,
-          userId: context.userId,
-          providerId: context.providerId,
-          model: context.model,
-          runtimeMode: context.runtimeMode,
-        };
-        return { ok: true, message: "ok" };
-      },
-    });
-
-    const response = await handleMcpRequest(
-      {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "surfaces.list",
-          arguments: {},
-        },
-      },
-      registry,
-      "2025-03-26",
-      {
-        sessionId: "web-session-123",
-        projectRoot: "/tmp/project",
-        providerId: "codex",
-        model: "gpt-5-codex",
-        runtimeMode: "supervised",
-      },
-    );
-
-    __jait_capture(0, (response));
-    __jait_capture(1, (capturedContext));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_570_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const chunks: string[] = [];
-    registry.register({
-      name: "jait.terminal",
-      description: "Run a command",
-      tier: "standard",
-      category: "terminal",
-      source: "builtin",
-      parameters: { type: "object", properties: { command: { type: "string" } }, required: ["command"] },
-      async execute(_input, context) {
-        context.onOutputChunk?.("first\n");
-        context.onOutputChunk?.("second\n");
-        return { ok: true, message: "done" };
-      },
-    });
-
-    await handleMcpRequest(
-      {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: { name: "jait_terminal", arguments: { command: "bun test" } },
-      },
-      registry,
-      "2025-03-26",
-      { sessionId: "session-1", projectRoot: "/tmp/project" },
-      undefined,
-      (chunk) => chunks.push(chunk),
-    );
-
-    __jait_capture(0, (chunks));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_604_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "surfaces.list",
-      description: "List surfaces",
-      tier: "standard",
-      category: "surfaces",
-      source: "builtin",
-      parameters: { type: "object", properties: {} },
-      async execute() {
-        return { ok: true, message: "ok" };
-      },
-    });
-
-    const response = await handleMcpRequest(
-      {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "surfaces.list",
-          arguments: {},
-        },
-      },
-      registry,
-      "2025-03-26",
-      {},
-    );
-
-    __jait_capture(0, (response));
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_646_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const sessionService = new SessionService(db);
-    const registry = new ToolRegistry();
-    const userId = "user-123";
-    const session = sessionService.create({
-      userId,
-      name: "Active Session",
-      projectPath: "/tmp/current-project",
-    });
-    const token = await signAuthToken({ id: userId, username: "alice" }, "test-secret");
-    let capturedContext: { sessionId: string; projectRoot: string; userId?: string } | null = null;
-
-    registry.register({
-      name: "surfaces.start",
-      description: "Start a surface",
-      tier: "standard",
-      category: "surfaces",
-      source: "builtin",
-      parameters: {
-        type: "object",
-        properties: {
-          type: { type: "string" },
-        },
-        required: ["type"],
-      },
-      async execute(_input, context) {
-        capturedContext = {
-          sessionId: context.sessionId,
-          projectRoot: context.projectRoot,
-          userId: context.userId,
-        };
-        return { ok: true, message: "ok" };
-      },
-    });
-
-    const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      sessionService,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-        jwtSecret: "test-secret",
-      } as any,
-    });
-
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "surfaces.start",
-          arguments: { type: "filesystem" },
-        },
-      },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (capturedContext), ({
-      sessionId: session.id,
-      projectRoot: "/tmp/current-project",
-      userId,
+    __jait_capture(1, (runsPayload.total));
+    __jait_capture(2, (runsPayload.items[0]), ({
+      status: "completed",
+      triggered_by: "schedule",
+      result: JSON.stringify({ handled: true }),
     }));
+
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_721_3": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_216_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
 
 try {
@@ -922,351 +322,192 @@ await (async()=>{
 
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const registry = new ToolRegistry();
-      const session = sessionService.create({
-        name: "Local MCP Session",
-        projectPath: "/tmp/local-project",
-      });
-      let capturedContext: { sessionId: string; projectRoot: string; userId?: string } | null = null;
 
-      registry.register({
-        name: "memory.search",
-        description: "Search memory",
-        tier: "standard",
-        category: "memory",
-        source: "builtin",
-        parameters: {
-          type: "object",
-          properties: {
-            query: { type: "string" },
-          },
-          required: ["query"],
-        },
-        async execute(_input, context) {
-          capturedContext = {
-            sessionId: context.sessionId,
-            projectRoot: context.projectRoot,
-            userId: context.userId,
-          };
-          return { ok: true, message: "ok" };
-        },
-      });
-
-      const app = Fastify();
-      appsToClose.push(app);
-      registerMcpRoutes(app, {
-        toolRegistry: registry,
-        sessionService,
-        config: {
-          host: "127.0.0.1",
-          port: 3000,
-          jwtSecret: "test-secret",
-        } as any,
-      });
-
-      const response = await app.inject({
-        method: "POST",
-        url: "/mcp",
-        headers: {
-          "content-type": "application/json",
-        },
-        payload: {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "tools/call",
-          params: {
-            name: "memory.search",
-            arguments: { query: "salary consulting" },
-          },
-        },
-      });
-
-      __jait_capture(0, (response.statusCode));
-      __jait_capture(1, (capturedContext), ({
-        sessionId: session.id,
-        projectRoot: "/tmp/local-project",
-        userId: undefined,
-      }));
-    } finally {
-      sqlite.close();
-    }
-  
-})();
-
-} finally {
-await __jait_hook_964();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_796_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    const token = await signAuthToken({ id: "user-456", username: "alice" }, "test-secret");
-    let capturedContext: { sessionId: string; projectRoot: string; userId?: string } | null = null;
-
-    registry.register({
-      name: "surfaces.list",
-      description: "List surfaces",
-      tier: "standard",
-      category: "surfaces",
-      source: "builtin",
-      parameters: { type: "object", properties: {} },
-      async execute(_input, context) {
-        capturedContext = {
-          sessionId: context.sessionId,
-          projectRoot: context.projectRoot,
-          userId: context.userId,
-        };
-        return { ok: true, message: "ok" };
-      },
-    });
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
 
     const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-        jwtSecret: "test-secret",
-      } as any,
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "agent-user");
+
+    const created = scheduler.create({
+      userId: "agent-user",
+      name: "legacy agent automation",
+      cron: "0 9 * * *",
+      toolName: "thread.control",
+      input: {
+        __jaitJobMeta: { jobType: "agent_task" },
+      },
+      sessionId: "default",
+      projectRoot: process.cwd(),
     });
 
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp?sessionId=query-session&projectRoot=%2Ftmp%2Fquery-project",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "surfaces.list",
-          arguments: {},
-        },
-      },
+    const disableResponse = await app.inject({
+      method: "PATCH",
+      url: `/api/jobs/${created.id}`,
+      headers,
+      payload: { enabled: false },
     });
 
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (capturedContext));
+    __jait_capture(0, (disableResponse.statusCode));
+    __jait_capture(1, (disableResponse.json()));
+
+    const enableResponse = await app.inject({
+      method: "PATCH",
+      url: `/api/jobs/${created.id}`,
+      headers,
+      payload: { enabled: true },
+    });
+
+    __jait_capture(2, (enableResponse.statusCode));
+    __jait_capture(3, (enableResponse.json()));
+
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_855_3": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_265_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    let capturedContext: {
-      sessionId: string;
-      projectRoot: string;
-      userId?: string;
-      providerId?: string;
-      model?: string;
-      runtimeMode?: string;
-    } | null = null;
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
 
-    registry.register({
-      name: "surfaces.list",
-      description: "List surfaces",
-      tier: "standard",
-      category: "surfaces",
-      source: "builtin",
-      parameters: { type: "object", properties: {} },
-      async execute(_input, context) {
-        capturedContext = {
-          sessionId: context.sessionId,
-          projectRoot: context.projectRoot,
-          userId: context.userId,
-          providerId: context.providerId,
-          model: context.model,
-          runtimeMode: context.runtimeMode,
-        };
-        return { ok: true, message: "ok" };
-      },
-    });
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
 
     const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-        jwtSecret: "test-secret",
-      } as any,
-    });
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
 
-    const response = await app.inject({
+    const userOneHeaders = await authHeader(config.jwtSecret, "user-1");
+    const userTwoHeaders = await authHeader(config.jwtSecret, "user-2");
+
+    const createResponse = await app.inject({
       method: "POST",
-      url: "/mcp?sessionId=query-session&projectRoot=%2Ftmp%2Fquery-project&providerId=codex&model=gpt-5-codex&runtimeMode=supervised",
-      headers: {
-        "content-type": "application/json",
-      },
+      url: "/api/jobs",
+      headers: userOneHeaders,
       payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "surfaces.list",
-          arguments: {},
-        },
+        name: "private automation",
+        cron_expression: "* * * * *",
+        payload: { command: "gateway.status", args: {} },
       },
     });
 
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (capturedContext));
+    __jait_capture(0, (createResponse.statusCode));
+    const created = createResponse.json() as { id: string };
+
+    const triggerAsOtherUser = await app.inject({
+      method: "POST",
+      url: `/api/jobs/${created.id}/trigger`,
+      headers: userTwoHeaders,
+    });
+
+    __jait_capture(1, (triggerAsOtherUser.statusCode));
+    __jait_capture(2, (executeTool.mock.calls));
+
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_925_3": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_306_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    let capturedContext: {
-      sessionId: string;
-      projectRoot: string;
-      providerId?: string;
-      model?: string;
-      runtimeMode?: string;
-    } | null = null;
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
 
-    registry.register({
-      name: "memory.save",
-      description: "Save memory",
-      tier: "standard",
-      category: "memory",
-      source: "builtin",
-      parameters: {
-        type: "object",
-        properties: {
-          content: { type: "string" },
-          sessionId: { type: "string" },
-          projectRoot: { type: "string" },
-          providerId: { type: "string" },
-          model: { type: "string" },
-          runtimeMode: { type: "string" },
-        },
-        required: ["content"],
-      },
-      async execute(_input, context) {
-        capturedContext = {
-          sessionId: context.sessionId,
-          projectRoot: context.projectRoot,
-          providerId: context.providerId,
-          model: context.model,
-          runtimeMode: context.runtimeMode,
-        };
-        return { ok: true, message: "ok" };
-      },
-    });
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
 
     const app = Fastify();
-    appsToClose.push(app);
-    registerMcpRoutes(app, {
-      toolRegistry: registry,
-      config: {
-        host: "127.0.0.1",
-        port: 3000,
-        jwtSecret: "test-secret",
-      } as any,
-    });
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
 
-    const response = await app.inject({
-      method: "POST",
-      url: "/mcp",
-      headers: {
-        "content-type": "application/json",
-      },
-      payload: {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "tools/call",
-        params: {
-          name: "memory.save",
-          arguments: {
-            content: "remember this",
-            sessionId: "argument-session",
-            projectRoot: "/tmp/argument-project",
-            providerId: "codex",
-            model: "gpt-5-codex",
-            runtimeMode: "supervised",
-          },
-        },
+    const headers = await authHeader(config.jwtSecret, "agent-user");
+
+    // Simulate a job created by the agent via cron.add: tool_name + input only,
+    // with no explicit prompt/provider/model columns.
+    scheduler.create({
+      userId: "agent-user",
+      name: "Duplication check",
+      cron: "0 6 * * *",
+      toolName: "thread.control",
+      input: {
+        action: "create",
+        kind: "delivery",
+        detach: true,
+        start: true,
+        title: "Duplication check",
+        prompt: "Check for duplicated memories and clean them up.",
+        providerId: "claude-code",
+        model: "claude-opus-4-6",
       },
     });
 
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (capturedContext));
+    const listResponse = await app.inject({ method: "GET", url: "/api/jobs", headers });
+    __jait_capture(0, (listResponse.statusCode));
+    const listed = (listResponse.json() as { items: Array<Record<string, unknown>> }).items
+      .find((job) => job.name === "Duplication check");
+    __jait_capture(1, (listed));
+
+    const detailResponse = await app.inject({ method: "GET", url: `/api/jobs/${listed?.id}`, headers });
+    __jait_capture(2, (detailResponse.statusCode));
+    __jait_capture(3, (detailResponse.json()));
+
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1010_3": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_362_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
 
 try {
@@ -1274,329 +515,90 @@ await (async()=>{
 
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const userService = new UserService(db);
-      const sessionState = new SessionStateService(db);
-      const user = userService.createUser("codex-owner", "password123");
-      userService.updateSettings(user.id, { chatProvider: "codex" });
-      const session = sessionService.create({
-        userId: user.id,
-        name: "Codex Session",
-        projectPath: "/tmp/current-project",
-      });
-      sessionState.set(session.id, {
-        "chat.providerRuntimeMode": "supervised",
-        "chat.cliModels": { codex: "gpt-5-codex" },
-      });
 
-      const registry = new ToolRegistry();
-      let capturedContext: {
-        sessionId: string;
-        projectRoot: string;
-        userId?: string;
-        providerId?: string;
-        model?: string;
-        runtimeMode?: string;
-      } | null = null;
+    const executeTool = vi.fn(async () => ({ ok: true, data: { handled: true } }));
+    const scheduler = new SchedulerService({ db, executeTool });
 
-      registry.register({
-        name: "surfaces.list",
-        description: "List surfaces",
-        tier: "standard",
-        category: "surfaces",
-        source: "builtin",
-        parameters: { type: "object", properties: {} },
-        async execute(_input, context) {
-          capturedContext = {
-            sessionId: context.sessionId,
-            projectRoot: context.projectRoot,
-            userId: context.userId,
-            providerId: context.providerId,
-            model: context.model,
-            runtimeMode: context.runtimeMode,
-          };
-          return { ok: true, message: "ok" };
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret" };
+    registerJobRoutes(app, config, scheduler);
+
+    const headers = await authHeader(config.jwtSecret, "agent-user");
+
+    // Regression: cron.add (agent.spawn path) persists a __jaitJobMeta blob
+    // that carries jobType/model/timeZone but NOT the prompt, which lives at
+    // the top level of the input. The blob must not shadow the inferred
+    // prompt/provider fields, otherwise the edit modal shows no prompt.
+    scheduler.create({
+      userId: "agent-user",
+      name: "jade-code-duplication-audit",
+      cron: "0 */2 * * *",
+      toolName: "agent.spawn",
+      input: {
+        __jaitJobMeta: {
+          jobType: "agent_task",
+          model: "deepseek-v4-flash:0731-cloud",
+          timeZone: "UTC",
         },
-      });
+        prompt: "Audit the entire project for code duplication. Work in /home/jakob/jait.",
+      },
+    });
 
-      const app = Fastify();
-      appsToClose.push(app);
-      registerMcpRoutes(app, {
-        toolRegistry: registry,
-        sessionService,
-        userService,
-        sessionState,
-        config: {
-          host: "127.0.0.1",
-          port: 3000,
-          jwtSecret: "test-secret",
-        } as any,
-      });
+    const listResponse = await app.inject({ method: "GET", url: "/api/jobs", headers });
+    __jait_capture(0, (listResponse.statusCode));
+    const listed = (listResponse.json() as { items: Array<Record<string, unknown>> }).items
+      .find((job) => job.name === "jade-code-duplication-audit");
+    __jait_capture(1, (listed));
 
-      const response = await app.inject({
-        method: "POST",
-        url: `/mcp?sessionId=${encodeURIComponent(session.id)}`,
-        headers: {
-          "content-type": "application/json",
-        },
-        payload: {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "tools/call",
-          params: {
-            name: "surfaces.list",
-            arguments: {},
-          },
-        },
-      });
+    const detailResponse = await app.inject({ method: "GET", url: `/api/jobs/${listed?.id}`, headers });
+    __jait_capture(2, (detailResponse.statusCode));
+    __jait_capture(3, (detailResponse.json()));
 
-      __jait_capture(0, (response.statusCode));
-      __jait_capture(1, (capturedContext), ({
-        sessionId: session.id,
-        projectRoot: "/tmp/current-project",
-        userId: user.id,
-        providerId: "codex",
-        model: "gpt-5-codex",
-        runtimeMode: "supervised",
-      }));
-    } finally {
-      sqlite.close();
-    }
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1104_3_each0": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_416_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const endpoint = "/mcp";
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      // The most recent chat belongs to someone else; worker calls must keep
-      // their own durable identity rather than adopting global chat defaults.
-      sessionService.create({ userId: "other-user", name: "Unrelated chat" });
-      const thread = threadService.create({
-        userId: "worker-owner",
-        personaAgentId: "developer",
-        title: "Worker preflight",
-        providerId: "codex",
-        model: "gpt-5.5",
-        runtimeMode: "supervised",
-        workingDirectory: "/project/worker",
-      });
-      let capturedContext: ToolContext | undefined;
-      const registry = new ToolRegistry();
-      registry.register({
-        name: "agent.github",
-        description: "Inspect worker identity",
-        parameters: { type: "object", properties: {} },
-        async execute(_input, context) {
-          capturedContext = context;
-          return context.userId
-            ? { ok: true, message: "Authenticated worker" }
-            : { ok: false, message: "Authenticated user required." };
-        },
-      });
-      registry.register(createTeamChatTool(new TeamChatService(db, sessionService, threadService), sessionService));
-      const app = Fastify();
-      appsToClose.push(app);
-      registerMcpRoutes(app, {
-        toolRegistry: registry, sessionService, threadService,
-        config: { host: "127.0.0.1", port: 3000, jwtSecret: "test-secret" } as AppConfig,
-      });
-      const response = await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        payload: {
-          jsonrpc: "2.0", id: 1, method: "tools/call",
-          params: { name: "agent_github", arguments: {} },
-        },
-      });
-      __jait_capture(0, (response.json().result));
-      __jait_capture(1, (capturedContext), ({
-        sessionId: thread.id,
-        threadId: thread.id,
-        userId: "worker-owner",
-        projectRoot: "/project/worker",
-        providerId: "codex",
-        model: "gpt-5.5",
-        runtimeMode: "supervised",
-      }));
-      const teamResponse = await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        payload: {
-          jsonrpc: "2.0", id: 2, method: "tools/call",
-          params: { name: "team_chat", arguments: { action: "list" } },
-        },
-      });
-      __jait_capture(2, (teamResponse.json().result));
-
-      const token = await signAuthToken({ id: "other-user", username: "other" }, "test-secret");
-      await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        headers: { authorization: `Bearer ${token}` },
-        payload: {
-          jsonrpc: "2.0", id: 3, method: "tools/call",
-          params: { name: "agent_github", arguments: {} },
-        },
-      });
-      __jait_capture(3, (capturedContext?.userId));
-      __jait_captureType(4, (capturedContext?.threadId));
-      __jait_captureType(5, (capturedContext?.providerId));
-      __jait_capture(6, (capturedContext?.projectRoot));
-    } finally {
-      sqlite.close();
-    }
+    const instant = new Date("2026-07-31T05:00:00.000Z");
+    __jait_capture(0, (matchesCronMinute("0 7 * * *", instant, "Europe/Berlin")));
+    __jait_capture(1, (matchesCronMinute("0 7 * * *", instant, "UTC")));
+    __jait_capture(2, (matchesCronMinute("0 7 * * *", instant, "Invalid/Timezone")));
   
 })();
 
 } finally {
-await __jait_hook_964();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1104_3_each1": {
+case "tailstatic_packages_gateway_src_routes_jobs_test_ts_426_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const endpoint = "/mcp/sse";
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      // The most recent chat belongs to someone else; worker calls must keep
-      // their own durable identity rather than adopting global chat defaults.
-      sessionService.create({ userId: "other-user", name: "Unrelated chat" });
-      const thread = threadService.create({
-        userId: "worker-owner",
-        personaAgentId: "developer",
-        title: "Worker preflight",
-        providerId: "codex",
-        model: "gpt-5.5",
-        runtimeMode: "supervised",
-        workingDirectory: "/project/worker",
-      });
-      let capturedContext: ToolContext | undefined;
-      const registry = new ToolRegistry();
-      registry.register({
-        name: "agent.github",
-        description: "Inspect worker identity",
-        parameters: { type: "object", properties: {} },
-        async execute(_input, context) {
-          capturedContext = context;
-          return context.userId
-            ? { ok: true, message: "Authenticated worker" }
-            : { ok: false, message: "Authenticated user required." };
-        },
-      });
-      registry.register(createTeamChatTool(new TeamChatService(db, sessionService, threadService), sessionService));
-      const app = Fastify();
-      appsToClose.push(app);
-      registerMcpRoutes(app, {
-        toolRegistry: registry, sessionService, threadService,
-        config: { host: "127.0.0.1", port: 3000, jwtSecret: "test-secret" } as AppConfig,
-      });
-      const response = await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        payload: {
-          jsonrpc: "2.0", id: 1, method: "tools/call",
-          params: { name: "agent_github", arguments: {} },
-        },
-      });
-      __jait_capture(0, (response.json().result));
-      __jait_capture(1, (capturedContext), ({
-        sessionId: thread.id,
-        threadId: thread.id,
-        userId: "worker-owner",
-        projectRoot: "/project/worker",
-        providerId: "codex",
-        model: "gpt-5.5",
-        runtimeMode: "supervised",
-      }));
-      const teamResponse = await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        payload: {
-          jsonrpc: "2.0", id: 2, method: "tools/call",
-          params: { name: "team_chat", arguments: { action: "list" } },
-        },
-      });
-      __jait_capture(2, (teamResponse.json().result));
-
-      const token = await signAuthToken({ id: "other-user", username: "other" }, "test-secret");
-      await app.inject({
-        method: "POST",
-        url: `${endpoint}?sessionId=${thread.id}`,
-        headers: { authorization: `Bearer ${token}` },
-        payload: {
-          jsonrpc: "2.0", id: 3, method: "tools/call",
-          params: { name: "agent_github", arguments: {} },
-        },
-      });
-      __jait_capture(3, (capturedContext?.userId));
-      __jait_captureType(4, (capturedContext?.threadId));
-      __jait_captureType(5, (capturedContext?.providerId));
-      __jait_capture(6, (capturedContext?.projectRoot));
-    } finally {
-      sqlite.close();
-    }
-  
-})();
-
-} finally {
-await __jait_hook_964();
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
 }
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1192_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-let appsToClose: Array<ReturnType<typeof Fastify>> = [];
-const __jait_hook_964 = async () => {
-  await Promise.all(appsToClose.map((app) => app.close()));
-  appsToClose = [];
-};
 /*__jait_scope_open__*/{
 
 try {
@@ -1604,90 +606,35 @@ await (async()=>{
 
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
+    const scheduler = new SchedulerService({ db, executeTool: async () => ({ ok: true }) });
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "schedule-validation-secret" };
+    registerJobRoutes(app, config, scheduler);
+    const headers = await authHeader(config.jwtSecret, "schedule-owner");
     try {
-      const sessionService = new SessionService(db);
-      const sessionState = new SessionStateService(db);
-      const userService = new UserService(db);
-      const user = userService.createUser("mcp-todo-user", "password123");
-      const session = sessionService.create({
-        userId: user.id,
-        name: "MCP Todo Session",
-        projectPath: "/tmp/mcp-project",
-      });
-
-      const registry = new ToolRegistry();
-      registry.register(createTodoTool());
-
-      const wsEvents: Array<{ type: string; sessionId: string; payload?: unknown }> = [];
-      const app = Fastify();
-      appsToClose.push(app);
-      registerMcpRoutes(app, {
-        toolRegistry: registry,
-        sessionService,
-        userService,
-        sessionState,
-        ws: {
-          broadcast(sessionId, event) {
-            wsEvents.push({
-              type: event.type,
-              sessionId,
-              payload: "payload" in event ? event.payload : undefined,
-            });
-          },
-          broadcastAll() {},
-        } as any,
-        config: {
-          host: "127.0.0.1",
-          port: 3000,
-          jwtSecret: "test-secret",
-        } as any,
-      });
-
-      const response = await app.inject({
-        method: "POST",
-        url: `/mcp?sessionId=${encodeURIComponent(session.id)}`,
-        headers: {
-          "content-type": "application/json",
-        },
-        payload: {
-          jsonrpc: "2.0",
-          id: 1,
-          method: "tools/call",
-          params: {
-            name: "todo",
-            arguments: {
-              todoList: [
-                { id: 1, title: "Trace MCP sync", status: "in-progress" },
-                { id: 2, title: "Verify todo render", status: "not-started" },
-              ],
-            },
-          },
-        },
-      });
-
-      __jait_capture(0, (response.statusCode));
-      __jait_capture(1, (sessionState.get(session.id, ["todo_list"])));
-      __jait_capture(2, (wsEvents), ([
-        {
-          type: "ui.state-sync",
-          sessionId: session.id,
-          payload: {
-            key: "todo_list",
-            value: [
-              { id: 1, title: "Trace MCP sync", status: "in-progress" },
-              { id: 2, title: "Verify todo render", status: "not-started" },
-            ],
-          },
-        },
-      ]));
+      for (const cron of ["not-a-cron", "60 * * * *", "*/0 * * * *", "0junk 9 * * *"]) {
+        const result = await app.inject({ method: "POST", url: "/api/jobs", headers, payload: { name: "Invalid review", cron_expression: cron, enabled: false } });
+        __jait_capture(0, (result.statusCode));
+        __jait_capture(1, (result.json().detail));
+      }
+      __jait_capture(2, (scheduler.list("schedule-owner")));
+      const created = await app.inject({ method: "POST", url: "/api/jobs", headers, payload: { name: "Weekly review", cron_expression: "0 9 * * 1", enabled: false } });
+      __jait_capture(3, (created.statusCode));
+      const id = created.json().id;
+      for (const cron of ["not-a-cron", "", 123, null]) {
+        const result = await app.inject({ method: "PATCH", url: `/api/jobs/${id}`, headers, payload: { name: "Changed", cron_expression: cron, enabled: true } });
+        __jait_capture(4, (result.statusCode));
+        __jait_capture(5, (scheduler.get(id)));
+      }
     } finally {
+      await app.close();
       sqlite.close();
     }
   
 })();
 
 } finally {
-await __jait_hook_964();
+
 }
 }
 

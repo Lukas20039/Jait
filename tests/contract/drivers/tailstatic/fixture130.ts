@@ -1,17 +1,15 @@
-// Translated fixture from packages/gateway/src/security/http-auth.test.ts; expected literals are in tail_static.rs.
-
-import {
-  AUTH_COOKIE_NAME,
-  extractBearerToken,
-  isPublicApiPath,
-  signAuthToken,
-  verifyAuthToken,
-} from "../../../../packages/gateway/src/security/http-auth.js";
+// Translated fixture from packages/gateway/src/security/assessment.test.ts; expected literals are in tail_static.rs.
+import { createServer } from "node:net";
+import { AssessmentService, validateScope } from "../../../../packages/gateway/src/security/assessment.js";
+import type { SecurityScopeInput, SecurityProbeState } from "@jait/shared";
+import { openRawSqlite } from "../../../../packages/gateway/src/db/sqlite-shim.js";
+import { migrations } from "../../../../packages/gateway/src/db/migrations.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/security/http-auth.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/assessment.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,25 +36,291 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_12_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each0": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "--script=attack";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each1": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "127.0.0.1;id";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each2": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "router.local";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "http://127.0.0.1";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each4": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "::1";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each5": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "192.0.2.0/24";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each6": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "224.0.0.1";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each7": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "0.0.0.0";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each8": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "127.1";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_14_3_each9": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const target = "0177.0.0.1";
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => validateScope(input({ targets: [target] })));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_17_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // GitHub redirects the browser to the callback during manifest setup and
-    // posts App webhooks to the webhook route; neither carries a Jait session.
-    __jait_capture(0, (isPublicApiPath("/api/github/apps/callback")));
-    __jait_capture(1, (isPublicApiPath("/api/github/apps/webhook")));
+    for (const bad of [
+      { authorized: false }, { targets: [] }, { ports: [] }, { ports: [0] }, { ports: [65536] }, { ports: [1.5] },
+      { ports: Array(17).fill(22) }, { targets: Array(17).fill("127.0.0.1") },
+      { expiresAt: new Date(Date.now() - 1).toISOString() }, { expiresAt: new Date(Date.now() + 3_700_000).toISOString() },
+      { exclusions: ["not-an-ip"] }, { exclusions: ["192.0.2.10", "192.0.2.11"] },
+    ]) __jait_thrown(0, () => validateScope(input(bad)));
   
 })();
 
@@ -67,18 +331,28 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_25_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isPublicApiPath("/api/github-apps")));
-    __jait_capture(1, (isPublicApiPath("/api/agents/abc/github-app")));
-    __jait_capture(2, (isPublicApiPath("/api/agents/abc/github-app/setup")));
-    __jait_capture(3, (isPublicApiPath("/api/agents/abc/github-app/manual")));
+    const probe = vi.fn(async (): Promise<SecurityProbeState> => "open");
+    const service = new AssessmentService(undefined, probe, 0);
+    const scope = service.createScope(input({ exclusions: ["192.0.2.11"], targets: ["192.0.2.10", "192.0.2.11", "192.0.2.10"] }), "owner");
+    scope.targets.push("203.0.113.5"); // caller mutations cannot expand stored scope
+    const run = service.start(scope.id, "owner");
+    const result = await service.wait(run.id, "owner");
+    __jait_capture(0, (probe.mock.calls.map(c => c.slice(0, 2))));
+    __jait_capture(1, (result.plannedChecks));
+    __jait_capture(2, (result.status));
+    __jait_capture(3, (result.observations.every(o => o.evidenceId && o.observedAt)));
   
 })();
 
@@ -89,17 +363,27 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_37_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isPublicApiPath("/api/github/apps/callback/extra")));
-    __jait_capture(1, (isPublicApiPath("/api/github/apps/webhook/extra")));
-    __jait_capture(2, (isPublicApiPath("/preview/api/github/apps/callback")));
+    const service = new AssessmentService(undefined, async () => "open", 0);
+    const scope = service.createScope(input(), "owner");
+    __jait_thrown(0, () => service.start(scope.id, "other"));
+    __jait_thrown(1, () => service.start(scope.id, "owner", "remote-node"));
+    const run = service.start(scope.id, "owner");
+    __jait_thrown(2, () => service.start(scope.id, "owner"));
+    __jait_thrown(3, () => service.cancel(run.id, "other"));
+    __jait_capture(4, (service.history("other").runs));
+    await service.wait(run.id, "owner");
   
 })();
 
@@ -110,24 +394,22 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_32_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_48_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    for (const path of [
-      "/api/auth/login",
-      "/api/auth/register",
-      "/api/auth/refresh",
-      "/api/mobile/discovery",
-      "/api/email/oauth/callback",
-      "/api/calendar/oauth/callback",
-    ]) {
-      __jait_capture(0, (isPublicApiPath(path)));
-    }
+    const service = new AssessmentService(undefined, async () => "open", 0);
+    const scope = service.createScope(input({ expiresAt: new Date(Date.now() + 40).toISOString() }), "owner");
+    await new Promise(resolve => setTimeout(resolve, 60));
+    __jait_thrown(0, () => service.start(scope.id, "owner"));
   
 })();
 
@@ -138,16 +420,25 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_47_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_54_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const token = await signAuthToken({ id: "user-1", username: "jakob" }, "secret");
-    __jait_capture(0, (await verifyAuthToken(token, "secret")));
+    const probe = vi.fn(async (): Promise<SecurityProbeState> => "open");
+    const service = new AssessmentService(undefined, probe, 100);
+    const scope = service.createScope(input({ expiresAt: new Date(Date.now() + 45).toISOString() }), "owner");
+    const result = await service.wait(service.start(scope.id, "owner").id, "owner");
+    __jait_capture(0, (result.status));
+    __jait_capture(1, (probe.mock.calls));
+    __jait_capture(2, (result.coverageGaps.some(g => g.includes("not performed"))));
   
 })();
 
@@ -158,16 +449,28 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_52_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_63_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const token = await signAuthToken({ id: "user-1", username: "jakob" }, "secret");
-    __jait_captureType(0, (await verifyAuthToken(token, "other-secret")));
+    const probe = vi.fn((_target: string, _port: number, signal: AbortSignal): Promise<SecurityProbeState> =>
+      new Promise(resolve => signal.addEventListener("abort", () => resolve("error"), { once: true })));
+    const service = new AssessmentService(undefined, probe, 0);
+    const scope = service.createScope(input(), "owner");
+    const run = service.start(scope.id, "owner");
+    service.cancel(run.id, "owner");
+    const result = await service.wait(run.id, "owner");
+    __jait_capture(0, (result.status));
+    __jait_capture(1, (result.observations));
+    __jait_capture(2, (probe.mock.calls));
   
 })();
 
@@ -178,23 +481,24 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_57_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_75_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // Signed with the same secret, but carrying a non-session purpose: the
-    // purpose check (not the signature) must reject it.
-    const token = await new jose.SignJWT({ username: "jakob", purpose: "preview" })
-      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-      .setSubject("user-1")
-      .setIssuedAt()
-      .setExpirationTime("7d")
-      .sign(new TextEncoder().encode("secret"));
-    __jait_captureType(0, (await verifyAuthToken(token, "secret")));
+    const clock=vi.spyOn(Date,"now").mockReturnValue(Date.now());
+    try {
+      const service=new AssessmentService(undefined,(_target,_port,signal)=>new Promise(resolve=>signal.addEventListener("abort",()=>resolve("error"),{once:true})),0,10);
+      const s=service.createScope(input(),"owner");
+      __jait_capture(0, ((await service.wait(service.start(s.id,"owner").id,"owner")).status));
+    } finally {clock.mockRestore();}
   
 })();
 
@@ -205,19 +509,23 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_71_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_83_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (extractBearerToken("Bearer abc")));
-    __jait_capture(1, (extractBearerToken("bearer  abc ")));
-    __jait_captureType(2, (extractBearerToken("Basic abc")));
-    __jait_captureType(3, (extractBearerToken(undefined)));
-    __jait_captureType(4, (extractBearerToken("Bearer   ")));
+    const service=new AssessmentService(undefined,(_target,_port,signal)=>new Promise(resolve=>signal.addEventListener("abort",()=>resolve("error"),{once:true})),0);
+    const s=service.createScope(input(),"owner"),run=service.start(s.id,"owner");
+    const clock=vi.spyOn(Date,"now").mockReturnValue(Date.now()+3600_000);
+    try { service.cancel(run.id,"owner");__jait_capture(0, ((await service.wait(run.id,"owner")).status)); }
+    finally {clock.mockRestore();}
   
 })();
 
@@ -228,15 +536,209 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_http_auth_test_ts_79_3": {
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_90_3": {
 
-const jose = await import((typeof Bun!=="undefined"?Bun.resolveSync("jose", __jait_original_dir):__jait_require.resolve("jose")));
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (AUTH_COOKIE_NAME));
+    const service = new AssessmentService(undefined, (_target, _port, signal) => new Promise(resolve =>
+      signal.addEventListener("abort", () => resolve("error"), { once: true })), 0, 30);
+    const scope = service.createScope(input(), "owner");
+    const result = await service.wait(service.start(scope.id, "owner").id, "owner");
+    __jait_capture(0, (result.status));
+    __jait_capture(1, (result.observations));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_98_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let count = 0;
+    const service = new AssessmentService(undefined, async () => {
+      count++;
+      if (count === 1) return "timeout";
+      if (count === 2) return "error";
+      throw new Error("untrusted scanner output");
+    }, 0);
+    const scope = service.createScope(input(), "owner");
+    const result = await service.wait(service.start(scope.id, "owner").id, "owner");
+    __jait_capture(0, (result.observations.map(o => o.state)));
+    __jait_capture(1, (result.status));
+    __jait_capture(2, (JSON.stringify(result)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_112_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const db = await openRawSqlite(":memory:");
+    migrations.find(m => m.id === 67)!.run(db);
+    try {
+      const service = new AssessmentService(db, async () => "refused", 0);
+      const scope = service.createScope(input(), "owner");
+      const result = await service.wait(service.start(scope.id, "owner").id, "owner");
+      const reopened = new AssessmentService(db);
+      __jait_capture(0, (reopened.getRun(result.id, "owner")), (result));
+      __jait_capture(1, (reopened.history("owner").scopes[0]), (scope));
+      __jait_capture(2, (reopened.history("other")));
+    } finally { db.close(); }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_125_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const db = await openRawSqlite(":memory:");
+    migrations.find(m => m.id === 67)!.run(db);
+    try {
+      const realPrepare = db.prepare.bind(db);
+      let writes = 0;
+      vi.spyOn(db, "prepare").mockImplementation(sql => {
+        const statement = realPrepare(sql);
+        if (sql.startsWith("INSERT INTO security_assessment_runs")) {
+          const realRun = statement.run.bind(statement);
+          statement.run = (...params: unknown[]) => {
+            if (++writes > 1) throw new Error("private storage details");
+            return realRun(...params);
+          };
+        }
+        return statement;
+      });
+      const service = new AssessmentService(db, async () => "open", 0);
+      const scope = service.createScope(input(), "owner");
+      const result = await service.wait(service.start(scope.id, "owner").id, "owner");
+      __jait_capture(0, (result.status));
+      __jait_capture(1, (result.observations));
+      __jait_capture(2, (result.coverageGaps.some(g => g.includes("could not be persisted"))));
+      __jait_capture(3, (JSON.stringify(result)));
+    } finally { db.close(); }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_151_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const db = await openRawSqlite(":memory:");
+    migrations.find(m => m.id === 67)!.run(db);
+    try {
+      const service = new AssessmentService(db, (_target, _port, signal) => new Promise(resolve =>
+        signal.addEventListener("abort", () => resolve("error"), { once: true })), 0);
+      const scope = service.createScope(input(), "owner");
+      const run = service.start(scope.id, "owner");
+      const reopened = new AssessmentService(db);
+      __jait_capture(0, (reopened.getRun(run.id, "owner").status));
+      service.cancel(run.id, "owner");
+      await service.wait(run.id, "owner");
+    } finally { db.close(); }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_assessment_test_ts_168_3": {
+
+
+const input = (overrides: Partial<SecurityScopeInput> = {}): SecurityScopeInput => ({
+  targets: ["192.0.2.10", "192.0.2.11"], exclusions: [], ports: [22, 80],
+  authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString(), ...overrides,
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const server = createServer(socket => socket.end());
+    await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("Expected listening address");
+    const service = new AssessmentService();
+    const scope = service.createScope(input({ targets: ["127.0.0.1"], ports: [address.port] }), "fixture-owner");
+    try {
+      const before = await service.wait(service.start(scope.id, "fixture-owner").id, "fixture-owner");
+      __jait_capture(0, (before.observations[0]?.state));
+      await new Promise<void>((resolve, reject) => server.close(err => err ? reject(err) : resolve()));
+      const after = await service.wait(service.start(scope.id, "fixture-owner").id, "fixture-owner");
+      __jait_capture(1, (after.observations[0]?.state));
+      __jait_capture(2, (after.scope.vantagePoint), (before.scope.vantagePoint));
+      __jait_capture(3, (after.scopeId), (before.scopeId));
+      __jait_capture(4, (after.status));
+    } finally { if (server.listening) server.close(); }
   
 })();
 

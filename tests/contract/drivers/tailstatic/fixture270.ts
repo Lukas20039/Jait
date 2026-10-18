@@ -1,16 +1,16 @@
-// Translated fixture from packages/gateway/src/tools/file-tools.test.ts; expected literals are in tail_static.rs.
-import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
+// Translated fixture from packages/gateway/src/tools/core/get-fs.test.ts; expected literals are in tail_static.rs.
 import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { FileSystemSurfaceFactory } from "../../../../packages/gateway/src/surfaces/filesystem.js";
-import { createImageViewTool, createFileReadTool, createFileWriteTool } from "../../../../packages/gateway/src/tools/file-tools.js";
+import { FileSystemSurface } from "../../../../packages/gateway/src/surfaces/filesystem.js";
+import { RemoteFileSystemSurface } from "../../../../packages/gateway/src/surfaces/remote-filesystem.js";
+import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { getFs, resolveProjectRoot } from "../../../../packages/gateway/src/tools/core/get-fs.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/file-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/core/get-fs.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -37,306 +37,382 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_42_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    const content = "Grüße 🌍\r\n\tvalue = 7  \r\n\r\n";
-    const write = await createFileWriteTool(registry).execute({ path: "result.txt", content }, toolContext);
-    __jait_capture(0, (write.ok));
-    __jait_capture(1, (readFileSync(join(project, "result.txt"))), (Buffer.from(content)));
-    __jait_capture(2, (write.data));
-    __jait_capture(3, (write.message));
-    const read = await createFileReadTool(registry).execute({ path: "result.txt" }, toolContext);
-    __jait_capture(4, (read.data), ({ content, size: 30 }));
+    const registry = new SurfaceRegistry();
+    await withRemoteSurface(registry);
+
+    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\README.md");
+    __jait_instance(0, fs, RemoteFileSystemSurface);
+    // Reading must be proxied to the remote node (no local ENOENT).
+    await __jait_captureResolved(1, (fs.read("E:\\Zinsrechner\\README.md")));
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_53_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    const pngBytes = Buffer.from([
-      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, // PNG signature
-      0x00, 0x01, 0x02, 0x03,
-    ]);
-    const imgPath = "shot.png";
-    writeFileSync(join(project, imgPath), pngBytes);
+    const registry = new SurfaceRegistry();
+    await withRemoteSurface(registry);
 
-    const tool = createImageViewTool(registry);
-    const result = await tool.execute({ path: imgPath }, toolContext);
-
-    __jait_capture(0, (result.ok));
-    const data = result.data as { base64: string; mimeType: string; size: number; inline: boolean };
-    __jait_capture(1, (data.mimeType));
-    __jait_capture(2, (data.size), (pngBytes.length));
-    __jait_capture(3, (data.inline));
-    __jait_capture(4, (data.base64), (pngBytes.toString("base64")));
-    // The bytes used to ship twice (`base64` plus a `dataUri` wrapper), which
-    // doubled the payload and pushed mid-sized screenshots past the transport.
-    __jait_capture(5, (result.data));
+    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\src\\index.ts");
+    __jait_instance(0, fs, RemoteFileSystemSurface);
+    // The returned surface's root is the remote Windows path, not a mangled POSIX path.
+    const root = (fs.snapshot().metadata as Record<string, unknown>).projectRoot;
+    __jait_capture(1, (root));
+    __jait_capture(2, (String(root)));
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_75_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    // 9 KB inlines to ~12 KB of base64, past the budget; the chat then loads
-    // the file from its path instead of the truncated tool result.
-    const bigPng = Buffer.alloc(9_000, 0x7f);
-    writeFileSync(join(project, "big.png"), bigPng);
-
-    const tool = createImageViewTool(registry);
-    const result = await tool.execute({ path: "big.png" }, toolContext);
-
-    __jait_capture(0, (result.ok));
-    const data = result.data as { base64?: string; inline: boolean; size: number; path: string };
-    __jait_capture(1, (data.inline));
-    __jait_capture(2, (data.size), (bigPng.length));
-    __jait_capture(3, (data.path));
-    __jait_captureType(4, (data.base64));
-    __jait_capture(5, (result.message));
+    const registry = new SurfaceRegistry();
+    // No remote surface registered — the path is Windows but gateway is non-Windows.
+    await __jait_rejected(0, getFs(registry, createContext(), "E:\\Zinsrechner\\README.md"));
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_93_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    const tool = createImageViewTool(registry);
-    const cases: Array<{ file: string; mime: string }> = [
-      { file: "a.jpg", mime: "image/jpeg" },
-      { file: "b.jpeg", mime: "image/jpeg" },
-      { file: "c.webp", mime: "image/webp" },
-      { file: "d.gif", mime: "image/gif" },
-    ];
-    for (const { file, mime } of cases) {
-      writeFileSync(join(project, file), Buffer.from([0x01, 0x02, 0x03]));
-      const result = await tool.execute({ path: file }, toolContext);
-      __jait_capture(0, (result.ok));
-      __jait_capture(1, ((result.data as { mimeType: string }).mimeType), (mime));
-    }
+    const registry = new SurfaceRegistry();
+    const local = new FileSystemSurface(`fs-${SESSION_ID}`);
+    await local.start({ sessionId: SESSION_ID, projectRoot: process.cwd() });
+    registry.registerInstance(local.id, local);
+
+    const fs = await getFs(registry, {
+      ...createContext(process.cwd()),
+      projectRoot: process.cwd(),
+    });
+    __jait_instance(0, fs, FileSystemSurface);
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_109_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    const tool = createImageViewTool(registry);
-    const result = await tool.execute({ path: "notes.txt" }, toolContext);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
+    const registry = new SurfaceRegistry();
+    void withRemoteSurface(registry, "E:\\Zinsrechner");
+
+    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
+    __jait_capture(0, (root));
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_116_3": {
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3": {
 
 
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
 /*__jait_scope_open__*/{
-let project: string;
-let registry: SurfaceRegistry;
-const toolContext: ToolContext = {
-    sessionId: "img-session",
-    actionId: "a1",
-    projectRoot: "",
-    requestedBy: "test",
-  };
-const __jait_hook_952 = async () => {
-    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
-    registry = new SurfaceRegistry();
-    registry.register(new FileSystemSurfaceFactory());
-    toolContext.projectRoot = project;
-    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
-      sessionId: toolContext.sessionId,
-      projectRoot: project,
-    });
-  };
-const __jait_hook_1335 = () => {
-    rmSync(project, { recursive: true, force: true });
-  };
-await __jait_hook_952();
+
 try {
 await (async()=>{
 
-    const tool = createImageViewTool(registry);
-    const result = await tool.execute({ path: "missing.png" }, toolContext);
-    __jait_capture(0, (result.ok));
+    const registry = new SurfaceRegistry();
+    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
+    __jait_capture(0, (root));
   
 })();
 
 } finally {
-await __jait_hook_1335();
+
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1": {
+
+
+const SESSION_ID = "session-win";
+function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
+  return {
+    sessionId: SESSION_ID,
+    actionId: "action-1",
+    projectRoot,
+    requestedBy: "agent",
+  };
+}
+function createMockWs(): WsControlPlane {
+  return {
+    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
+      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
+      if (op === "read") return { content: "remote-file-content" };
+      if (op === "list") return ["src/"];
+      return {};
+    }),
+  } as unknown as WsControlPlane;
+}
+async function withRemoteSurface(
+  registry: SurfaceRegistry,
+  projectRoot = "E:\\Zinsrechner",
+  nodeId = "node-windows",
+): Promise<RemoteFileSystemSurface> {
+  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
+  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
+  registry.registerInstance(surface.id, surface);
+  return surface;
+}
+
+try {
+await (async()=>{
+
+  const registry = new SurfaceRegistry();
+  const root = "C:\\Users\\jakob\\Tankstelle";
+  await withRemoteSurface(registry, root);
+  const local = new FileSystemSurface(`fs-${SESSION_ID}`);
+  await local.start({ sessionId: SESSION_ID, projectRoot: `/home/jakob/${root}` });
+  registry.registerInstance(local.id, local);
+  __jait_capture(0, (resolveProjectRoot(registry, SESSION_ID, root)), (root));
+
+})();
+
+} finally {
+
+}
+
 
 break;
 }

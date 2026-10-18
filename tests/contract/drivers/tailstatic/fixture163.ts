@@ -1,13 +1,23 @@
-// Translated fixture from packages/gateway/src/services/email/imap.test.ts; expected literals are in tail_static.rs.
-
-
-
+// Translated fixture from packages/gateway/src/services/disk-janitor.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, mkdirSync, writeFileSync, existsSync, utimesSync, chmodSync } from "node:fs";
+import { rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import type { Database } from "bun:sqlite";
+import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/index.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import {
+  DiskJanitor,
+  isInside,
+  loadDiskJanitorPolicy,
+  type DiskJanitorPolicy,
+} from "../../../../packages/gateway/src/services/disk-janitor.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/email/imap.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/disk-janitor.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -34,474 +44,1832 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_26_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_117_3_each0": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
 /*__jait_scope_open__*/{
-await __jait_hook_1331();
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+/*__jait_scope_open__*/{
+const withSuccess = false;
+await __jait_hook_1701();
 try {
 await (async()=>{
 
-    await new ImapMailboxClient(config).verify();
-    __jait_capture(0, (ImapFlow.mock.calls));
-    __jait_capture(1, (nodemailer.createTransport.mock.calls));
-    __jait_capture(2, (state.client.close.mock.calls));
-    __jait_capture(3, (state.transport.close.mock.calls));
+    const blocked = join(worktreeRoot, "repo", "jait-blocked");
+    makeAgedDir(blocked, 10 * DAY_MS, 4096);
+    gitStub.cleanupWorktreeWithOptions = async () => {
+      throw new Error("EACCES: permission denied " + blocked);
+    };
+    if (withSuccess) makeAgedDir(join(tempRoot, "jait-success"), 10 * DAY_MS, 2048);
+    const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
+    const instance = new DiskJanitor(sqlite, policy(), logger, gitStub as never, {
+      worktrees: worktreeRoot, temp: tempRoot, sandboxStorage: sandboxRoot,
+    });
+    const run = instance.run.bind(instance);
+    let pass: ReturnType<typeof run> | undefined;
+    vi.spyOn(instance, "run").mockImplementation((options) => {
+      pass = run(options);
+      return pass;
+    });
+    vi.useFakeTimers();
+    instance.start();
+    try {
+      await vi.advanceTimersByTimeAsync(10);
+      const report = await pass!;
+      __jait_capture(0, (report.errors));
+      __jait_capture(1, (report.bytesReclaimed), (withSuccess ? 2048 : 0));
+      __jait_capture(2, (existsSync(blocked)));
+      __jait_capture(3, (logger.warn.mock.calls), ([blocked]));
+      __jait_capture(4, (logger.error.mock.calls));
+      __jait_capture(5, (logger.info.mock.calls), (withSuccess ? 1 : 0));
+      await vi.advanceTimersByTimeAsync(1000);
+      await pass!;
+      __jait_capture(6, (logger.warn.mock.calls));
+    } finally {
+      instance.stop();
+    }
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_33_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    state.client.connect.mockRejectedValueOnce(new Error("offline"));
-    await __jait_rejected(0, new ImapMailboxClient(config).listFolders(""));
-    __jait_capture(1, (state.client.close.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_38_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    state.client.fetchOne.mockResolvedValue({ uid: 42, size: 11 * 1024 * 1024 });
-    await __jait_rejected(0, new ImapMailboxClient(config).getMessage("", id));
-    __jait_capture(1, (state.client.fetchOne.mock.calls));
-    state.client.fetchOne.mockClear();
-    await __jait_rejected(2, new ImapMailboxClient(config).getMessage("", encoded(["INBOX", "6", 42])));
-    __jait_capture(3, (state.client.fetchOne.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_46_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    const source = Buffer.from("From: Alice <alice@example.com>\r\nTo: me@example.com\r\nSubject: Welcome\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Hello <b>world</b></p>");
-    state.client.fetchOne.mockResolvedValueOnce({ uid: 42, size: source.length }).mockResolvedValueOnce({ uid: 42, source, envelope: { subject: "Welcome", from: [{ name: "Alice", address: "alice@example.com" }] }, flags: new Set() });
-    const result = await new ImapMailboxClient(config).getMessage("", id);
-    __jait_capture(0, (result.bodyHtml));
-    __jait_capture(1, (result.bodyText));
-    __jait_capture(2, (parseImapMessageId(result.id)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_54_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    await new ImapMailboxClient(config).tagMessage("", id, ["UNREAD", "Important"], []);
-    __jait_capture(0, (state.client.messageFlagsRemove.mock.calls));
-    __jait_capture(1, (state.client.messageFlagsAdd.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_59_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    state.client.list.mockResolvedValueOnce([{ path: "Trash", specialUse: "\\Trash" }]);
-    await new ImapMailboxClient(config).deleteMessage("", id);
-    __jait_capture(0, (state.client.messageMove.mock.calls));
-    state.client.list.mockResolvedValueOnce([]);
-    await __jait_rejected(1, new ImapMailboxClient(config).deleteMessage("", id));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_66_3_each0": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const value = "bad";
-await __jait_hook_1331();
-try {
-await (async()=>{
-
-    __jait_thrown(0, () => parseImapMessageId(value));
-  
-})();
-
-} finally {
-
+await __jait_hook_2435();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_66_3_each1": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_117_3_each1": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
 /*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
 /*__jait_scope_open__*/{
-const value = encoded(["INBOX\r\nDELETE", "7", 42]);
-await __jait_hook_1331();
+const withSuccess = true;
+await __jait_hook_1701();
 try {
 await (async()=>{
 
-    __jait_thrown(0, () => parseImapMessageId(value));
+    const blocked = join(worktreeRoot, "repo", "jait-blocked");
+    makeAgedDir(blocked, 10 * DAY_MS, 4096);
+    gitStub.cleanupWorktreeWithOptions = async () => {
+      throw new Error("EACCES: permission denied " + blocked);
+    };
+    if (withSuccess) makeAgedDir(join(tempRoot, "jait-success"), 10 * DAY_MS, 2048);
+    const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
+    const instance = new DiskJanitor(sqlite, policy(), logger, gitStub as never, {
+      worktrees: worktreeRoot, temp: tempRoot, sandboxStorage: sandboxRoot,
+    });
+    const run = instance.run.bind(instance);
+    let pass: ReturnType<typeof run> | undefined;
+    vi.spyOn(instance, "run").mockImplementation((options) => {
+      pass = run(options);
+      return pass;
+    });
+    vi.useFakeTimers();
+    instance.start();
+    try {
+      await vi.advanceTimersByTimeAsync(10);
+      const report = await pass!;
+      __jait_capture(0, (report.errors));
+      __jait_capture(1, (report.bytesReclaimed), (withSuccess ? 2048 : 0));
+      __jait_capture(2, (existsSync(blocked)));
+      __jait_capture(3, (logger.warn.mock.calls), ([blocked]));
+      __jait_capture(4, (logger.error.mock.calls));
+      __jait_capture(5, (logger.info.mock.calls), (withSuccess ? 1 : 0));
+      await vi.advanceTimersByTimeAsync(1000);
+      await pass!;
+      __jait_capture(6, (logger.warn.mock.calls));
+    } finally {
+      instance.stop();
+    }
   
 })();
 
 } finally {
-
+await __jait_hook_2435();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_66_3_each2": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_153_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const value = encoded(["INBOX", "7", -1]);
-await __jait_hook_1331();
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+/*__jait_source_gate__ skipIf process.platform === "win32" || process.getuid?.() === 0 */
+await __jait_hook_1701();
 try {
 await (async()=>{
 
-    __jait_thrown(0, () => parseImapMessageId(value));
-  
+      const blocked = join(tempRoot, "jait-permission");
+      makeAgedDir(blocked, 10 * DAY_MS, 4096);
+      chmodSync(blocked, 0o555);
+      const instance = janitor();
+      try {
+        const failed = await instance.run({ now: NOW });
+        __jait_capture(0, (failed.errors.join(" ")));
+        __jait_capture(1, (failed.bytesReclaimed));
+        __jait_capture(2, (failed.tempScratch));
+        __jait_capture(3, (existsSync(blocked)));
+      } finally {
+        chmodSync(blocked, 0o755);
+      }
+      const recovered = await instance.run({ now: NOW });
+      __jait_capture(4, (recovered.errors));
+      __jait_capture(5, (recovered.bytesReclaimed));
+      __jait_capture(6, (existsSync(blocked)));
+    
 })();
 
 } finally {
-
-}
+await __jait_hook_2435();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_66_3_each3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_176_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const value = encoded(["INBOX", "7", "42"]);
-await __jait_hook_1331();
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
 try {
 await (async()=>{
 
-    __jait_thrown(0, () => parseImapMessageId(value));
+    const path = join(worktreeRoot, "repo", "jait-aaa");
+    makeAgedDir(path, 10 * DAY_MS);
+    seedThread({
+      workingDirectory: path,
+      status: "completed",
+      updatedAt: new Date(NOW.getTime() - 10 * DAY_MS).toISOString(),
+      branch: "jait/aaa",
+    });
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.worktrees));
+    __jait_capture(1, (report.worktrees[0]?.reason));
+    __jait_capture(2, (existsSync(path)));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_2435();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_imap_test_ts_69_3": {
-const state = vi.hoisted(() => ({
-  client: { mailbox: { path: "INBOX", uidValidity: 7n, exists: 2 }, on: vi.fn(), connect: vi.fn(), close: vi.fn(),
-    getMailboxLock: vi.fn(), fetchOne: vi.fn(), fetchAll: vi.fn(), search: vi.fn(),
-    messageFlagsAdd: vi.fn(), messageFlagsRemove: vi.fn(), list: vi.fn(), messageMove: vi.fn() },
-  transport: { sendMail: vi.fn(), verify: vi.fn(), close: vi.fn() },
-}));
-await vi.mock(Bun.resolveSync("imapflow", __jait_original_dir), () => ({ ImapFlow: vi.fn(function () { return state.client; }) }));
-await vi.mock(Bun.resolveSync("nodemailer", __jait_original_dir), () => ({ default: { createTransport: vi.fn(() => state.transport) } }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { ImapMailboxClient, parseImapMessageId } = await import("../../../../packages/gateway/src/services/email/imap.js");
-const { ImapFlow } = await import((typeof Bun!=="undefined"?Bun.resolveSync("imapflow", __jait_original_dir):__jait_require.resolve("imapflow")));
-const { default: nodemailer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("nodemailer", __jait_original_dir):__jait_require.resolve("nodemailer")));
-const config = { email: "me@example.com", displayName: "Me", imap: { host: "imap.example.com", port: 993, secure: true, user: "me", password: "test-password" }, smtp: { host: "smtp.example.com", port: 587, secure: false, user: "me", password: "test-password" } };
-const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
-const id = encoded(["INBOX", "7", 42]);
-const __jait_hook_1331 = () => {
-  vi.clearAllMocks();
-  state.client.mailbox = { path: "INBOX", uidValidity: 7n, exists: 2 };
-  state.client.getMailboxLock.mockResolvedValue({ release: vi.fn() });
-  state.client.connect.mockResolvedValue(undefined);
-  state.transport.sendMail.mockResolvedValue({ messageId: "sent-id" });
-};
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_193_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
 /*__jait_scope_open__*/{
-await __jait_hook_1331();
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
 try {
 await (async()=>{
 
-    const sent = await new ImapMailboxClient(config).sendMessage("", { to: "person@example.com", subject: "Hello", body: "Message" });
-    __jait_capture(0, (sent.id));
-    __jait_capture(1, (state.transport.sendMail.mock.calls));
-    __jait_capture(2, (state.transport.close.mock.calls));
+    const path = join(worktreeRoot, "repo", "jait-live");
+    makeAgedDir(path, 30 * DAY_MS);
+    seedThread({
+      workingDirectory: path,
+      status: "running",
+      updatedAt: new Date(NOW.getTime() - 30 * DAY_MS).toISOString(),
+    });
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.worktrees));
+    __jait_capture(1, (existsSync(path)));
   
 })();
 
 } finally {
+await __jait_hook_2435();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_208_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-fresh");
+    makeAgedDir(path, 1 * DAY_MS);
+    seedThread({
+      workingDirectory: path,
+      status: "completed",
+      updatedAt: new Date(NOW.getTime() - 1 * DAY_MS).toISOString(),
+    });
+
+    const report = await janitor({ worktreeGraceMs: 2 * DAY_MS }).run({ now: NOW });
+
+    __jait_capture(0, (report.worktrees));
+    __jait_capture(1, (existsSync(path)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_223_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-orphan");
+    makeAgedDir(path, 5 * DAY_MS);
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.worktrees));
+    __jait_capture(1, (report.worktrees[0]?.reason));
+    __jait_capture(2, (existsSync(path)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_234_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-branch");
+    makeAgedDir(path, 10 * DAY_MS);
+    seedThread({
+      workingDirectory: path,
+      status: "error",
+      updatedAt: new Date(NOW.getTime() - 10 * DAY_MS).toISOString(),
+      branch: "jait/branch",
+    });
+
+    await janitor({ preserveBranches: true }).run({ now: NOW });
+
+    __jait_capture(0, (cleanupCalls[0]?.preserveBranch));
+    __jait_capture(1, (cleanupCalls[0]?.branch));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_250_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-win");
+    makeAgedDir(path, 10 * DAY_MS);
+    // Thread was created on Windows; the stored path does not match this host.
+    seedThread({
+      workingDirectory: "C:\\Users\\jakob\\.jait\\worktrees\\repo\\jait-win",
+      status: "completed",
+      updatedAt: new Date(NOW.getTime() - 10 * DAY_MS).toISOString(),
+    });
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.worktrees));
+    __jait_capture(1, (report.worktrees[0]?.reason));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_266_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-dry");
+    makeAgedDir(path, 10 * DAY_MS, 4096);
+
+    const report = await janitor().inspect(NOW);
+
+    __jait_capture(0, (report.dryRun));
+    __jait_capture(1, (report.worktrees));
+    __jait_capture(2, (report.bytesReclaimed));
+    __jait_capture(3, (existsSync(path)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_278_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const path = join(worktreeRoot, "repo", "jait-off");
+    makeAgedDir(path, 30 * DAY_MS);
+
+    const report = await janitor({ enabled: false }).run({ now: NOW });
+
+    __jait_capture(0, (report.skippedReason));
+    __jait_capture(1, (existsSync(path)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_288_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    __jait_capture(0, (isInside("/home/u/.jait/worktrees", "/home/u/.jait/worktrees/repo/a")));
+    __jait_capture(1, (isInside("/home/u/.jait/worktrees", "/home/u/.jait/worktrees")));
+    __jait_capture(2, (isInside("/home/u/.jait/worktrees", "/home/u/projects/real-repo")));
+    __jait_capture(3, (isInside("/home/u/.jait/worktrees", "/home/u/.jait/worktrees/../../secrets")));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_297_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    __jait_capture(0, (loadDiskJanitorPolicy({}).enabled));
+    __jait_capture(1, (loadDiskJanitorPolicy({ JAIT_DISK_JANITOR_ENABLED: "false" }).enabled));
+
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_302_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const stale = join(tempRoot, "jait-stale");
+    const unrelated = join(tempRoot, "unrelated");
+    makeAgedDir(stale, 4 * DAY_MS, 4096);
+    makeAgedDir(unrelated, 4 * DAY_MS, 4096);
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.tempScratch));
+    __jait_capture(1, (report.tempScratch[0]?.path), (stale));
+    __jait_capture(2, (existsSync(stale)));
+    __jait_capture(3, (existsSync(unrelated)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_316_3": {
+
+
+const NOW = new Date("2026-08-20T12:00:00.000Z");
+const DAY_MS = 24 * 60 * 60 * 1_000;
+function policy(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitorPolicy {
+  return {
+    enabled: true,
+    worktreeGraceMs: 2 * DAY_MS,
+    orphanWorktreeGraceMs: DAY_MS,
+    preserveBranches: true,
+    tempScratchMaxAgeMs: 3 * DAY_MS,
+    sandboxStorageMaxAgeMs: DAY_MS,
+    initialDelayMs: 10,
+    intervalMs: 1_000,
+    ...overrides,
+  };
+}
+function makeAgedDir(path: string, ageMs: number, bytes = 128): void {
+  mkdirSync(path, { recursive: true });
+  writeFileSync(join(path, "payload.bin"), Buffer.alloc(bytes));
+  const seconds = (NOW.getTime() - ageMs) / 1_000;
+  utimesSync(path, seconds, seconds);
+}
+/*__jait_scope_open__*/{
+let db: JaitDB;
+let sqlite: Database;
+let root: string;
+let worktreeRoot: string;
+let tempRoot: string;
+let sandboxRoot: string;
+let cleanupCalls: Array<{ path: string; preserveBranch?: boolean; branch?: string | null }>;
+let gitStub: { cleanupWorktreeWithOptions: (p: string, o?: never) => Promise<void> };
+function janitor(overrides: Partial<DiskJanitorPolicy> = {}): DiskJanitor {
+    return new DiskJanitor(sqlite, policy(overrides), {
+      info: () => {},
+      warn: () => {},
+      error: () => {},
+    }, gitStub as never, {
+      worktrees: worktreeRoot,
+      temp: tempRoot,
+      sandboxStorage: sandboxRoot,
+    });
+  }
+function seedThread(params: {
+    workingDirectory: string;
+    status: string;
+    updatedAt: string;
+    branch?: string;
+  }): string {
+    const threads = new ThreadService(db);
+    const thread = threads.create({ title: "t", providerId: "codex" });
+    sqlite
+      .prepare(
+        "UPDATE agent_threads SET working_directory = ?, status = ?, updated_at = ?, branch = ? WHERE id = ?",
+      )
+      .run(
+        params.workingDirectory,
+        params.status,
+        params.updatedAt,
+        params.branch ?? null,
+        thread.id,
+      );
+    return thread.id;
+  }
+const __jait_hook_1701 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    root = mkdtempSync(join(__jait_fixture_dir, "janitor-test-"));
+    worktreeRoot = join(root, "worktrees");
+    mkdirSync(worktreeRoot, { recursive: true });
+    tempRoot = join(root, "temp");
+    sandboxRoot = join(root, "sandbox");
+    mkdirSync(tempRoot, { recursive: true });
+    mkdirSync(sandboxRoot, { recursive: true });
+
+    cleanupCalls = [];
+    gitStub = {
+      cleanupWorktreeWithOptions: async (path: string, options?: never) => {
+        cleanupCalls.push({ path, ...(options ?? {}) });
+        await rm(path, { recursive: true, force: true });
+      },
+    };
+
+  };
+const __jait_hook_2435 = async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    sqlite.close();
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1701();
+try {
+await (async()=>{
+
+    const stale = join(sandboxRoot, "stale-vm");
+    makeAgedDir(stale, 2 * DAY_MS, 2048);
+
+    const report = await janitor().run({ now: NOW });
+
+    __jait_capture(0, (report.sandboxStorage));
+    __jait_capture(1, (report.sandboxStorage[0]?.path), (stale));
+    __jait_capture(2, (existsSync(stale)));
+  
+})();
+
+} finally {
+await __jait_hook_2435();
 }
 }
 

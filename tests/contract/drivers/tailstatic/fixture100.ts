@@ -1,17 +1,18 @@
-// Translated fixture from packages/gateway/src/routes/providers-ollama-usage.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/routes/providers-model-routing.test.ts; expected literals are in tail_static.rs.
 
-
-
-
-
-
-
+import { loadConfig } from "../../../../packages/gateway/src/config.js"
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js"
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js"
+import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js"
+import { ProviderAccountService } from "../../../../packages/gateway/src/services/provider-accounts.js"
+import { UserService } from "../../../../packages/gateway/src/services/users.js"
+import { registerProviderRoutes } from "../../../../packages/gateway/src/routes/providers.js"
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/providers-ollama-usage.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/providers-model-routing.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,342 +39,148 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_31_3": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
+case "tailstatic_packages_gateway_src_routes_providers_model_routing_test_ts_12_3": {
+
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
 /*__jait_scope_open__*/{
-await __jait_hook_795();
+
 try {
 await (async()=>{
 
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ Email: account.email, Name: account.name, Plan: account.plan })));
-    const { app, recordOllamaUsage, request } = await setup();
-    try {
-      __jait_capture(0, ((await request()).statusCode));
-      __jait_capture(1, (fetchSignedInOllamaUsage.mock.calls), (["http://localhost:11434",account]));
-      __jait_capture(2, (recordOllamaUsage.mock.calls), (["jait-backend:user-1:ollama",usage,"pro",account.email]));
-    } finally { await app.close(); }
+    const { db, sqlite } = await openDatabase(':memory:')
+    migrateDatabase(sqlite)
+    const config = { ...loadConfig(), jwtSecret: 'provider-model-reset-test', logLevel: 'silent' }
+    const users = new UserService(db)
+    const user = users.createUser('refresh-user', 'password123')
+    const token = await signAuthToken({ id: user.id, username: user.username }, config.jwtSecret)
+    const registry = new ProviderRegistry()
+    const resetModels = vi.fn()
+    registry.register({
+      id: 'codex-account',
+      ownerUserId: user.id,
+      info: { id: 'codex-account', name: 'Codex', description: 'Codex ACP', available: true, modes: ['full-access'] },
+      checkAvailability: async () => true,
+      listModels: async () => [],
+      resetModels,
+    } as any)
+    const app = Fastify({ logger: false })
+    registerProviderRoutes(app, config, { providerRegistry: registry, userService: users })
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/providers/models/reset',
+      headers: { authorization: `Bearer ${token}` },
+    })
+    __jait_capture(0, (response.statusCode))
+    __jait_capture(1, (resetModels.mock.calls))
+    await app.close()
+    sqlite.close()
   
 })();
 
 } finally {
-await __jait_hook_892();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_41_3": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
+case "tailstatic_packages_gateway_src_routes_providers_model_routing_test_ts_42_3": {
+
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
 /*__jait_scope_open__*/{
-await __jait_hook_795();
+
 try {
 await (async()=>{
 
-    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(account)).mockResolvedValueOnce(Response.json(usage));
-    vi.stubGlobal("fetch", fetchMock);
-    const { app, recordOllamaUsage, request } = await setup("cloud-key");
-    try {
-      __jait_capture(0, ((await request()).statusCode));
-      __jait_capture(1, (fetchSignedInOllamaUsage.mock.calls));
-      __jait_capture(2, (fetchMock.mock.calls[1][0]));
-      __jait_capture(3, (fetchMock.mock.calls[1][1].headers.Authorization));
-      __jait_capture(4, (recordOllamaUsage.mock.calls));
-    } finally { await app.close(); }
+    const { db, sqlite } = await openDatabase(':memory:')
+    migrateDatabase(sqlite)
+    const config = { ...loadConfig(), jwtSecret: 'provider-model-node-test', logLevel: 'silent' }
+    const users = new UserService(db)
+    const user = users.createUser('model-user', 'password123')
+    const token = await signAuthToken({ id: user.id, username: user.username }, config.jwtSecret)
+    const headers = { authorization: `Bearer ${token}` }
+
+    const registry = new ProviderRegistry()
+    registry.register({
+      id: 'jait',
+      info: {
+        id: 'jait',
+        name: 'Jait',
+        description: 'Gateway provider',
+        available: true,
+        modes: ['full-access', 'supervised'],
+      },
+      checkAvailability: async () => true,
+      listModels: async () => [{ id: 'gateway-model', name: 'Gateway model' }],
+    } as any)
+
+    const node = {
+      id: 'windows-node',
+      name: 'Windows workstation',
+      platform: 'windows',
+      clientId: 'client-1',
+      isGateway: false,
+      providers: ['codex'],
+      registeredAt: new Date().toISOString(),
+    }
+    const providerAccounts = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex CLI",
+      command: "codex-acp",
+      auth: "acp",
+    }], "/tmp/jait-provider-model-routing-test")
+    const account = providerAccounts.create(user.id, "codex", "Windows", node.id)
+
+    const proxyProviderOp = vi.fn(async () => [
+      { id: 'windows-codex-model', name: 'Windows Codex model' },
+    ])
+    const ws = {
+      getFsNodes: () => [node],
+      findNodeByDeviceId: (nodeId: string) => nodeId === node.id ? node : undefined,
+      proxyProviderOp,
+    }
+
+    const app = Fastify({ logger: false })
+    registerProviderRoutes(app, config, {
+      providerRegistry: registry,
+      userService: users,
+      providerAccountService: providerAccounts,
+      ws: ws as any,
+    })
+
+    const remoteResponse = await app.inject({
+      method: 'GET',
+      url: `/api/providers/${account.id}/models?nodeId=windows-node`,
+      headers,
+    })
+    __jait_capture(0, (remoteResponse.statusCode))
+    __jait_capture(1, (remoteResponse.json().models))
+    __jait_capture(2, (proxyProviderOp.mock.calls), (['windows-node','list-models',{ providerId: account.id, providerType: 'codex' },90_000]))
+
+    const jaitResponse = await app.inject({
+      method: 'GET',
+      url: '/api/providers/jait/models?nodeId=windows-node',
+      headers,
+    })
+    __jait_capture(3, (jaitResponse.statusCode))
+    __jait_capture(4, (jaitResponse.json().models))
+    __jait_capture(5, (proxyProviderOp.mock.calls))
+
+    await app.close()
+    sqlite.close()
   
 })();
 
 } finally {
-await __jait_hook_892();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_54_3": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-await __jait_hook_795();
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(account)));
-    vi.mocked(fetchSignedInOllamaUsage).mockRejectedValue(new OllamaUsageError("Ollama device authentication request failed (401)", 401));
-    const { app, recordOllamaUsage, request } = await setup();
-    try {
-      const response = await request();
-      __jait_capture(0, (response.statusCode));
-      __jait_capture(1, (response.body));
-      __jait_capture(2, (response.body));
-      __jait_capture(3, (recordOllamaUsage.mock.calls));
-    } finally { await app.close(); }
-  
-})();
-
-} finally {
-await __jait_hook_892();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_81_4": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-async function keySetup() {
-     const config = loadConfig();
-     const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-     const updateSettings = vi.fn();
-     const app = Fastify({ logger: false });
-     registerProviderRoutes(app, config, {
-       providerRegistry: new ProviderRegistry(),
-       userService: { getSettings: () => ({ apiKeys: { OTHER_KEY: "keep", OLLAMA_API_KEY: "old" } }), updateSettings } as never,
-     });
-     const request = (apiKey: unknown, authenticated = true) => app.inject({ method: "POST", url: "/api/provider-usage/ollama/api-key", headers: authenticated ? { authorization: `Bearer ${token}` } : {}, payload: { apiKey } });
-     return { app, request, updateSettings };
-   }
-await __jait_hook_795();
-try {
-await (async()=>{
-
-     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(usage)));
-     const { app, request, updateSettings } = await keySetup();
-     try {
-       const response = await request("  new-key  ");
-       __jait_capture(0, (response.statusCode));
-       __jait_capture(1, (updateSettings.mock.calls));
-       __jait_capture(2, (response.body));
-     } finally { await app.close(); }
-   
-})();
-
-} finally {
-await __jait_hook_892();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_91_4": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-async function keySetup() {
-     const config = loadConfig();
-     const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-     const updateSettings = vi.fn();
-     const app = Fastify({ logger: false });
-     registerProviderRoutes(app, config, {
-       providerRegistry: new ProviderRegistry(),
-       userService: { getSettings: () => ({ apiKeys: { OTHER_KEY: "keep", OLLAMA_API_KEY: "old" } }), updateSettings } as never,
-     });
-     const request = (apiKey: unknown, authenticated = true) => app.inject({ method: "POST", url: "/api/provider-usage/ollama/api-key", headers: authenticated ? { authorization: `Bearer ${token}` } : {}, payload: { apiKey } });
-     return { app, request, updateSettings };
-   }
-await __jait_hook_795();
-try {
-await (async()=>{
-
-     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("secret-provider-detail", { status: 401 })));
-     const { app, request, updateSettings } = await keySetup();
-     try {
-       const response = await request("bad-key");
-       __jait_capture(0, (response.statusCode));
-       __jait_capture(1, (response.body));
-       __jait_capture(2, (updateSettings.mock.calls));
-     } finally { await app.close(); }
-   
-})();
-
-} finally {
-await __jait_hook_892();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_providers_ollama_usage_test_ts_101_4": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/ollama-device-auth.ts",import.meta.url)), async (original) => ({ ...await original<typeof import("../services/ollama-device-auth.js")>(), fetchSignedInOllamaUsage: vi.fn() }));
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { loadConfig } = await import("../../../../packages/gateway/src/config.js");
-const { ProviderRegistry } = await import("../../../../packages/gateway/src/providers/registry.js");
-const { signAuthToken } = await import("../../../../packages/gateway/src/security/http-auth.js");
-const { fetchSignedInOllamaUsage } = await import("../../../../packages/gateway/src/services/ollama-device-auth.js");
-const { OllamaUsageError } = await import("../../../../packages/gateway/src/services/provider-quota-fetchers.js");
-const { registerProviderRoutes } = await import("../../../../packages/gateway/src/routes/providers.js");
-const account = { email: "me@example.com", name: "Me", plan: "pro" };
-const usage = { limits: { weekly: { usage: 0.09, models: [] } } };
-async function setup(apiKey?: string) {
-  const config = loadConfig();
-  const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-  const recordOllamaUsage = vi.fn();
-  const app = Fastify({ logger: false });
-  registerProviderRoutes(app, config, {
-    providerRegistry: new ProviderRegistry(),
-    providerUsageService: { recordOllamaUsage, listForUser: () => [] } as never,
-    userService: { getSettings: () => ({ jaitBackend: "ollama", apiKeys: { OLLAMA_URL: "http://localhost:11434", ...(apiKey ? { OLLAMA_API_KEY: apiKey } : {}) } }) } as never,
-  });
-  const request = () => app.inject({ method: "GET", url: "/api/provider-usage/summary", headers: { authorization: `Bearer ${token}` } });
-  return { app, recordOllamaUsage, request };
-}
-const __jait_hook_795 = () => { vi.mocked(fetchSignedInOllamaUsage).mockReset().mockResolvedValue(usage); };
-const __jait_hook_892 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-async function keySetup() {
-     const config = loadConfig();
-     const token = await signAuthToken({ id: "user-1", username: "test" }, config.jwtSecret);
-     const updateSettings = vi.fn();
-     const app = Fastify({ logger: false });
-     registerProviderRoutes(app, config, {
-       providerRegistry: new ProviderRegistry(),
-       userService: { getSettings: () => ({ apiKeys: { OTHER_KEY: "keep", OLLAMA_API_KEY: "old" } }), updateSettings } as never,
-     });
-     const request = (apiKey: unknown, authenticated = true) => app.inject({ method: "POST", url: "/api/provider-usage/ollama/api-key", headers: authenticated ? { authorization: `Bearer ${token}` } : {}, payload: { apiKey } });
-     return { app, request, updateSettings };
-   }
-await __jait_hook_795();
-try {
-await (async()=>{
-
-     const fetchMock = vi.fn();
-     vi.stubGlobal("fetch", fetchMock);
-     const { app, request, updateSettings } = await keySetup();
-     try {
-       for (const key of [null, 42, "", "  ", "x".repeat(4097)]) __jait_capture(0, ((await request(key)).statusCode));
-       __jait_capture(1, ((await request("valid", false)).statusCode));
-       __jait_capture(2, (fetchMock.mock.calls));
-       __jait_capture(3, (updateSettings.mock.calls));
-     } finally { await app.close(); }
-   
-})();
-
-} finally {
-await __jait_hook_892();
 }
 }
 

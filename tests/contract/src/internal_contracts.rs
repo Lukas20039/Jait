@@ -18,7 +18,95 @@ pub const CASES: &[(&str, Check)] = &[
     ("internal.commands-observed-destructive", observed_commands),
     ("internal.commands-common-destructive", destructive_commands),
     ("internal.commands-ordinary-allowed", ordinary_commands),
+    (
+        "internal.compaction.active-turn-prefix-and-callback",
+        active_turn_prefix_and_callback,
+    ),
 ];
+
+// The reference test asserts inside summaryGenerator as well as after compaction.
+// Both phases are observed by the adapter; all predicates stay here in Rust.
+fn active_turn_prefix_and_callback(r: &Path, d: &Path, c: &dyn Fn() -> bool) -> Result<()> {
+    let mut history = vec![
+        json!({"role":"system","content":"base instructions"}),
+        json!({"role":"user","content":"Verify authorized targets; preserve evidence"}),
+        json!({"role":"system","content":"[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]"}),
+    ];
+    for index in 0..38 {
+        history.push(json!({"role":"assistant","content":format!("Evidence {index}"),"tool_calls":[{"id":format!("c{index}"),"type":"function","function":{"name":"file_read","arguments":"{}"}}]}));
+        history.push(json!({"role":"tool","tool_call_id":format!("c{index}"),"content":format!("result-{index} {}", "x".repeat(400))}));
+    }
+    let actual = internal_driver::call(
+        r,
+        d,
+        json!({"version":1,"calls":[{"op":"compaction.active-turn","history":history,"limit":1000,"summary":"[conversation-summary]Scope and progress preserved; next verify rollback.[/conversation-summary]"}]}),
+        c,
+    )?;
+    check_active_turn_prefix(&actual, &history)
+}
+
+fn check_active_turn_prefix(actual: &Value, original: &[Value]) -> Result<()> {
+    let results = actual
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("expected results"))?;
+    ensure!(results.len() == 1, "expected exactly one compaction result");
+    let result = &results[0];
+    let snapshots = result["duringSummary"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("missing callback observations"))?;
+    ensure!(!snapshots.is_empty(), "summary callback was not observed");
+    for snapshot in snapshots {
+        ensure!(
+            snapshot
+                .as_array()
+                .is_some_and(|messages| messages == original),
+            "history changed before summary completed"
+        );
+    }
+    ensure!(result["changed"] == true, "compaction did not run");
+    let source = result["source"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("missing removed prefix"))?;
+    ensure!(
+        source.iter().any(|message| message["content"]
+            .as_str()
+            .is_some_and(|text| text.contains("scope-expires-at-18:00"))),
+        "old checkpoint absent from summary source"
+    );
+    ensure!(
+        source.iter().any(|message| message["content"]
+            .as_str()
+            .is_some_and(|text| text.starts_with("result-0 "))),
+        "oldest result absent from summary source"
+    );
+    ensure!(
+        source
+            .iter()
+            .filter(|message| message["role"] == "tool")
+            .count()
+            == 30,
+        "wrong removed tool result count"
+    );
+    let history = result["history"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("missing compacted history"))?;
+    ensure!(
+        history.get(1) == original.get(1),
+        "active user message changed"
+    );
+    ensure!(
+        history
+            .get(2)
+            .and_then(|message| message["content"].as_str())
+            .is_some_and(|text| text.contains("[active-turn-summary]")),
+        "active checkpoint absent"
+    );
+    ensure!(
+        history.get(3..) == original.get(original.len().saturating_sub(16)..),
+        "recent tool pairs changed"
+    );
+    Ok(())
+}
 
 fn expect(
     root: &Path,
@@ -240,4 +328,50 @@ fn ordinary_commands(r: &Path, d: &Path, c: &dyn Fn() -> bool) -> Result<()> {
         false,
         false,
     )
+}
+
+#[cfg(test)]
+mod active_turn_assertion_tests {
+    use super::*;
+
+    #[test]
+    fn rejects_each_original_predicate_failure_including_callback_only_mutation() {
+        // Use arbitrary message contents: the contract must preserve relations,
+        // rather than pinning today's complete production output.
+        let original: Vec<Value> = (0..79)
+            .map(|index| json!({"role":"user","content":format!("message {index}")}))
+            .collect();
+        let mut history = original[..3].to_vec();
+        history[2] = json!({"role":"system","content":"prefix [active-turn-summary] suffix"});
+        history.extend_from_slice(&original[63..]);
+        let mut source =
+            vec![json!({"role":"system","content":"prefix scope-expires-at-18:00 suffix"})];
+        source.extend(
+            (0..30).map(|index| json!({"role":"tool","content":format!("result-{index} text")})),
+        );
+        let good =
+            json!([{"changed":true,"duringSummary":[original],"history":history,"source":source}]);
+        check_active_turn_prefix(&good, &original).unwrap();
+        for (pointer, value) in [
+            (
+                "/0/duringSummary/0/4/content",
+                json!("changed only during callback"),
+            ),
+            ("/0/changed", json!(false)),
+            ("/0/source/0/content", json!("checkpoint lost")),
+            ("/0/source/1/content", json!("oldest result lost")),
+            ("/0/source/2/role", json!("assistant")),
+            ("/0/history/1/content", json!("user request changed")),
+            ("/0/history/2/content", json!("checkpoint lost")),
+            ("/0/history/3/content", json!("tail changed")),
+            ("/0/duringSummary", json!([])),
+        ] {
+            let mut bad = good.clone();
+            *bad.pointer_mut(pointer).unwrap() = value;
+            assert!(
+                check_active_turn_prefix(&bad, &original).is_err(),
+                "accepted {pointer}"
+            );
+        }
+    }
 }

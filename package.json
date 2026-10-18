@@ -50,7 +50,10 @@
     "clean": "rm -rf packages/*/dist apps/*/dist node_modules/.cache",
     "test:contract:coverage": "node tests/contract/run.mjs coverage",
     "test:contract:translated": "node tests/contract/run.mjs translated-report",
-    "test:contract:matcher-differential": "node tests/contract/tooling/matcher-differential.mjs"
+    "test:contract:matcher-differential": "node tests/contract/tooling/matcher-differential.mjs",
+    "dev:gateway:rust": "node packages/gateway-rust/run.mjs run",
+    "build:gateway:rust": "node packages/gateway-rust/run.mjs build",
+    "test:gateway:rust": "node packages/gateway-rust/tooling/check-native.mjs"
   },
   "devDependencies": {
     "@vitest/coverage-istanbul": "3.2.7",

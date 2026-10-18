@@ -14,8 +14,13 @@ export function findUnusedAssertionHelpers(source, declarationLine, declarationC
     visit(node)
     return result
   }
-  const registrations = walk(file, node => ts.isCallExpression(node) && ts.isIdentifier(node.expression)
-    && ['it', 'test'].includes(node.expression.text)
+  const testBase = expression => ts.isIdentifier(expression) && ['it', 'test'].includes(expression.text)
+  const registrations = walk(file, node => ts.isCallExpression(node)
+    && (testBase(node.expression) || ts.isCallExpression(node.expression)
+      && ts.isPropertyAccessExpression(node.expression.expression)
+      && node.expression.expression.name.text === 'each'
+      && testBase(node.expression.expression.expression)
+      && node.arguments.some(argument => ts.isArrowFunction(argument) || ts.isFunctionExpression(argument)))
     && (() => {
       const position = file.getLineAndCharacterOfPosition(node.getStart(file))
       return position.line + 1 === declarationLine && position.character + 1 === declarationColumn

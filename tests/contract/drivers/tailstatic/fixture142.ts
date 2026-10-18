@@ -1,10 +1,11 @@
-// Translated fixture from packages/gateway/src/seq-gate.test.ts; expected literals are in tail_static.rs.
-import { __chatTestUtils } from "../../../../packages/gateway/src/routes/chat.js";
+// Translated fixture from packages/gateway/src/security/vnc-recovery.test.ts; expected literals are in tail_static.rs.
+import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/seq-gate.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/vnc-recovery.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -31,149 +32,33 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_seq_gate_test_ts_39_3": {
+case "tailstatic_packages_gateway_src_security_vnc_recovery_test_ts_6_3": {
 
 
-const { sessionStreamSeq, sessionSubscribers, subscribe, emitToSubscribers, emitTurnDone } = __chatTestUtils;
-const SESSION = "seq-gate-session";
-function makeDoneEvent() {
-  return {
-    type: "done" as const,
-    session_id: SESSION,
-    prompt_count: 1,
-    remaining_prompts: null,
-  };
-}
-const __jait_hook_1161 = () => {
-  sessionStreamSeq.clear();
-  sessionSubscribers.clear();
-};
 /*__jait_scope_open__*/{
-await __jait_hook_1161();
+
 try {
 await (async()=>{
 
-    // Simulate a turn that has already emitted some events, so the counter is >= 1.
-    sessionStreamSeq.set(SESSION, 3);
-
-    // A resume subscriber connects mid-run: snapshotSeq = 3, so minSeqExclusive = 3.
-    const received: unknown[] = [];
-    const unsubscribe = subscribe(SESSION, 3, (event) => {
-      received.push(event);
-    });
-
-    // Success-path sequence (as fixed): emit done, THEN delete the counter.
-    // This calls the same helper the route uses, so it exercises the real code path.
-    emitTurnDone(SESSION, makeDoneEvent());
-
-    // The done event must NOT be dropped by the seq gate.
-    __jait_capture(0, (received));
-    __jait_capture(1, (received[0]), ({ type: "done", session_id: SESSION }));
-    __jait_capture(2, ((received[0] as { seq: number }).seq)); // 3 + 1 > snapshotSeq 3
-
-    unsubscribe();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_seq_gate_test_ts_61_3": {
-
-
-const { sessionStreamSeq, sessionSubscribers, subscribe, emitToSubscribers, emitTurnDone } = __chatTestUtils;
-const SESSION = "seq-gate-session";
-function makeDoneEvent() {
-  return {
-    type: "done" as const,
-    session_id: SESSION,
-    prompt_count: 1,
-    remaining_prompts: null,
-  };
-}
-const __jait_hook_1161 = () => {
-  sessionStreamSeq.clear();
-  sessionSubscribers.clear();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1161();
-try {
-await (async()=>{
-
-    sessionStreamSeq.set(SESSION, 0);
-
-    const received: unknown[] = [];
-    const unsubscribe = subscribe(SESSION, 0, (event) => {
-      received.push(event);
-    });
-
-    emitTurnDone(SESSION, makeDoneEvent());
-
-    __jait_capture(0, (received));
-    __jait_capture(1, (received[0]));
-
-    unsubscribe();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_seq_gate_test_ts_77_3": {
-
-
-const { sessionStreamSeq, sessionSubscribers, subscribe, emitToSubscribers, emitTurnDone } = __chatTestUtils;
-const SESSION = "seq-gate-session";
-function makeDoneEvent() {
-  return {
-    type: "done" as const,
-    session_id: SESSION,
-    prompt_count: 1,
-    remaining_prompts: null,
-  };
-}
-const __jait_hook_1161 = () => {
-  sessionStreamSeq.clear();
-  sessionSubscribers.clear();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_1161();
-try {
-await (async()=>{
-
-    // This ordering is the OLD (buggy) behavior. It is asserted to demonstrate
-    // why the fix moves the delete AFTER the emit. If this test ever starts
-    // passing, the seq gate has been changed and the fix may be unnecessary.
-    sessionStreamSeq.set(SESSION, 3);
-
-    const received: unknown[] = [];
-    const unsubscribe = subscribe(SESSION, 3, (event) => {
-      received.push(event);
-    });
-
-    // Buggy ordering: delete counter, THEN emit done.
-    sessionStreamSeq.delete(SESSION);
-    emitToSubscribers(SESSION, makeDoneEvent());
-
-    // done gets seq = (undefined ?? 0) + 1 = 1, which is <= minSeqExclusive 3 → dropped.
-    __jait_capture(0, (received));
-
-    unsubscribe();
+    const source = readFileSync(new URL("./sandbox-manager.ts", __jait_original_url), "utf8");
+    const loops = [...source.matchAll(/while true; do(?:(?!\n\s*done)[\s\S])*?\n\s*done/g)].map(match => match[0]).filter(loop => loop.includes("x11vnc -display"));
+    __jait_capture(0, (loops));
+    for (const loop of loops) {
+      const result = spawnSync("bash", ["-c", `set -eu
+calls=0
+x11vnc() { calls=$((calls+1)); echo "attempt:$calls"; return 11; }
+sleep() { if [ "$calls" -ge 2 ]; then exit 0; fi; }
+${loop}`], { encoding: "utf8", timeout: 2000 });
+      __jait_capture(1, (result.stdout));
+      __jait_capture(2, (result.status));
+    }
   
 })();
 

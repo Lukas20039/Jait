@@ -1,24 +1,14 @@
-// Translated fixture from packages/gateway/src/routes/project-open.test.ts; expected literals are in tail_static.rs.
-import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+// Translated fixture from packages/gateway/src/routes/preview.test.ts; expected literals are in tail_static.rs.
+
 import { loadConfig } from "../../../../packages/gateway/src/config.js";
-import { createServer } from "../../../../packages/gateway/src/server.js";
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { SessionStateService } from "../../../../packages/gateway/src/services/session-state.js";
-import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
-import { ProjectStateService } from "../../../../packages/gateway/src/services/project-state.js";
-import { SurfaceRegistry, FileSystemSurfaceFactory } from "../../../../packages/gateway/src/surfaces/index.js";
-import { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import { execFileSync } from "node:child_process";
-import { join } from "node:path";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { registerPreviewRoutes } from "../../../../packages/gateway/src/routes/preview.js";
+import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/project-open.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/preview.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -45,1997 +35,233 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_125_3": {
+case "tailstatic_packages_gateway_src_routes_preview_test_ts_13_3": {
 
-
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
 
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
 try {
 await (async()=>{
 
-    const res = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
-    });
-
-    __jait_capture(0, (res.ok));
-    const data = (await res.json()) as { surfaceId: string; projectRoot: string };
-    __jait_capture(1, (data.surfaceId));
-    __jait_capture(2, (data.projectRoot), (writableTestRoot));
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = { reload: vi.fn().mockResolvedValue({ browserId: "browser-1" }) };
+    const sessionService = { getById: vi.fn((id: string, userId: string) => id === "session-1" && userId === "user-1" ? { id } : null) };
+    registerPreviewRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+    const payload = { sessionId: "session-1" };
+    __jait_capture(0, ((await app.inject({ method: "POST", url: "/api/preview/reload", payload })).statusCode));
+    __jait_capture(1, ((await app.inject({ method: "POST", url: "/api/preview/reload", headers: await authHeader(config.jwtSecret, "user-2"), payload })).statusCode));
+    __jait_capture(2, (previewService.reload.mock.calls));
+    const headers = await authHeader(config.jwtSecret, "user-1");
+    __jait_capture(3, ((await app.inject({ method: "POST", url: "/api/preview/reload", headers, payload })).statusCode));
+    __jait_capture(4, (previewService.reload.mock.calls));
+    previewService.reload.mockRejectedValueOnce(new Error("Take control before refreshing."));
+    const blocked = await app.inject({ method: "POST", url: "/api/preview/reload", headers, payload });
+    __jait_capture(5, (blocked.statusCode));
+    __jait_capture(6, (blocked.json().error));
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_4502();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_138_3": {
+case "tailstatic_packages_gateway_src_routes_preview_test_ts_33_3": {
 
-
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
 
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
 try {
 await (async()=>{
 
-    // First open the project
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
-    });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
-
-    // Now list the directory
-    const listRes = await authedFetch(
-      `${address}/api/project/list?path=${encodeURIComponent(writableTestRoot)}&surfaceId=${surfaceId}`,
-    );
-
-    __jait_capture(0, (listRes.ok));
-    const listData = (await listRes.json()) as { path: string; entries: unknown[] };
-    __jait_capture(1, (listData.path), (writableTestRoot));
-    __jait_capture(2, (Array.isArray(listData.entries)));
-    // ~/.jait should have at least the data directory
-    __jait_capture(3, (listData.entries.length));
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = { navigate: vi.fn().mockResolvedValue({ sessionId: "session-1" }) };
+    const sessionService = { getById: vi.fn((id: string, userId: string) => id === "session-1" && userId === "user-1" ? { id } : null) };
+    registerPreviewRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+    const payload = { sessionId: "session-1", url: "https://example.com/" };
+    __jait_capture(0, ((await app.inject({ method: "POST", url: "/api/preview/navigate", payload })).statusCode));
+    __jait_capture(1, ((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-2"), payload })).statusCode));
+    __jait_capture(2, (previewService.navigate.mock.calls));
+    __jait_capture(3, ((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-1"), payload })).statusCode));
+    __jait_capture(4, (previewService.navigate.mock.calls), (["session-1",payload.url]));
+    previewService.navigate.mockRejectedValueOnce(new Error("Take control before navigating."));
+    __jait_capture(5, ((await app.inject({ method: "POST", url: "/api/preview/navigate", headers: await authHeader(config.jwtSecret, "user-1"), payload })).statusCode));
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_4502();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_160_3": {
+case "tailstatic_packages_gateway_src_routes_preview_test_ts_50_3": {
 
-
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
 
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
 try {
 await (async()=>{
 
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      // Editor mode is opt-in, so the panel state only opens when requested.
-      body: JSON.stringify({ path: writableTestRoot, sessionId, openPanel: true }),
-    });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = {
+      setSharedWithAgent: vi.fn().mockReturnValue({ sessionId: "session-1", sharedWithAgent: true }),
+    };
+    const sessionService = {
+      getById: vi.fn((id: string, userId: string) => id === "session-1" && userId === "user-1" ? { id } : null),
+    };
+    registerPreviewRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
 
-    // Check DB state
-    const state = sessionState.get(sessionId, ["project.panel"]);
-    __jait_capture(0, (state["project.panel"]), ({
-      open: true,
-      remotePath: writableTestRoot,
-      surfaceId,
-      nodeId: "gateway",
-    }));
+    const body = { sessionId: "session-1", sharedWithAgent: true };
+    const denied = await app.inject({ method: "POST", url: "/api/preview/share", headers: await authHeader(config.jwtSecret, "user-2"), payload: body });
+    __jait_capture(0, (denied.statusCode));
+    __jait_capture(1, (previewService.setSharedWithAgent.mock.calls));
+
+    const allowed = await app.inject({ method: "POST", url: "/api/preview/share", headers: await authHeader(config.jwtSecret, "user-1"), payload: body });
+    __jait_capture(2, (allowed.statusCode));
+    __jait_capture(3, (previewService.setSharedWithAgent.mock.calls));
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_4502();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_179_3": {
+case "tailstatic_packages_gateway_src_routes_preview_test_ts_72_3": {
 
-
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
 
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
 try {
 await (async()=>{
 
-    const user = users.createUser(`project-state-${Date.now()}`, "password123");
-    const project = projects.create({
-      userId: user.id,
-      title: "jait",
-      rootPath: writableTestRoot,
-      nodeId: "gateway",
-    });
-    const session = sessions.create({
-      userId: user.id,
-      projectId: project.id,
-      projectPath: writableTestRoot,
-      name: "Current chat",
-    });
-    projectState.set(project.id, {
-      "project.ui": {
-        panel: { open: false, remotePath: writableTestRoot, surfaceId: "old-surface", nodeId: "gateway" },
-        tabs: { remoteRoot: writableTestRoot, tabs: [], activePath: null, activePreview: null },
-        layout: { tree: false, editor: true },
-        terminal: { open: true },
-        preview: null,
-      },
-    });
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId: session.id }),
-    });
-    const { surfaceId, panelOpen } = (await openRes.json()) as { surfaceId: string; panelOpen: boolean };
-
-    __jait_capture(0, (panelOpen));
-    const state = projectState.get(project.id, ["project.ui"]);
-    __jait_capture(1, (state["project.ui"]), ({
-      panel: { open: false, remotePath: writableTestRoot, surfaceId, nodeId: "gateway" },
-      tabs: { remoteRoot: writableTestRoot, tabs: [], activePath: null, activePreview: null },
-      layout: { tree: false, editor: true },
-      terminal: { open: true },
-      preview: null,
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_221_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const user = users.createUser(`project-explicit-open-${Date.now()}`, "password123");
-    const project = projects.create({
-      userId: user.id,
-      title: "jait",
-      rootPath: writableTestRoot,
-      nodeId: "gateway",
-    });
-    const session = sessions.create({
-      userId: user.id,
-      projectId: project.id,
-      projectPath: writableTestRoot,
-      name: "Current chat",
-    });
-    projectState.set(project.id, {
-      "project.ui": {
-        panel: { open: false, remotePath: writableTestRoot, nodeId: "gateway" },
-        tabs: null,
-        layout: { tree: true, editor: false },
-        terminal: null,
-        preview: null,
-      },
-    });
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId: session.id, openPanel: true }),
-    });
-    const data = (await openRes.json()) as { surfaceId: string; panelOpen: boolean };
-
-    __jait_capture(0, (data.panelOpen));
-    const state = projectState.get(project.id, ["project.ui"]);
-    __jait_capture(1, (state["project.ui"]), ({
-      panel: { open: true, surfaceId: data.surfaceId },
-      layout: { tree: true, editor: false },
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_260_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const res = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: "/nonexistent/path/12345", sessionId }),
-    });
-
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, (res.status));
-    const data = (await res.json()) as { error: string };
-    __jait_capture(2, (data.error));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_273_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
-    });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
-
-    const applyRes = await authedFetch(`${address}/api/project/apply-diff`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: "../outside.txt", content: "blocked", surfaceId }),
-    });
-
-    __jait_capture(0, (applyRes.status));
-    const data = (await applyRes.json()) as { error: string };
-    __jait_capture(1, (data.error));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_292_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
-    });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
-
-    const writeRes = await authedFetch(`${address}/api/project/write`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestFile, content: "after", surfaceId }),
-    });
-
-    __jait_capture(0, (writeRes.ok));
-    await __jait_captureResolved(1, (readFile(writableTestFile, "utf-8")));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_310_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const user = users.findById(ownerId)!;
-    const session = sessions.create({ userId: user.id, name: "No project yet" });
-    __jait_captureType(0, (session.projectId));
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId: session.id }),
-    });
-
-    __jait_capture(1, (openRes.ok));
-    const data = (await openRes.json()) as { projectId: string | null; projectRoot: string };
-    __jait_captureType(2, (data.projectId));
-    __jait_capture(3, (data.projectRoot), (writableTestRoot));
-
-    const updatedSession = sessions.getById(session.id, user.id);
-    __jait_captureType(4, (updatedSession?.projectId));
-    __jait_captureType(5, (updatedSession?.projectPath));
-    __jait_captureType(6, (projects.findByRoot(writableTestRoot, "gateway", user.id)));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_332_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const searchFile = join(writableTestRoot, "nested", "unique-search-target.ts");
-    await writeFile(searchFile, "const UNIQUE_SEARCH_TOKEN = 'project-search-regression';\n", "utf-8");
-
-    const authResponse = await authedFetch(`${address}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: `project-search-${Date.now()}`,
-        password: "password123",
-        invitation: users.createInvitation(ownerId),
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = {
+      inspect: vi.fn().mockResolvedValue({
+        status: "ready",
+        url: "/api/dev-proxy/4173/",
+        browserEvents: [],
+        logs: [],
+        screenshot: null,
+        page: {
+          title: "Preview App",
+          url: "http://127.0.0.1:4173/",
+          text: "Ready",
+          elements: [],
+          activeElement: null,
+          dialogs: [],
+          obstruction: null,
+        },
+        snapshot: "Title: Preview App",
+        target: {
+          selector: "#submit",
+          found: true,
+          obscured: true,
+        },
       }),
-    });
-    const { access_token: accessToken, user } = (await authResponse.json()) as {
-      access_token: string;
-      user: { id: string };
     };
-    const searchHeaders = { Authorization: `Bearer ${accessToken}` };
-    const searchSession = sessions.create({ userId: user.id, name: "Project search" });
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...searchHeaders },
-      body: JSON.stringify({ path: writableTestRoot, sessionId: searchSession.id }),
+    registerPreviewRoutes(app, config, {
+      previewService: previewService as any,
     });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
 
-    const unauthorizedSearch = await fetch(
-      `${address}/api/project/search?query=unique-search-target&mode=files&surfaceId=${encodeURIComponent(surfaceId)}`,
-    );
-    __jait_capture(0, (unauthorizedSearch.status));
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/preview/inspect/session-1?selector=%23submit",
+      headers: await authHeader(config.jwtSecret, "user-1"),
+    });
 
-    const fileSearchRes = await authedFetch(
-      `${address}/api/project/search?query=${encodeURIComponent("unique-search-target")}&mode=files&surfaceId=${encodeURIComponent(surfaceId)}`,
-      { headers: searchHeaders },
-    );
-    __jait_capture(1, (fileSearchRes.ok));
-    const fileSearchData = (await fileSearchRes.json()) as { files: { path: string; name: string }[] };
-    __jait_capture(2, (fileSearchData.files));
+    __jait_capture(0, (response.statusCode));
+    __jait_capture(1, (previewService.inspect.mock.calls));
+    __jait_capture(2, (response.json()));
 
-    const contentSearchRes = await authedFetch(
-      `${address}/api/project/search?query=${encodeURIComponent("project-search-regression")}&mode=content&surfaceId=${encodeURIComponent(surfaceId)}`,
-      { headers: searchHeaders },
-    );
-    __jait_capture(3, (contentSearchRes.ok));
-    const contentSearchData = (await contentSearchRes.json()) as { matches: { file: string; line: number; content: string }[] };
-    __jait_capture(4, (contentSearchData.matches));
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_4502();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_388_3": {
+case "tailstatic_packages_gateway_src_routes_preview_test_ts_121_3": {
 
-
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+async function authHeader(jwtSecret: string, userId: string) {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
 
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
 try {
 await (async()=>{
 
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" };
+    const previewService = {
+      inspect: vi.fn(),
+    };
+    const browserCollaborationService = {
+      getSessionByPreviewSessionId: vi.fn().mockReturnValue({ id: "bs_1", secretSafe: true }),
+    };
+    registerPreviewRoutes(app, config, {
+      previewService: previewService as any,
+      browserCollaborationService: browserCollaborationService as any,
     });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
 
-    const writeRes = await authedFetch(`${address}/api/project/write`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: "../outside.txt", content: "blocked", surfaceId }),
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/preview/inspect/session-1",
+      headers: await authHeader(config.jwtSecret, "user-1"),
     });
 
-    __jait_capture(0, (writeRes.status));
-    const data = (await writeRes.json()) as { error: string };
-    __jait_capture(1, (data.error));
+    __jait_capture(0, (response.statusCode));
+    __jait_capture(1, (previewService.inspect.mock.calls));
+    __jait_capture(2, (response.json()));
+
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_4502();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_407_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    // Open first project
-    const res1 = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId }),
-    });
-    const { surfaceId: first } = (await res1.json()) as { surfaceId: string };
-
-    // Open a different project (same session)
-    const secondProjectRoot = join(writableTestRoot, "second-project");
-    await mkdir(secondProjectRoot, { recursive: true });
-    const res2 = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: secondProjectRoot, sessionId }),
-    });
-    const { surfaceId: second } = (await res2.json()) as { surfaceId: string };
-
-    // First surface should be gone
-    __jait_captureType(0, (surfaceRegistry.getSurface(first)));
-    // Second should be running
-    const s = surfaceRegistry.getSurface(second);
-    __jait_captureType(1, (s));
-    __jait_capture(2, (s?.state));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_434_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const openRes = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId, openPanel: true }),
-    });
-    const { surfaceId } = (await openRes.json()) as { surfaceId: string };
-
-    await surfaceRegistry.stopAll("shutdown");
-
-    const state = sessionState.get(sessionId, ["project.panel"]);
-    __jait_capture(0, (state["project.panel"]), ({
-      open: true,
-      remotePath: writableTestRoot,
-      surfaceId,
-      nodeId: "gateway",
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_453_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const user = users.createUser(`project-open-${Date.now()}`, "password123");
-    const project = projects.create({
-      userId: user.id,
-      title: "jait",
-      rootPath: "/home/alice/jait",
-      nodeId: "gateway",
-    });
-    const session = sessions.create({
-      userId: user.id,
-      projectId: project.id,
-      projectPath: "/home/alice/jait",
-      name: "Current chat",
-    });
-
-    const res = await authedFetch(`${address}/api/project/open`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path: writableTestRoot, sessionId: session.id }),
-    });
-
-    __jait_capture(0, (res.ok));
-
-    const updatedSession = sessions.getById(session.id, user.id);
-    __jait_capture(1, (updatedSession?.projectPath), (writableTestRoot));
-
-    const updatedProject = projects.getById(project.id, user.id);
-    __jait_capture(2, (updatedProject?.rootPath));
-  
-})();
-
-} finally {
-await __jait_hook_4502();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_project_open_test_ts_483_3": {
-
-
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let address: string;
-let authToken: string;
-let ownerId: string;
-const authedFetch: typeof fetch = (input, init) => {
-    const headers = new Headers(init?.headers);
-    if (!headers.has("authorization")) headers.set("authorization", "Bearer " + authToken);
-    return fetch(input, { ...init, headers });
-  };
-let sessionId = "test-session-" + Date.now();
-let sessionState: SessionStateService;
-let surfaceRegistry: SurfaceRegistry;
-let sessions: SessionService;
-let projects: ProjectService;
-let projectState: ProjectStateService;
-let users: UserService;
-let writableTestRoot: string;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let writableTestFile: string;
-const __jait_hook_2058 = async () => {
-    const config = loadConfig();
-    const opened = await openDatabase(":memory:");
-    const { db } = opened;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-
-    sessions = new SessionService(db);
-    sessionState = new SessionStateService(db);
-    users = new UserService(db);
-    const owner = users.createUser("project-owner", "password123");
-    ownerId = owner.id;
-    authToken = await signAuthToken(owner, config.jwtSecret);
-    sessionId = sessions.create({ userId: ownerId }).id;
-    projects = new ProjectService(db);
-    projectState = new ProjectStateService(db);
-    surfaceRegistry = new SurfaceRegistry();
-    surfaceRegistry.register(new FileSystemSurfaceFactory());
-
-    writableTestRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-route-"));
-    execFileSync("git", ["init", "--quiet"], { cwd: writableTestRoot });
-    await mkdir(join(writableTestRoot, "data"), { recursive: true });
-
-    const ws = new WsControlPlane(config);
-
-    // Persist project state on surface start (same as index.ts)
-    surfaceRegistry.onSurfaceStarted = (id, surface) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        const projectRoot = (snap.metadata as Record<string, unknown>)?.projectRoot ?? null;
-        if (sid) {
-          sessionState.set(sid, { "project.panel": { open: true, remotePath: projectRoot, surfaceId: id } });
-        }
-      }
-    };
-
-    surfaceRegistry.onSurfaceStopped = (id, surface, context) => {
-      if (surface.type === "filesystem") {
-        const snap = surface.snapshot();
-        const sid = snap.sessionId ?? "";
-        if (sid && context?.reason !== "shutdown") {
-          sessionState.set(sid, { "project.panel": null });
-        }
-      }
-    };
-
-    app = await createServer(config, {
-      db,
-      sqlite,
-      sessionService: sessions,
-      userService: users,
-      projectService: projects,
-      surfaceRegistry,
-      sessionState,
-      projectState,
-      ws,
-    });
-
-    await app.listen({ port: 0, host: "127.0.0.1" });
-    const addr = app.server.address();
-    address = typeof addr === "string" ? addr : `http://127.0.0.1:${addr?.port}`;
-
-    await mkdir(join(writableTestRoot, "nested"), { recursive: true });
-    writableTestFile = join(writableTestRoot, "nested", "editable.txt");
-    await writeFile(writableTestFile, "before", "utf-8");
-  };
-const __jait_hook_4502 = async () => {
-    await surfaceRegistry.stopAll("test-cleanup");
-    await app?.close();
-    sqlite?.close();
-    if (writableTestRoot) await rm(writableTestRoot, { recursive: true, force: true });
-  };
-await __jait_hook_2058();
-try {
-await (async()=>{
-
-    const firstRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-first-"));
-    const secondRoot = await mkdtemp(join(__jait_fixture_dir, "jait-project-second-"));
-    const secondFile = join(secondRoot, "AGENTS.md");
-    await writeFile(secondFile, "project instructions", "utf-8");
-
-    try {
-      const firstOpen = await authedFetch(`${address}/api/project/open`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: firstRoot, sessionId: `first-${Date.now()}` }),
-      });
-      const { surfaceId: staleSurfaceId } = (await firstOpen.json()) as { surfaceId: string };
-
-      await authedFetch(`${address}/api/project/open`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: secondRoot, sessionId: `second-${Date.now()}` }),
-      });
-
-      const readRes = await authedFetch(
-        `${address}/api/project/read?path=${encodeURIComponent(secondFile)}&surfaceId=${encodeURIComponent(staleSurfaceId)}`,
-      );
-
-      __jait_capture(0, (readRes.ok));
-      const data = (await readRes.json()) as { content: string };
-      __jait_capture(1, (data.content));
-    } finally {
-      await rm(firstRoot, { recursive: true, force: true });
-      await rm(secondRoot, { recursive: true, force: true });
-    }
-  
-})();
-
-} finally {
-await __jait_hook_4502();
 }
 }
 

@@ -325,6 +325,15 @@ case 319: return await (await import('./tailstatic/fixture319.ts')).run(call.nam
 case 320: return await (await import('./tailstatic/fixture320.ts')).run(call.name);
 case 321: return await (await import('./tailstatic/fixture321.ts')).run(call.name);
 case 322: return await (await import('./tailstatic/fixture322.ts')).run(call.name);
+case 323: return await (await import('./tailstatic/fixture323.ts')).run(call.name);
+case 324: return await (await import('./tailstatic/fixture324.ts')).run(call.name);
+case 325: return await (await import('./tailstatic/fixture325.ts')).run(call.name);
+case 326: return await (await import('./tailstatic/fixture326.ts')).run(call.name);
+case 327: return await (await import('./tailstatic/fixture327.ts')).run(call.name);
+case 328: return await (await import('./tailstatic/fixture328.ts')).run(call.name);
+case 329: return await (await import('./tailstatic/fixture329.ts')).run(call.name);
+case 330: return await (await import('./tailstatic/fixture330.ts')).run(call.name);
+case 331: return await (await import('./tailstatic/fixture331.ts')).run(call.name);
  default: throw new Error('unknown tailstatic file');
  } } finally { console.log=log; }
 }

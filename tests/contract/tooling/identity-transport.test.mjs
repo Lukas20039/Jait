@@ -71,3 +71,33 @@ test('generated serialization retains nested Date types without rereading getter
     assert.equal(reads, 1, file);
   }
 });
+
+test('generated exception constructors use prototype identity for throws and rejections', async () => {
+  const Expected = class SameName extends Error {};
+  const Other = class SameName extends Error {};
+  class Child extends Expected {}
+  for (const file of fs.readdirSync(directory).filter(file => file.endsWith('.ts'))) {
+    const source = fs.readFileSync(new URL(file, directory), 'utf8');
+    const start = source.indexOf('const __jait_refs=');
+    const end = source.indexOf('const __jait_instance=', start);
+    assert.ok(start >= 0 && end > start, file);
+    const rows = [];
+    const context = { Error, Function, Symbol, __jait_boxed: value => ({ type: typeof value, name: value?.name, value }), __jait_record: row => rows.push(row) };
+    vm.runInNewContext(ts.transpile(source.slice(start, end)) + '\nglobalThis.thrown = __jait_thrown; globalThis.rejected = __jait_rejected;', context);
+    context.thrown(0, () => { throw new Expected('fixture failure'); }, Expected);
+    context.thrown(1, () => { throw new Other('fixture failure'); }, Expected);
+    context.thrown(2, () => { throw new Child('fixture failure'); }, Expected);
+    await context.rejected(3, Promise.reject(new Other('fixture failure')), Expected);
+    context.thrown(4, () => {}, Expected);
+    for (const row of rows.slice(0, 4)) {
+      assert.equal(row.threw, true, file);
+      assert.ok(Number.isInteger(row.expectedPrototype) && row.expectedPrototype > 0, file);
+      assert.ok(Array.isArray(row.prototypes), file);
+    }
+    assert.equal(rows[0].prototypes.includes(rows[0].expectedPrototype), true, file);
+    assert.equal(rows[1].prototypes.includes(rows[1].expectedPrototype), false, file);
+    assert.equal(rows[2].prototypes.includes(rows[2].expectedPrototype), true, file);
+    assert.equal(rows[3].prototypes.includes(rows[3].expectedPrototype), false, file);
+    assert.equal(rows[4].threw, false, file);
+  }
+});

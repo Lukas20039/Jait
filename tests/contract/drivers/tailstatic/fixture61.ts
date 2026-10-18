@@ -1,17 +1,16 @@
-// Translated fixture from packages/gateway/src/routes/channels.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/routes/browser-devtools.test.ts; expected literals are in tail_static.rs.
 
-import { openRawSqlite } from "../../../../packages/gateway/src/db/sqlite-shim.js";
-import { ChannelManager, type ReplyGenerator } from "../../../../packages/gateway/src/channels/manager.js";
-import { registerChannelRoutes } from "../../../../packages/gateway/src/routes/channels.js";
-import type { ChannelConnector, ChannelConnectorEvents, ChannelStatus, OutboundMessage } from "../../../../packages/gateway/src/channels/types.js";
-import type { LLMConfig } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { once } from "node:events";
+
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import type { AppConfig } from "../../../../packages/gateway/src/config.js";
+import { registerBrowserDevToolsRoutes } from "../../../../packages/gateway/src/routes/browser-devtools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/channels.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/browser-devtools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,626 +37,263 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_45_3": {
+case "tailstatic_packages_gateway_src_routes_browser_devtools_test_ts_46_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
-try {
-await (async()=>{
-
-    const res = await app.inject({ method: "GET", url: "/api/channels" });
-    __jait_capture(0, (res.statusCode));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_50_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
-try {
-await (async()=>{
-
-    const res = await app.inject({ method: "GET", url: "/api/channels", headers: await authHeaders() });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (res.json()[0]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_56_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
-try {
-await (async()=>{
-
-    const res = await app.inject({ method: "POST", url: "/api/channels/whatsapp/start", headers: await authHeaders() });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (res.json()));
-    __jait_capture(2, (res.json().qr));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_63_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
-try {
-await (async()=>{
-
-    await app.inject({ method: "POST", url: "/api/channels/whatsapp/start", headers: await authHeaders() });
-    const res = await app.inject({ method: "GET", url: "/api/channels/whatsapp/status", headers: await authHeaders() });
-    __jait_capture(0, (res.json()));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_69_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
-try {
-await (async()=>{
-
-    const res = await app.inject({
-      method: "PATCH",
-      url: "/api/channels/whatsapp/config",
-      headers: await authHeaders(),
-      payload: { allowedSenders: ["123"], respondToAll: true },
+const { WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
+const cleanup: (() => Promise<unknown>)[] = [];
+async function fixture() {
+  const upstream = Fastify();
+  const assets = vi.fn();
+  upstream.get("/devtools/*", (req, reply) => { assets(req.url); return reply.type("text/html").send("<html>DevTools</html>"); });
+  const endpoint = await upstream.listen({ port: 0, host: "127.0.0.1" });
+  cleanup.push(() => upstream.close());
+  const wss = new WebSocketServer({ noServer: true });
+  upstream.server.on("upgrade", (request, socket, head) => {
+    __jait_capture(0, (request.url));
+    wss.handleUpgrade(request, socket, head, ws => {
+      ws.on("message", data => ws.send(data));
     });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (res.json()));
+  });
+  cleanup.push(async () => { for (const ws of wss.clients) ws.terminate(); wss.close(); });
+  let active = true;
+  const previewService = {
+    getDevToolsConnection: vi.fn(async () => {
+      if (!active) throw new Error("Take control first");
+      return { endpoint, targetId: "page-1", browserId: "browser-1", revision: 1 };
+    }),
+    isDevToolsConnectionActive: vi.fn(() => active),
+  };
+  const sessionService = { getById: vi.fn((id, userId) => id === "session-1" && userId === "user-1" ? { id } : null) };
+  const config = { ...loadConfig(), jwtSecret: "devtools-test-secret" };
+  const app = Fastify({ routerOptions: { maxParamLength: 2048 } });
+  registerBrowserDevToolsRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+  cleanup.push(() => app.close());
+  const headers = { authorization: "Bearer " + await signAuthToken({ id: "user-1", username: "owner" }, config.jwtSecret) };
+  const otherHeaders = { authorization: "Bearer " + await signAuthToken({ id: "user-2", username: "other" }, config.jwtSecret) };
+  const issue = () => app.inject({ method: "POST", url: "/api/preview/devtools", payload: { sessionId: "session-1" }, headers });
+  return { app, headers, otherHeaders, previewService, issue, assets, revoke: () => { active = false; } };
+}
+const __jait_hook_399 = async () => { for (const close of cleanup.splice(0).reverse()) await close(); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = await fixture();
+    const request = { method: "POST" as const, url: "/api/preview/devtools", payload: { sessionId: "session-1" } };
+    __jait_capture(1, ((await f.app.inject(request)).statusCode));
+    __jait_capture(2, ((await f.app.inject({ ...request, headers: f.otherHeaders })).statusCode));
+    __jait_capture(3, (f.previewService.getDevToolsConnection.mock.calls));
+    f.revoke();
+    __jait_capture(4, ((await f.issue()).statusCode));
   
 })();
 
 } finally {
-
+await __jait_hook_399();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_80_3": {
+case "tailstatic_packages_gateway_src_routes_browser_devtools_test_ts_56_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
+const { WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
+const cleanup: (() => Promise<unknown>)[] = [];
+async function fixture() {
+  const upstream = Fastify();
+  const assets = vi.fn();
+  upstream.get("/devtools/*", (req, reply) => { assets(req.url); return reply.type("text/html").send("<html>DevTools</html>"); });
+  const endpoint = await upstream.listen({ port: 0, host: "127.0.0.1" });
+  cleanup.push(() => upstream.close());
+  const wss = new WebSocketServer({ noServer: true });
+  upstream.server.on("upgrade", (request, socket, head) => {
+    __jait_capture(0, (request.url));
+    wss.handleUpgrade(request, socket, head, ws => {
+      ws.on("message", data => ws.send(data));
+    });
+  });
+  cleanup.push(async () => { for (const ws of wss.clients) ws.terminate(); wss.close(); });
+  let active = true;
+  const previewService = {
+    getDevToolsConnection: vi.fn(async () => {
+      if (!active) throw new Error("Take control first");
+      return { endpoint, targetId: "page-1", browserId: "browser-1", revision: 1 };
+    }),
+    isDevToolsConnectionActive: vi.fn(() => active),
+  };
+  const sessionService = { getById: vi.fn((id, userId) => id === "session-1" && userId === "user-1" ? { id } : null) };
+  const config = { ...loadConfig(), jwtSecret: "devtools-test-secret" };
+  const app = Fastify({ routerOptions: { maxParamLength: 2048 } });
+  registerBrowserDevToolsRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+  cleanup.push(() => app.close());
+  const headers = { authorization: "Bearer " + await signAuthToken({ id: "user-1", username: "owner" }, config.jwtSecret) };
+  const otherHeaders = { authorization: "Bearer " + await signAuthToken({ id: "user-2", username: "other" }, config.jwtSecret) };
+  const issue = () => app.inject({ method: "POST", url: "/api/preview/devtools", payload: { sessionId: "session-1" }, headers });
+  return { app, headers, otherHeaders, previewService, issue, assets, revoke: () => { active = false; } };
 }
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
+const __jait_hook_399 = async () => { for (const close of cleanup.splice(0).reverse()) await close(); };
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
+
 try {
 await (async()=>{
 
-    const res = await app.inject({ method: "GET", url: "/api/channels/telegram/status", headers: await authHeaders() });
-    __jait_capture(0, (res.statusCode));
+    const f = await fixture();
+    const grant = (await f.issue()).json();
+    __jait_capture(1, (grant.url));
+    __jait_capture(2, ((await f.app.inject(grant.url)).body));
+    const prefix = grant.url.replace("/devtools_app.html", "");
+    for (const path of ["/json/list", "/../json/list", "/%2e%2e/secret.js", "/https://example.com/x.js"]) {
+      __jait_capture(3, ([403, 404]), ((await f.app.inject(prefix + path)).statusCode));
+    }
+    __jait_capture(4, (f.assets.mock.calls));
+    __jait_capture(5, ((await f.app.inject(grant.url.replace(/preview\/[^/]+/, "preview/invalid"))).statusCode));
+    f.revoke();
+    __jait_capture(6, ((await f.app.inject(grant.url)).statusCode));
   
 })();
 
 } finally {
-
+await __jait_hook_399();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_85_3": {
+case "tailstatic_packages_gateway_src_routes_browser_devtools_test_ts_71_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
+const { WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
+const cleanup: (() => Promise<unknown>)[] = [];
+async function fixture() {
+  const upstream = Fastify();
+  const assets = vi.fn();
+  upstream.get("/devtools/*", (req, reply) => { assets(req.url); return reply.type("text/html").send("<html>DevTools</html>"); });
+  const endpoint = await upstream.listen({ port: 0, host: "127.0.0.1" });
+  cleanup.push(() => upstream.close());
+  const wss = new WebSocketServer({ noServer: true });
+  upstream.server.on("upgrade", (request, socket, head) => {
+    __jait_capture(0, (request.url));
+    wss.handleUpgrade(request, socket, head, ws => {
+      ws.on("message", data => ws.send(data));
+    });
+  });
+  cleanup.push(async () => { for (const ws of wss.clients) ws.terminate(); wss.close(); });
+  let active = true;
+  const previewService = {
+    getDevToolsConnection: vi.fn(async () => {
+      if (!active) throw new Error("Take control first");
+      return { endpoint, targetId: "page-1", browserId: "browser-1", revision: 1 };
+    }),
+    isDevToolsConnectionActive: vi.fn(() => active),
+  };
+  const sessionService = { getById: vi.fn((id, userId) => id === "session-1" && userId === "user-1" ? { id } : null) };
+  const config = { ...loadConfig(), jwtSecret: "devtools-test-secret" };
+  const app = Fastify({ routerOptions: { maxParamLength: 2048 } });
+  registerBrowserDevToolsRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+  cleanup.push(() => app.close());
+  const headers = { authorization: "Bearer " + await signAuthToken({ id: "user-1", username: "owner" }, config.jwtSecret) };
+  const otherHeaders = { authorization: "Bearer " + await signAuthToken({ id: "user-2", username: "other" }, config.jwtSecret) };
+  const issue = () => app.inject({ method: "POST", url: "/api/preview/devtools", payload: { sessionId: "session-1" }, headers });
+  return { app, headers, otherHeaders, previewService, issue, assets, revoke: () => { active = false; } };
 }
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
+const __jait_hook_399 = async () => { for (const close of cleanup.splice(0).reverse()) await close(); };
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-const __jait_hook_1860 = async () => { ({ app } = await buildApp()); };
-await __jait_hook_1860();
+
 try {
 await (async()=>{
 
-    await app.inject({ method: "POST", url: "/api/channels/whatsapp/start", headers: await authHeaders() });
-    const res = await app.inject({ method: "POST", url: "/api/channels/whatsapp/stop", headers: await authHeaders() });
-    __jait_capture(0, (res.json()));
+    const f = await fixture();
+    const grant = (await f.issue()).json();
+    const url = "/api/preview/devtools/" + grant.id;
+    __jait_capture(1, ((await f.app.inject({ method: "DELETE", url, headers: f.otherHeaders })).statusCode));
+    __jait_capture(2, ((await f.app.inject({ method: "DELETE", url, headers: f.headers })).statusCode));
+    __jait_capture(3, ((await f.app.inject(grant.url)).statusCode));
   
 })();
 
 } finally {
-
+await __jait_hook_399();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_101_3": {
+case "tailstatic_packages_gateway_src_routes_browser_devtools_test_ts_80_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
+const { WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
+const cleanup: (() => Promise<unknown>)[] = [];
+async function fixture() {
+  const upstream = Fastify();
+  const assets = vi.fn();
+  upstream.get("/devtools/*", (req, reply) => { assets(req.url); return reply.type("text/html").send("<html>DevTools</html>"); });
+  const endpoint = await upstream.listen({ port: 0, host: "127.0.0.1" });
+  cleanup.push(() => upstream.close());
+  const wss = new WebSocketServer({ noServer: true });
+  upstream.server.on("upgrade", (request, socket, head) => {
+    __jait_capture(0, (request.url));
+    wss.handleUpgrade(request, socket, head, ws => {
+      ws.on("message", data => ws.send(data));
+    });
+  });
+  cleanup.push(async () => { for (const ws of wss.clients) ws.terminate(); wss.close(); });
+  let active = true;
+  const previewService = {
+    getDevToolsConnection: vi.fn(async () => {
+      if (!active) throw new Error("Take control first");
+      return { endpoint, targetId: "page-1", browserId: "browser-1", revision: 1 };
+    }),
+    isDevToolsConnectionActive: vi.fn(() => active),
+  };
+  const sessionService = { getById: vi.fn((id, userId) => id === "session-1" && userId === "user-1" ? { id } : null) };
+  const config = { ...loadConfig(), jwtSecret: "devtools-test-secret" };
+  const app = Fastify({ routerOptions: { maxParamLength: 2048 } });
+  registerBrowserDevToolsRoutes(app, config, { previewService: previewService as any, sessionService: sessionService as any });
+  cleanup.push(() => app.close());
+  const headers = { authorization: "Bearer " + await signAuthToken({ id: "user-1", username: "owner" }, config.jwtSecret) };
+  const otherHeaders = { authorization: "Bearer " + await signAuthToken({ id: "user-2", username: "other" }, config.jwtSecret) };
+  const issue = () => app.inject({ method: "POST", url: "/api/preview/devtools", payload: { sessionId: "session-1" }, headers });
+  return { app, headers, otherHeaders, previewService, issue, assets, revoke: () => { active = false; } };
 }
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
+const __jait_hook_399 = async () => { for (const close of cleanup.splice(0).reverse()) await close(); };
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-let mgr: Awaited<ReturnType<typeof buildApp>>["mgr"];
-async function patch(payload: Record<string, unknown>) {
-    return app.inject({ method: "PATCH", url: "/api/channels/whatsapp/config", headers: await authHeaders(), payload });
-  }
-const __jait_hook_4133 = async () => { ({ app, mgr } = await buildApp()); };
-await __jait_hook_4133();
+
 try {
 await (async()=>{
 
-    const res = await patch({ token: "secret-bot-token" });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (res.json()));
-    __jait_captureType(2, (res.json().token));
-    __jait_capture(3, (mgr.getConfig("whatsapp").token));
-
-    const list = await app.inject({ method: "GET", url: "/api/channels", headers: await authHeaders() });
-    __jait_capture(4, (list.json()[0].config));
-    __jait_captureType(5, (list.json()[0].config.token));
+    const f = await fixture();
+    const base = await f.app.listen({ port: 0, host: "127.0.0.1" });
+    const grant = (await f.issue()).json();
+    const client = new WebSocket(base.replace("http:", "ws:") + grant.socketUrl);
+    cleanup.push(async () => { client.terminate(); });
+    await once(client, "open");
+    const message = once(client, "message");
+    client.send(JSON.stringify({ id: 1, method: "DOM.getDocument" }));
+    __jait_capture(1, (String((await message)[0])));
+    const closed = once(client, "close");
+    f.revoke();
+    await closed;
+    const rejected = new WebSocket(base.replace("http:", "ws:") + grant.socketUrl);
+    rejected.on("error", () => {});
+    const denied = await once(rejected, "unexpected-response");
+    __jait_capture(2, (denied[1].statusCode));
+    denied[1].resume();
+    rejected.terminate();
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_113_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-let mgr: Awaited<ReturnType<typeof buildApp>>["mgr"];
-async function patch(payload: Record<string, unknown>) {
-    return app.inject({ method: "PATCH", url: "/api/channels/whatsapp/config", headers: await authHeaders(), payload });
-  }
-const __jait_hook_4133 = async () => { ({ app, mgr } = await buildApp()); };
-await __jait_hook_4133();
-try {
-await (async()=>{
-
-    await patch({ token: "secret-bot-token" });
-    await patch({ respondToAll: true });
-    __jait_capture(0, (mgr.getConfig("whatsapp").token));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_119_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-let mgr: Awaited<ReturnType<typeof buildApp>>["mgr"];
-async function patch(payload: Record<string, unknown>) {
-    return app.inject({ method: "PATCH", url: "/api/channels/whatsapp/config", headers: await authHeaders(), payload });
-  }
-const __jait_hook_4133 = async () => { ({ app, mgr } = await buildApp()); };
-await __jait_hook_4133();
-try {
-await (async()=>{
-
-    await patch({ token: "secret-bot-token" });
-    const res = await patch({ token: null });
-    __jait_capture(0, (res.json()));
-    __jait_capture(1, (mgr.getConfig("whatsapp").token));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_126_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-let mgr: Awaited<ReturnType<typeof buildApp>>["mgr"];
-async function patch(payload: Record<string, unknown>) {
-    return app.inject({ method: "PATCH", url: "/api/channels/whatsapp/config", headers: await authHeaders(), payload });
-  }
-const __jait_hook_4133 = async () => { ({ app, mgr } = await buildApp()); };
-await __jait_hook_4133();
-try {
-await (async()=>{
-
-    const res = await app.inject({ method: "POST", url: "/api/channels/whatsapp/pair", headers: await authHeaders() });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (res.json().error));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_channels_test_ts_132_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-class FakeConnector implements ChannelConnector {
-  readonly id = "whatsapp";
-  readonly label = "WhatsApp";
-  private _status: ChannelStatus = "stopped";
-  async start(events: ChannelConnectorEvents) { this._status = "qr"; events.onStatus("qr", { qr: "data:image/png;base64,abc" }); }
-  async stop() { this._status = "stopped"; }
-  async send(_msg: OutboundMessage) {}
-  status() { return this._status; }
-  currentQr() { return this._status === "qr" ? "data:image/png;base64,abc" : null; }
-}
-const noopGen: ReplyGenerator = { async generate() { return ""; } };
-const fakeLLM = { baseUrl: "http://x", apiKey: "x", model: "m" } as LLMConfig;
-const config = { jwtSecret: "test-secret" } as AppConfig;
-const authUser = { id: "user-1", username: "tester" };
-async function authHeaders() {
-  const token = await signAuthToken(authUser, config.jwtSecret);
-  return { Authorization: `Bearer ${token}` };
-}
-async function buildApp() {
-  const sqlite = await openRawSqlite(":memory:");
-  const mgr = new ChannelManager({ sqlite, resolveLLM: () => fakeLLM, replyGenerator: noopGen });
-  mgr.register(new FakeConnector());
-  const app = Fastify();
-  registerChannelRoutes(app, config, mgr);
-  return { app, mgr };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof buildApp>>["app"];
-let mgr: Awaited<ReturnType<typeof buildApp>>["mgr"];
-async function patch(payload: Record<string, unknown>) {
-    return app.inject({ method: "PATCH", url: "/api/channels/whatsapp/config", headers: await authHeaders(), payload });
-  }
-const __jait_hook_4133 = async () => { ({ app, mgr } = await buildApp()); };
-await __jait_hook_4133();
-try {
-await (async()=>{
-
-    const res = await app.inject({ method: "POST", url: "/api/channels/nope/pair", headers: await authHeaders() });
-    __jait_capture(0, (res.statusCode));
-  
-})();
-
-} finally {
-
+await __jait_hook_399();
 }
 }
 

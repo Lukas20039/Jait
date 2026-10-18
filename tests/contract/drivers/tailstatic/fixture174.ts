@@ -1,17 +1,14 @@
-// Translated fixture from packages/gateway/src/services/jait-llm.test.ts; expected literals are in tail_static.rs.
-
-import {
-  JaitConfigError,
-  callJaitLlmCompletion,
-  normalizeOpenRouterModelId,
-  resolveJaitLlmConfig,
-} from "../../../../packages/gateway/src/services/jait-llm.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/git-stacked.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, writeFile, readFile, rm, chmod, mkdir, lstat, symlink, readlink } from "node:fs/promises";
+import { execSync } from "node:child_process";
+import { join } from "node:path";
+import { homedir, platform, tmpdir } from "node:os";
+import { GitService, isManagedWorktreePath } from "../../../../packages/gateway/src/services/git.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/jait-llm.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/git-stacked.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,1122 +35,711 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_41_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    const llm = resolveJaitLlmConfig({
-      config,
-      apiKeys: { OPENROUTER_API_KEY: "or-key" },
-      requestedModel: "gpt-4o",
-      jaitBackend: "openrouter",
-    });
+    // Create a change
+    await writeFile(join(repoDir, "file.txt"), "hello");
 
-    __jait_capture(0, (llm.openaiApiKey));
-    __jait_capture(1, (llm.openaiBaseUrl));
-    __jait_capture(2, (llm.openaiModel));
+    // Make commit fail via a pre-commit hook that rejects
+    const hookPath = join(repoDir, ".git", "hooks", "pre-commit");
+    await writeFile(hookPath, "#!/bin/sh\nexit 1\n");
+    if (platform() !== "win32") await chmod(hookPath, 0o755);
+
+    const error = await captureError(svc.runStackedAction(repoDir, "commit", "test commit"));
+
+    __jait_instance(0, error, Error);
+
+    // Files should NOT be left staged
+    const staged = git(repoDir, "diff --cached --name-only");
+    __jait_capture(1, (staged));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_62_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_59_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    const llm = resolveJaitLlmConfig({
-      config,
-      apiKeys: { OPENROUTER_API_KEY: "or-key" },
-      requestedModel: "anthropic/claude-sonnet-4-20250514",
-      jaitBackend: "openrouter",
-    });
+    await writeFile(join(repoDir, "file.txt"), "hello");
 
-    __jait_capture(0, (llm.openaiModel));
+    // Pass undefined message so it auto-generates, but sabotage the commit
+    // by making the repo read-only objects dir
+    // Instead: use a commit-msg hook that rejects
+    const hookPath = join(repoDir, ".git", "hooks", "commit-msg");
+    await writeFile(hookPath, "#!/bin/sh\nexit 1\n");
+    if (platform() !== "win32") await chmod(hookPath, 0o755);
+
+    const error = await captureError(svc.runStackedAction(repoDir, "commit", "test commit"));
+
+    __jait_instance(0, error, Error);
+
+    // Verify nothing is left staged
+    const staged = git(repoDir, "diff --cached --name-only");
+    __jait_capture(1, (staged));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_73_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_78_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    __jait_capture(0, (normalizeOpenRouterModelId("mimo v2 pro")));
-    __jait_capture(1, (normalizeOpenRouterModelId("MiMo V3 Pro")));
-    __jait_capture(2, (normalizeOpenRouterModelId("hunter-alpha")));
-    __jait_capture(3, (normalizeOpenRouterModelId("xiaomi/mimo-v2-flash")));
+    await writeFile(join(repoDir, "file.txt"), "hello");
+
+    const result = await svc.runStackedAction(repoDir, "commit", "test: add file");
+
+    __jait_capture(0, (result.commit.status));
+    // No staged or unstaged files should remain
+    const status = git(repoDir, "status --porcelain");
+    __jait_capture(1, (status));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_80_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_89_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    // Regression: a swarm specialist inheriting the parent session's ACP
-    // model name ("opus") while routed through the user's Ollama backend
-    // used to reach Ollama's /v1/chat/completions with model="opus", which
-    // 404s ("model 'opus' not found") deep inside the LLM call — the
-    // specialist (and often the whole swarm turn) then silently produced
-    // nothing. This must fail fast and clearly instead.
-    __jait_thrown(0, () =>
-      resolveJaitLlmConfig({
-        config,
-        requestedModel: "opus",
-        jaitBackend: "ollama",
-      }), (JaitConfigError));
+    await writeFile(join(repoDir, "staged.txt"), "staged");
+    await writeFile(join(repoDir, "unstaged-a.txt"), "a");
+    await writeFile(join(repoDir, "unstaged-b.txt"), "b");
+
+    // Stage only the first file; the other two remain unstaged.
+    git(repoDir, "add staged.txt");
+
+    const result = await svc.runStackedAction(repoDir, "commit", "test: staged only");
+
+    __jait_capture(0, (result.commit.status));
+    // Only the staged file should be in the commit.
+    __jait_capture(1, (git(repoDir, "show --name-only --format= HEAD")));
+    // The unstaged files must NOT be committed nor pushed; they stay in the tree.
+    const status = git(repoDir, "status --porcelain");
+    __jait_capture(2, (status));
+    __jait_capture(3, (status));
+    __jait_capture(4, (status));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_96_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_109_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    // Regression guard: OmniRoute model ids almost always contain a slash
-    // ("openai/gpt-4o", "auto/coding"). The OpenRouter branch keys off
-    // `requestedModel.includes("/")`, so without an explicit omniroute
-    // early-return every OmniRoute request would silently be sent to
-    // openrouter.ai — with the user's OpenRouter key, or none at all.
-    const llm = resolveJaitLlmConfig({
-      config,
-      apiKeys: { OPENROUTER_API_KEY: "or-key" },
-      requestedModel: "openai/gpt-4o",
-      jaitBackend: "omniroute",
-    });
+    const releaseCheckoutDir = join(repoDir, ".jait", "release-checkout-20260729");
+    await mkdir(releaseCheckoutDir, { recursive: true });
+    git(releaseCheckoutDir, "init");
+    await writeFile(join(repoDir, "file.txt"), "hello");
 
-    __jait_capture(0, (llm.backend));
-    __jait_capture(1, (llm.openaiBaseUrl));
-    __jait_capture(2, (llm.openaiModel));
+    const result = await svc.runStackedAction(repoDir, "commit", "test: ignore local checkout");
+
+    __jait_capture(0, (result.commit.status));
+    __jait_capture(1, (git(repoDir, "show --name-only --format= HEAD")));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_114_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_121_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    const llm = resolveJaitLlmConfig({
-      config,
-      requestedModel: "gpt-4o",
-      jaitBackend: "omniroute",
-    });
+    const releaseCheckoutDir = join(repoDir, ".jait", "release-checkout-20260729");
+    await mkdir(releaseCheckoutDir, { recursive: true });
+    git(releaseCheckoutDir, "init");
+    git(releaseCheckoutDir, "config user.email test@test.com");
+    git(releaseCheckoutDir, "config user.name Test");
+    await writeFile(join(releaseCheckoutDir, "release.txt"), "release");
+    git(releaseCheckoutDir, "add release.txt");
+    git(releaseCheckoutDir, "commit -m release");
+    git(repoDir, "add .jait/release-checkout-20260729");
+    git(repoDir, "commit -m \"track local release checkout\"");
 
-    __jait_capture(0, (llm.openaiModel));
+    git(releaseCheckoutDir, "checkout --orphan empty");
+    git(releaseCheckoutDir, "rm -rf .");
+    await writeFile(join(repoDir, "file.txt"), "hello");
+
+    const result = await svc.runStackedAction(repoDir, "commit", "test: ignore stale checkout");
+
+    __jait_capture(0, (result.commit.status));
+    __jait_capture(1, (git(repoDir, "show --name-only --format= HEAD")));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_124_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_143_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    const llm = resolveJaitLlmConfig({ config, jaitBackend: "omniroute" });
+    const packageDir = join(repoDir, "packages", "one");
+    await mkdir(packageDir, { recursive: true });
+    await writeFile(join(packageDir, "inside.txt"), "inside");
+    await writeFile(join(repoDir, "outside.txt"), "outside");
 
-    __jait_capture(0, (llm.openaiModel));
-    // Placeholder key: OmniRoute serves keyless free-tier providers, but an
-    // empty bearer breaks some upstreams.
-    __jait_capture(1, (llm.openaiApiKey));
+    const result = await svc.runStackedAction(packageDir, "commit", "test: scoped commit");
+
+    __jait_capture(0, (result.commit.status));
+    __jait_capture(1, (git(repoDir, "show --name-only --format= HEAD")));
+    __jait_capture(2, (git(repoDir, "status --porcelain")));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_133_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_156_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    const llm = resolveJaitLlmConfig({
-      config: { ...config, omnirouteBaseUrl: "http://gateway:20128/v1", omnirouteApiKey: "cfg-key" },
-      apiKeys: { OMNIROUTE_BASE_URL: "http://nas:20128/v1/", OMNIROUTE_API_KEY: "user-key" },
-      requestedModel: "auto/coding",
-      jaitBackend: "omniroute",
-    });
+    const bareRemote = await mkdtemp(join(__jait_fixture_dir, "git-sync-remote-"));
+    git(bareRemote, "init --bare");
+    git(repoDir, `remote add origin "${bareRemote}"`);
 
-    __jait_capture(0, (llm.openaiBaseUrl));
-    __jait_capture(1, (llm.openaiApiKey));
+    const result = await svc.sync(repoDir);
+
+    __jait_capture(0, (result.pull.status));
+    __jait_capture(1, (result.push.status));
+    __jait_capture(2, (result.upstreamBranch));
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_145_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_168_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
-
+let repoDir: string;
+let svc: GitService;
+const __jait_hook_758 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-stacked-test-"));
+    git(repoDir, "init");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    // Create an initial commit so HEAD exists
+    await writeFile(join(repoDir, "init.txt"), "init");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
+    svc = new GitService();
+  };
+const __jait_hook_1178 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
+  };
+await __jait_hook_758();
 try {
 await (async()=>{
 
-    for (const alias of ["default", "fable", "sonnet", "opus", "haiku", "opusplan"]) {
-      __jait_thrown(0, () =>
-        resolveJaitLlmConfig({ config, requestedModel: alias, jaitBackend: "openai" }), (JaitConfigError));
+    const bareRemote = await mkdtemp(join(__jait_fixture_dir, "git-version-bump-remote-"));
+    const collaboratorDir = await mkdtemp(join(__jait_fixture_dir, "git-version-bump-peer-"));
+    try {
+      git(bareRemote, "init --bare");
+      git(repoDir, `remote add origin "${bareRemote}"`);
+
+      await writeFile(join(repoDir, "package.json"), `${JSON.stringify({ name: "retry-test", version: "1.0.0" }, null, 2)}\n`);
+      git(repoDir, "add package.json");
+      git(repoDir, "commit -m \"chore: add package\"");
+      git(repoDir, "push -u origin HEAD");
+
+      git(collaboratorDir, `clone "${bareRemote}" .`);
+      git(collaboratorDir, "config user.email test@test.com");
+      git(collaboratorDir, "config user.name Test");
+      await writeFile(join(collaboratorDir, "README.md"), "collaborator change\n");
+      git(collaboratorDir, "add README.md");
+      git(collaboratorDir, "commit -m \"docs: add readme\"");
+      git(collaboratorDir, "push origin HEAD");
+
+      const result = await svc.runVersionBumpCommitPushFlow(repoDir);
+      const branch = git(repoDir, "rev-parse --abbrev-ref HEAD");
+
+      __jait_capture(0, (result.version.previousVersion));
+      __jait_capture(1, (result.version.nextVersion));
+      __jait_capture(2, (result.sync.status));
+      __jait_capture(3, (result.git.commit.status));
+      __jait_capture(4, (result.git.push.status));
+
+      const packageJson = JSON.parse(await readFile(join(repoDir, "package.json"), "utf-8")) as { version: string };
+      __jait_capture(5, (packageJson.version));
+      __jait_capture(6, (git(repoDir, `show origin/${branch}:README.md`)));
+      __jait_capture(7, (git(repoDir, `show origin/${branch}:package.json`)));
+    } finally {
+      await rm(collaboratorDir, { recursive: true, force: true });
+      await rm(bareRemote, { recursive: true, force: true });
     }
   
 })();
 
 } finally {
-await __jait_hook_316();
+await __jait_hook_1178();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_153_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_210_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const apiKeys = {
-      JAIT_BACKEND_INSTANCES: serializeJaitBackendInstances([
-        {
-          id: "desktop",
-          type: "ollama",
-          name: "Desktop",
-          baseUrl: "http://desktop:11434",
-          numCtx: 65536,
-        },
-        {
-          id: "server",
-          type: "ollama",
-          name: "Server",
-          baseUrl: "http://server:11434",
-          numCtx: 131072,
-        },
-      ]),
-    };
-    const llm = resolveJaitLlmConfig({
-      config,
-      apiKeys,
-      requestedModel: encodeJaitModelId("ollama", "server", "qwen3:32b"),
-      jaitBackend: "openai",
-    });
-
-    __jait_capture(0, (llm.backend));
-    __jait_capture(1, (llm.openaiBaseUrl));
-    __jait_capture(2, (llm.openaiModel));
-    __jait_capture(3, (llm.numCtx));
+    const repoDir = await mkdtemp(join(__jait_fixture_dir, "git-disk-growth-test-"));
+    const worktreeDir = `${repoDir}-worktree`;
+    try {
+      git(repoDir, "init");
+      git(repoDir, "config user.email test@test.com");
+      git(repoDir, "config user.name Test");
+      await writeFile(join(repoDir, ".gitignore"), "node_modules/\njait-win/\ntarget/\n*.local\n");
+      await writeFile(join(repoDir, "tracked.local"), "tracked despite ignore");
+      await writeFile(join(repoDir, "untracked.txt"), "keep");
+      await writeFile(join(repoDir, "file with spaces.txt"), "keep spaces");
+      await symlink("jait-win", join(repoDir, "build-link"));
+      await mkdir(join(repoDir, "nested", "target"), { recursive: true });
+      await mkdir(join(repoDir, "node_modules"));
+      await mkdir(join(repoDir, "jait-win"));
+      await writeFile(join(repoDir, "nested", "target", "build.bin"), Buffer.alloc(1024 * 1024));
+      await writeFile(join(repoDir, "node_modules", "dep.js"), "dependency");
+      await writeFile(join(repoDir, "jait-win", "disk.bin"), Buffer.alloc(1024 * 1024));
+      await writeFile(join(repoDir, "secret.local"), "excluded");
+      git(repoDir, "add .gitignore");
+      git(repoDir, "add -f tracked.local");
+      git(repoDir, "commit -m initial");
+      await new GitService().createWorktree(repoDir, git(repoDir, "branch --show-current"),
+        "jait/disk-growth", worktreeDir, { fastPath: true });
+      for (const path of ["node_modules", "jait-win", "nested/target", "secret.local"]) {
+        await __jait_captureRejected(0, (lstat(join(worktreeDir, path))));
+      }
+      __jait_capture(1, (await readFile(join(worktreeDir, "tracked.local"), "utf8")));
+      __jait_capture(2, (await readFile(join(worktreeDir, "untracked.txt"), "utf8")));
+      __jait_capture(3, (await readFile(join(worktreeDir, "file with spaces.txt"), "utf8")));
+      __jait_capture(4, ((await lstat(join(worktreeDir, "build-link"))).isSymbolicLink()));
+      __jait_capture(5, (await readlink(join(worktreeDir, "build-link"))));
+      __jait_capture(6, ((await lstat(join(worktreeDir, ".git"))).isFile()));
+    } finally {
+      await rm(worktreeDir, { recursive: true, force: true });
+      await rm(repoDir, { recursive: true, force: true });
+    }
   
 })();
 
 } finally {
-await __jait_hook_316();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_185_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_249_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const apiKeys = {
-      JAIT_BACKEND_INSTANCES: serializeJaitBackendInstances([
-        {
-          id: "glm",
-          type: "openai",
-          name: "GLM",
-          baseUrl: "https://api.example.com/v1/",
-          apiKey: "instance-key",
-        },
-      ]),
-    };
-    const llm = resolveJaitLlmConfig({
-      config,
-      apiKeys,
-      requestedModel: encodeJaitModelId("openai", "glm", "glm-5"),
-      jaitBackend: "ollama",
-    });
+    const repoDir = await mkdtemp(join(__jait_fixture_dir, "git-fast-worktree-test-"));
+    const worktreeDir = `${repoDir}-worktree`;
+    try {
+      git(repoDir, "init");
+      git(repoDir, "config user.email test@test.com");
+      git(repoDir, "config user.name Test");
+      await writeFile(join(repoDir, "tracked.txt"), "tracked");
+      await writeFile(join(repoDir, "untracked.txt"), "copied");
+      git(repoDir, "add tracked.txt");
+      git(repoDir, "commit -m initial");
+      const baseBranch = git(repoDir, "branch --show-current");
 
-    __jait_capture(0, (llm.backend));
-    __jait_capture(1, (llm.openaiBaseUrl));
-    __jait_capture(2, (llm.openaiApiKey));
-    __jait_capture(3, (llm.openaiModel));
+      await new GitService().createWorktree(
+        repoDir,
+        baseBranch,
+        "jait/fast-worktree-test",
+        worktreeDir,
+        { fastPath: true },
+      );
+
+      __jait_capture(0, ((await lstat(join(worktreeDir, ".git"))).isFile()));
+      __jait_capture(1, (await readFile(join(worktreeDir, ".git"), "utf8")));
+      __jait_capture(2, (await readFile(join(worktreeDir, "tracked.txt"), "utf8")));
+      __jait_capture(3, (await readFile(join(worktreeDir, "untracked.txt"), "utf8")));
+      __jait_capture(4, (git(worktreeDir, "status --porcelain")));
+    } finally {
+      await rm(worktreeDir, { recursive: true, force: true });
+      await rm(repoDir, { recursive: true, force: true });
+    }
   
 })();
 
 } finally {
-await __jait_hook_316();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_210_3": {
+case "tailstatic_packages_gateway_src_services_git_stacked_test_ts_281_3": {
 
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+async function captureError(run: Promise<unknown>): Promise<unknown> {
+  try {
+    await run;
+    return null;
+  } catch (error) {
+    return error;
+  }
 }
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_thrown(0, () => resolveJaitLlmConfig({
-      config,
-      apiKeys: { JAIT_BACKEND_INSTANCES: "[]" },
-      requestedModel: encodeJaitModelId("ollama", "gone", "qwen3"),
-      jaitBackend: "ollama",
-    }));
+    const managedRoot = join(homedir(), ".jait", "worktrees");
+
+    __jait_capture(0, (isManagedWorktreePath(join(managedRoot, "repo", "thread"))));
+    __jait_capture(1, (isManagedWorktreePath(managedRoot)));
+    __jait_capture(2, (isManagedWorktreePath(`${managedRoot}-copy/repo/thread`)));
   
 })();
 
 } finally {
-await __jait_hook_316();
+
 }
 }
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_221_3": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn().mockResolvedValue(
-      completionsResponse({
-        choices: [{ finish_reason: "stop", message: { content: "  hello world  " } }],
-      }),
-    );
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await __jait_captureResolved(0, (callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 512 })));
-  
-})();
-
-} finally {
-await __jait_hook_316();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_234_3": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn().mockResolvedValue(
-      completionsResponse({
-        choices: [
-          {
-            finish_reason: "stop",
-            message: { content: [{ type: "text", text: "part one " }, { type: "text", text: "part two" }] },
-          },
-        ],
-      }),
-    );
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await __jait_captureResolved(0, (callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 512 })));
-  
-})();
-
-} finally {
-await __jait_hook_316();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_252_3": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // Regression: reasoning models (GLM thinking, DeepSeek-R1, Qwen thinking)
-    // put their thought in `message.reasoning` / `reasoning_content` and leave
-    // `content` empty with finish_reason "length" when the budget runs out
-    // mid-thought. This used to surface as "" and made e.g. chat title
-    // generation silently fall back to the user's first message.
-    const fetchMock = vi.fn().mockResolvedValue(
-      completionsResponse({
-        choices: [
-          {
-            finish_reason: "length",
-            message: { content: "", reasoning: "the user wants me to name this chat..." },
-          },
-        ],
-      }),
-    );
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
-    __jait_capture(1, (fetchMock.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_316();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_276_3": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn().mockResolvedValue(
-      completionsResponse({
-        choices: [
-          {
-            finish_reason: "length",
-            message: { content: "", reasoning_content: "thinking..." },
-          },
-        ],
-      }),
-    );
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
-  
-})();
-
-} finally {
-await __jait_hook_316();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_294_3": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn().mockResolvedValue(
-      completionsResponse({ choices: [{ finish_reason: "error", message: { content: "" } }] }),
-    );
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
-  
-})();
-
-} finally {
-await __jait_hook_316();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_306_1": {
-
-const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const originalFetch = globalThis.fetch;
-function ollamaLlm() {
-  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
-}
-function completionsResponse(body: unknown) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-const config = {
-  port: 0,
-  wsPort: 0,
-  host: "127.0.0.1",
-  logLevel: "silent",
-  corsOrigin: "*",
-  nodeEnv: "test",
-  jwtSecret: "test",
-  llmProvider: "ollama" as const,
-  ollamaUrl: "http://localhost:11434",
-  ollamaModel: "dummy",
-  openaiApiKey: "",
-  openaiModel: "gpt-4o",
-  openaiBaseUrl: "https://api.openai.com/v1",
-  contextWindow: 128000,
-  hookSecret: "test",
-  heartbeatCron: "* * * * *",
-  whisperUrl: "http://localhost:8178",
-};
-const __jait_hook_316 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
-
-try {
-await (async()=>{
-
-  __jait_thrown(0, () => resolveJaitLlmConfig({config, jaitBackend:"opencode-go"}));
-  const resolved = resolveJaitLlmConfig({config, jaitBackend:"opencode-go",apiKeys:{OPENCODE_GO_API_KEY:"key"}});
-  __jait_capture(1, (resolved.openaiModel));
-  __jait_capture(2, (resolved.openaiBaseUrl));
-
-})();
-
-} finally {
-await __jait_hook_316();
-}
-
 
 break;
 }

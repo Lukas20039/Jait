@@ -1,10 +1,20 @@
-// Translated fixture from packages/gateway/src/routes/update-failure.test.ts; expected literals are in tail_static.rs.
-import { describeUpdateFailure } from "../../../../packages/gateway/src/routes/update-failure.js";
+// Translated fixture from packages/gateway/src/routes/thread-consent.test.ts; expected literals are in tail_static.rs.
+
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
+import { ConsentManager } from "../../../../packages/gateway/src/security/consent-manager.js";
+import { ControlAccess } from "../../../../packages/gateway/src/security/control-access.js";
+import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+import type { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import type { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { DeviceRegistry } from "../../../../packages/gateway/src/services/device-registry.js";
+import { registerMobileRoutes } from "../../../../packages/gateway/src/routes/mobile.js";
+import { registerConsentRoutes } from "../../../../packages/gateway/src/routes/consent.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/update-failure.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/thread-consent.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -31,298 +41,195 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_routes_thread_consent_test_ts_39_3": {
 
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
-
+let app: ReturnType<typeof Fastify>;
+let manager: ConsentManager;
+let owner: { authorization: string };
+let stranger: { authorization: string };
+let id: string;
+let decision: ReturnType<ConsentManager["requestConsent"]>;
+const __jait_hook_919 = async () => {
+    manager = new ConsentManager();
+    app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "thread-consent-test-secret" };
+    const sessions = { getById: () => undefined } as unknown as SessionService;
+    const threads = { getById: (id: string) => id === "owned-thread" ? { id, userId: "owner" } : undefined } as unknown as ThreadService;
+    const access = new ControlAccess(sessions, undefined, manager, threads);
+    registerConsentRoutes(app, manager, { write: vi.fn() } as any, { config, access });
+    registerMobileRoutes(app, { deviceRegistry: new DeviceRegistry(), consentManager: manager, sessionService: sessions, threadService: threads, config });
+    owner = { authorization: "Bearer " + await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret) };
+    stranger = { authorization: "Bearer " + await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret) };
+    decision = manager.requestConsent({
+      sessionId: "owned-thread", actionId: "thread-tool", toolName: "file.patch", summary: "Edit assigned source file",
+      preview: {}, risk: "medium", policy: { consentLevel: "once", description: "Ask first", knownTool: true, source: "profile" },
+    });
+    id = manager.listPending()[0]!.id;
+  };
+const __jait_hook_2212 = async () => { manager.cancelAll(); await app.close(); };
+await __jait_hook_919();
 try {
 await (async()=>{
 
-    const err = installError(
-      [
-        "npm error code ETARGET",
-        "npm error notarget No matching version found for @jait/shared@^0.1.83.",
-        "npm error notarget In most cases you or one of your dependencies are requesting",
-        "npm error notarget a package version that doesn't exist.",
-      ].join("\n"),
-    );
-
-    const failure = describeUpdateFailure(err);
-
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.hint));
-    __jait_capture(2, (failure.detail));
+    const list = await app.inject({ url: "/api/consent/pending", headers: owner });
+    __jait_capture(0, (list.statusCode));
+    __jait_capture(1, (list.json().requests.map((entry: { id: string }) => entry.id)), ([id]));
+    const approval = await app.inject({ method: "POST", url: `/api/consent/${id}/approve`, headers: owner });
+    __jait_capture(2, (approval.statusCode));
+    __jait_capture(3, ((await decision).approved));
   
 })();
 
 } finally {
-
+await __jait_hook_2212();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_33_3": {
+case "tailstatic_packages_gateway_src_routes_thread_consent_test_ts_48_3": {
 
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
-
+let app: ReturnType<typeof Fastify>;
+let manager: ConsentManager;
+let owner: { authorization: string };
+let stranger: { authorization: string };
+let id: string;
+let decision: ReturnType<ConsentManager["requestConsent"]>;
+const __jait_hook_919 = async () => {
+    manager = new ConsentManager();
+    app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "thread-consent-test-secret" };
+    const sessions = { getById: () => undefined } as unknown as SessionService;
+    const threads = { getById: (id: string) => id === "owned-thread" ? { id, userId: "owner" } : undefined } as unknown as ThreadService;
+    const access = new ControlAccess(sessions, undefined, manager, threads);
+    registerConsentRoutes(app, manager, { write: vi.fn() } as any, { config, access });
+    registerMobileRoutes(app, { deviceRegistry: new DeviceRegistry(), consentManager: manager, sessionService: sessions, threadService: threads, config });
+    owner = { authorization: "Bearer " + await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret) };
+    stranger = { authorization: "Bearer " + await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret) };
+    decision = manager.requestConsent({
+      sessionId: "owned-thread", actionId: "thread-tool", toolName: "file.patch", summary: "Edit assigned source file",
+      preview: {}, risk: "medium", policy: { consentLevel: "once", description: "Ask first", knownTool: true, source: "profile" },
+    });
+    id = manager.listPending()[0]!.id;
+  };
+const __jait_hook_2212 = async () => { manager.cancelAll(); await app.close(); };
+await __jait_hook_919();
 try {
 await (async()=>{
 
-    const err = installError("something went wrong", "ETARGET");
-    __jait_capture(0, (describeUpdateFailure(err).code));
+    const list = await app.inject({ url: "/api/consent/pending", headers: stranger });
+    __jait_capture(0, (list.json().requests));
+    const approval = await app.inject({ method: "POST", url: `/api/consent/${id}/approve`, headers: stranger });
+    __jait_capture(1, (approval.statusCode));
+    __jait_capture(2, (manager.listPending()));
   
 })();
 
 } finally {
-
+await __jait_hook_2212();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_38_3": {
+case "tailstatic_packages_gateway_src_routes_thread_consent_test_ts_56_3": {
 
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
-
+let app: ReturnType<typeof Fastify>;
+let manager: ConsentManager;
+let owner: { authorization: string };
+let stranger: { authorization: string };
+let id: string;
+let decision: ReturnType<ConsentManager["requestConsent"]>;
+const __jait_hook_919 = async () => {
+    manager = new ConsentManager();
+    app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "thread-consent-test-secret" };
+    const sessions = { getById: () => undefined } as unknown as SessionService;
+    const threads = { getById: (id: string) => id === "owned-thread" ? { id, userId: "owner" } : undefined } as unknown as ThreadService;
+    const access = new ControlAccess(sessions, undefined, manager, threads);
+    registerConsentRoutes(app, manager, { write: vi.fn() } as any, { config, access });
+    registerMobileRoutes(app, { deviceRegistry: new DeviceRegistry(), consentManager: manager, sessionService: sessions, threadService: threads, config });
+    owner = { authorization: "Bearer " + await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret) };
+    stranger = { authorization: "Bearer " + await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret) };
+    decision = manager.requestConsent({
+      sessionId: "owned-thread", actionId: "thread-tool", toolName: "file.patch", summary: "Edit assigned source file",
+      preview: {}, risk: "medium", policy: { consentLevel: "once", description: "Ask first", knownTool: true, source: "profile" },
+    });
+    id = manager.listPending()[0]!.id;
+  };
+const __jait_hook_2212 = async () => { manager.cancelAll(); await app.close(); };
+await __jait_hook_919();
 try {
 await (async()=>{
 
-    const failure = describeUpdateFailure(
-      installError("npm error 404 Not Found - GET https://registry.npmjs.org/@jait%2fgateway"),
-    );
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.hint));
+    const url = `/api/mobile/consent/${id}/approve`;
+    __jait_capture(0, ((await app.inject({ method: "POST", url })).statusCode));
+    __jait_capture(1, ((await app.inject({ method: "POST", url, headers: stranger })).statusCode));
+    __jait_capture(2, (manager.listPending()));
+    __jait_capture(3, ((await app.inject({ method: "POST", url, headers: owner })).statusCode));
+    __jait_capture(4, ((await decision).approved));
   
 })();
 
 } finally {
-
+await __jait_hook_2212();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_46_3": {
+case "tailstatic_packages_gateway_src_routes_thread_consent_test_ts_65_3": {
 
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
-
+let app: ReturnType<typeof Fastify>;
+let manager: ConsentManager;
+let owner: { authorization: string };
+let stranger: { authorization: string };
+let id: string;
+let decision: ReturnType<ConsentManager["requestConsent"]>;
+const __jait_hook_919 = async () => {
+    manager = new ConsentManager();
+    app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "thread-consent-test-secret" };
+    const sessions = { getById: () => undefined } as unknown as SessionService;
+    const threads = { getById: (id: string) => id === "owned-thread" ? { id, userId: "owner" } : undefined } as unknown as ThreadService;
+    const access = new ControlAccess(sessions, undefined, manager, threads);
+    registerConsentRoutes(app, manager, { write: vi.fn() } as any, { config, access });
+    registerMobileRoutes(app, { deviceRegistry: new DeviceRegistry(), consentManager: manager, sessionService: sessions, threadService: threads, config });
+    owner = { authorization: "Bearer " + await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret) };
+    stranger = { authorization: "Bearer " + await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret) };
+    decision = manager.requestConsent({
+      sessionId: "owned-thread", actionId: "thread-tool", toolName: "file.patch", summary: "Edit assigned source file",
+      preview: {}, risk: "medium", policy: { consentLevel: "once", description: "Ask first", knownTool: true, source: "profile" },
+    });
+    id = manager.listPending()[0]!.id;
+  };
+const __jait_hook_2212 = async () => { manager.cancelAll(); await app.close(); };
+await __jait_hook_919();
 try {
 await (async()=>{
 
-    const failure = describeUpdateFailure(
-      installError("npm error code EACCES\nnpm error syscall mkdir\nnpm error Error: EACCES: permission denied, mkdir '/usr/lib/node_modules'"),
-    );
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.hint));
+    __jait_capture(0, ((await app.inject({ method: "POST", url: `/api/consent/${id}/approve` })).statusCode));
+    __jait_capture(1, (manager.listPending()));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_54_3": {
-
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const failure = describeUpdateFailure(
-      installError("npm error code EAI_AGAIN\nnpm error network request to https://registry.npmjs.org failed"),
-    );
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.hint));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_62_3": {
-
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const failure = describeUpdateFailure(
-      installError("npm error code EBADENGINE\nnpm error engine Unsupported engine\nnpm error notsup Required: {\"node\":\">=22\"}"),
-    );
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.hint));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_70_3": {
-
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const failure = describeUpdateFailure(installError("npm error something entirely unexpected"));
-    __jait_capture(0, (failure.code));
-    __jait_captureType(1, (failure.hint));
-    __jait_capture(2, (failure.detail));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_77_3": {
-
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const long = `${"npm warn progress ".repeat(500)}npm error code ETARGET`;
-    const failure = describeUpdateFailure(new Error(long));
-    __jait_capture(0, (failure.detail.length));
-    __jait_capture(1, (failure.detail.endsWith("npm error code ETARGET")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_update_failure_test_ts_84_3": {
-
-
-function installError(output: string, code?: string): Error & { code?: string } {
-  const err = new Error(`Command failed: npm install -g @jait/gateway@0.1.857\n${output}`) as Error & {
-    code?: string;
-  };
-  if (code) err.code = code;
-  const stderr = output.split("\n").filter((line) => line.startsWith("npm error")).join("\n");
-  (err as unknown as { stderr: string }).stderr = stderr;
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const failure = describeUpdateFailure("npm error code ETARGET");
-    __jait_capture(0, (failure.code));
-    __jait_capture(1, (failure.detail));
-  
-})();
-
-} finally {
-
+await __jait_hook_2212();
 }
 }
 

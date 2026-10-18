@@ -1,14 +1,14 @@
-// Translated fixture from packages/gateway/src/tools/agent-tool-execution.test.ts; expected literals are in tail_static.rs.
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createAgentSpawnTool } from "../../../../packages/gateway/src/tools/agent-tools.js";
-import { createAgentTool } from "../../../../packages/gateway/src/tools/core/agent.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/terminal-waiting.test.ts; expected literals are in tail_static.rs.
+import { createTerminalRunTool, getManagedTerminalExecution } from "../../../../packages/gateway/src/tools/terminal-tools.js";
+import { backgroundCommandMonitor } from "../../../../packages/gateway/src/services/background-command-monitor.js";
+import { TerminalSurfaceFactory, type TerminalSurface } from "../../../../packages/gateway/src/surfaces/terminal.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-tool-execution.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/terminal-waiting.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,208 +35,249 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each0": {
+case "tailstatic_packages_gateway_src_terminal_waiting_test_ts_38_3": {
 
 
-function completion(delta: unknown, finishReason: string) {
-  return new Response([
-    `data: ${JSON.stringify({ choices: [{ delta }] })}\n\n`,
-    `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: finishReason }] })}\n\n`,
-    "data: [DONE]\n\n",
-  ].join(""), { headers: { "Content-Type": "text/event-stream" } });
+function setup() {
+  const listeners = new Set<(data: string) => void>();
+  const writes: string[] = [];
+  const surface = {
+    id: "term-waiting", type: "terminal", state: "running",
+    shellIntegrationReady: true,
+    touch() {},
+    addOutputListener(cb: (data: string) => void) { listeners.add(cb); },
+    removeOutputListener(cb: (data: string) => void) { listeners.delete(cb); },
+    write(data: string) { writes.push(data); },
+    snapshot() { return { metadata: { shell: "/bin/bash" } }; },
+  } as unknown as TerminalSurface;
+  const tool = createTerminalRunTool({ getSurface: () => surface } as unknown as SurfaceRegistry);
+  const notify = vi.fn();
+  backgroundCommandMonitor.setCompletionHandler(notify);
+  return {
+    writes, notify,
+    emit(data: string) { for (const cb of [...listeners]) cb(data); },
+    run(isBackground: boolean, timeout = 1000) {
+      return tool.execute({ command: "build-app", terminalId: surface.id, isBackground, timeout },
+        { sessionId: "s-waiting", actionId: "a-waiting", projectRoot: process.cwd(), requestedBy: "test" });
+    },
+  };
 }
-const context: ToolContext = {
-  sessionId: "agent-execution-tests", actionId: "agent-action", requestedBy: "test",
-  projectRoot: "/owned/project", userId: "owner-1", providerId: "jait",
-  executionNodeId: "owned-node", sandboxContainerName: "owned-thread-sandbox",
+const __jait_hook_1481 = () => {
+  backgroundCommandMonitor.clearForTests();
+  vi.useRealTimers();
 };
-const __jait_hook_872 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-const _name = "agent";
-const createTool = createAgentTool;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    const execute = vi.fn().mockResolvedValue({ ok: true, message: "Owned project inspected" });
-    registry.register({
-      name: "fixture.inspect", description: "Inspect this owned project fixture",
-      parameters: { type: "object", properties: {} }, execute,
-    });
-    const fetch = vi.fn()
-      .mockResolvedValueOnce(completion({ tool_calls: [{ index: 0, id: "inspect-call", type: "function", function: { name: "fixture_inspect", arguments: "{}" } }] }, "tool_calls"))
-      .mockResolvedValueOnce(completion({ content: "[INFORM] Inspection complete" }, "stop"));
-    vi.stubGlobal("fetch", fetch);
-    const onNestedEvent = vi.fn();
-    const tool = createTool({
-      toolRegistry: registry,
-      getLLMConfig: () => ({ openaiApiKey: "fixture-key", openaiBaseUrl: "https://model.example.test/v1", openaiModel: "fixture-model", contextWindow: 32768 }),
-    });
-    const result = await tool.execute({ prompt: "Inspect the owned project", description: "Inspect project fixture", allowedTools: "fixture.inspect" }, { ...context, onNestedEvent });
-    __jait_capture(0, (result));
-    __jait_capture(1, (execute.mock.calls), ([context.executionNodeId,context.sandboxContainerName,context.projectRoot,context.userId]));
-    __jait_capture(2, (onNestedEvent.mock.calls));
-    __jait_capture(3, (onNestedEvent.mock.calls));
+    vi.useFakeTimers();
+    const env = setup();
+    let returned = false;
+    const run = env.run(true).then(result => { returned = true; return result; });
+    await vi.advanceTimersByTimeAsync(20);
+    __jait_capture(0, (returned));
+    env.emit("Listening on http://localhost:5173\r\n");
+    await vi.advanceTimersByTimeAsync(1000);
+    __jait_capture(1, ((await run).data));
+    __jait_capture(2, (env.notify.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_872();
-}
+await __jait_hook_1481();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each0": {
+case "tailstatic_packages_gateway_src_terminal_waiting_test_ts_51_3": {
 
 
-function completion(delta: unknown, finishReason: string) {
-  return new Response([
-    `data: ${JSON.stringify({ choices: [{ delta }] })}\n\n`,
-    `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: finishReason }] })}\n\n`,
-    "data: [DONE]\n\n",
-  ].join(""), { headers: { "Content-Type": "text/event-stream" } });
+function setup() {
+  const listeners = new Set<(data: string) => void>();
+  const writes: string[] = [];
+  const surface = {
+    id: "term-waiting", type: "terminal", state: "running",
+    shellIntegrationReady: true,
+    touch() {},
+    addOutputListener(cb: (data: string) => void) { listeners.add(cb); },
+    removeOutputListener(cb: (data: string) => void) { listeners.delete(cb); },
+    write(data: string) { writes.push(data); },
+    snapshot() { return { metadata: { shell: "/bin/bash" } }; },
+  } as unknown as TerminalSurface;
+  const tool = createTerminalRunTool({ getSurface: () => surface } as unknown as SurfaceRegistry);
+  const notify = vi.fn();
+  backgroundCommandMonitor.setCompletionHandler(notify);
+  return {
+    writes, notify,
+    emit(data: string) { for (const cb of [...listeners]) cb(data); },
+    run(isBackground: boolean, timeout = 1000) {
+      return tool.execute({ command: "build-app", terminalId: surface.id, isBackground, timeout },
+        { sessionId: "s-waiting", actionId: "a-waiting", projectRoot: process.cwd(), requestedBy: "test" });
+    },
+  };
 }
-const context: ToolContext = {
-  sessionId: "agent-execution-tests", actionId: "agent-action", requestedBy: "test",
-  projectRoot: "/owned/project", userId: "owner-1", providerId: "jait",
-  executionNodeId: "owned-node", sandboxContainerName: "owned-thread-sandbox",
+const __jait_hook_1481 = () => {
+  backgroundCommandMonitor.clearForTests();
+  vi.useRealTimers();
 };
-const __jait_hook_872 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-const _name = "agent";
-const createTool = createAgentTool;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const getLLMConfig = vi.fn();
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
-    const tool = createTool({ toolRegistry: new ToolRegistry(), getLLMConfig });
-    const result = await tool.execute({ prompt: "Inspect the owned project", description: "Inspect project fixture", allowedTools: "missing.inspect" }, context);
+    vi.useFakeTimers();
+    const env = setup();
+    const run = env.run(true);
+    await vi.advanceTimersByTimeAsync(20);
+    env.emit("startup failed\r\n\x1b]633;D;1\x07\x1b]633;B\x07");
+    await vi.advanceTimersByTimeAsync(1000);
+    const result = await run;
     __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (fetch.mock.calls));
-    __jait_capture(3, (getLLMConfig.mock.calls));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (env.notify.mock.calls));
+    __jait_captureType(3, (getManagedTerminalExecution("term-waiting")));
   
 })();
 
 } finally {
-await __jait_hook_872();
-}
+await __jait_hook_1481();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each1": {
+case "tailstatic_packages_gateway_src_terminal_waiting_test_ts_65_3": {
 
 
-function completion(delta: unknown, finishReason: string) {
-  return new Response([
-    `data: ${JSON.stringify({ choices: [{ delta }] })}\n\n`,
-    `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: finishReason }] })}\n\n`,
-    "data: [DONE]\n\n",
-  ].join(""), { headers: { "Content-Type": "text/event-stream" } });
+function setup() {
+  const listeners = new Set<(data: string) => void>();
+  const writes: string[] = [];
+  const surface = {
+    id: "term-waiting", type: "terminal", state: "running",
+    shellIntegrationReady: true,
+    touch() {},
+    addOutputListener(cb: (data: string) => void) { listeners.add(cb); },
+    removeOutputListener(cb: (data: string) => void) { listeners.delete(cb); },
+    write(data: string) { writes.push(data); },
+    snapshot() { return { metadata: { shell: "/bin/bash" } }; },
+  } as unknown as TerminalSurface;
+  const tool = createTerminalRunTool({ getSurface: () => surface } as unknown as SurfaceRegistry);
+  const notify = vi.fn();
+  backgroundCommandMonitor.setCompletionHandler(notify);
+  return {
+    writes, notify,
+    emit(data: string) { for (const cb of [...listeners]) cb(data); },
+    run(isBackground: boolean, timeout = 1000) {
+      return tool.execute({ command: "build-app", terminalId: surface.id, isBackground, timeout },
+        { sessionId: "s-waiting", actionId: "a-waiting", projectRoot: process.cwd(), requestedBy: "test" });
+    },
+  };
 }
-const context: ToolContext = {
-  sessionId: "agent-execution-tests", actionId: "agent-action", requestedBy: "test",
-  projectRoot: "/owned/project", userId: "owner-1", providerId: "jait",
-  executionNodeId: "owned-node", sandboxContainerName: "owned-thread-sandbox",
+const __jait_hook_1481 = () => {
+  backgroundCommandMonitor.clearForTests();
+  vi.useRealTimers();
 };
-const __jait_hook_872 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-const _name = "agent.spawn";
-const createTool = createAgentSpawnTool;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    const execute = vi.fn().mockResolvedValue({ ok: true, message: "Owned project inspected" });
-    registry.register({
-      name: "fixture.inspect", description: "Inspect this owned project fixture",
-      parameters: { type: "object", properties: {} }, execute,
-    });
-    const fetch = vi.fn()
-      .mockResolvedValueOnce(completion({ tool_calls: [{ index: 0, id: "inspect-call", type: "function", function: { name: "fixture_inspect", arguments: "{}" } }] }, "tool_calls"))
-      .mockResolvedValueOnce(completion({ content: "[INFORM] Inspection complete" }, "stop"));
-    vi.stubGlobal("fetch", fetch);
-    const onNestedEvent = vi.fn();
-    const tool = createTool({
-      toolRegistry: registry,
-      getLLMConfig: () => ({ openaiApiKey: "fixture-key", openaiBaseUrl: "https://model.example.test/v1", openaiModel: "fixture-model", contextWindow: 32768 }),
-    });
-    const result = await tool.execute({ prompt: "Inspect the owned project", description: "Inspect project fixture", allowedTools: "fixture.inspect" }, { ...context, onNestedEvent });
-    __jait_capture(0, (result));
-    __jait_capture(1, (execute.mock.calls), ([context.executionNodeId,context.sandboxContainerName,context.projectRoot,context.userId]));
-    __jait_capture(2, (onNestedEvent.mock.calls));
-    __jait_capture(3, (onNestedEvent.mock.calls));
+    vi.useFakeTimers();
+    const env = setup();
+    const run = env.run(false, 100);
+    await vi.advanceTimersByTimeAsync(20);
+    env.emit("building first stage\r\n");
+    await vi.advanceTimersByTimeAsync(600);
+    const result = await run;
+    __jait_capture(0, (env.writes.some(value => value.includes("\x03"))));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (getManagedTerminalExecution("term-waiting")));
+    env.emit("build complete\r\n\x1b]633;D;0\x07\x1b]633;B\x07");
+    await vi.advanceTimersByTimeAsync(100);
+    __jait_capture(3, (env.notify.mock.calls));
+    __jait_capture(4, (env.notify.mock.calls[0]![0]));
+    __jait_capture(5, (env.notify.mock.calls[0]![0].output));
+    __jait_captureType(6, (getManagedTerminalExecution("term-waiting")));
   
 })();
 
 } finally {
-await __jait_hook_872();
-}
+await __jait_hook_1481();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each1": {
+case "tailstatic_packages_gateway_src_terminal_waiting_test_ts_89_1": {
 
 
-function completion(delta: unknown, finishReason: string) {
-  return new Response([
-    `data: ${JSON.stringify({ choices: [{ delta }] })}\n\n`,
-    `data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: finishReason }] })}\n\n`,
-    "data: [DONE]\n\n",
-  ].join(""), { headers: { "Content-Type": "text/event-stream" } });
+function setup() {
+  const listeners = new Set<(data: string) => void>();
+  const writes: string[] = [];
+  const surface = {
+    id: "term-waiting", type: "terminal", state: "running",
+    shellIntegrationReady: true,
+    touch() {},
+    addOutputListener(cb: (data: string) => void) { listeners.add(cb); },
+    removeOutputListener(cb: (data: string) => void) { listeners.delete(cb); },
+    write(data: string) { writes.push(data); },
+    snapshot() { return { metadata: { shell: "/bin/bash" } }; },
+  } as unknown as TerminalSurface;
+  const tool = createTerminalRunTool({ getSurface: () => surface } as unknown as SurfaceRegistry);
+  const notify = vi.fn();
+  backgroundCommandMonitor.setCompletionHandler(notify);
+  return {
+    writes, notify,
+    emit(data: string) { for (const cb of [...listeners]) cb(data); },
+    run(isBackground: boolean, timeout = 1000) {
+      return tool.execute({ command: "build-app", terminalId: surface.id, isBackground, timeout },
+        { sessionId: "s-waiting", actionId: "a-waiting", projectRoot: process.cwd(), requestedBy: "test" });
+    },
+  };
 }
-const context: ToolContext = {
-  sessionId: "agent-execution-tests", actionId: "agent-action", requestedBy: "test",
-  projectRoot: "/owned/project", userId: "owner-1", providerId: "jait",
-  executionNodeId: "owned-node", sandboxContainerName: "owned-thread-sandbox",
+const __jait_hook_1481 = () => {
+  backgroundCommandMonitor.clearForTests();
+  vi.useRealTimers();
 };
-const __jait_hook_872 = () => { vi.unstubAllGlobals(); };
-/*__jait_scope_open__*/{
-const _name = "agent.spawn";
-const createTool = createAgentSpawnTool;
-/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const getLLMConfig = vi.fn();
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
-    const tool = createTool({ toolRegistry: new ToolRegistry(), getLLMConfig });
-    const result = await tool.execute({ prompt: "Inspect the owned project", description: "Inspect project fixture", allowedTools: "missing.inspect" }, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (fetch.mock.calls));
-    __jait_capture(3, (getLLMConfig.mock.calls));
-  
+  const registry = new SurfaceRegistry();
+  registry.register(new TerminalSurfaceFactory());
+  const tool = createTerminalRunTool(registry);
+  let terminalId: string | undefined;
+  const completion = vi.fn();
+  backgroundCommandMonitor.setCompletionHandler(completion);
+  try {
+    const result = await tool.execute({
+      command: `node -e "console.log('stage-one');setTimeout(()=>console.log('stage-two'),500)"`,
+      timeout: 100,
+    }, { sessionId: "s-real-wait", actionId: "a-real-wait", projectRoot: process.cwd(), requestedBy: "test" });
+    terminalId = (result.data as { terminalId: string }).terminalId;
+    __jait_capture(0, (result.data));
+    await vi.waitFor(() => __jait_capture(1, (completion.mock.calls)), { timeout: 5000 });
+    __jait_capture(2, (completion.mock.calls[0]![0]));
+    __jait_capture(3, (completion.mock.calls[0]![0].output));
+  } finally {
+    if (terminalId) await registry.stopSurface(terminalId);
+  }
+
 })();
 
 } finally {
-await __jait_hook_872();
+await __jait_hook_1481();
 }
-}
-}
+
 
 break;
 }

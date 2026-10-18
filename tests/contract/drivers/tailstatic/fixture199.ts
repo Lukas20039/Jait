@@ -1,11 +1,17 @@
-// Translated fixture from packages/gateway/src/services/repo-proposals.test.ts; expected literals are in tail_static.rs.
-import { openDatabase } from "../../../../packages/gateway/src/db/connection.js";
-import { RepoProposalService } from "../../../../packages/gateway/src/services/repo-proposals.js";
+// Translated fixture from packages/gateway/src/services/provider-reset-windows.test.ts; expected literals are in tail_static.rs.
+import {
+  deriveOllamaResetWindow,
+  describeOllamaResetSource,
+  parseOllamaResetSource,
+  OLLAMA_MONTH_MINS,
+  OLLAMA_SESSION_MINS,
+  OLLAMA_WEEK_MINS,
+} from "../../../../packages/gateway/src/services/provider-reset-windows.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/repo-proposals.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-reset-windows.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -32,72 +38,36 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_33_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_16_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+
 try {
 await (async()=>{
 
-    const first = service.create({
-      repoId: "repo-1",
-      userId: "user-1",
-      message: "First follow-up",
+    const now = new Date("2026-03-11T09:37:00.000Z");
+    // Ollama's activity period ends "now", which is what used to leak into resetsAt.
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now,
+      utilization: 0.42,
+      anchorIso: now.toISOString(),
     });
-    const second = service.create({
-      repoId: "repo-1",
-      userId: "user-1",
-      message: "Second follow-up",
-      priority: "high",
-      dueDate: "2026-05-12",
-      tags: ["ui", "todo"],
-      sourceThreadId: "thread-2",
-      sourceThreadTitle: "Thread Two",
-    });
-
-    const proposals = service.listByRepo("repo-1");
-    __jait_capture(0, (proposals));
-    __jait_capture(1, (proposals[0]?.id), (second.id));
-    __jait_capture(2, (proposals[1]?.id), (first.id));
-    __jait_capture(3, (proposals[0]?.sourceThreadTitle));
-    __jait_capture(4, (proposals[0]?.priority));
-    __jait_capture(5, (proposals[0]?.dueDate));
-    __jait_capture(6, (proposals[0]?.tags), (JSON.stringify(["ui", "todo"])));
-    __jait_captureType(7, (proposals[0]?.completedAt));
-    __jait_capture(8, (proposals[0]?.completionHistory));
+    __jait_capture(0, (new Date(window.resetsAt).getTime()), (now.getTime()));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+    __jait_capture(3, (window.source));
   
 })();
 
@@ -108,76 +78,32 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_62_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_31_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+
 try {
 await (async()=>{
 
-    const created = service.create({
-      repoId: "repo-1",
-      userId: "user-1",
-      message: "Original",
+    // The anchor Ollama reports is week-aligned; using it directly would shift a
+    // 5-hour grid by three hours every week.
+    const first = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.4,
+      anchorIso: "2026-03-09T00:00:00.000Z",
     });
-
-    const updated = service.update(created.id, {
-      message: "Updated prompt",
-      status: "in_progress",
-      priority: "low",
-      dueDate: "2026-05-20",
-      tags: ["cleanup"],
+    const second = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-18T09:37:00.000Z"),
+      utilization: 0.4,
+      anchorIso: "2026-03-16T00:00:00.000Z",
     });
-    __jait_capture(0, (updated?.message));
-    __jait_capture(1, (updated?.status));
-    __jait_capture(2, (updated?.priority));
-    __jait_capture(3, (updated?.dueDate));
-    __jait_capture(4, (updated?.tags), (JSON.stringify(["cleanup"])));
-    __jait_captureType(5, (updated?.completedAt));
-
-    const completed = service.update(created.id, {
-      status: "done",
-    });
-    __jait_capture(6, (completed?.completedAt));
-    const history = JSON.parse(completed?.completionHistory ?? "[]") as Array<{ completedAt: string; previousStatus: string }>;
-    __jait_capture(7, (history));
-    __jait_capture(8, (history[0]?.completedAt), (completed?.completedAt));
-    __jait_capture(9, (history[0]?.previousStatus));
-
-    const reopened = service.update(created.id, {
-      status: "open",
-    });
-    __jait_captureType(10, (reopened?.completedAt));
-    __jait_capture(11, (JSON.parse(reopened?.completionHistory ?? "[]")));
-
-    service.delete(created.id);
-    __jait_captureType(12, (service.getById(created.id)));
+    __jait_capture(0, (new Date(first.resetsAt).getUTCHours()), (new Date(second.resetsAt).getUTCHours()));
   
 })();
 
@@ -188,49 +114,329 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_102_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_49_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+
 try {
 await (async()=>{
 
-    const created = service.create({
-      repoId: "repo-1",
-      userId: "user-1",
-      message: "Already finished",
-      status: "done",
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: WEEK,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.2,
+      anchorIso: "2026-03-09T00:00:00.000Z",
     });
+    __jait_capture(0, (window.windowStartAt));
+    __jait_capture(1, (window.resetsAt));
+  
+})();
 
-    __jait_capture(0, (created.completedAt));
-    const history = JSON.parse(created.completionHistory) as Array<{ completedAt: string; previousStatus: string | null }>;
-    __jait_capture(1, (history), ([{ completedAt: created.completedAt, previousStatus: null }]));
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_60_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: MONTH,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.2,
+      anchorIso: "2026-01-31T00:00:00.000Z",
+    });
+    __jait_capture(0, (window.windowStartAt));
+    __jait_capture(1, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_71_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T10:20:00.000Z"),
+      utilization: 0.03,
+      previous: {
+        utilization: 0.81,
+        resetsAt: "2026-03-11T10:00:00.000Z",
+        source: "observed",
+        observedAt: "2026-03-11T09:37:00.000Z",
+      },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_88_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // The stale grid point (05:00) predates the previous snapshot, so it cannot
+    // be the boundary the drop crossed; "now" is the honest upper bound.
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T09:50:00.000Z"),
+      utilization: 0.05,
+      previous: {
+        utilization: 0.6,
+        resetsAt: "2026-03-11T10:00:00.000Z",
+        source: "window-grid",
+        observedAt: "2026-03-11T09:40:00.000Z",
+      },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_107_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const now = new Date("2026-03-11T16:20:00.000Z");
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now,
+      utilization: 0.55,
+      previous: { utilization: 0.5, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.resetsAt));
+    __jait_capture(2, (window.windowStartAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_120_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T21:30:00.000Z"),
+      utilization: 0.6,
+      previous: { utilization: 0.6, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_132_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T21:30:00.000Z"),
+      utilization: 0.4,
+      previous: { utilization: 0.4, resetsAt: "2026-03-11T20:00:00.000Z", source: "window-grid" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_144_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T12:00:00.000Z"),
+      utilization: 0.799,
+      previous: { utilization: 0.8, resetsAt: "2026-03-11T15:00:00.000Z", source: "window-grid" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_155_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: WEEK,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: null,
+      previous: { utilization: null, resetsAt: null, source: null },
+      anchorIso: null,
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_170_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (parseOllamaResetSource("observed")));
+    __jait_captureType(1, (parseOllamaResetSource("bogus")));
+    __jait_captureType(2, (parseOllamaResetSource(undefined)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_176_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const messages = [
+      describeOllamaResetSource("observed"),
+      describeOllamaResetSource("window-boundary"),
+      describeOllamaResetSource("window-grid"),
+      describeOllamaResetSource(null),
+    ];
+    __jait_capture(0, (new Set(messages).size), (messages.length));
   
 })();
 

@@ -1,17 +1,16 @@
-// Translated fixture from packages/gateway/src/routes/sessions-personal.test.ts; expected literals are in tail_static.rs.
-import { AuditWriter } from "../../../../packages/gateway/src/services/audit.js"
-import { createServer } from "../../../../packages/gateway/src/server.js"
-import { loadConfig } from "../../../../packages/gateway/src/config.js"
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js"
-import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js"
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js"
-import { ProjectService } from "../../../../packages/gateway/src/services/projects.js"
-import { UserService } from "../../../../packages/gateway/src/services/users.js"
+// Translated fixture from packages/gateway/src/routes/security-workbench.test.ts; expected literals are in tail_static.rs.
+
+import { createServer } from "node:http";
+import { registerSecurityWorkbenchRoutes } from "../../../../packages/gateway/src/routes/security-workbench.js";
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
+import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+import { getAssessmentService } from "../../../../packages/gateway/src/security/assessment.js";
+import { getSecurityWorkbench } from "../../../../packages/gateway/src/security/workbench.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/sessions-personal.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/security-workbench.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,67 +37,58 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_sessions_personal_test_ts_12_3": {
+case "tailstatic_packages_gateway_src_routes_security_workbench_test_ts_11_1": {
 
-
-/*__jait_scope_open__*/{
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const cleanup:Array<()=>Promise<unknown>>=[];
+const __jait_hook_474 = async()=>{await Promise.all(cleanup.splice(0).map(fn=>fn()))};
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(':memory:')
-    migrateDatabase(sqlite)
-    const config = { ...loadConfig(), port: 0, wsPort: 0, nodeEnv: 'test', logLevel: 'silent' }
-    const userService = new UserService(db)
-    const owner = userService.createUser('personal-owner', 'password123')
-    const other = userService.createUser('personal-other', 'password123')
-    const sessionService = new SessionService(db)
-    const projectService = new ProjectService(db)
-    const personal = Array.from({ length: 105 }, (_, i) => sessionService.create({ userId: owner.id, name: `Personal ${i}` }))
-    const project = projectService.create({ userId: owner.id, title: 'Busy project', rootPath: '/work/project', nodeId: 'gateway' })
-    for (let i = 0; i < 100; i++) {
-      const chat = sessionService.create({ userId: owner.id, projectId: project.id })
-      sqlite.prepare('UPDATE sessions SET last_active_at = ? WHERE id = ?').run('2099-01-01T00:00:00.000Z', chat.id)
-    }
-    sessionService.create({ userId: other.id })
-    const archived = sessionService.create({ userId: owner.id })
-    sessionService.archive(archived.id)
-    const app = await createServer(config, { db, sqlite, sessionService, projectService, userService, audit: new AuditWriter(db) })
-    try {
-      const token = await signAuthToken({ id: owner.id, username: owner.username }, config.jwtSecret)
-      const headers = { authorization: `Bearer ${token}` }
-      // The former sidebar query loses all 105 personal chats behind project activity.
-      const oldPage = await app.inject({ method: 'GET', url: '/api/sessions?status=active&limit=100', headers })
-      __jait_capture(0, (oldPage.json().sessions.filter((s: { projectId: string | null }) => !s.projectId)))
-      const result = await app.inject({ method: 'GET', url: '/api/sessions?status=active&personal=true', headers })
-      __jait_capture(1, (result.statusCode))
-      __jait_capture(2, (result.json().sessions.map((s: { id: string }) => s.id).sort()), (personal.map(s => s.id).sort()))
-      __jait_capture(3, (result.json().hasMore))
-      const limited = await app.inject({ method: 'GET', url: '/api/sessions?status=active&personal=true&limit=20', headers })
-      __jait_capture(4, (limited.json().sessions))
-      __jait_capture(5, (limited.json().sessions.every((s: { projectId: string | null }) => s.projectId === null)))
-      __jait_capture(6, (limited.json().hasMore))
-      const all = await app.inject({ method: 'GET', url: '/api/sessions?status=active&limit=100', headers })
-      __jait_capture(7, (all.json().sessions))
-      __jait_capture(8, (all.json().sessions.every((s: { projectId: string | null }) => s.projectId === project.id)))
-    } finally {
-      await app.close()
-      sqlite.close()
-    }
-  
+ const app=Fastify();cleanup.push(()=>app.close());
+ const config={...loadConfig(),jwtSecret:"security-workbench-test"};
+ registerSecurityWorkbenchRoutes(app,config);
+ const owner={authorization:"Bearer "+await signAuthToken({id:"workbench-route",username:"owner"},config.jwtSecret)};
+ const other={authorization:"Bearer "+await signAuthToken({id:"other-route",username:"other"},config.jwtSecret)};
+ for(const url of ["/api/security/workbench","/api/security/engines","/api/security/checks/unknown","/api/security/checks/unknown/report","/api/security/findings/unknown/plan"])
+  __jait_capture(0, ((await app.inject({url})).statusCode));
+ const server=createServer((_req,res)=>res.end("secret discarded"));
+ await new Promise<void>(resolve=>server.listen(0,"127.0.0.1",resolve));cleanup.push(()=>new Promise<void>(resolve=>server.close(()=>resolve())));
+ const address=server.address();if(!address||typeof address==="string")throw new Error("port");
+ const scope=getAssessmentService().createScope({targets:["127.0.0.1"],exclusions:[],ports:[address.port],methods:["http"],authorized:true,expiresAt:new Date(Date.now()+60_000).toISOString()},"workbench-route");
+ const payload={scopeId:scope.id,profile:"http",target:"127.0.0.1",port:address.port};
+ __jait_capture(1, ((await app.inject({method:"POST",url:"/api/security/checks",headers:other,payload})).statusCode));
+ const result=await app.inject({method:"POST",url:"/api/security/checks",headers:owner,payload});
+ __jait_capture(2, (result.statusCode));
+ const run=await getSecurityWorkbench().wait(result.json().id,"workbench-route");__jait_capture(3, (run.status));
+ for(const url of ["/api/security/checks/"+run.id,"/api/security/checks/"+run.id+"/report","/api/security/findings/"+run.findingIds[0]+"/plan"])
+  __jait_capture(4, ((await app.inject({url,headers:other})).statusCode));
+ __jait_capture(5, ((await app.inject({url:"/api/security/workbench",headers:other})).json()));
+ __jait_capture(6, ((await app.inject({method:"POST",url:"/api/security/comparisons",headers:other,payload:{beforeRunId:run.id,afterRunId:run.id}})).statusCode));
+ __jait_capture(7, ((await app.inject({method:"POST",url:"/api/security/comparisons",headers:owner,payload:{beforeRunId:run.id,afterRunId:run.id}})).json().comparable));
+ const report=await app.inject({url:"/api/security/checks/"+run.id+"/report",headers:owner});
+ __jait_capture(8, (report.statusCode));__jait_capture(9, (report.body));__jait_capture(10, (report.body));
+ const finding=run.findingIds[0];
+ __jait_capture(11, ((await app.inject({method:"POST",url:"/api/security/findings/"+finding+"/decision",headers:owner,payload:{disposition:"verified-absent"}})).statusCode));
+ __jait_capture(12, ((await app.inject({method:"POST",url:"/api/security/findings/"+finding+"/decision",headers:owner,payload:{disposition:"accepted-risk"}})).json().disposition));
+ __jait_capture(13, ((await app.inject({method:"DELETE",url:"/api/security/checks/"+run.id,headers:other})).statusCode));
+ __jait_capture(14, ((await app.inject({method:"DELETE",url:"/api/security/checks/"+run.id,headers:owner})).statusCode));
+ __jait_capture(15, ((await app.inject({url:"/api/security/checks/"+run.id,headers:owner})).statusCode));
+
 })();
 
 } finally {
+await __jait_hook_474();
+}
 
-}
-}
 
 break;
 }

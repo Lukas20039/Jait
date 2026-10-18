@@ -1,17 +1,19 @@
-// Translated fixture from packages/gateway/src/routes/chat-trajectory.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/routes/chat-swarm-live-prose.test.ts; expected literals are in tail_static.rs.
 import { createServer } from "../../../../packages/gateway/src/server.js";
 import { loadConfig } from "../../../../packages/gateway/src/config.js";
 import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
 import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
 import { UserService } from "../../../../packages/gateway/src/services/users.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { __chatTestUtils } from "../../../../packages/gateway/src/routes/chat.js";
-import type { AddressInfo } from "node:net";
+import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/chat-trajectory.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/chat-swarm-live-prose.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,210 +40,55 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_chat_trajectory_test_ts_111_3": {
+case "tailstatic_packages_gateway_src_routes_chat_swarm_live_prose_test_ts_55_3": {
 
 
-const { emitToSubscribers, emitTurnDone } = __chatTestUtils;
-type StreamEventLike = Record<string, unknown>;
-const emit = (sessionId: string, event: StreamEventLike) =>
-  emitToSubscribers(sessionId, event as unknown as Parameters<typeof emitToSubscribers>[1]);
 const testConfig = {
   ...loadConfig(),
   port: 0,
   wsPort: 0,
   logLevel: "silent" as const,
   nodeEnv: "test",
-  jwtSecret: "trajectory-test-secret",
+  jwtSecret: "test-jwt-secret",
+  // The fetch mock speaks OpenAI-style SSE. Pin the provider so the agent
+  // loop doesn't switch to Ollama's native NDJSON protocol on hosts (CI)
+  // where OPENAI_API_KEY / LLM_PROVIDER are unset.
+  llmProvider: "openai" as const,
 };
-let app: Awaited<ReturnType<typeof createServer>> | null = null;
-function seedTurn(sessionId: string): void {
-  emit(sessionId, { type: "request", content: "hello", provider: "jait", mode: "agent" });
-  emit(sessionId, { type: "thinking", content: "let me think" });
-  emit(sessionId, { type: "token", content: "Hi there" });
-  emit(sessionId, { type: "tool_start", tool: "bash", args: { cmd: "ls" }, call_id: "c1" });
-  emit(sessionId, { type: "tool_output", call_id: "c1", content: "file.ts" });
-  emit(sessionId, { type: "tool_result", call_id: "c1", tool: "bash", ok: true, message: "ok" });
-  emitTurnDone(sessionId, { type: "done", session_id: sessionId, prompt_count: 1, remaining_prompts: null } as never);
-}
-type TrajectoryChunk = { type: string; log_id: number; replay: boolean; payload: StreamEventLike };
-function waitFor(chunks: TrajectoryChunk[], count: number): Promise<void> {
-  const deadline = Date.now() + 10_000;
-  return new Promise((resolve, reject) => {
-    const poll = () => {
-      if (chunks.length >= count) return resolve();
-      if (Date.now() > deadline) return reject(new Error(`timed out waiting for ${count} events (got ${chunks.length})`));
-      setTimeout(poll, 10);
-    };
-    poll();
+const originalFetch = globalThis.fetch;
+function sseResponse(chunks: string[]): Response {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const c of chunks) controller.enqueue(encoder.encode(c));
+      controller.close();
+    },
   });
+  return new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream" } });
 }
-async function collectEvents(
-  url: string,
-  token: string,
-): Promise<{ chunks: TrajectoryChunk[]; abort: () => void }> {
-  const controller = new AbortController();
-  const res = await fetch(url, { headers: { authorization: `Bearer ${token}` }, signal: controller.signal });
-  __jait_capture(0, (res.status));
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  const chunks: TrajectoryChunk[] = [];
-  void (async () => {
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) return;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = JSON.parse(line.slice(6)) as TrajectoryChunk;
-          if (data.type !== "trajectory_event") continue;
-          chunks.push(data);
-        }
-      }
-    } catch {
-      // aborted by the test — expected
-    }
-  })();
-  return { chunks, abort: () => controller.abort() };
+function toolCallStream(name: string, args: string): Response {
+  return sseResponse([
+    `data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-1","type":"function","function":{"name":"${name}","arguments":"${args}"}}]},"finish_reason":null}]}\n\n`,
+    `data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\n`,
+    "data: [DONE]\n\n",
+  ]);
 }
-async function setup(): Promise<{ sessionId: string; token: string; url: string }> {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  const sessionService = new SessionService(db);
-  const userService = new UserService(db);
-  const user = userService.createUser("traj-live-user", "password123");
-  const session = sessionService.create({ userId: user.id, name: "Trajectory" });
-
-  app = await createServer(testConfig, { db, sqlite, sessionService, userService });
-  await app.listen({ port: 0, host: "127.0.0.1" });
-  const address = app.server.address() as AddressInfo;
-  const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
-  const url = `http://127.0.0.1:${address.port}/api/sessions/${session.id}/trajectory`;
-  return { sessionId: session.id, token, url };
+function textStream(text: string): Response {
+  return sseResponse([
+    `data: {"choices":[{"delta":{"content":"${text}"},"finish_reason":null}]}\n\n`,
+    `data: {"choices":[{"delta":{},"finish_reason":"stop"}]}\n\n`,
+    "data: [DONE]\n\n",
+  ]);
 }
-const __jait_hook_1228 = async () => {
-  await app?.close();
-  app = null;
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const standalone = await createServer(testConfig);
-    try {
-      const res = await standalone.inject({ method: "GET", url: "/api/sessions/traj/trajectory" });
-      __jait_capture(1, (res.statusCode));
-    } finally {
-      await standalone.close();
-    }
-  
-})();
-
-} finally {
-await __jait_hook_1228();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_chat_trajectory_test_ts_121_3": {
-
-
-const { emitToSubscribers, emitTurnDone } = __chatTestUtils;
-type StreamEventLike = Record<string, unknown>;
-const emit = (sessionId: string, event: StreamEventLike) =>
-  emitToSubscribers(sessionId, event as unknown as Parameters<typeof emitToSubscribers>[1]);
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent" as const,
-  nodeEnv: "test",
-  jwtSecret: "trajectory-test-secret",
-};
-let app: Awaited<ReturnType<typeof createServer>> | null = null;
-function seedTurn(sessionId: string): void {
-  emit(sessionId, { type: "request", content: "hello", provider: "jait", mode: "agent" });
-  emit(sessionId, { type: "thinking", content: "let me think" });
-  emit(sessionId, { type: "token", content: "Hi there" });
-  emit(sessionId, { type: "tool_start", tool: "bash", args: { cmd: "ls" }, call_id: "c1" });
-  emit(sessionId, { type: "tool_output", call_id: "c1", content: "file.ts" });
-  emit(sessionId, { type: "tool_result", call_id: "c1", tool: "bash", ok: true, message: "ok" });
-  emitTurnDone(sessionId, { type: "done", session_id: sessionId, prompt_count: 1, remaining_prompts: null } as never);
-}
-type TrajectoryChunk = { type: string; log_id: number; replay: boolean; payload: StreamEventLike };
-function waitFor(chunks: TrajectoryChunk[], count: number): Promise<void> {
-  const deadline = Date.now() + 10_000;
-  return new Promise((resolve, reject) => {
-    const poll = () => {
-      if (chunks.length >= count) return resolve();
-      if (Date.now() > deadline) return reject(new Error(`timed out waiting for ${count} events (got ${chunks.length})`));
-      setTimeout(poll, 10);
-    };
-    poll();
-  });
-}
-async function collectEvents(
-  url: string,
-  token: string,
-): Promise<{ chunks: TrajectoryChunk[]; abort: () => void }> {
-  const controller = new AbortController();
-  const res = await fetch(url, { headers: { authorization: `Bearer ${token}` }, signal: controller.signal });
-  __jait_capture(0, (res.status));
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  const chunks: TrajectoryChunk[] = [];
-  void (async () => {
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) return;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = JSON.parse(line.slice(6)) as TrajectoryChunk;
-          if (data.type !== "trajectory_event") continue;
-          chunks.push(data);
-        }
-      }
-    } catch {
-      // aborted by the test — expected
-    }
-  })();
-  return { chunks, abort: () => controller.abort() };
-}
-async function setup(): Promise<{ sessionId: string; token: string; url: string }> {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  const sessionService = new SessionService(db);
-  const userService = new UserService(db);
-  const user = userService.createUser("traj-live-user", "password123");
-  const session = sessionService.create({ userId: user.id, name: "Trajectory" });
-
-  app = await createServer(testConfig, { db, sqlite, sessionService, userService });
-  await app.listen({ port: 0, host: "127.0.0.1" });
-  const address = app.server.address() as AddressInfo;
-  const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
-  const url = `http://127.0.0.1:${address.port}/api/sessions/${session.id}/trajectory`;
-  return { sessionId: session.id, token, url };
-}
-const __jait_hook_1228 = async () => {
-  await app?.close();
-  app = null;
+const __jait_hook_1973 = () => {
+  globalThis.fetch = originalFetch;
 };
 /*__jait_scope_open__*/{
 
@@ -250,262 +97,95 @@ await (async()=>{
 
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
-    const sessionService = new SessionService(db);
     const userService = new UserService(db);
-    const user = userService.createUser("traj-user", "password123");
-
-    app = await createServer(testConfig, { db, sqlite, sessionService, userService });
-    const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
-
-    const res = await app.inject({
-      method: "GET",
-      url: "/api/sessions/does-not-exist/trajectory",
-      headers: { authorization: `Bearer ${token}` },
+    const sessionService = new SessionService(db);
+    const user = userService.createUser("swarm-live-prose", "password123");
+    const session = sessionService.create({ userId: user.id, name: "Swarm" });
+    const surfaceRegistry = new SurfaceRegistry();
+    const toolRegistry = createToolRegistry(surfaceRegistry, {
+      config: testConfig as any,
+      userService,
+      providerRegistry: new ProviderRegistry(),
     });
-    __jait_capture(1, (res.statusCode));
-  
-})();
 
-} finally {
-await __jait_hook_1228();
-}
-}
+    const agentArgs = JSON.stringify({
+      prompt: "Do the work",
+      description: "Developer",
+      allowedTools: "file.list",
+    }).replace(/"/g, '\\"');
+    let fetchCalls = 0;
+    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      if (String(input).startsWith("http://127.0.0.1:")) return originalFetch(input, init);
+      const call = fetchCalls++;
+      if (call === 0) return toolCallStream("agent", agentArgs);
+      if (call === 1) return textStream("specialist live prose");
+      return textStream("final answer");
+    });
+    globalThis.fetch = fetchMock as typeof fetch;
 
-break;
-}
-case "tailstatic_packages_gateway_src_routes_chat_trajectory_test_ts_139_3": {
-
-
-const { emitToSubscribers, emitTurnDone } = __chatTestUtils;
-type StreamEventLike = Record<string, unknown>;
-const emit = (sessionId: string, event: StreamEventLike) =>
-  emitToSubscribers(sessionId, event as unknown as Parameters<typeof emitToSubscribers>[1]);
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent" as const,
-  nodeEnv: "test",
-  jwtSecret: "trajectory-test-secret",
-};
-let app: Awaited<ReturnType<typeof createServer>> | null = null;
-function seedTurn(sessionId: string): void {
-  emit(sessionId, { type: "request", content: "hello", provider: "jait", mode: "agent" });
-  emit(sessionId, { type: "thinking", content: "let me think" });
-  emit(sessionId, { type: "token", content: "Hi there" });
-  emit(sessionId, { type: "tool_start", tool: "bash", args: { cmd: "ls" }, call_id: "c1" });
-  emit(sessionId, { type: "tool_output", call_id: "c1", content: "file.ts" });
-  emit(sessionId, { type: "tool_result", call_id: "c1", tool: "bash", ok: true, message: "ok" });
-  emitTurnDone(sessionId, { type: "done", session_id: sessionId, prompt_count: 1, remaining_prompts: null } as never);
-}
-type TrajectoryChunk = { type: string; log_id: number; replay: boolean; payload: StreamEventLike };
-function waitFor(chunks: TrajectoryChunk[], count: number): Promise<void> {
-  const deadline = Date.now() + 10_000;
-  return new Promise((resolve, reject) => {
-    const poll = () => {
-      if (chunks.length >= count) return resolve();
-      if (Date.now() > deadline) return reject(new Error(`timed out waiting for ${count} events (got ${chunks.length})`));
-      setTimeout(poll, 10);
-    };
-    poll();
-  });
-}
-async function collectEvents(
-  url: string,
-  token: string,
-): Promise<{ chunks: TrajectoryChunk[]; abort: () => void }> {
-  const controller = new AbortController();
-  const res = await fetch(url, { headers: { authorization: `Bearer ${token}` }, signal: controller.signal });
-  __jait_capture(0, (res.status));
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  const chunks: TrajectoryChunk[] = [];
-  void (async () => {
+    const app = await createServer(testConfig, {
+      db,
+      sqlite,
+      userService,
+      sessionService,
+      toolRegistry,
+      surfaceRegistry,
+    });
+    await app.listen({ port: 0, host: "127.0.0.1" });
     try {
+      const address = app.server.address() as import("node:net").AddressInfo;
+      const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
+      const response = await originalFetch(`http://127.0.0.1:${address.port}/api/chat`, {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+        body: JSON.stringify({ content: "do it", sessionId: session.id, mode: "swarm", model: "test-model" }),
+      });
+      __jait_capture(0, (response.status));
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      const events: any[] = [];
+      let startedAt = Date.now();
       while (true) {
         const { done, value } = await reader.read();
-        if (done) return;
+        if (done) break;
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
+        buffer = lines.pop() || "";
         for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = JSON.parse(line.slice(6)) as TrajectoryChunk;
-          if (data.type !== "trajectory_event") continue;
-          chunks.push(data);
+          const t = line.trim();
+          if (!t.startsWith("data:")) continue;
+          const payload = t.slice(5).trim();
+          if (payload === "[DONE]") continue;
+          try {
+            const obj = JSON.parse(payload);
+            if (obj && typeof obj.type === "string") events.push({ ...obj, _t: Date.now() - startedAt });
+          } catch {}
         }
+        if (Date.now() - startedAt > 15000) throw new Error("timeout");
       }
-    } catch {
-      // aborted by the test — expected
+      buffer += decoder.decode();
+
+      const types = events.map((e) => e.type);
+      console.log("FETCH CALLS:", fetchCalls);
+      console.log("TYPES:", types.join(","));
+      const prose = events.find((e) => e.type === "tool_output" && String(e.content).includes("specialist live prose"));
+      const agentResultIdx = events.findIndex((e) => e.type === "tool_result");
+      // The gateway emits a synthetic `request` turn-boundary event first, then
+      // the agent loop emits the `mode_notice`.
+      __jait_capture(1, (types[0]));
+      __jait_capture(2, (types));
+      __jait_captureType(3, (prose));
+      const proseIdx = events.indexOf(prose);
+      if (agentResultIdx !== -1) __jait_capture(4, (proseIdx), (agentResultIdx));
+    } finally {
+      await app.close();
     }
-  })();
-  return { chunks, abort: () => controller.abort() };
-}
-async function setup(): Promise<{ sessionId: string; token: string; url: string }> {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  const sessionService = new SessionService(db);
-  const userService = new UserService(db);
-  const user = userService.createUser("traj-live-user", "password123");
-  const session = sessionService.create({ userId: user.id, name: "Trajectory" });
-
-  app = await createServer(testConfig, { db, sqlite, sessionService, userService });
-  await app.listen({ port: 0, host: "127.0.0.1" });
-  const address = app.server.address() as AddressInfo;
-  const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
-  const url = `http://127.0.0.1:${address.port}/api/sessions/${session.id}/trajectory`;
-  return { sessionId: session.id, token, url };
-}
-const __jait_hook_1228 = async () => {
-  await app?.close();
-  app = null;
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { sessionId, token, url } = await setup();
-    // Seed a completed turn before any client connects, so it must be served
-    // from the persisted log (old data).
-    seedTurn(sessionId);
-
-    const { chunks, abort } = await collectEvents(url, token);
-    // Replay: the 7 pre-seeded events arrive first, in order.
-    await waitFor(chunks, 7);
-    const replay = chunks.slice(0, 7);
-    __jait_capture(1, (replay.map((e) => e.payload.type)));
-    __jait_capture(2, (replay.map((e) => e.log_id)));
-    __jait_capture(3, (replay.every((e) => e.replay === true)));
-
-    // Live: an event emitted after connect arrives with the next log_id.
-    emit(sessionId, { type: "token", content: " live chunk" });
-    await waitFor(chunks, 8);
-    const live = chunks[7]!;
-    __jait_capture(4, (live.log_id));
-    __jait_capture(5, (live.replay));
-    __jait_capture(6, (live.payload.type));
-    __jait_capture(7, (live.payload.content));
-
-    abort();
   
 })();
 
 } finally {
-await __jait_hook_1228();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_routes_chat_trajectory_test_ts_167_3": {
-
-
-const { emitToSubscribers, emitTurnDone } = __chatTestUtils;
-type StreamEventLike = Record<string, unknown>;
-const emit = (sessionId: string, event: StreamEventLike) =>
-  emitToSubscribers(sessionId, event as unknown as Parameters<typeof emitToSubscribers>[1]);
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent" as const,
-  nodeEnv: "test",
-  jwtSecret: "trajectory-test-secret",
-};
-let app: Awaited<ReturnType<typeof createServer>> | null = null;
-function seedTurn(sessionId: string): void {
-  emit(sessionId, { type: "request", content: "hello", provider: "jait", mode: "agent" });
-  emit(sessionId, { type: "thinking", content: "let me think" });
-  emit(sessionId, { type: "token", content: "Hi there" });
-  emit(sessionId, { type: "tool_start", tool: "bash", args: { cmd: "ls" }, call_id: "c1" });
-  emit(sessionId, { type: "tool_output", call_id: "c1", content: "file.ts" });
-  emit(sessionId, { type: "tool_result", call_id: "c1", tool: "bash", ok: true, message: "ok" });
-  emitTurnDone(sessionId, { type: "done", session_id: sessionId, prompt_count: 1, remaining_prompts: null } as never);
-}
-type TrajectoryChunk = { type: string; log_id: number; replay: boolean; payload: StreamEventLike };
-function waitFor(chunks: TrajectoryChunk[], count: number): Promise<void> {
-  const deadline = Date.now() + 10_000;
-  return new Promise((resolve, reject) => {
-    const poll = () => {
-      if (chunks.length >= count) return resolve();
-      if (Date.now() > deadline) return reject(new Error(`timed out waiting for ${count} events (got ${chunks.length})`));
-      setTimeout(poll, 10);
-    };
-    poll();
-  });
-}
-async function collectEvents(
-  url: string,
-  token: string,
-): Promise<{ chunks: TrajectoryChunk[]; abort: () => void }> {
-  const controller = new AbortController();
-  const res = await fetch(url, { headers: { authorization: `Bearer ${token}` }, signal: controller.signal });
-  __jait_capture(0, (res.status));
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  const chunks: TrajectoryChunk[] = [];
-  void (async () => {
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) return;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          const data = JSON.parse(line.slice(6)) as TrajectoryChunk;
-          if (data.type !== "trajectory_event") continue;
-          chunks.push(data);
-        }
-      }
-    } catch {
-      // aborted by the test — expected
-    }
-  })();
-  return { chunks, abort: () => controller.abort() };
-}
-async function setup(): Promise<{ sessionId: string; token: string; url: string }> {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  const sessionService = new SessionService(db);
-  const userService = new UserService(db);
-  const user = userService.createUser("traj-live-user", "password123");
-  const session = sessionService.create({ userId: user.id, name: "Trajectory" });
-
-  app = await createServer(testConfig, { db, sqlite, sessionService, userService });
-  await app.listen({ port: 0, host: "127.0.0.1" });
-  const address = app.server.address() as AddressInfo;
-  const token = await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret);
-  const url = `http://127.0.0.1:${address.port}/api/sessions/${session.id}/trajectory`;
-  return { sessionId: session.id, token, url };
-}
-const __jait_hook_1228 = async () => {
-  await app?.close();
-  app = null;
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { sessionId, token, url } = await setup();
-    // Nothing connected yet — emit a turn as a background turn would.
-    seedTurn(sessionId);
-
-    // A later connection still sees the full history.
-    const { chunks, abort } = await collectEvents(url, token);
-    await waitFor(chunks, 7);
-    __jait_capture(1, (chunks.map((e) => e.payload.type)));
-    abort();
-  
-})();
-
-} finally {
-await __jait_hook_1228();
+await __jait_hook_1973();
 }
 }
 

@@ -1,5 +1,5 @@
 /** Test-only transport. Rust owns inputs and expected behavior; no real model calls. */
-import { generateLLMConversationSummary, pruneHistory, runAgentLoop, toolDefsToSchemas, type AgentMessage } from '../../../packages/gateway/src/tools/agent-loop.ts';
+import { compactActiveTurnHistory, generateLLMConversationSummary, pruneHistory, runAgentLoop, toolDefsToSchemas, type AgentMessage } from '../../../packages/gateway/src/tools/agent-loop.ts';
 
 export async function dispatch(call: any): Promise<unknown> {
   const history: AgentMessage[] = structuredClone(call.history ?? []);
@@ -20,6 +20,19 @@ export async function dispatch(call: any): Promise<unknown> {
     return new Response(JSON.stringify({ message: { content: 'Resumed from checkpoint.' }, done: true }) + '\n');
   }) as typeof fetch;
   try {
+    if (call.op === 'compaction.active-turn') {
+      let source: AgentMessage[] = [];
+      const duringSummary: AgentMessage[][] = [];
+      const changed = await compactActiveTurnHistory(history, [], call.limit, {
+        summaryGenerator: async removed => {
+          source = removed;
+          // Capture before returning, so Rust checks the original callback-time assertion.
+          duringSummary.push(structuredClone(history));
+          return call.summary;
+        },
+      });
+      return { changed, history, source, duringSummary };
+    }
     if (call.op === 'compaction.summary') {
       const summary = await generateLLMConversationSummary(history, llm, abort.signal);
       return { summary, requests };

@@ -1,15 +1,17 @@
-// Translated fixture from packages/gateway/src/services/provider-usage.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/connection.js";
-import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
-import type { NotificationService } from "../../../../packages/gateway/src/services/notifications.js";
-import { providerUsage } from "../../../../packages/gateway/src/db/schema.js";
+// Translated fixture from packages/gateway/src/services/provider-accounts.test.ts; expected literals are in tail_static.rs.
 import { ProviderUsageService } from "../../../../packages/gateway/src/services/provider-usage.js";
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
+import { ProviderAccountService } from "../../../../packages/gateway/src/services/provider-accounts.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-usage.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-accounts.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,739 +38,295 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_28_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_18_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    const service = new ProviderUsageService(db);
-    const window = { status: "ok" as const, percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-    service.recordOpenCodeGoUsage("go", { usage: { rolling: window, weekly: { ...window, percent: 90 }, monthly: { ...window, status: "rate-limited", percent: 100 } } });
-    __jait_capture(0, (service.listForUser(["go"])), ([window.resetsAt]));
-    service.recordOllamaUsage("ollama", { source: "settings", limits: {
-      session: { usage: 0.4, models: [], resetsAt: window.resetsAt }, weekly: { usage: 0.8, models: [], resetsAt: null },
-    } });
-    __jait_capture(1, (service.listForUser(["ollama"])), ([window.resetsAt]));
+    const { db, sqlite } = await openDatabase(":memory:"); migrateDatabase(sqlite);
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-go-usage-")); roots.push(root);
+    const usage = new ProviderUsageService(db);
+    const service = new ProviderAccountService(db, new ProviderRegistry(), [{ id: "opencode", name: "OpenCode", description: "Test", command: process.execPath }], root, usage);
+    const own = service.create("user-1", "opencode", "Own");
+    const other = service.create("user-2", "opencode", "Other");
+    service.connectOpenCodeGo(own.id, "user-1", "own-key");
+    service.connectOpenCodeGo(other.id, "user-2", "other-key");
+    const window = { status: "ok", percent: 40, resetsAt: "2026-10-09T12:00:00Z" };
+    const mock = vi.fn().mockResolvedValue(Response.json({ usage: { rolling: window, weekly: window, monthly: window } }));
+    vi.stubGlobal("fetch", mock);
+    __jait_capture(0, (await service.refreshUsage("user-1")));
+    __jait_capture(1, (mock.mock.calls));
+    __jait_capture(2, (mock.mock.calls[0]?.[1].headers.Authorization));
+    __jait_capture(3, (usage.listForUser([own.id])));
+    __jait_capture(4, (usage.listForUser([other.id])));
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_45_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_37_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    const service = new ProviderUsageService(db);
-    vi.useFakeTimers();
-    try {
-      vi.setSystemTime(new Date("2026-10-07T10:00:00Z"));
-      service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.42, models: [] } } });
-      vi.setSystemTime(new Date("2026-10-07T10:01:00Z"));
-      service.recordOllamaUsage("ollama", { range: "7d", scope: "self", granularity: "day", from: "2026-09-30T00:00:00Z", until: "2026-10-07T10:01:00Z", totals: { request_count: 50 }, buckets: [] });
-      __jait_capture(0, (service.listForUser(["ollama"])));
-      service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.5, models: [] } } });
-      __jait_capture(1, (service.listForUser(["ollama"])));
-    } finally { vi.useRealTimers(); }
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+      args: [],
+    }], root);
+
+    const personal = service.create("user-1", "codex", "Personal");
+    const work = service.create("user-1", "codex", "Work");
+
+    __jait_capture(0, (personal.id), (work.id));
+    __jait_capture(1, (service.list("user-1").map((account) => account.label).sort()));
+    __jait_capture(2, (registry.getForUser(personal.id, "user-1")?.providerType));
+    __jait_captureType(3, (registry.getForUser(personal.id, "user-2")));
+
+    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
+    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
+    __jait_capture(4, (personalAdapter.config.env?.CODEX_HOME), (join(root, personal.id)));
+    __jait_capture(5, (workAdapter.config.env?.CODEX_HOME), (join(root, work.id)));
+    __jait_capture(6, (personalAdapter.config.env?.CODEX_HOME), (workAdapter.config.env?.CODEX_HOME));
+    __jait_capture(7, (existsSync(join(root, personal.id))));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_58_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_69_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    const service = new ProviderUsageService(db);
-    service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } } as any);
-    __jait_capture(0, (service.listForUser(["ollama"])));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_63_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const service = new ProviderUsageService(db);
-    service.recordOllamaUsage("ollama-1", { limits: { weekly: { usage: 0.8, models: [] } } });
-    const activity = {
-      range: "7d", scope: "self", granularity: "day",
-      from: "2026-09-30T00:00:00Z", until: "2026-10-07T11:29:42Z",
-      totals: { request_count: 10388 }, buckets: [],
-    };
-    service.recordOllamaUsage("ollama-1", activity, "pro", "test@example.com");
-    service.recordOllamaUsage("ollama-1", activity, "pro", "test@example.com");
-    __jait_capture(0, (service.listForUser(["ollama-1"])), ([activity.from,activity.until]));
-    service.recordOllamaUsage("ollama-1", { limits: { weekly: { usage: 0.2, models: [] } } });
-    __jait_capture(1, (service.listForUser(["ollama-1"])));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_82_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const service = new ProviderUsageService(db);
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.4,
-      resetsAt: 1_700_000_000,
-    });
-
-    const snapshots = service.listForUser(["account-1"]);
-    __jait_capture(0, (snapshots));
-    __jait_capture(1, (snapshots[0]));
-    __jait_capture(2, (snapshots[0].resetsAt), (new Date(1_700_000_000 * 1000).toISOString()));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_104_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const service = new ProviderUsageService(db);
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "seven_day",
-      utilization: 0.2,
-    });
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed_warning",
-      rateLimitType: "seven_day",
-      utilization: 0.95,
-    });
-
-    const snapshots = service.listForUser(["account-1"]);
-    __jait_capture(0, (snapshots));
-    __jait_capture(1, (snapshots[0].status));
-    __jait_capture(2, (snapshots[0].utilization));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_123_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const service = new ProviderUsageService(db);
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-    });
-    service.recordClaudeRateLimit("account-2", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-    });
-
-    __jait_capture(0, (service.listForUser(["account-1"])));
-    __jait_capture(1, (service.listForUser(["account-1", "account-2"])));
-    __jait_capture(2, (service.listForUser([])));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_139_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const { service: notifications, warning } = makeNotifications();
-    const service = new ProviderUsageService(db);
-    service.attachNotifications(notifications);
-
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.95,
-    });
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.97,
-    });
-
-    __jait_capture(0, (warning.mock.calls));
-    __jait_capture(1, (warning.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_159_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const { service: notifications, warning } = makeNotifications();
-    const service = new ProviderUsageService(db);
-    service.attachNotifications(notifications);
-
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed_warning",
-      rateLimitType: "seven_day",
-    });
-
-    __jait_capture(0, (warning.mock.calls));
-    __jait_capture(1, (warning.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_173_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const { service: notifications, warning } = makeNotifications();
-    const service = new ProviderUsageService(db);
-    service.attachNotifications(notifications);
-
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.95,
-    });
-    __jait_capture(0, (warning.mock.calls));
-
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.3,
-    });
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.96,
-    });
-    __jait_capture(1, (warning.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_198_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const { service: notifications, warning } = makeNotifications();
-    const service = new ProviderUsageService(db);
-    service.attachNotifications(notifications);
-
-    service.recordClaudeRateLimit("account-1", "claude", {
-      status: "allowed",
-      rateLimitType: "five_hour",
-      utilization: 0.5,
-    });
-
-    __jait_capture(0, (warning.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_584();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_212_3": {
-
-
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_434();
-try {
-await (async()=>{
-
-    const service = new ProviderUsageService(db);
-    service.recordCodexRateLimits("codex-account", {
-      rateLimits: {
-        primary: {
-          usedPercent: 12,
-          windowDurationMins: 300,
-          resetsAt: 1_700_000_000,
-        },
-        secondary: {
-          usedPercent: 34,
-          windowDurationMins: 10_080,
-          resetsAt: 1_700_100_000,
-        },
-        planType: "plus",
-        credits: { hasCredits: true, balance: "7.50" },
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [
+      {
+        id: "codex",
+        name: "Codex",
+        description: "Codex test provider",
+        command: process.execPath,
       },
-    });
+      {
+        id: "claude-code",
+        name: "Claude Code",
+        description: "Claude Code test provider",
+        command: process.execPath,
+      },
+      {
+        id: "local-acp",
+        name: "Local ACP",
+        description: "ACP provider without Jait-managed login",
+        command: process.execPath,
+        auth: false,
+      },
+    ], root);
 
-    const snapshots = service.listForUser(["codex-account"]);
-    __jait_capture(0, (snapshots));
-    __jait_capture(1, (snapshots));
+    __jait_capture(0, (service.listTypes()));
+
+    const personal = service.create("user-1", "claude-code", "Personal");
+    const work = service.create("user-1", "claude-code", "Work");
+    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
+    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
+
+    __jait_capture(1, (personalAdapter.config.env?.HOME), (join(root, personal.id)));
+    __jait_capture(2, (workAdapter.config.env?.HOME), (join(root, work.id)));
+    __jait_capture(3, (personalAdapter.config.env?.CLAUDE_CONFIG_DIR), (workAdapter.config.env?.CLAUDE_CONFIG_DIR));
+    __jait_capture(4, (personalAdapter.config.env?.NPM_CONFIG_CACHE), (workAdapter.config.env?.NPM_CONFIG_CACHE));
+    __jait_capture(5, (personalAdapter.config.env?.ANTHROPIC_API_KEY));
+    __jait_thrown(6, () => service.create("user-1", "local-acp", "Local"));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_119_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    const service = new ProviderUsageService(db);
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-11T09:37:00.000Z"));
-    try {
-      service.recordOllamaUsage(
-        "ollama",
-        {
-          limits: {
-            session: {
-              usage: 0.25,
-              models: [{ name: "gpt-oss", request_count: 4 }],
-            },
-            weekly: { usage: 0.4, models: [] },
-            monthly: { usage: 0.6, models: [] },
-          },
-          activity: {
-            cost: "3.20",
-            period: { ending_at: "2026-10-01T00:00:00.000Z" },
-          },
-        },
-        "pro",
-      );
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
 
-      const snapshots = service.listForUser(["ollama"]);
-      __jait_capture(0, (snapshots));
-      // The reported activity period is *not* a reset time — echoing it made the
-      // Usage modal claim the quota reset at fetch time. Each window instead gets
-      // a reset derived from the boundaries Ollama exposes.
-      __jait_capture(1, (snapshots.map((snapshot) => snapshot.resetsAt)));
-      __jait_capture(2, (snapshots));
-    } finally {
-      vi.useRealTimers();
-    }
+    const first = service.create("user-1", "codex", "First");
+    const second = service.create("user-1", "codex", "Second");
+    __jait_capture(0, (await service.delete(first.id, "user-2")));
+    __jait_capture(1, (await service.delete(first.id, "user-1")));
+
+    __jait_captureType(2, (registry.get(first.id)));
+    __jait_capture(3, (existsSync(join(root, first.id))));
+    __jait_captureType(4, (registry.get(second.id)));
+    __jait_capture(5, (existsSync(join(root, second.id))));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_304_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_145_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    const service = new ProviderUsageService(db);
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-03-11T10:20:00.000Z"));
-    try {
-      db.insert(providerUsage).values({
-        accountId: "ollama",
-        rateLimitType: "five_hour",
-        providerType: "ollama",
-        utilization: 0.82,
-        resetsAt: "2026-03-11T10:00:00.000Z",
-        updatedAt: "2026-03-11T09:37:00.000Z",
-        rawJson: JSON.stringify({ resetSource: "observed", windowStartAt: "2026-03-11T05:00:00.000Z" }),
-      }).run();
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
 
-      // Ollama reports 0.03 used: the quota demonstrably reset since the snapshot above.
-      service.recordOllamaUsage(
-        "ollama",
-        {
-          limits: {
-            session: { usage: 0.03, models: [] },
-            weekly: { usage: 0.4, models: [] },
-            monthly: { usage: 0.6, models: [] },
-          },
-          activity: { cost: "0", period: { starting_at: "2026-03-09T00:00:00.000Z" } },
-        },
-        "pro",
-      );
+    const windows = service.create("user-1", "codex", "Work", "windows-node");
+    const laptop = service.create("user-1", "codex", "Work", "laptop-node");
 
-      const session = service
-        .listForUser(["ollama"])
-        .find((snapshot) => snapshot.rateLimitType === "five_hour");
-      __jait_capture(0, (session?.resetsAt));
-    } finally {
-      vi.useRealTimers();
-    }
+    __jait_capture(0, (windows.nodeId));
+    __jait_capture(1, (laptop.nodeId));
+    __jait_capture(2, (registry.get(windows.id)?.executionNodeId));
+    __jait_capture(3, (existsSync(join(root, windows.id))));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_341_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_169_3": {
 
 
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-function makeNotifications() {
-  const warning = vi.fn();
-  return { warning, service: { warning } as unknown as NotificationService };
-}
-const __jait_hook_434 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_584 = () => {
-  sqlite.close();
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 };
 /*__jait_scope_open__*/{
-await __jait_hook_434();
+
 try {
 await (async()=>{
 
-    db.insert(providerUsage).values({
-      accountId: "ollama",
-      rateLimitType: "five_hour",
-      providerType: "ollama",
-      utilization: 0.25,
-      resetsAt: "2026-09-20T13:45:00.000Z",
-      updatedAt: "2026-09-20T13:45:00.000Z",
-      rawJson: "{}",
-    }).run();
-    const service = new ProviderUsageService(db);
-    __jait_capture(0, (service.listForUser(["ollama"])[0]));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
+
+    service.create("user-1", "codex", "Work");
+    __jait_thrown(0, () => service.create("user-1", "codex", "Work"));
+    __jait_thrown(1, () => service.create("user-1", "claude-code", "Work"));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_584();
+await __jait_hook_469();
 }
 }
 

@@ -199,6 +199,13 @@ the translated suite without restoring a production test file.
 
 ## Declaration parity review
 
+`python3 tests/contract/tooling/parity-review-index.py` inventories generated
+registrations separately from review credit. It records each declaration's
+`translation_variants`, including ignored variants, and parses Rust raw strings
+with any generated delimiter length. A generated variant is not proof that all
+source variants are present or equivalent. The inventory regression checks run
+with `python3 tests/contract/tooling/parity-review-index.test.py`.
+
 Run `bun tests/contract/tooling/apply-fragments.mjs` to merge reviewed declaration
 mappings, then run the Rust coverage audit described in
 [the migration plan](../../docs/gateway-rust-migration.md). Reapplying identical
@@ -424,3 +431,18 @@ accepted these duplicates; the new negative controls are exercised against both
 a minimal trace and the actual socket trace. This does not certify arbitrary
 multi-tool workflows or every route/database domain. The recovery corpus still
 has the historical-fixture and populated-domain limits documented in its review.
+
+## Initial native implementation lane
+
+`bun run test:gateway:rust` runs `tests/gateway_rust.rs` against the real
+`packages/gateway-rust` library and production entrypoint. Cargo compiles that
+entrypoint as the `gateway-native` test binary. The suite covers isolated config,
+loopback enforcement, bind failures, health JSON differential checks using the
+existing TypeScript handler, concurrent HTTP/HEAD/query behavior, unsupported
+routes, process startup without Node/Bun/PATH, and SIGTERM cleanup on Unix.
+Artifacts are under `.jait/artifacts/gateway-rust/`.
+
+This is an initial component suite. The full HTTP/SSE acceptance profile still
+requires APIs the native gateway does not implement; it must continue to fail
+against this partial backend. No full parity or replacement-readiness credit is
+claimed. The existing TypeScript-backed suites remain in place.

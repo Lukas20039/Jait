@@ -1,14 +1,10 @@
-// Translated fixture from packages/gateway/src/services/github-pull-requests.test.ts; expected literals are in tail_static.rs.
-import {
-  GitHubPullRequestService,
-  type PullRequestConflictGitOperations,
-} from "../../../../packages/gateway/src/services/github-pull-requests.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/git-forge.test.ts; expected literals are in tail_static.rs.
+import { getForge, getForgeForRemote, GitHubForge, GitLabForge, GiteaForge, AzureDevOpsForge, BitbucketForge } from "../../../../packages/gateway/src/services/git-forge.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/github-pull-requests.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/git-forge.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,104 +31,26 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_5_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const runner = vi.fn(async () => ({
-      stdout: JSON.stringify([{
-        number: 42,
-        title: "feat: in-app pull requests",
-        state: "OPEN",
-        url: "https://github.com/acme/jait/pull/42",
-        author: { login: "octocat", name: "Octo Cat" },
-        baseRefName: "main",
-        headRefName: "feature/pulls",
-        isDraft: false,
-        reviewDecision: "APPROVED",
-        mergeStateStatus: "CLEAN",
-        additions: 120,
-        deletions: 15,
-        changedFiles: 4,
-        createdAt: "2026-08-01T10:00:00Z",
-        updatedAt: "2026-08-01T12:00:00Z",
-        labels: [{ name: "feature", color: "00ff00" }],
-        statusCheckRollup: [{
-          name: "test",
-          status: "COMPLETED",
-          conclusion: "SUCCESS",
-          detailsUrl: "https://github.com/acme/jait/actions/1",
-        }],
-      }]),
-      stderr: "",
-    }));
-    const service = new GitHubPullRequestService(runner);
-
-    const result = await service.list("git@github.com:acme/jait.git", "open", 50);
-
-    __jait_capture(0, (runner.mock.calls));
-    __jait_capture(1, (result));
+    __jait_instance(0, getForge("github"), GitHubForge);
+    __jait_instance(1, getForge("gitlab"), GitLabForge);
+    __jait_instance(2, getForge("gitea"), GiteaForge);
+    __jait_instance(3, getForge("azure-devops"), AzureDevOpsForge);
+    __jait_instance(4, getForge("bitbucket"), BitbucketForge);
   
 })();
 
@@ -143,71 +61,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_109_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_13_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const runner = vi.fn(async () => ({ stdout: "", stderr: "" }));
-    const service = new GitHubPullRequestService(runner);
-    const body = "Looks good with `code` and $(untrusted input).";
-
-    await service.review("https://github.com/acme/jait", 42, "approve", body);
-
-    __jait_capture(0, (runner.mock.calls), ([["pr", "review", "42", "--repo", "acme/jait", "--approve", "--body-file", "-"],{ input: body }]));
+    __jait_captureType(0, (getForge("unknown")));
+    __jait_captureType(1, (getForge("none")));
   
 })();
 
@@ -218,67 +81,17 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_122_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_18_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = new GitHubPullRequestService();
-
-    __jait_thrown(0, () => service.repositoryTarget("https://gitlab.com/acme/jait"));
+    const a = getForge("github");
+    const b = getForge("github");
+    __jait_capture(0, (a), (b));
   
 })();
 
@@ -289,73 +102,19 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_129_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_24_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const previousToken = process.env.GITHUB_TOKEN;
-    process.env.GITHUB_TOKEN = "gateway-owner-token";
-    try {
-      const service = new GitHubPullRequestService();
-      await __jait_rejected(0, service.list("https://github.com/acme/jait", "open", 1));
-    } finally {
-      if (previousToken === undefined) delete process.env.GITHUB_TOKEN;
-      else process.env.GITHUB_TOKEN = previousToken;
-    }
+    __jait_capture(0, (getForge("github")!.displayName));
+    __jait_capture(1, (getForge("gitlab")!.displayName));
+    __jait_capture(2, (getForge("gitea")!.displayName));
+    __jait_capture(3, (getForge("azure-devops")!.displayName));
+    __jait_capture(4, (getForge("bitbucket")!.displayName));
   
 })();
 
@@ -366,84 +125,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_142_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_34_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const path = "src/link;$(touch-owned)";
-    const baseBranch = "main;$(touch-base)";
-    const headBranch = "feature;$(touch-head)";
-    const operations = conflictOperations({ paths: [{ path, mode: "120000" }] });
-    const service = new GitHubPullRequestService(
-      conflictRunner({ baseBranch, headBranch }),
-      operations,
-    );
-
-    await service.resolveConflicts(
-      "https://github.com/acme/jait",
-      42,
-      { [path]: "ours" },
-    );
-
-    __jait_capture(0, (operations.cloneOrFetch.mock.calls), (["https://github.com/acme/jait","github.com--acme--jait--conflicts",baseBranch]));
-    __jait_capture(1, (operations.git.mock.calls), (["/tmp/jait-conflict-clone",["merge", "--no-edit", `refs/remotes/origin/${baseBranch}`],60_000]));
-    __jait_capture(2, (operations.git.mock.calls), (["/tmp/jait-conflict-clone",["checkout", "--ours", "--", path],30_000]));
-    __jait_capture(3, (operations.git.mock.calls), (["/tmp/jait-conflict-clone",["add", "--", path],30_000]));
-    __jait_capture(4, (operations.git.mock.calls), (["/tmp/jait-conflict-clone",["branch", "-D", "--", headBranch],30_000]));
+    const forge = getForgeForRemote("https://github.com/user/repo.git");
+    __jait_instance(0, forge, GitHubForge);
   
 })();
 
@@ -454,69 +145,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_185_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_39_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const operations = conflictOperations({ paths: [{ path: "../outside" }] });
-    const service = new GitHubPullRequestService(conflictRunner(), operations);
-
-    await __jait_rejected(0, service.resolveConflicts("https://github.com/acme/jait", 42));
-    __jait_capture(1, (operations.git.mock.calls));
+    const forge = getForgeForRemote("git@github.com:user/repo.git");
+    __jait_instance(0, forge, GitHubForge);
   
 })();
 
@@ -527,86 +165,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_198_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_44_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const path = "assets/logo.bin";
-    const operations = conflictOperations({
-      paths: [{ path }],
-      stages: {
-        [`:2:${path}`]: Buffer.from([0, 255, 1, 2]),
-        [`:3:${path}`]: Buffer.from([0, 254, 3, 4]),
-      },
-    });
-    const service = new GitHubPullRequestService(conflictRunner(), operations);
-
-    const preview = await service.resolveConflicts("https://github.com/acme/jait", 42);
-    __jait_capture(0, (preview), ({
-      status: "conflicts",
-      files: [{ path, binary: true, ours: "", theirs: "" }],
-    }));
-
-    await service.resolveConflicts(
-      "https://github.com/acme/jait",
-      42,
-      { [path]: "theirs" },
-    );
-    __jait_capture(1, (operations.git.mock.calls), (["/tmp/jait-conflict-clone",["checkout", "--theirs", "--", path],30_000]));
+    const forge = getForgeForRemote("https://gitlab.com/group/project.git");
+    __jait_instance(0, forge, GitLabForge);
   
 })();
 
@@ -617,93 +185,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_227_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_49_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const token = "ghp_super_secret";
-    const git: PullRequestConflictGitOperations["git"] = vi.fn(async (_cwd, args) => {
-      if (args[0] === "ls-files") return "";
-      if (args[0] === "push" && args.length === 1) throw new Error("no credential helper");
-      if (args[0] === "push") throw new Error(`remote echoed ${token}`);
-      return "";
-    });
-    const operations = conflictOperations({ git });
-    const service = new GitHubPullRequestService(
-      conflictRunner({
-        token,
-        headUrl: "https://embedded:credential@github.com/fork/jait",
-      }),
-      operations,
-    );
-
-    let surfaced = "";
-    try {
-      await service.resolveConflicts("https://github.com/acme/jait", 42);
-    } catch (error) {
-      surfaced = error instanceof Error ? error.message : String(error);
-    }
-    __jait_capture(0, (surfaced));
-    __jait_capture(1, (surfaced), (token));
-
-    const fallbackPush = vi.mocked(git).mock.calls.find(([, args]) => args[0] === "push" && args.length > 1);
-    __jait_capture(2, (fallbackPush?.[1]));
-    __jait_capture(3, (JSON.stringify(fallbackPush?.[1])), (token));
-    __jait_capture(4, (fallbackPush?.[3]?.redactions), (token));
+    const forge = getForgeForRemote("https://gitlab.mycompany.com/team/repo.git");
+    __jait_instance(0, forge, GitLabForge);
   
 })();
 
@@ -714,83 +205,223 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_github_pull_requests_test_ts_263_3": {
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_54_3": {
 
 
-function conflictRunner(options: {
-  baseBranch?: string;
-  headBranch?: string;
-  token?: string;
-  headUrl?: string;
-} = {}) {
-  return vi.fn(async (args: string[]) => {
-    if (args[0] === "auth") {
-      return { stdout: options.token ?? "test-token", stderr: "" };
-    }
-    if (args.at(-1) === "headRepository") {
-      return {
-        stdout: JSON.stringify({
-          headRepository: { url: options.headUrl ?? "https://github.com/acme/jait" },
-        }),
-        stderr: "",
-      };
-    }
-    return {
-      stdout: JSON.stringify({
-        number: 42,
-        title: "Conflict PR",
-        state: "OPEN",
-        baseRefName: options.baseBranch ?? "main",
-        headRefName: options.headBranch ?? "feature",
-      }),
-      stderr: "",
-    };
-  });
-}
-function conflictOperations(options: {
-  paths?: Array<{ path: string; mode?: string }>;
-  stages?: Record<string, Buffer>;
-  git?: PullRequestConflictGitOperations["git"];
-  cloneOrFetch?: PullRequestConflictGitOperations["cloneOrFetch"];
-} = {}): PullRequestConflictGitOperations {
-  const paths = options.paths ?? [];
-  return {
-    cloneOrFetch: options.cloneOrFetch ?? vi.fn(async () => "/tmp/jait-conflict-clone"),
-    git: options.git ?? vi.fn(async (_cwd, args) => {
-      if (args[0] === "merge" && paths.length > 0) throw new Error("merge conflicts");
-      if (args[0] === "ls-files") {
-        return paths.map(({ path, mode = "100644" }) => `${mode} deadbeef 2\t${path}\0`).join("");
-      }
-      return "";
-    }),
-    gitBuffer: vi.fn(async (_cwd, args) => options.stages?.[String(args[1])] ?? Buffer.from("text")),
-    gh: vi.fn(async () => ""),
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let activeClones = 0;
-    let maxActiveClones = 0;
-    const operations = conflictOperations({
-      cloneOrFetch: vi.fn(async () => {
-        activeClones += 1;
-        maxActiveClones = Math.max(maxActiveClones, activeClones);
-        await new Promise((resolve) => setTimeout(resolve, 10));
-        activeClones -= 1;
-        return "/tmp/jait-conflict-clone";
-      }),
-    });
-    const service = new GitHubPullRequestService(conflictRunner(), operations);
+    const forge = getForgeForRemote("https://gitea.example.com/user/repo.git");
+    __jait_instance(0, forge, GiteaForge);
+  
+})();
 
-    await Promise.all([
-      service.resolveConflicts("https://github.com/acme/jait", 41),
-      service.resolveConflicts("https://github.com/acme/jait", 42),
-    ]);
+} finally {
 
-    __jait_capture(0, (maxActiveClones));
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_59_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const forge = getForgeForRemote("https://dev.azure.com/org/project/_git/repo");
+    __jait_instance(0, forge, AzureDevOpsForge);
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_64_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const forge = getForgeForRemote("https://org.visualstudio.com/project/_git/repo");
+    __jait_instance(0, forge, AzureDevOpsForge);
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_69_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const forge = getForgeForRemote("https://bitbucket.org/user/repo.git");
+    __jait_instance(0, forge, BitbucketForge);
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_74_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_captureType(0, (getForgeForRemote(null)));
+    __jait_captureType(1, (getForgeForRemote("")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_87_3": {
+
+
+/*__jait_scope_open__*/{
+const ghRemote = { provider: "github" as const, host: "github.com", normalizedUrl: "https://github.com/user/repo", repo: "repo", owner: "user" };
+const glRemote = { provider: "gitlab" as const, host: "gitlab.com", normalizedUrl: "https://gitlab.com/group/repo", repo: "repo", owner: "group" };
+const giteaRemote = { provider: "gitea" as const, host: "gitea.example.com", normalizedUrl: "https://gitea.example.com/user/repo", repo: "repo", owner: "user" };
+const azRemote = { provider: "azure-devops" as const, host: "dev.azure.com", normalizedUrl: "https://dev.azure.com/org/project/_git/repo", repo: "repo", organization: "org", project: "project" };
+const bbRemote = { provider: "bitbucket" as const, host: "bitbucket.org", normalizedUrl: "https://bitbucket.org/user/repo", repo: "repo", owner: "user" };
+
+try {
+await (async()=>{
+
+    const url = new GitHubForge().buildCreatePrUrl(ghRemote, "feature", "main");
+    __jait_capture(0, (url));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_92_3": {
+
+
+/*__jait_scope_open__*/{
+const ghRemote = { provider: "github" as const, host: "github.com", normalizedUrl: "https://github.com/user/repo", repo: "repo", owner: "user" };
+const glRemote = { provider: "gitlab" as const, host: "gitlab.com", normalizedUrl: "https://gitlab.com/group/repo", repo: "repo", owner: "group" };
+const giteaRemote = { provider: "gitea" as const, host: "gitea.example.com", normalizedUrl: "https://gitea.example.com/user/repo", repo: "repo", owner: "user" };
+const azRemote = { provider: "azure-devops" as const, host: "dev.azure.com", normalizedUrl: "https://dev.azure.com/org/project/_git/repo", repo: "repo", organization: "org", project: "project" };
+const bbRemote = { provider: "bitbucket" as const, host: "bitbucket.org", normalizedUrl: "https://bitbucket.org/user/repo", repo: "repo", owner: "user" };
+
+try {
+await (async()=>{
+
+    const url = new GitLabForge().buildCreatePrUrl(glRemote, "feature");
+    __jait_capture(0, (url));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_97_3": {
+
+
+/*__jait_scope_open__*/{
+const ghRemote = { provider: "github" as const, host: "github.com", normalizedUrl: "https://github.com/user/repo", repo: "repo", owner: "user" };
+const glRemote = { provider: "gitlab" as const, host: "gitlab.com", normalizedUrl: "https://gitlab.com/group/repo", repo: "repo", owner: "group" };
+const giteaRemote = { provider: "gitea" as const, host: "gitea.example.com", normalizedUrl: "https://gitea.example.com/user/repo", repo: "repo", owner: "user" };
+const azRemote = { provider: "azure-devops" as const, host: "dev.azure.com", normalizedUrl: "https://dev.azure.com/org/project/_git/repo", repo: "repo", organization: "org", project: "project" };
+const bbRemote = { provider: "bitbucket" as const, host: "bitbucket.org", normalizedUrl: "https://bitbucket.org/user/repo", repo: "repo", owner: "user" };
+
+try {
+await (async()=>{
+
+    const url = new GiteaForge().buildCreatePrUrl(giteaRemote, "feature", "main");
+    __jait_capture(0, (url));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_102_3": {
+
+
+/*__jait_scope_open__*/{
+const ghRemote = { provider: "github" as const, host: "github.com", normalizedUrl: "https://github.com/user/repo", repo: "repo", owner: "user" };
+const glRemote = { provider: "gitlab" as const, host: "gitlab.com", normalizedUrl: "https://gitlab.com/group/repo", repo: "repo", owner: "group" };
+const giteaRemote = { provider: "gitea" as const, host: "gitea.example.com", normalizedUrl: "https://gitea.example.com/user/repo", repo: "repo", owner: "user" };
+const azRemote = { provider: "azure-devops" as const, host: "dev.azure.com", normalizedUrl: "https://dev.azure.com/org/project/_git/repo", repo: "repo", organization: "org", project: "project" };
+const bbRemote = { provider: "bitbucket" as const, host: "bitbucket.org", normalizedUrl: "https://bitbucket.org/user/repo", repo: "repo", owner: "user" };
+
+try {
+await (async()=>{
+
+    const url = new AzureDevOpsForge().buildCreatePrUrl(azRemote, "feature", "main");
+    __jait_capture(0, (url));
+    __jait_capture(1, (url));
+    __jait_capture(2, (url));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_forge_test_ts_109_3": {
+
+
+/*__jait_scope_open__*/{
+const ghRemote = { provider: "github" as const, host: "github.com", normalizedUrl: "https://github.com/user/repo", repo: "repo", owner: "user" };
+const glRemote = { provider: "gitlab" as const, host: "gitlab.com", normalizedUrl: "https://gitlab.com/group/repo", repo: "repo", owner: "group" };
+const giteaRemote = { provider: "gitea" as const, host: "gitea.example.com", normalizedUrl: "https://gitea.example.com/user/repo", repo: "repo", owner: "user" };
+const azRemote = { provider: "azure-devops" as const, host: "dev.azure.com", normalizedUrl: "https://dev.azure.com/org/project/_git/repo", repo: "repo", organization: "org", project: "project" };
+const bbRemote = { provider: "bitbucket" as const, host: "bitbucket.org", normalizedUrl: "https://bitbucket.org/user/repo", repo: "repo", owner: "user" };
+
+try {
+await (async()=>{
+
+    const url = new BitbucketForge().buildCreatePrUrl(bbRemote, "feature");
+    __jait_capture(0, (url));
   
 })();
 

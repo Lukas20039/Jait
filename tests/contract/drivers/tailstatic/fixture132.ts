@@ -1,26 +1,17 @@
-// Translated fixture from packages/gateway/src/security/pairing-preview-access.test.ts; expected literals are in tail_static.rs.
-
-
-import { mkdtempSync, writeFileSync, symlinkSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
-import { createServer as httpServer } from "node:http";
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import { NodeCredentialsService } from "../../../../packages/gateway/src/services/node-credentials.js";
-import { registerAuthRoutes } from "../../../../packages/gateway/src/routes/auth.js";
-import { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { loadConfig } from "../../../../packages/gateway/src/config.js";
+// Translated fixture from packages/gateway/src/security/control-access.test.ts; expected literals are in tail_static.rs.
 import { createServer } from "../../../../packages/gateway/src/server.js";
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { nodes } from "../../../../packages/gateway/src/db/schema.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { DeviceRegistry } from "../../../../packages/gateway/src/services/device-registry.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/security/pairing-preview-access.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/control-access.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -47,306 +38,361 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_24_3": {
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_32_3": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
   const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
 }
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:"); migrateDatabase(sqlite);
-    cleanups.push(() => sqlite.close());
-    const users = new UserService(db), app = Fastify();
-    await app.register(cookie); registerAuthRoutes(app, config, users); cleanups.push(() => app.close());
-    const register = (username: string, invitation?: string) => app.inject({ method: "POST", url: "/api/auth/register", payload: { username, password: "test-password-only", invitation } });
-    const first = await register("owner"); __jait_capture(0, (first.statusCode));
-    __jait_capture(1, ((await register("stranger")).statusCode));
-    const invited = await app.inject({ method: "POST", url: "/api/auth/invitations", headers: { authorization: "Bearer " + first.json().access_token } });
-    __jait_capture(2, (invited.statusCode));
-    const code = invited.json().invitation;
-    const second = await register("friend", code); __jait_capture(3, (second.statusCode));
-    __jait_capture(4, ((await register("reused-code", code)).statusCode));
-    __jait_capture(5, ((await app.inject({ method: "POST", url: "/api/auth/invitations", headers: { authorization: "Bearer " + second.json().access_token } })).statusCode));
-    __jait_capture(6, (users.countUsers()));
+    const { app, write } = await setup();
+    const r = await app.inject({ method: "POST", url: "/api/terminals/fake-terminal/write", payload: { data: "MARKER" } });
+    __jait_capture(0, (r.statusCode));
+    __jait_capture(1, (write.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1011();
+await __jait_hook_611();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_43_3": {
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_38_3": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
   const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
 }
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:"); migrateDatabase(sqlite);
-    cleanups.push(() => sqlite.close());
-    const now = new Date().toISOString();
-    db.insert(nodes).values({ nodeId: "node-a", firstSeenAt: now, lastSeenAt: now, createdAt: now, updatedAt: now }).run();
-    const credentials = new NodeCredentialsService(db);
-    __jait_capture(0, (credentials.bind("node-a", "owner")));
-    __jait_capture(1, (credentials.bind("node-a", "stranger")));
-    const token = credentials.issue("node-a", "owner")!;
-    __jait_capture(2, (new NodeCredentialsService(db).resolve(token)));
-    __jait_capture(3, (sqlite.prepare("SELECT token_hash FROM node_credentials").get()), ({ token_hash: token }));
-    const plane = new WsControlPlane(config, db);
-    const client = { authenticated: false, userId: null, terminalSubscriptions: new Set(), ws: { send: vi.fn(), close: vi.fn(), readyState: 1 } };
-    __jait_capture(4, (await (plane as any).authenticateClient(client, token)));
-    const input = vi.fn(); plane.onTerminalInput = input; plane.canAccessTerminal = () => true;
+    const { app, write, other } = await setup();
+    const r = await app.inject({ method: "POST", url: "/api/terminals/fake-terminal/write", headers: other, payload: { data: "MARKER" } });
+    __jait_capture(0, (r.statusCode));
+    __jait_capture(1, (write.mock.calls));
+    const list = await app.inject({ url: "/api/terminals", headers: other });
+    __jait_capture(2, (list.json().terminals));
+  
+})();
+
+} finally {
+await __jait_hook_611();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_46_3": {
+
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
+}
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { app, write, headers } = await setup();
+    const r = await app.inject({ method: "POST", url: "/api/terminals/fake-terminal/write", headers, payload: { data: "MARKER" } });
+    __jait_capture(0, (r.statusCode));
+    __jait_capture(1, (write.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_611();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_55_3_each0": {
+
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
+}
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const nodeEnv = "production";
+
+try {
+await (async()=>{
+
+    const plane = new WsControlPlane({ ...config, nodeEnv });
+    const input = vi.fn(), approval = vi.fn(), send = vi.fn();
+    plane.onTerminalInput = input; plane.onConsentApprove = approval;
+    const client = { authenticated: false, userId: null, ws: { readyState: 1, send } };
     await (plane as any).handleMessage(client, { type: "terminal.input", terminalId: "fake", data: "MARKER" });
-    __jait_capture(5, (input.mock.calls));
-    __jait_capture(6, (credentials.revoke("node-a", "stranger")));
-    __jait_capture(7, (credentials.revoke("node-a", "owner")));
-    __jait_captureType(8, (new NodeCredentialsService(db).resolve(token)));
-    await (plane as any).handleMessage(client, { type: "fs.register-node", payload: { id: "node-a", name: "a", platform: "linux" } });
-    __jait_capture(9, (plane.getFsNodes()));
+    await (plane as any).handleMessage(client, { type: "consent.approve", requestId: "fake" });
+    __jait_capture(0, (input.mock.calls)); __jait_capture(1, (approval.mock.calls));
+    __jait_capture(2, (JSON.parse(send.mock.calls[0]![0]).payload.code));
   
 })();
 
 } finally {
-await __jait_hook_1011();
+await __jait_hook_611();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_81_3": {
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_55_3_each1": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
   const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
 }
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const nodeEnv = "development";
+
+try {
+await (async()=>{
+
+    const plane = new WsControlPlane({ ...config, nodeEnv });
+    const input = vi.fn(), approval = vi.fn(), send = vi.fn();
+    plane.onTerminalInput = input; plane.onConsentApprove = approval;
+    const client = { authenticated: false, userId: null, ws: { readyState: 1, send } };
+    await (plane as any).handleMessage(client, { type: "terminal.input", terminalId: "fake", data: "MARKER" });
+    await (plane as any).handleMessage(client, { type: "consent.approve", requestId: "fake" });
+    __jait_capture(0, (input.mock.calls)); __jait_capture(1, (approval.mock.calls));
+    __jait_capture(2, (JSON.parse(send.mock.calls[0]![0]).payload.code));
+  
+})();
+
+} finally {
+await __jait_hook_611();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_65_3": {
+
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
+}
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let observed: import("node:http").IncomingHttpHeaders = {};
-    const upstream = httpServer((req, res) => { observed = req.headers; res.setHeader("content-type", "text/javascript"); res.setHeader("set-cookie", "jait_token=evil"); res.end('export const ok = true'); });
-    await new Promise<void>((resolve) => upstream.listen(0, "127.0.0.1", resolve));
-    cleanups.push(() => new Promise<void>((resolve) => upstream.close(() => resolve())));
-    const port = (upstream.address() as import("node:net").AddressInfo).port;
-    const { app, token, headers, other } = await previewSetup(port, __jait_fixture_dir);
-    const response = await app.inject({ url: `/api/dev-proxy/${port}/main.js`, headers: { ...headers, cookie: "jait_token=" + token } });
-    __jait_capture(0, (response.statusCode));
-    __jait_captureType(1, (observed.authorization)); __jait_captureType(2, (observed.cookie));
-    __jait_captureType(3, (response.headers["set-cookie"]));
-    __jait_capture(4, ((await app.inject({ url: `/api/dev-proxy/${port}/`, headers: other })).statusCode));
-    __jait_capture(5, ((await app.inject({ url: "/api/dev-proxy/1/", headers })).statusCode));
+    const plane = new WsControlPlane(config);
+    const input = vi.fn(), approval = vi.fn();
+    plane.onTerminalInput = input; plane.onConsentApprove = approval;
+    plane.canAccessTerminal = (_id, user) => user === "owner";
+    plane.canAccessConsent = (_id, user) => user === "owner";
+    const client = (userId: string) => ({ authenticated: true, userId, ws: { readyState: 1, send: vi.fn() } });
+    for (const user of ["stranger", "owner"]) {
+      await (plane as any).handleMessage(client(user), { type: "terminal.input", terminalId: "fake", data: "MARKER" });
+      await (plane as any).handleMessage(client(user), { type: "consent.approve", requestId: "fake" });
+    }
+    __jait_capture(0, (input.mock.calls)); __jait_capture(1, (approval.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1011();
+await __jait_hook_611();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_95_3": {
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_80_1": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
   const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
 }
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
-/*__jait_scope_open__*/{
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
 
 try {
 await (async()=>{
 
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-preview-access-"));
-    const outside = mkdtempSync(join(__jait_fixture_dir, "jait-preview-outside-"));
-    cleanups.push(() => { rmSync(root, { recursive: true, force: true }); rmSync(outside, { recursive: true, force: true }); });
-    const html = join(root, "index.html"); writeFileSync(html, "<html><head></head><body>preview</body></html>");
-    writeFileSync(join(outside, "private.txt"), "private-marker"); symlinkSync(join(outside, "private.txt"), join(root, "escape.txt"));
-    const { app, headers, other } = await previewSetup(4321, root);
-    const url = "/api/dev-file/" + Buffer.from(html).toString("base64url");
-    __jait_capture(0, ((await app.inject({ url, headers })).statusCode));
-    __jait_capture(1, ((await app.inject({ url, headers: other })).statusCode));
-    __jait_capture(2, ((await app.inject({ url: url + "/escape.txt", headers })).statusCode));
-    const grant = await app.inject({ method: "POST", url: "/api/preview/access", headers, payload: { source: url } });
-    __jait_capture(3, (grant.statusCode));
-    const scopedUrl = new URL(grant.json().url);
-    const rendered = await app.inject({ url: scopedUrl.pathname, headers: { origin: "null" } });
-    __jait_capture(4, (rendered.statusCode));
-    __jait_capture(5, (rendered.headers["content-security-policy"]));
-    __jait_capture(6, (rendered.headers["content-security-policy"]));
-    const grantToken = scopedUrl.pathname.split("/")[2];
-    __jait_capture(7, ((await app.inject({ url: "/api/filesystem/nodes", headers: { authorization: "Bearer " + grantToken } })).statusCode));
-    __jait_capture(8, ((await app.inject({ url: scopedUrl.pathname.replace("/file/", "/proxy/") })).statusCode));
+  const { app } = await setup();
+  for (const url of ["/api/dev-proxy/1/", "/api/dev-file/fake", "/api/filesystem/browse?path=/tmp", "/api/consent/pending"]) {
+    const r = await app.inject({ url });
+    __jait_capture(0, (r.statusCode));
+  }
 
-  
 })();
 
 } finally {
-await __jait_hook_1011();
+await __jait_hook_611();
 }
-}
+
 
 break;
 }
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_118_3": {
+case "tailstatic_packages_gateway_src_security_control_access_test_ts_89_1": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
+
+const config = { ...loadConfig(), jwtSecret: "control-access-regression-secret", nodeEnv: "production", logLevel: "silent" };
+const apps: Array<Awaited<ReturnType<typeof createServer>>> = [];
+async function setup() {
+  const write = vi.fn();
+  const surfaces = new SurfaceRegistry();
+  const snapshot = { id: "fake-terminal", type: "terminal", state: "running", sessionId: "owner-session", metadata: {} };
+  surfaces.registerInstance("fake-terminal", { id: snapshot.id, type: "terminal", sessionId: snapshot.sessionId,
+    state: "running", snapshot: () => snapshot, write, resize: vi.fn() } as any);
+  const approve = vi.fn(() => true);
+  const consentManager = { getRequest: () => ({ id: "pending", status: "pending", sessionId: "owner-session" }), approve, listPending: () => [], reject: vi.fn(() => true) } as any;
+  const app = await createServer(config, { consentManager, deviceRegistry: new DeviceRegistry(), surfaceRegistry: surfaces, toolRegistry: new ToolRegistry(),
+    audit: { write: vi.fn() } as any,
+    sessionService: { getById: (id: string, user?: string) => id === "owner-session" && (!user || user === "owner") ? { id, userId: "owner" } : null } as any });
+  apps.push(app);
   const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
+  const other = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
+  return { app, write, approve, headers: { authorization: `Bearer ${token}` }, other: { authorization: `Bearer ${other}` } };
 }
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
-/*__jait_scope_open__*/{
+const __jait_hook_611 = async () => { for (const app of apps.splice(0)) await app.close(); };
 
 try {
 await (async()=>{
 
-    const { app, token, headers } = await previewSetup(4321, __jait_fixture_dir);
-    const evil = { origin: "https://attacker.invalid", cookie: "jait_token=" + token };
-    __jait_capture(0, ((await app.inject({ url: "/api/tools", headers: evil })).statusCode));
-    __jait_capture(1, ((await app.inject({ method: "POST", url: "/api/auth/refresh", headers: evil })).statusCode));
-    __jait_capture(2, ((await app.inject({ url: "/api/filesystem/nodes", headers: { ...headers, origin: "http://tauri.localhost" } })).statusCode));
-  
-})();
-
-} finally {
-await __jait_hook_1011();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_security_pairing_preview_access_test_ts_127_1": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const { default: cookie } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@fastify/cookie", __jait_original_dir):__jait_require.resolve("@fastify/cookie")));
-const { default: WebSocket, WebSocketServer } = await import((typeof Bun!=="undefined"?Bun.resolveSync("ws",__jait_original_dir):__jait_require.resolve("ws/package.json").replace(/package\.json$/,"wrapper.mjs")));
-const config = { ...loadConfig(), jwtSecret: "paired-preview-security-test", logLevel: "silent", nodeEnv: "production" };
-const cleanups: Array<() => unknown> = [];
-async function previewSetup(port: number, root: string) {
-  const app = await createServer(config, {
-    projectService: { list: (_status: unknown, user: string) => user === "owner" ? [{ rootPath: root }] : [] } as any,
-    sessionService: { getById: (id: string, user: string) => id === "preview-session" && user === "owner" ? { id, userId: user } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview-session", status: "ready", port, projectRoot: root, remoteBrowser: { novncPort: port } }] } as any,
-  });
-  cleanups.push(() => app.close());
-  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
-  const stranger = await signAuthToken({ id: "stranger", username: "stranger" }, config.jwtSecret);
-  return { app, token, headers: { authorization: "Bearer " + token }, other: { authorization: "Bearer " + stranger } };
-}
-const __jait_hook_1011 = async () => { for (const cleanup of cleanups.splice(0).reverse()) await cleanup(); };
-
-try {
-await (async()=>{
-
-  const upstream = httpServer();
-  const upstreamWs = new WebSocketServer({ server: upstream });
-  upstreamWs.on("connection", (socket) => socket.on("message", (data) => socket.send(data.toString())));
-  await new Promise<void>((resolve) => upstream.listen(0, "127.0.0.1", resolve));
-  cleanups.push(() => { upstreamWs.close(); return new Promise<void>((resolve) => upstream.close(() => resolve())); });
-  const port = (upstream.address() as import("node:net").AddressInfo).port;
-  const { app, headers } = await previewSetup(port, __jait_fixture_dir);
-  await app.listen({ port: 0, host: "127.0.0.1" });
-  const appPort = (app.server.address() as import("node:net").AddressInfo).port;
-  const grant = await app.inject({ method: "POST", url: "/api/preview/access", headers: { ...headers, host: "127.0.0.1:" + appPort },
-    payload: { source: "/noVNC/vnc_lite.html?path=api/live-view/" + port + "/websockify" } });
-  __jait_capture(0, (grant.statusCode));
-  const viewer = new URL(grant.json().url);
-  const path = viewer.searchParams.get("path");
-  const socket = new WebSocket("ws://127.0.0.1:" + appPort + "/" + path, { origin: "http://tauri.localhost" });
-  cleanups.push(() => socket.terminate());
-  await new Promise<void>((resolve, reject) => { socket.once("open", resolve); socket.once("error", reject); });
-  // Upstream connection starts after the client handshake; allow it to settle.
-  await new Promise((resolve) => setTimeout(resolve, 80));
-  const echo = new Promise<string>((resolve) => socket.once("message", (data) => resolve(data.toString())));
-  socket.send("native-preview-marker");
-  __jait_capture(1, (await echo));
+  const { app, headers, other, approve } = await setup();
+  const url = "/api/mobile/consent/pending/approve";
+  __jait_capture(0, ((await app.inject({ method: "POST", url })).statusCode));
+  __jait_capture(1, ((await app.inject({ method: "POST", url, headers: other })).statusCode));
+  __jait_capture(2, (approve.mock.calls));
+  __jait_capture(3, ((await app.inject({ method: "POST", url, headers })).statusCode));
+  __jait_capture(4, (approve.mock.calls));
 
 })();
 
 } finally {
-await __jait_hook_1011();
+await __jait_hook_611();
 }
 
 

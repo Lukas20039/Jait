@@ -1,21 +1,19 @@
-// Translated fixture from packages/gateway/src/routes/assistant-profiles-environment.test.ts; expected literals are in tail_static.rs.
-import type { CliProviderAdapter, ProviderInfo, ProviderSession, StartSessionOptions } from "../../../../packages/gateway/src/providers/contracts.js";
+// Translated fixture from packages/gateway/src/routes/agent-runtime.test.ts; expected literals are in tail_static.rs.
+import { createServer } from "../../../../packages/gateway/src/server.js";
 import { loadConfig } from "../../../../packages/gateway/src/config.js";
 import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { SessionStateService } from "../../../../packages/gateway/src/services/session-state.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
 import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { createServer } from "../../../../packages/gateway/src/server.js";
-import { AssistantProfileService } from "../../../../packages/gateway/src/services/assistant-profiles.js";
-import { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { RepositoryService } from "../../../../packages/gateway/src/services/repositories.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
+import { __chatTestUtils } from "../../../../packages/gateway/src/routes/chat.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/assistant-profiles-environment.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/agent-runtime.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,407 +40,83 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_assistant_profiles_environment_test_ts_142_3": {
+case "tailstatic_packages_gateway_src_routes_agent_runtime_test_ts_16_3": {
 
 
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-class MockProvider implements CliProviderAdapter {
-  readonly id = "codex";
-  readonly info: ProviderInfo = {
-    id: "codex",
-    name: "Mock Codex",
-    description: "Test provider",
-    available: true,
-    modes: ["full-access", "supervised"],
-  };
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return {
-      id: "provider-session",
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(): Promise<void> {}
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(): () => void {
-    return () => {};
-  }
-}
-async function authHeaders(userId: string, username: string, jwtSecret: string) {
-  const token = await signAuthToken({ id: userId, username }, jwtSecret);
-  return { authorization: `Bearer ${token}` };
-}
+const config = { ...loadConfig(), port: 0, wsPort: 0, logLevel: "silent", nodeEnv: "test" };
 /*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let userService: UserService;
-let projectService: ProjectService;
-let assistantProfileService: AssistantProfileService;
-let repoService: RepositoryService;
-let sessionService: SessionService;
-const __jait_hook_2364 = async () => {
-    const opened = await openDatabase(":memory:");
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    userService = new UserService(opened.db);
-    projectService = new ProjectService(opened.db);
-    assistantProfileService = new AssistantProfileService(opened.db);
-    repoService = new RepositoryService(opened.db);
-    sessionService = new SessionService(opened.db);
-    const audit = new AuditWriter(opened.db);
-    const providerRegistry = new ProviderRegistry();
-    providerRegistry.register(new MockProvider());
 
-    const ws = {
-      registerGatewayFsNode: () => {},
-      getNodeRegistry: () => ({
-        version: 1,
-        serverTime: new Date().toISOString(),
-        nodes: [
-          {
-            id: "gateway",
-            name: "Gateway",
-            platform: "linux",
-            role: "gateway",
-            lifecycle: "ready",
-            protocolVersion: 1,
-            capabilities: {
-              providers: ["codex"],
-              surfaces: ["terminal", "filesystem"],
-              tools: ["thread.control"],
-              screenShare: false,
-              voice: false,
-              preview: true,
-            },
-            connectedAt: new Date().toISOString(),
-            lastSeenAt: new Date().toISOString(),
-          },
-        ],
-      }),
-      getFsNodes: () => [
-        {
-          id: "gateway",
-          name: "Gateway",
-          platform: "linux",
-          clientId: "gateway",
-          isGateway: true,
-          providers: ["codex"],
-          registeredAt: new Date().toISOString(),
-        },
-      ],
-    } as any;
-
-    app = await createServer(testConfig, {
-      db: opened.db,
-      sqlite: opened.sqlite,
-      userService,
-      sessionService,
-      projectService,
-      assistantProfileService,
-      repoService,
-      providerRegistry,
-      ws,
-      audit,
-    });
-  };
-const __jait_hook_4243 = async () => {
-    await app?.close();
-    sqlite.close();
-  };
-await __jait_hook_2364();
 try {
 await (async()=>{
 
-    const user = userService.createUser("assistant-user", "password123");
-    const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
-
-    const createRes = await app.inject({
-      method: "POST",
-      url: "/api/assistants/profiles",
-      headers,
-      payload: {
-        name: "Operator",
-        description: "Primary assistant",
-        runtimeMode: "supervised",
-        enabledSkills: ["coding-agent"],
-      },
-    });
-    __jait_capture(0, (createRes.statusCode));
-    const created = JSON.parse(createRes.body) as { profile: { id: string; isDefault: boolean; enabledSkills: string[] } };
-    __jait_capture(1, (created.profile.isDefault));
-    __jait_capture(2, (created.profile.enabledSkills));
-
-    const secondRes = await app.inject({
-      method: "POST",
-      url: "/api/assistants/profiles",
-      headers,
-      payload: {
-        name: "Network assistant",
-        isDefault: true,
-      },
-    });
-    __jait_capture(3, (secondRes.statusCode));
-    const second = JSON.parse(secondRes.body) as { profile: { id: string; isDefault: boolean } };
-    __jait_capture(4, (second.profile.isDefault));
-
-    const listRes = await app.inject({
-      method: "GET",
-      url: "/api/assistants/profiles",
-      headers,
-    });
-    __jait_capture(5, (listRes.statusCode));
-    const listed = JSON.parse(listRes.body) as { profiles: Array<{ id: string; isDefault: boolean }> };
-    __jait_capture(6, (listed.profiles));
-    __jait_capture(7, (listed.profiles.find((profile) => profile.id === created.profile.id)?.isDefault));
-
-    const updateRes = await app.inject({
-      method: "PATCH",
-      url: `/api/assistants/profiles/${created.profile.id}`,
-      headers,
-      payload: {
-        toolProfile: "strict",
-        enabledPlugins: ["calendar"],
-      },
-    });
-    __jait_capture(8, (updateRes.statusCode));
-    const updated = JSON.parse(updateRes.body) as { profile: { toolProfile: string | null; enabledPlugins: string[] } };
-    __jait_capture(9, (updated.profile.toolProfile));
-    __jait_capture(10, (updated.profile.enabledPlugins));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const userService = new UserService(db);
+    const sessionService = new SessionService(db);
+    const sessionState = new SessionStateService(db);
+    const threadService = new ThreadService(db);
+    const user = userService.createUser("runtime-user", "password123");
+    const other = userService.createUser("runtime-other", "password123");
+    const session = sessionService.create({ userId: user.id });
+    const thread = threadService.create({ userId: user.id, title: "Task", providerId: "codex" });
+    const startedAt = "2026-09-30T12:00:00.000Z";
+    sessionState.set(session.id, { "chat.activeTurn": { turnId: "turn-1", startedAt, mode: "agent", provider: "codex" } });
+    const old = threadService.addActivity(thread.id, "message", "old turn", { role: "user", content: "old" });
+    sqlite.prepare("UPDATE agent_thread_activities SET created_at = ? WHERE id = ?").run("2026-09-29T12:00:00.000Z", old.id);
+    const current = threadService.addActivity(thread.id, "message", "current turn", { role: "user", content: "current" });
+    sqlite.prepare("UPDATE agent_thread_activities SET created_at = ? WHERE id = ?").run(startedAt, current.id);
+    threadService.addActivity(thread.id, "message", "assistant reply", { role: "assistant" });
+    threadService.addActivity(thread.id, "tool.result", "newer activity", { output: "result" });
+    threadService.markRunning(thread.id, "provider-session");
+    threadService.update(thread.id, { title: "Renamed while working" });
+    const app = await createServer(config, { db, sqlite, userService, sessionService, sessionState, threadService, providerRegistry: new ProviderRegistry() });
+    const headers = { authorization: `Bearer ${await signAuthToken({ id: user.id, username: user.username }, config.jwtSecret)}` };
+    const otherHeaders = { authorization: `Bearer ${await signAuthToken({ id: other.id, username: other.username }, config.jwtSecret)}` };
+    threadService.savePersonaAgent(user.id, { id: "profile", name: "Runtime agent", chatSessionId: session.id, chatThreadId: thread.id, activeTasks: 900, liveState: "running" });
+    __jait_capture(0, (threadService.getPersonaAgent("profile", user.id)));
+    __chatTestUtils.activeStreams.add(session.id);
+    try {
+      for (const url of [`/api/sessions/${session.id}/runtime`, `/api/threads/${thread.id}/runtime`]) {
+        __jait_capture(1, ((await app.inject({ method: "GET", url })).statusCode));
+        __jait_capture(2, ((await app.inject({ method: "GET", url, headers: otherHeaders })).statusCode));
+        const response = await app.inject({ method: "GET", url, headers });
+        __jait_capture(3, (response.statusCode));
+        __jait_capture(4, (response.json()), ({ running: true, startedAt }));
+      }
+      // A bound session streaming without this persona must not count toward it.
+      const readProfiles = async () => (await app.inject({ method: "GET", url: "/api/persona-agents", headers })).json().agents;
+      __jait_capture(5, (await readProfiles()));
+      __jait_capture(6, ((await app.inject({ method: "GET", url: "/api/persona-agents", headers: otherHeaders })).json().agents));
+      threadService.addActivity(thread.id, "tool.approval", "Approval required", { requestId: "approval-one", tool: "terminal.run" });
+      __jait_capture(7, (await readProfiles()));
+      // An unrelated result cannot clear this approval.
+      threadService.addActivity(thread.id, "tool.result", "Other tool finished", { tool: "file.read" });
+      __jait_capture(8, (await readProfiles()));
+      threadService.addActivity(thread.id, "tool.approval-response", "Tool approved", { requestId: "approval-one", approved: true });
+      __jait_capture(9, (await readProfiles()));
+      __chatTestUtils.activeStreams.delete(session.id);
+      // A stale durable marker alone must not show a stopped chat as working.
+      __jait_capture(10, ((await app.inject({ method: "GET", url: `/api/sessions/${session.id}/runtime`, headers })).json()));
+      threadService.markInterrupted(thread.id);
+      __jait_capture(11, (await readProfiles()));
+      __jait_capture(12, ((await app.inject({ method: "GET", url: `/api/threads/${thread.id}/runtime`, headers })).json()));
+    } finally {
+      __chatTestUtils.activeStreams.delete(session.id);
+      await app.close();
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_4243();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_routes_assistant_profiles_environment_test_ts_200_3": {
-
-
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-class MockProvider implements CliProviderAdapter {
-  readonly id = "codex";
-  readonly info: ProviderInfo = {
-    id: "codex",
-    name: "Mock Codex",
-    description: "Test provider",
-    available: true,
-    modes: ["full-access", "supervised"],
-  };
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return {
-      id: "provider-session",
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(): Promise<void> {}
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(): () => void {
-    return () => {};
-  }
-}
-async function authHeaders(userId: string, username: string, jwtSecret: string) {
-  const token = await signAuthToken({ id: userId, username }, jwtSecret);
-  return { authorization: `Bearer ${token}` };
-}
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let userService: UserService;
-let projectService: ProjectService;
-let assistantProfileService: AssistantProfileService;
-let repoService: RepositoryService;
-let sessionService: SessionService;
-const __jait_hook_2364 = async () => {
-    const opened = await openDatabase(":memory:");
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    userService = new UserService(opened.db);
-    projectService = new ProjectService(opened.db);
-    assistantProfileService = new AssistantProfileService(opened.db);
-    repoService = new RepositoryService(opened.db);
-    sessionService = new SessionService(opened.db);
-    const audit = new AuditWriter(opened.db);
-    const providerRegistry = new ProviderRegistry();
-    providerRegistry.register(new MockProvider());
-
-    const ws = {
-      registerGatewayFsNode: () => {},
-      getNodeRegistry: () => ({
-        version: 1,
-        serverTime: new Date().toISOString(),
-        nodes: [
-          {
-            id: "gateway",
-            name: "Gateway",
-            platform: "linux",
-            role: "gateway",
-            lifecycle: "ready",
-            protocolVersion: 1,
-            capabilities: {
-              providers: ["codex"],
-              surfaces: ["terminal", "filesystem"],
-              tools: ["thread.control"],
-              screenShare: false,
-              voice: false,
-              preview: true,
-            },
-            connectedAt: new Date().toISOString(),
-            lastSeenAt: new Date().toISOString(),
-          },
-        ],
-      }),
-      getFsNodes: () => [
-        {
-          id: "gateway",
-          name: "Gateway",
-          platform: "linux",
-          clientId: "gateway",
-          isGateway: true,
-          providers: ["codex"],
-          registeredAt: new Date().toISOString(),
-        },
-      ],
-    } as any;
-
-    app = await createServer(testConfig, {
-      db: opened.db,
-      sqlite: opened.sqlite,
-      userService,
-      sessionService,
-      projectService,
-      assistantProfileService,
-      repoService,
-      providerRegistry,
-      ws,
-      audit,
-    });
-  };
-const __jait_hook_4243 = async () => {
-    await app?.close();
-    sqlite.close();
-  };
-await __jait_hook_2364();
-try {
-await (async()=>{
-
-    const user = userService.createUser("env-user", "password123");
-    const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
-
-    assistantProfileService.create(user.id, {
-      name: "Daily operator",
-      enabledSkills: ["tmux"],
-    });
-
-    const project = projectService.create({
-      userId: user.id,
-      title: "Jait",
-      rootPath: "/home/alice/jait",
-      nodeId: "gateway",
-    });
-
-    sessionService.create({
-      userId: user.id,
-      projectId: project.id,
-      projectPath: project.rootPath ?? undefined,
-      name: "Main session",
-    });
-
-    repoService.create({
-      userId: user.id,
-      name: "Jait",
-      localPath: "/home/alice/jait",
-      defaultBranch: "main",
-    });
-
-    sqlite.prepare(`
-      INSERT INTO network_hosts (ip, mac, hostname, os_version, open_ports, ssh_reachable, agent_status, providers, first_seen_at, last_seen_at, scanned_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      "192.168.1.20",
-      null,
-      "nas",
-      "Linux",
-      JSON.stringify([22, 443]),
-      1,
-      "running",
-      JSON.stringify(["codex"]),
-      "2026-03-26T00:00:00.000Z",
-      "2026-03-26T00:00:00.000Z",
-      "2026-03-26T00:00:00.000Z",
-    );
-
-    const res = await app.inject({
-      method: "GET",
-      url: "/api/environment/snapshot",
-      headers,
-    });
-    __jait_capture(0, (res.statusCode));
-    const body = JSON.parse(res.body) as {
-      snapshot: {
-        assistants: Array<{ name: string }>;
-        nodes: Array<{ id: string }>;
-        projects: Array<{ id: string; sessionCount: number }>;
-        repositories: Array<{ name: string; connected: boolean }>;
-        networkHosts: Array<{ hostname: string | null }>;
-        connectors: Array<{ id: string; status: string }>;
-      };
-    };
-    __jait_capture(1, (body.snapshot.assistants.map((profile) => profile.name)));
-    __jait_capture(2, (body.snapshot.nodes.map((node) => node.id)));
-    __jait_capture(3, (body.snapshot.projects.find((entry) => entry.id === project.id)?.sessionCount));
-    __jait_capture(4, (body.snapshot.repositories.find((entry) => entry.name === "Jait")?.connected));
-    __jait_captureType(5, (body.snapshot.networkHosts.find((host) => host.hostname === "nas")));
-    __jait_capture(6, (body.snapshot.connectors.find((connector) => connector.id === "codex")?.status));
-  
-})();
-
-} finally {
-await __jait_hook_4243();
 }
 }
 

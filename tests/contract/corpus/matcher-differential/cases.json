@@ -1222,5 +1222,182 @@
         }
       }
     }
+  },
+  {
+    "id": "throw-class-same-identity",
+    "vitest": true,
+    "wire": {
+      "observation": {
+        "threw": true,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [
+          1,
+          2,
+          3
+        ],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrow",
+        "dynamic": true,
+        "negate": false
+      }
+    }
+  },
+  {
+    "id": "throw-class-same-name-other-identity",
+    "vitest": false,
+    "wire": {
+      "observation": {
+        "threw": true,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [
+          4,
+          2,
+          3
+        ],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrow",
+        "dynamic": true,
+        "negate": false
+      }
+    }
+  },
+  {
+    "id": "throw-class-subclass",
+    "vitest": true,
+    "wire": {
+      "observation": {
+        "threw": true,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [
+          5,
+          1,
+          2,
+          3
+        ],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrow",
+        "dynamic": true,
+        "negate": false
+      }
+    }
+  },
+  {
+    "id": "throw-class-negated-other-identity",
+    "vitest": true,
+    "wire": {
+      "observation": {
+        "threw": true,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [
+          4,
+          2,
+          3
+        ],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrow",
+        "dynamic": true,
+        "negate": true
+      }
+    }
+  },
+  {
+    "id": "throw-class-error-alias-other-identity",
+    "vitest": false,
+    "wire": {
+      "observation": {
+        "threw": true,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [
+          4,
+          2,
+          3
+        ],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrowError",
+        "dynamic": true,
+        "negate": false
+      }
+    }
+  },
+  {
+    "id": "throw-class-requires-throw",
+    "vitest": false,
+    "wire": {
+      "observation": {
+        "threw": false,
+        "error": "fixture failure",
+        "errorTypes": [
+          "CollisionError",
+          "Error",
+          "Object"
+        ],
+        "other": {
+          "type": "function",
+          "name": "CollisionError"
+        },
+        "prototypes": [],
+        "expectedPrototype": 1
+      },
+      "rule": {
+        "matcher": "toThrow",
+        "dynamic": true,
+        "negate": false
+      }
+    }
   }
 ]

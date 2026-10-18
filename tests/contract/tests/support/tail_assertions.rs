@@ -476,9 +476,16 @@ pub(crate) fn matches(observation: &Value, rule: &Value) -> bool {
             }
             if rule["dynamic"] == true {
                 match expected["type"].as_str().unwrap_or("") {
-                    "function" => observation["errorTypes"]
-                        .as_array()
-                        .is_some_and(|names| names.contains(&expected["name"])),
+                    "function" => {
+                        let prototype = observation
+                            .get("expectedPrototype")
+                            .filter(|id| id.as_u64().is_some_and(|value| value > 0))
+                            .expect("exception constructor is missing prototype identity");
+                        observation["prototypes"]
+                            .as_array()
+                            .expect("exception is missing its prototype chain")
+                            .contains(prototype)
+                    }
                     "object" if e.get("message").is_some() => observation["error"] == e["message"],
                     "string" => observation["error"]
                         .as_str()
@@ -737,5 +744,17 @@ mod tests {
     fn identity_without_reference_metadata_is_rejected() {
         let observation = json!({"actual":{"type":"object","prototype":"AbortSignal","value":{"__jait_type":"AbortSignal","aborted":false}},"other":{"type":"object","value":{}},"otherRef":8});
         let _ = matches(&observation, &json!({"matcher":"toBe","dynamic":true}));
+    }
+
+    #[test]
+    fn exception_constructor_comparisons_require_identity_metadata() {
+        let rule = json!({"matcher":"toThrow","dynamic":true});
+        let complete = json!({"threw":true,"other":{"type":"function","name":"Error"},"expectedPrototype":1,"prototypes":[1,2]});
+        assert!(matches(&complete, &rule));
+        for missing in ["expectedPrototype", "prototypes"] {
+            let mut observation = complete.clone();
+            observation.as_object_mut().unwrap().remove(missing);
+            assert!(std::panic::catch_unwind(|| matches(&observation, &rule)).is_err());
+        }
     }
 }

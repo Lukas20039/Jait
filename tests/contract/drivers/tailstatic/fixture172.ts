@@ -1,6 +1,5 @@
-// Translated fixture from packages/gateway/src/services/git-worktree-base.test.ts; expected literals are in tail_static.rs.
-import { mkdtemp, rm, mkdir, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+// Translated fixture from packages/gateway/src/services/git-diff-stats.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { execSync } from "node:child_process";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -9,7 +8,7 @@ import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/git-worktree-base.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/git-diff-stats.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,298 +35,119 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_65_3": {
+case "tailstatic_packages_gateway_src_services_git_diff_stats_test_ts_31_3": {
 
 
 function git(cwd: string, cmd: string) {
   return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
 /*__jait_scope_open__*/{
-let root: string;
-let origin: string;
-let worktreesRoot: string;
+let repoDir: string;
 let svc: GitService;
-async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
-    const dir = join(root, name);
-    git(root, `clone "${origin}" "${dir}"`);
-    git(dir, "config user.email test@test.com");
-    git(dir, "config user.name Test");
-    git(dir, "checkout --detach refs/remotes/origin/main");
-    git(dir, "branch -D main");
-    if (opts.keepTrackingRef === false) {
-      git(dir, "update-ref -d refs/remotes/origin/main");
-    }
-    return dir;
-  }
-const expectedTip = () => git(origin, "rev-parse main");
-const __jait_hook_1100 = async () => {
-    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
-    origin = join(root, "origin");
-    worktreesRoot = join(root, "worktrees");
-    await mkdir(origin, { recursive: true });
-    await mkdir(worktreesRoot, { recursive: true });
-    git(origin, "init");
-    git(origin, "config user.email test@test.com");
-    git(origin, "config user.name Test");
-    await writeFile(join(origin, "file.txt"), "hello");
-    git(origin, "add -A");
-    git(origin, "commit -m initial");
-    git(origin, "branch -M main");
+const __jait_hook_521 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-diff-stats-test-"));
+    git(repoDir, "init -b main");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    await writeFile(join(repoDir, "base.txt"), "line1\nline2\nline3\n");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
     svc = new GitService();
   };
-const __jait_hook_1680 = async () => {
-    await rm(root, { recursive: true, force: true });
+const __jait_hook_922 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
   };
-await __jait_hook_1100();
+await __jait_hook_521();
 try {
 await (async()=>{
 
-    const checkout = await prStyleCheckout("pr-checkout");
-    __jait_thrown(0, () => git(checkout, "rev-parse --verify refs/heads/main"));
+    // Branch off main, then advance main with large unrelated work.
+    git(repoDir, "checkout -b jait/thread");
+    git(repoDir, "checkout main");
+    const bigContent = Array.from({ length: 500 }, (_, i) => `unrelated ${i}`).join("\n") + "\n";
+    await writeFile(join(repoDir, "unrelated.txt"), bigContent);
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m 'big unrelated work on main'");
 
-    const fast = await svc.createWorktree(
-      checkout,
-      "main",
-      "jait/aaaa1111",
-      join(worktreesRoot, "fast"),
-      { fastPath: true },
-    );
-    __jait_capture(1, (git(fast.path, "rev-parse HEAD")), (expectedTip()));
-    __jait_capture(2, (git(fast.path, "branch --show-current")));
-    __jait_capture(3, (existsSync(join(fast.path, "file.txt"))));
-    __jait_capture(4, (git(fast.path, "status --porcelain")));
+    // The thread makes a tiny committed change plus an uncommitted edit.
+    git(repoDir, "checkout jait/thread");
+    await writeFile(join(repoDir, "feature.txt"), "hello\n");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m 'thread feature'");
+    await writeFile(join(repoDir, "feature.txt"), "hello\nworld\n");
 
-    const plain = await svc.createWorktree(
-      checkout,
-      "main",
-      "jait/bbbb2222",
-      join(worktreesRoot, "plain"),
-      { fastPath: false },
-    );
-    __jait_capture(5, (git(plain.path, "rev-parse HEAD")), (expectedTip()));
-    __jait_capture(6, (git(plain.path, "branch --show-current")));
+    const stats = await svc.diffStats(repoDir, "main");
 
-    // The base was only available as a remote-tracking ref here. Recording it
-    // as the new branch's upstream (git's default for that start point, logged
-    // as "branch 'x' set up to track 'origin/main'") would let an unattended
-    // push with push.default=current/upstream target the default branch.
-    for (const branch of ["jait/aaaa1111", "jait/bbbb2222"]) {
-      __jait_thrown(7, () => git(checkout, `config --get branch.${branch}.remote`));
-      __jait_thrown(8, () => git(checkout, `config --get branch.${branch}.merge`));
-    }
+    // Only feature.txt (committed + uncommitted), NOT main's 500-line file.
+    __jait_capture(0, (stats.files));
+    __jait_capture(1, (stats.insertions));
+    __jait_capture(2, (stats.deletions));
+    __jait_capture(3, (stats.hasChanges));
   
 })();
 
 } finally {
-await __jait_hook_1680();
+await __jait_hook_922();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_101_3": {
+case "tailstatic_packages_gateway_src_services_git_diff_stats_test_ts_56_3": {
 
 
 function git(cwd: string, cmd: string) {
   return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
 }
 /*__jait_scope_open__*/{
-let root: string;
-let origin: string;
-let worktreesRoot: string;
+let repoDir: string;
 let svc: GitService;
-async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
-    const dir = join(root, name);
-    git(root, `clone "${origin}" "${dir}"`);
-    git(dir, "config user.email test@test.com");
-    git(dir, "config user.name Test");
-    git(dir, "checkout --detach refs/remotes/origin/main");
-    git(dir, "branch -D main");
-    if (opts.keepTrackingRef === false) {
-      git(dir, "update-ref -d refs/remotes/origin/main");
-    }
-    return dir;
-  }
-const expectedTip = () => git(origin, "rev-parse main");
-const __jait_hook_1100 = async () => {
-    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
-    origin = join(root, "origin");
-    worktreesRoot = join(root, "worktrees");
-    await mkdir(origin, { recursive: true });
-    await mkdir(worktreesRoot, { recursive: true });
-    git(origin, "init");
-    git(origin, "config user.email test@test.com");
-    git(origin, "config user.name Test");
-    await writeFile(join(origin, "file.txt"), "hello");
-    git(origin, "add -A");
-    git(origin, "commit -m initial");
-    git(origin, "branch -M main");
+const __jait_hook_521 = async () => {
+    repoDir = await mkdtemp(join(__jait_fixture_dir, "git-diff-stats-test-"));
+    git(repoDir, "init -b main");
+    git(repoDir, "config user.email test@test.com");
+    git(repoDir, "config user.name Test");
+    await writeFile(join(repoDir, "base.txt"), "line1\nline2\nline3\n");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m initial");
     svc = new GitService();
   };
-const __jait_hook_1680 = async () => {
-    await rm(root, { recursive: true, force: true });
+const __jait_hook_922 = async () => {
+    await rm(repoDir, { recursive: true, force: true });
   };
-await __jait_hook_1100();
+await __jait_hook_521();
 try {
 await (async()=>{
 
-    const checkout = await prStyleCheckout("shallow-checkout", { keepTrackingRef: false });
-    __jait_thrown(0, () => git(checkout, "rev-parse --verify refs/remotes/origin/main"));
-    __jait_thrown(1, () => git(checkout, "rev-parse --verify refs/heads/main"));
+    // Thread branch has no commits of its own; main advanced afterward.
+    git(repoDir, "checkout -b jait/thread");
+    git(repoDir, "checkout main");
+    await writeFile(join(repoDir, "more.txt"), "a\nb\nc\nd\n");
+    git(repoDir, "add -A");
+    git(repoDir, "commit -m 'main advances'");
 
-    const result = await svc.createWorktree(
-      checkout,
-      "main",
-      "jait/cccc3333",
-      join(worktreesRoot, "fetched"),
-      { fastPath: false },
-    );
-    __jait_capture(2, (git(result.path, "rev-parse HEAD")), (expectedTip()));
-    __jait_capture(3, (git(result.path, "branch --show-current")));
-    __jait_capture(4, (existsSync(join(result.path, "file.txt"))));
+    git(repoDir, "checkout jait/thread");
+    await writeFile(join(repoDir, "base.txt"), "line1\nline2\nline3\nline4\n");
+
+    const stats = await svc.diffStats(repoDir, "main");
+
+    // Should not surface main's new commit as this thread's work — only the
+    // single uncommitted line added to the tracked file.
+    __jait_capture(0, (stats.insertions));
+    __jait_capture(1, (stats.deletions));
+    __jait_capture(2, (stats.files));
   
 })();
 
 } finally {
-await __jait_hook_1680();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_118_3": {
-
-
-function git(cwd: string, cmd: string) {
-  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
-}
-/*__jait_scope_open__*/{
-let root: string;
-let origin: string;
-let worktreesRoot: string;
-let svc: GitService;
-async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
-    const dir = join(root, name);
-    git(root, `clone "${origin}" "${dir}"`);
-    git(dir, "config user.email test@test.com");
-    git(dir, "config user.name Test");
-    git(dir, "checkout --detach refs/remotes/origin/main");
-    git(dir, "branch -D main");
-    if (opts.keepTrackingRef === false) {
-      git(dir, "update-ref -d refs/remotes/origin/main");
-    }
-    return dir;
-  }
-const expectedTip = () => git(origin, "rev-parse main");
-const __jait_hook_1100 = async () => {
-    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
-    origin = join(root, "origin");
-    worktreesRoot = join(root, "worktrees");
-    await mkdir(origin, { recursive: true });
-    await mkdir(worktreesRoot, { recursive: true });
-    git(origin, "init");
-    git(origin, "config user.email test@test.com");
-    git(origin, "config user.name Test");
-    await writeFile(join(origin, "file.txt"), "hello");
-    git(origin, "add -A");
-    git(origin, "commit -m initial");
-    git(origin, "branch -M main");
-    svc = new GitService();
-  };
-const __jait_hook_1680 = async () => {
-    await rm(root, { recursive: true, force: true });
-  };
-await __jait_hook_1100();
-try {
-await (async()=>{
-
-    const clone = join(root, "normal-clone");
-    git(root, `clone "${origin}" "${clone}"`);
-    const result = await svc.createWorktree(
-      clone,
-      "main",
-      "jait/dddd4444",
-      join(worktreesRoot, "local"),
-      { fastPath: false },
-    );
-    __jait_capture(0, (git(result.path, "branch --show-current")));
-    __jait_capture(1, (git(result.path, "rev-parse HEAD")), (expectedTip()));
-  
-})();
-
-} finally {
-await __jait_hook_1680();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_132_3": {
-
-
-function git(cwd: string, cmd: string) {
-  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
-}
-/*__jait_scope_open__*/{
-let root: string;
-let origin: string;
-let worktreesRoot: string;
-let svc: GitService;
-async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
-    const dir = join(root, name);
-    git(root, `clone "${origin}" "${dir}"`);
-    git(dir, "config user.email test@test.com");
-    git(dir, "config user.name Test");
-    git(dir, "checkout --detach refs/remotes/origin/main");
-    git(dir, "branch -D main");
-    if (opts.keepTrackingRef === false) {
-      git(dir, "update-ref -d refs/remotes/origin/main");
-    }
-    return dir;
-  }
-const expectedTip = () => git(origin, "rev-parse main");
-const __jait_hook_1100 = async () => {
-    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
-    origin = join(root, "origin");
-    worktreesRoot = join(root, "worktrees");
-    await mkdir(origin, { recursive: true });
-    await mkdir(worktreesRoot, { recursive: true });
-    git(origin, "init");
-    git(origin, "config user.email test@test.com");
-    git(origin, "config user.name Test");
-    await writeFile(join(origin, "file.txt"), "hello");
-    git(origin, "add -A");
-    git(origin, "commit -m initial");
-    git(origin, "branch -M main");
-    svc = new GitService();
-  };
-const __jait_hook_1680 = async () => {
-    await rm(root, { recursive: true, force: true });
-  };
-await __jait_hook_1100();
-try {
-await (async()=>{
-
-    const clone = await prStyleCheckout("missing-base");
-    await __jait_rejected(0, svc.createWorktree(
-        clone,
-        "does-not-exist",
-        "jait/eeee5555",
-        join(worktreesRoot, "missing"),
-        { fastPath: false },
-      ));
-  
-})();
-
-} finally {
-await __jait_hook_1680();
+await __jait_hook_922();
 }
 }
 

@@ -1,12 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/web-tools.test.ts; expected literals are in tail_static.rs.
-import { createWebFetchTool, createWebSearchTool } from "../../../../packages/gateway/src/tools/browser-tools.js";
-import { createWebTool } from "../../../../packages/gateway/src/tools/core/web.js";
+// Translated fixture from packages/gateway/src/tools/team-chat-tools.test.ts; expected literals are in tail_static.rs.
+import type { TeamChatService } from "../../../../packages/gateway/src/services/team-chat.js";
+import type { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { createTeamChatTool } from "../../../../packages/gateway/src/tools/team-chat-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/web-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/team-chat-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,257 +34,343 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_22_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    fetch.mockResolvedValue(new Response("Inventory fixture page", { headers: { "Content-Type": "text/plain" } }));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/", maxBytes: 9 }, context)));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "list" }, { ...context, userId: undefined })).ok));
+    __jait_capture(1, (f.service.list.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each0": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_27_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "http://127.0.0.1/";
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
+    const f = fixture();
+    __jait_capture(0, (await f.tool.execute({ action: "list" }, context)), ({ ok: true, data: { rooms: [f.room] } }));
+    __jait_capture(1, (f.service.list.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each1": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_32_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "http://169.254.169.254/";
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
+    const f = fixture();
+    __jait_capture(0, (await f.tool.execute({ action: "get", roomId: "room-1" }, context)), ({ ok: true, data: { room: f.room, members: [{ id: "reviewer-1" }], messages: [] } }));
+    __jait_capture(1, (f.service.get.mock.calls));
+    __jait_capture(2, (f.service.history.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each2": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_38_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "file:///etc/passwd";
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "send", roomId: "room-1", content: "Review the test results", recipientIds: ["reviewer-1"], kind: "assignment" }, context)).ok));
+    __jait_capture(1, (f.service.postRouted.mock.calls), ([f.sender]));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_46_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    fetch.mockResolvedValue(new Response("Unavailable", { status: 503 }));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, context)));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "send", roomId: "room-1", content: " " }, context)).ok));
+    __jait_capture(1, (f.service.postRouted.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_51_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    fetch.mockRejectedValue(new Error("Network offline"));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, context)));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "goal", roomId: "room-1", content: "Verify tools", criteria: ["Browser passes"] }, context)).ok));
+    __jait_capture(1, (f.service.setGoal.mock.calls), (["owner-1","room-1","Verify tools",["Browser passes"],f.sender]));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_27_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_56_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, { ...context, signal: AbortSignal.abort() })));
-    __jait_capture(1, (fetch.mock.calls));
+    const f = fixture();
+    f.service.completeGoal.mockImplementation(() => { throw new Error("Independent verification required"); });
+    __jait_capture(0, (await f.tool.execute({ action: "complete", roomId: "room-1", evidence: ["Browser checks passed"] }, context)));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_33_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_61_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    __jait_capture(0, (await createWebSearchTool().execute({ query: "asset inventory" }, { ...context, signal: AbortSignal.abort() })));
-    __jait_capture(1, (fetch.mock.calls));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "complete", roomId: "room-1", evidence: ["Browser checks passed"] }, context)).ok));
+    __jait_capture(1, (f.service.completeGoal.mock.calls), (["owner-1","room-1",["Browser checks passed"],f.sender]));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_39_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_66_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    fetch.mockResolvedValue(new Response("Inventory ready"));
-    __jait_capture(0, (await createWebTool().execute({ url: "https://example.com/" }, context)));
+    const f = fixture();
+    f.service.get.mockImplementation(() => { throw new Error("Room not found"); });
+    __jait_capture(0, (await f.tool.execute({ action: "get", roomId: "foreign-room" }, context)));
+    __jait_capture(1, (f.service.postRouted.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_43_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    __jait_capture(0, ((await createWebTool().execute({}, context)).ok));
-    __jait_capture(1, (fetch.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_461();
 }
 }
 

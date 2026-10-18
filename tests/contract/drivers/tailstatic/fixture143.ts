@@ -1,16 +1,17 @@
-// Translated fixture from packages/gateway/src/server.test.ts; expected literals are in tail_static.rs.
-import { createServer } from "../../../../packages/gateway/src/server.js";
-import { loadConfig } from "../../../../packages/gateway/src/config.js";
-import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-import { createServer as createHttpServer } from "node:http";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, unlinkSync } from "node:fs";
+// Translated fixture from packages/gateway/src/security/workbench.test.ts; expected literals are in tail_static.rs.
+import { createServer } from "node:http";
+import { getAssessmentService, setAssessmentDb } from "../../../../packages/gateway/src/security/assessment.js";
+import { SecurityWorkbenchService } from "../../../../packages/gateway/src/security/workbench.js";
+import { parseTrivy } from "../../../../packages/gateway/src/lib/security/engines.js";
+import { openRawSqlite } from "../../../../packages/gateway/src/db/sqlite-shim.js";
+import { migrations } from "../../../../packages/gateway/src/db/migrations.js";
+import { evidence, rule, type AdapterResult } from "../../../../packages/gateway/src/lib/security/protocols.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/server.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/workbench.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -37,944 +38,280 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_server_test_ts_40_3": {
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_19_3": {
 
 
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
 }
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const webDir = mkdtempSync(join("/tmp", "jait-web-cache-"));
-    const assetDir = join(webDir, "assets");
-    const assetName = "app-B1234567.js";
-    const assetPath = join(assetDir, assetName);
-    mkdirSync(assetDir);
-    writeFileSync(join(webDir, "index.html"), "<!doctype html><title>test</title>");
-    writeFileSync(assetPath, "export const cached = true;");
-    const previous = process.env["JAIT_WEB_DIR"];
-    process.env["JAIT_WEB_DIR"] = webDir;
-    let app: Awaited<ReturnType<typeof createServer>> | undefined;
+    const s = scope(); const service = new SecurityWorkbenchService();
+    const input = {scopeId: s.id, profile: "http" as const, target: "127.0.0.1", port: 80};
+    for (const candidate of [
+      {...input, target: "192.0.2.1"}, {...input, port: 443}, {...input, profile: "tls"},
+      {...input, serverName: "unapproved.invalid"}, {...input, username: "root"},
+      {...input, path: "../secret"},
+    ]) __jait_thrown(0, () => service.start(candidate as typeof input, "owner"));
+    __jait_thrown(1, () => service.start(input, "other"));
+    __jait_thrown(2, () => service.start(input, "owner", "remote-node"));
+    const host = scope(["host-audit"], [80]);
+    __jait_thrown(3, () => service.start({scopeId:host.id, profile:"host-audit", target:"127.0.0.1", username:"root"}, "owner"));
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_32_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let fixed = false;
+    const server = createServer((_request, response) => { if (fixed) response.setHeader("X-Content-Type-Options", "nosniff"); response.end("fixture"); });
+    await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
+    cleanup.push(() => new Promise(resolve => server.close(() => resolve())));
+    const address = server.address(); if (!address || typeof address === "string") throw new Error("Expected port");
+    const s = scope(["http"], [address.port]); const service = new SecurityWorkbenchService();
+    const before = await service.wait(service.start({scopeId:s.id, profile:"http", target:"127.0.0.1", port:address.port}, "owner").id, "owner");
+    const finding = service.history("owner").findings.find(f => f.ruleId === "http.nosniff")!;
+    __jait_capture(0, (finding.evidenceIds.every(id => before.evidence.some(e => e.id === id))));
+    __jait_capture(1, (service.plan(finding.id, "owner").rollback.length));
+    service.decide(finding.id, "owner", "accepted-risk");
+    const repeated = await service.wait(service.start(before.input, "owner").id, "owner");
+    __jait_capture(2, (service.finding(finding.id, "owner").disposition));
+    __jait_capture(3, (before.findings[0]?.evidenceIds), (repeated.findings[0]?.evidenceIds));
+    fixed = true;
+    const verified = await service.verify(finding.id, "owner");
+    __jait_capture(4, (verified.status));
+    __jait_capture(5, (service.finding(finding.id, "owner").disposition));
+    const report = service.report(before.id, "owner");
+    __jait_capture(6, (JSON.stringify(report)));
+    __jait_capture(7, (report.findings.some(f => f.evidenceIds.some(id => before.evidence.some(e => e.id === id)))));
+    __jait_capture(8, (service.history("other")));
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_56_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let output = fixture(); const service = new SecurityWorkbenchService(undefined, async () => output);
+    const s = scope(); const first = await service.wait(service.start({scopeId:s.id, profile:"http", target:"127.0.0.1", port:80}, "owner").id, "owner");
+    const id = first.findingIds[0]!;
+    output = fixture(false, false);
+    __jait_capture(0, ((await service.verify(id, "owner")).status));
+    __jait_capture(1, (service.finding(id, "owner").disposition));
+    output = {...fixture(false), engineVersion:"2"};
+    __jait_capture(2, ((await service.verify(id, "owner")).status));
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_66_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const adapter = vi.fn((_input, _scope, signal: AbortSignal): Promise<AdapterResult> => new Promise(resolve => signal.addEventListener("abort", () => resolve(fixture(false, false)), {once:true})));
+    const service = new SecurityWorkbenchService(undefined, adapter); const s = scope(["http", "tcp"]);
+    const run = service.start({scopeId:s.id, profile:"http", target:"127.0.0.1", port:80}, "owner");
+    __jait_thrown(0, () => getAssessmentService().start(s.id,"owner"));
+    __jait_thrown(1, () => service.cancel(run.id,"other"));
+    service.cancel(run.id,"owner"); const result = await service.wait(run.id,"owner");
+    __jait_capture(2, (result.status));
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_75_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const s=getAssessmentService().createScope({targets:["127.0.0.1"],exclusions:[],ports:[1],methods:["trivy"],paths:["Dockerfile"],authorized:true,expiresAt:new Date(Date.now()+60_000).toISOString()},"owner",process.cwd());
+    let raw=JSON.stringify({SchemaVersion:2,Results:[{Misconfigurations:[{ID:"DS-0002",Status:"FAIL",Severity:"HIGH"}]}]});
+    const service=new SecurityWorkbenchService(undefined,async()=>parseTrivy(raw,"Dockerfile","0.75.0"));
+    const input={scopeId:s.id,profile:"trivy" as const,path:"Dockerfile"};
+    const before=await service.wait(service.start(input,"owner").id,"owner");
+    const finding=before.findings[0]!;
+    raw=JSON.stringify({SchemaVersion:2,Results:[{Class:"lang-pkgs",Type:"npm"}]});
+    __jait_capture(0, ((await service.verify(finding.id,"owner")).status));
+    __jait_capture(1, (service.finding(finding.id,"owner").disposition));
+    raw=JSON.stringify({SchemaVersion:2,Results:[{Misconfigurations:[{ID:"DS-0002",Status:"PASS"}]}]});
+    __jait_capture(2, ((await service.verify(finding.id,"owner")).status));
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_88_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const clock=vi.spyOn(Date,"now").mockReturnValue(Date.now());
+    try{
+      const s=getAssessmentService().createScope({targets:["127.0.0.1"],exclusions:[],ports:[80],methods:["http"],authorized:true,expiresAt:new Date(Date.now()+20).toISOString()},"owner");
+      const service=new SecurityWorkbenchService(undefined,(_input,_scope,signal)=>new Promise(resolve=>signal.addEventListener("abort",()=>resolve(fixture(false,false)),{once:true})));
+      const run=await service.wait(service.start({scopeId:s.id,profile:"http",target:"127.0.0.1",port:80},"owner").id,"owner");
+      __jait_capture(0, (run.status));
+    }finally{clock.mockRestore();}
+  
+})();
+
+} finally {
+await __jait_hook_528();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_workbench_test_ts_97_3": {
+
+
+const cleanup: Array<() => Promise<void>> = [];
+function scope(methods: ("http" | "tls" | "nmap" | "host-audit" | "tcp")[] = ["http"], ports = [80]) {
+  return getAssessmentService().createScope({ targets: ["127.0.0.1"], exclusions: [], ports, authorized: true, methods, expiresAt: new Date(Date.now() + 60_000).toISOString() }, "owner");
+}
+const fixture = (present = true, conclusive = true): AdapterResult => ({
+  engine: "fixture-http", engineVersion: "1", evidence: [evidence("127.0.0.1", 80, "Header policy", {noSniff: !present})],
+  rules: present ? [rule("http.nosniff", "Missing nosniff", "low", "Set the header")] : [], coverageGaps: ["Fixture"], conclusive,
+});
+const __jait_hook_528 = async () => { await Promise.all(cleanup.splice(0).map(fn => fn())); };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const db = await openRawSqlite(":memory:");
+    for (const id of [67,68]) migrations.find(m => m.id === id)!.run(db);
+    setAssessmentDb(db);
     try {
-      app = await createServer({ ...testConfig, nodeEnv: "production" });
-      const first = await app.inject({ method: "GET", url: `/assets/${assetName}` });
-      __jait_capture(0, (first.statusCode));
-      __jait_capture(1, (first.body));
-      __jait_capture(2, (first.headers["cache-control"]));
-      const range = await app.inject({
-        method: "GET",
-        url: `/assets/${assetName}`,
-        headers: { range: "bytes=0-5" },
-      });
-      __jait_capture(3, (range.statusCode));
-      __jait_capture(4, (range.body));
-      unlinkSync(assetPath);
-      const second = await app.inject({ method: "GET", url: `/assets/${assetName}` });
-      __jait_capture(5, (second.statusCode));
-      __jait_capture(6, (second.body), (first.body));
+      const s = scope(); const service = new SecurityWorkbenchService(db, async () => ({...fixture(), raw:"private artifact", contentType:"text/plain"}));
+      const run = await service.wait(service.start({scopeId:s.id,profile:"http",target:"127.0.0.1",port:80},"owner").id,"owner");
+      __jait_capture(0, (run.artifact?.sha256));
+      const recovered = new SecurityWorkbenchService(db);
+      __jait_capture(1, (recovered.get(run.id,"owner")), (run));
+      __jait_capture(2, (recovered.history("other").findings));
+      __jait_capture(3, (JSON.stringify(recovered.report(run.id,"owner"))));
+      recovered.deleteRun(run.id,"owner");
+      __jait_capture(4, ((db.prepare("SELECT count(*) AS n FROM security_artifacts").get() as {n:number}).n));
     } finally {
-      await app?.close();
-      if (previous === undefined) delete process.env["JAIT_WEB_DIR"];
-      else process.env["JAIT_WEB_DIR"] = previous;
-      rmSync(webDir, { recursive: true, force: true });
+      const fresh = await openRawSqlite(":memory:"); migrations.find(m => m.id === 67)!.run(fresh); setAssessmentDb(fresh);
+      cleanup.push(async () => fresh.close()); db.close();
     }
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_78_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const app = await createServer(testConfig);
-    const response = await app.inject({
-      method: "GET",
-      url: "/health",
-    });
-
-    __jait_capture(0, (response.statusCode));
-    const body = JSON.parse(response.body);
-    __jait_capture(1, (body.healthy));
-    __jait_capture(2, (body.version));
-    __jait_capture(3, (typeof body.uptime));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_93_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const app = await createServer(testConfig);
-    const response = await app.inject({
-      method: "GET",
-      url: "/",
-    });
-
-    __jait_capture(0, (response.statusCode));
-    const contentType = response.headers["content-type"] ?? "";
-    if (String(contentType).includes("text/html")) {
-      // Web dist is present — SPA is served
-      __jait_capture(1, (response.body));
-    } else {
-      // No web dist — JSON fallback
-      const body = JSON.parse(response.body);
-      __jait_capture(2, (body.name));
-      __jait_capture(3, (body.status));
-      __jait_capture(4, (body.version));
-    }
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_115_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const { app, headers } = await createAuthedServer();
-    const response = await app.inject({
-      method: "POST",
-      url: "/api/chat",
-      headers,
-      payload: { content: "", sessionId: "test" },
-    });
-
-    __jait_capture(0, (response.statusCode));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_128_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const { app, headers } = await createAuthedServer();
-    const response = await app.inject({
-      method: "POST",
-      url: "/api/chat",
-      headers,
-      payload: {},
-    });
-
-    __jait_capture(0, (response.statusCode));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_141_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const { app, headers } = await createAuthedServer();
-    const response = await app.inject({
-      method: "GET",
-      url: "/api/sessions/unknown-session/messages",
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    const body = JSON.parse(response.body);
-    __jait_capture(1, (body.sessionId));
-    __jait_capture(2, (body.messages));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_173_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const { app, headers } = await createRegisteredPreviewServer();
-    // Encode relative path from cwd — avoids platform-specific absolute path issues
-    const relPath = relative(process.cwd(), devFileHtml);
-    const encodedPath = Buffer.from(relPath, "utf8")
-      .toString("base64")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-
-    const response = await app.inject({
-      method: "GET",
-      url: `/api/dev-file/${encodedPath}`,
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (String(response.headers["content-type"])));
-    __jait_capture(2, (response.body), (`<base href="/api/dev-file/${encodedPath}/">`));
-    __jait_capture(3, (response.body), (`/api/dev-file/${encodedPath}/icon.svg`));
-
-    const assetResponse = await app.inject({
-      method: "GET",
-      url: `/api/dev-file/${encodedPath}/icon.svg`,
-      headers,
-    });
-
-    __jait_capture(4, (assetResponse.statusCode));
-    __jait_capture(5, (String(assetResponse.headers["content-type"])));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_205_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const { app, headers } = await createRegisteredPreviewServer();
-    const relPath = relative(process.cwd(), devFileHtml);
-    const encodedPath = Buffer.from(relPath, "utf8")
-      .toString("base64")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-
-    const response = await app.inject({
-      method: "GET",
-      url: `/api/dev-file/${encodedPath}`,
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (String(response.headers["content-type"])));
-    await app.close();
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_225_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const upstream = createHttpServer((request, response) => {
-      if (request.url === "/") {
-        response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        response.end('<!DOCTYPE html><html><head></head><body><script type="module" src="/@vite/client"></script><script type="module" src="/src/main.tsx"></script></body></html>');
-        return;
-      }
-
-      if (request.url === "/src/main.tsx") {
-        response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" });
-        response.end('import "/@fs/home/user/project/node_modules/vite/dist/client/env.mjs"; import "/node_modules/.vite/deps/react.js?v=1";');
-        return;
-      }
-
-      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      response.end("not found");
-    });
-
-    await new Promise<void>((resolveListen) => upstream.listen(0, "127.0.0.1", () => resolveListen()));
-    const address = upstream.address();
-    if (!address || typeof address === "string") {
-      throw new Error("Expected TCP address for upstream test server");
-    }
-
-    const { app, headers } = await createRegisteredPreviewServer(address.port);
-    const response = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/src/main.tsx`,
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (String(response.headers["content-type"])));
-    __jait_capture(2, (response.body), (`"/api/dev-proxy/${address.port}/@fs/home/user/project/node_modules/vite/dist/client/env.mjs"`));
-    __jait_capture(3, (response.body), (`"/api/dev-proxy/${address.port}/node_modules/.vite/deps/react.js?v=1"`));
-
-    const htmlResponse = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/`,
-      headers,
-    });
-
-    __jait_capture(4, (htmlResponse.statusCode));
-    __jait_capture(5, (htmlResponse.body));
-    __jait_capture(6, (htmlResponse.body), (`/api/dev-proxy/${address.port}/src/main.tsx`));
-
-    await app.close();
-    await new Promise<void>((resolveClose, rejectClose) => upstream.close((error) => error ? rejectClose(error) : resolveClose()));
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_275_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    let attempts = 0;
-    const upstream = createHttpServer((request, response) => {
-      if (request.url?.startsWith("/node_modules/.vite/deps/react.js")) {
-        attempts += 1;
-        if (attempts === 1) {
-          response.writeHead(504, { "Content-Type": "text/plain; charset=utf-8" });
-          response.end("Outdated Optimize Dep");
-          return;
-        }
-        response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" });
-        response.end("export default 'ok';");
-        return;
-      }
-
-      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      response.end("not found");
-    });
-
-    await new Promise<void>((resolveListen) => upstream.listen(0, "127.0.0.1", () => resolveListen()));
-    const address = upstream.address();
-    if (!address || typeof address === "string") {
-      throw new Error("Expected TCP address for upstream test server");
-    }
-
-    const { app, headers } = await createRegisteredPreviewServer(address.port);
-    const response = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/node_modules/.vite/deps/react.js?v=1`,
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (response.body));
-    __jait_capture(2, (attempts));
-
-    await app.close();
-    await new Promise<void>((resolveClose, rejectClose) => upstream.close((error) => error ? rejectClose(error) : resolveClose()));
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_315_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const upstream = createHttpServer((request, response) => {
-      if (request.url === "/") {
-        response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        response.end('<!DOCTYPE html><html><body><script type="module" src="/src/main.tsx"></script></body></html>');
-        return;
-      }
-
-      if (request.url === "/src/main.tsx") {
-        response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" });
-        response.end('import "/@vite/client"; console.log("ok");');
-        return;
-      }
-
-      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      response.end("not found");
-    });
-
-    await new Promise<void>((resolveListen) => upstream.listen(0, "127.0.0.1", () => resolveListen()));
-    const address = upstream.address();
-    if (!address || typeof address === "string") {
-      throw new Error("Expected TCP address for upstream test server");
-    }
-
-    const { app, headers } = await createRegisteredPreviewServer(address.port);
-
-    const htmlResponse = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/`,
-      headers,
-    });
-
-    __jait_capture(0, (htmlResponse.statusCode));
-    __jait_capture(1, (htmlResponse.body), (`/api/dev-proxy/${address.port}/src/main.tsx`));
-
-    const moduleResponse = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/src/main.tsx`,
-      headers,
-    });
-
-    __jait_capture(2, (moduleResponse.statusCode));
-    __jait_capture(3, (moduleResponse.body), (`/api/dev-proxy/${address.port}/@vite/client`));
-
-    await app.close();
-    await new Promise<void>((resolveClose, rejectClose) => upstream.close((error) => error ? rejectClose(error) : resolveClose()));
-  
-})();
-
-} finally {
-await __jait_hook_6188();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_server_test_ts_363_3": {
-
-
-const __jait_original_dir = dirname(fileURLToPath(__jait_original_url));
-const testConfig = {
-  ...loadConfig(),
-  port: 0, // random port
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "development",
-};
-async function createAuthedServer() {
-  const app = await createServer(testConfig);
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  const headers = { authorization: `Bearer ${token}` };
-  return { app, headers };
-}
-async function createRegisteredPreviewServer(port = 4321) {
-  const app = await createServer(testConfig, {
-    projectService: { list: () => [{ rootPath: process.cwd() }] } as any,
-    sessionService: { getById: (_id: string, userId: string) => userId === "test-user" ? { userId } : null } as any,
-    previewService: { list: () => [{ sessionId: "preview", status: "ready", port }] } as any,
-  });
-  const token = await signAuthToken({ id: "test-user", username: "tester" }, testConfig.jwtSecret);
-  return { app, headers: { authorization: "Bearer " + token } };
-}
-/*__jait_scope_open__*/{
-let devFileFixtureDir: string;
-let devFileHtml: string;
-let devFileSvg: string;
-const __jait_hook_5698 = () => {
-    devFileFixtureDir = mkdtempSync(join(process.cwd(), ".tmp-dev-file-test-"));
-    devFileHtml = join(devFileFixtureDir, "preview.html");
-    devFileSvg = join(devFileFixtureDir, "icon.svg");
-    writeFileSync(devFileHtml, '<!DOCTYPE html>\n<html><head><title>Test</title></head>\n<body><img src="/icon.svg" /></body>\n</html>\n');
-    writeFileSync(devFileSvg, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>\n');
-  };
-const __jait_hook_6188 = () => {
-    rmSync(devFileFixtureDir, { recursive: true, force: true });
-  };
-await __jait_hook_5698();
-try {
-await (async()=>{
-
-    const upstream = createHttpServer((request, response) => {
-      if (request.url?.startsWith("/src/main.tsx")) {
-        response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        response.end("<!DOCTYPE html><html><body>spa fallback</body></html>");
-        return;
-      }
-
-      response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-      response.end("not found");
-    });
-
-    await new Promise<void>((resolveListen) => upstream.listen(0, "127.0.0.1", () => resolveListen()));
-    const address = upstream.address();
-    if (!address || typeof address === "string") {
-      throw new Error("Expected TCP address for upstream test server");
-    }
-
-    const { app, headers } = await createRegisteredPreviewServer(address.port);
-    const response = await app.inject({
-      method: "GET",
-      url: `/api/dev-proxy/${address.port}/src/main.tsx`,
-      headers,
-    });
-
-    __jait_capture(0, (response.statusCode));
-    __jait_capture(1, (String(response.headers["content-type"])));
-    __jait_capture(2, (response.json()));
-
-    await app.close();
-    await new Promise<void>((resolveClose, rejectClose) => upstream.close((error) => error ? rejectClose(error) : resolveClose()));
-  
-})();
-
-} finally {
-await __jait_hook_6188();
+await __jait_hook_528();
 }
 }
 

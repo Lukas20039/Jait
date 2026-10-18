@@ -1,12 +1,17 @@
-// Translated fixture from packages/gateway/src/services/messenger-service.test.ts; expected literals are in tail_static.rs.
-import { fileURLToPath } from 'node:url';
-import { MessengerService } from "../../../../packages/gateway/src/services/messenger-service.js";
+// Translated fixture from packages/gateway/src/services/jait-llm.test.ts; expected literals are in tail_static.rs.
+
+import {
+  JaitConfigError,
+  callJaitLlmCompletion,
+  normalizeOpenRouterModelId,
+  resolveJaitLlmConfig,
+} from "../../../../packages/gateway/src/services/jait-llm.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/messenger-service.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/jait-llm.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,217 +38,1122 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_49_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c, room } = setup();
-    room.events.push({ event_id: '$edit', type: 'm.room.message', sender: '@alice:test', origin_server_ts: 2, content: { 'm.relates_to': { rel_type: 'm.replace', event_id: '$one' }, 'm.new_content': { msgtype: 'm.text', body: 'changed' } } } as any);
-    room.events.push({ event_id: '$react', type: 'm.reaction', sender: '@alice:test', content: { 'm.relates_to': { rel_type: 'm.annotation', event_id: '$one', key: '👍' } } } as any);
-    __jait_capture(0, (c.messages('!room:test')));
+    const llm = resolveJaitLlmConfig({
+      config,
+      apiKeys: { OPENROUTER_API_KEY: "or-key" },
+      requestedModel: "gpt-4o",
+      jaitBackend: "openrouter",
+    });
+
+    __jait_capture(0, (llm.openaiApiKey));
+    __jait_capture(1, (llm.openaiBaseUrl));
+    __jait_capture(2, (llm.openaiModel));
   
 })();
 
 } finally {
-
+await __jait_hook_316();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_24_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_62_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c, room } = setup();
-    room.events.push({ event_id: '$edit', type: 'm.room.message', sender: '@other:test', content: { 'm.relates_to': { rel_type: 'm.replace', event_id: '$one' }, 'm.new_content': { body: 'forged' } } } as any);
-    room.events.push({ event_id: '$react', type: 'm.reaction', sender: '@other:test', content: { 'm.relates_to': { rel_type: 'm.annotation', event_id: '$one', key: '👍' } } } as any);
-    room.events.push({ event_id: '$redact', type: 'm.room.redaction', content: { redacts: '$react' } } as any);
-    __jait_capture(0, (c.messages('!room:test')[0]));
+    const llm = resolveJaitLlmConfig({
+      config,
+      apiKeys: { OPENROUTER_API_KEY: "or-key" },
+      requestedModel: "anthropic/claude-sonnet-4-20250514",
+      jaitBackend: "openrouter",
+    });
+
+    __jait_capture(0, (llm.openaiModel));
   
 })();
 
 } finally {
-
+await __jait_hook_316();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_31_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_73_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c, room, message } = setup();
-    room.events = Array.from({ length: 2000 }, (_, i) => message('$' + i));
-    c.client.doRequest.mockResolvedValue({ chunk: [message('$older')], end: 'page2' });
-    await c.earlier('!room:test');
-    __jait_capture(0, (c.messages('!room:test')[0].id));
+    __jait_capture(0, (normalizeOpenRouterModelId("mimo v2 pro")));
+    __jait_capture(1, (normalizeOpenRouterModelId("MiMo V3 Pro")));
+    __jait_capture(2, (normalizeOpenRouterModelId("hunter-alpha")));
+    __jait_capture(3, (normalizeOpenRouterModelId("xiaomi/mimo-v2-flash")));
   
 })();
 
 } finally {
-
+await __jait_hook_316();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_38_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_80_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c } = setup();
-    c.client.doRequest.mockResolvedValue({ chunk: [], end: 'page1' });
-    await c.earlier('!room:test');
-    await c.sync({ rooms: { join: { '!room:test': { timeline: { events: [], prev_batch: 'reset' } } } } });
-    __jait_capture(0, (c.snapshot('!room:test').hasEarlier));
-    await c.earlier('!room:test');
-    __jait_capture(1, (c.client.doRequest.mock.calls));
+    // Regression: a swarm specialist inheriting the parent session's ACP
+    // model name ("opus") while routed through the user's Ollama backend
+    // used to reach Ollama's /v1/chat/completions with model="opus", which
+    // 404s ("model 'opus' not found") deep inside the LLM call — the
+    // specialist (and often the whole swarm turn) then silently produced
+    // nothing. This must fail fast and clearly instead.
+    __jait_thrown(0, () =>
+      resolveJaitLlmConfig({
+        config,
+        requestedModel: "opus",
+        jaitBackend: "ollama",
+      }), (JaitConfigError));
   
 })();
 
 } finally {
-
+await __jait_hook_316();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_47_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_96_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c, room } = setup();
-    room.events[0].sender = '@bob:test';
-    await __jait_rejected(0, c.command({ action: 'edit', roomId: '!room:test', eventId: '$one', text: 'wrong' }));
-    await c.command({ action: 'react', roomId: '!room:test', eventId: '$one', key: '👍' });
-    __jait_capture(1, (c.client.sendEvent.mock.calls));
-    await c.command({ action: 'react', roomId: '!room:test', eventId: '$one', key: '👍' });
-    __jait_capture(2, (c.client.redactEvent.mock.calls));
+    // Regression guard: OmniRoute model ids almost always contain a slash
+    // ("openai/gpt-4o", "auto/coding"). The OpenRouter branch keys off
+    // `requestedModel.includes("/")`, so without an explicit omniroute
+    // early-return every OmniRoute request would silently be sent to
+    // openrouter.ai — with the user's OpenRouter key, or none at all.
+    const llm = resolveJaitLlmConfig({
+      config,
+      apiKeys: { OPENROUTER_API_KEY: "or-key" },
+      requestedModel: "openai/gpt-4o",
+      jaitBackend: "omniroute",
+    });
+
+    __jait_capture(0, (llm.backend));
+    __jait_capture(1, (llm.openaiBaseUrl));
+    __jait_capture(2, (llm.openaiModel));
   
 })();
 
 } finally {
-
+await __jait_hook_316();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_114_3": {
 
-
-function setup() {
-  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
-  const c = (service as any).connection('test');
-  c.status = 'ready';
-  c.session = { userId: '@alice:test' };
-  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
-  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
-  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
-  c.rooms.set('!room:test', room);
-  return { c, room, message };
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
 }
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { c } = setup();
-    await c.command({ action: 'remove', roomId: '!room:test' });
-    __jait_capture(0, (c.client.leaveRoom.mock.calls));
-    __jait_capture(1, (c.client.doRequest.mock.calls));
-    __jait_capture(2, (c.snapshot().rooms));
+    const llm = resolveJaitLlmConfig({
+      config,
+      requestedModel: "gpt-4o",
+      jaitBackend: "omniroute",
+    });
+
+    __jait_capture(0, (llm.openaiModel));
   
 })();
 
 } finally {
+await __jait_hook_316();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_124_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const llm = resolveJaitLlmConfig({ config, jaitBackend: "omniroute" });
+
+    __jait_capture(0, (llm.openaiModel));
+    // Placeholder key: OmniRoute serves keyless free-tier providers, but an
+    // empty bearer breaks some upstreams.
+    __jait_capture(1, (llm.openaiApiKey));
+  
+})();
+
+} finally {
+await __jait_hook_316();
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_133_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const llm = resolveJaitLlmConfig({
+      config: { ...config, omnirouteBaseUrl: "http://gateway:20128/v1", omnirouteApiKey: "cfg-key" },
+      apiKeys: { OMNIROUTE_BASE_URL: "http://nas:20128/v1/", OMNIROUTE_API_KEY: "user-key" },
+      requestedModel: "auto/coding",
+      jaitBackend: "omniroute",
+    });
+
+    __jait_capture(0, (llm.openaiBaseUrl));
+    __jait_capture(1, (llm.openaiApiKey));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_145_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    for (const alias of ["default", "fable", "sonnet", "opus", "haiku", "opusplan"]) {
+      __jait_thrown(0, () =>
+        resolveJaitLlmConfig({ config, requestedModel: alias, jaitBackend: "openai" }), (JaitConfigError));
+    }
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_153_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const apiKeys = {
+      JAIT_BACKEND_INSTANCES: serializeJaitBackendInstances([
+        {
+          id: "desktop",
+          type: "ollama",
+          name: "Desktop",
+          baseUrl: "http://desktop:11434",
+          numCtx: 65536,
+        },
+        {
+          id: "server",
+          type: "ollama",
+          name: "Server",
+          baseUrl: "http://server:11434",
+          numCtx: 131072,
+        },
+      ]),
+    };
+    const llm = resolveJaitLlmConfig({
+      config,
+      apiKeys,
+      requestedModel: encodeJaitModelId("ollama", "server", "qwen3:32b"),
+      jaitBackend: "openai",
+    });
+
+    __jait_capture(0, (llm.backend));
+    __jait_capture(1, (llm.openaiBaseUrl));
+    __jait_capture(2, (llm.openaiModel));
+    __jait_capture(3, (llm.numCtx));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_185_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const apiKeys = {
+      JAIT_BACKEND_INSTANCES: serializeJaitBackendInstances([
+        {
+          id: "glm",
+          type: "openai",
+          name: "GLM",
+          baseUrl: "https://api.example.com/v1/",
+          apiKey: "instance-key",
+        },
+      ]),
+    };
+    const llm = resolveJaitLlmConfig({
+      config,
+      apiKeys,
+      requestedModel: encodeJaitModelId("openai", "glm", "glm-5"),
+      jaitBackend: "ollama",
+    });
+
+    __jait_capture(0, (llm.backend));
+    __jait_capture(1, (llm.openaiBaseUrl));
+    __jait_capture(2, (llm.openaiApiKey));
+    __jait_capture(3, (llm.openaiModel));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_210_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_thrown(0, () => resolveJaitLlmConfig({
+      config,
+      apiKeys: { JAIT_BACKEND_INSTANCES: "[]" },
+      requestedModel: encodeJaitModelId("ollama", "gone", "qwen3"),
+      jaitBackend: "ollama",
+    }));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_221_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      completionsResponse({
+        choices: [{ finish_reason: "stop", message: { content: "  hello world  " } }],
+      }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await __jait_captureResolved(0, (callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 512 })));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_234_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      completionsResponse({
+        choices: [
+          {
+            finish_reason: "stop",
+            message: { content: [{ type: "text", text: "part one " }, { type: "text", text: "part two" }] },
+          },
+        ],
+      }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await __jait_captureResolved(0, (callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 512 })));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_252_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // Regression: reasoning models (GLM thinking, DeepSeek-R1, Qwen thinking)
+    // put their thought in `message.reasoning` / `reasoning_content` and leave
+    // `content` empty with finish_reason "length" when the budget runs out
+    // mid-thought. This used to surface as "" and made e.g. chat title
+    // generation silently fall back to the user's first message.
+    const fetchMock = vi.fn().mockResolvedValue(
+      completionsResponse({
+        choices: [
+          {
+            finish_reason: "length",
+            message: { content: "", reasoning: "the user wants me to name this chat..." },
+          },
+        ],
+      }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
+    __jait_capture(1, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_276_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      completionsResponse({
+        choices: [
+          {
+            finish_reason: "length",
+            message: { content: "", reasoning_content: "thinking..." },
+          },
+        ],
+      }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_294_3": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      completionsResponse({ choices: [{ finish_reason: "error", message: { content: "" } }] }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await __jait_rejected(0, callJaitLlmCompletion(ollamaLlm(), [{ role: "user", content: "hi" }], { maxTokens: 24 }));
+  
+})();
+
+} finally {
+await __jait_hook_316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_jait_llm_test_ts_306_1": {
+
+const { encodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const originalFetch = globalThis.fetch;
+function ollamaLlm() {
+  return resolveJaitLlmConfig({ config, jaitBackend: "ollama" });
+}
+function completionsResponse(body: unknown) {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+const config = {
+  port: 0,
+  wsPort: 0,
+  host: "127.0.0.1",
+  logLevel: "silent",
+  corsOrigin: "*",
+  nodeEnv: "test",
+  jwtSecret: "test",
+  llmProvider: "ollama" as const,
+  ollamaUrl: "http://localhost:11434",
+  ollamaModel: "dummy",
+  openaiApiKey: "",
+  openaiModel: "gpt-4o",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  contextWindow: 128000,
+  hookSecret: "test",
+  heartbeatCron: "* * * * *",
+  whisperUrl: "http://localhost:8178",
+};
+const __jait_hook_316 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+
+try {
+await (async()=>{
+
+  __jait_thrown(0, () => resolveJaitLlmConfig({config, jaitBackend:"opencode-go"}));
+  const resolved = resolveJaitLlmConfig({config, jaitBackend:"opencode-go",apiKeys:{OPENCODE_GO_API_KEY:"key"}});
+  __jait_capture(1, (resolved.openaiModel));
+  __jait_capture(2, (resolved.openaiBaseUrl));
+
+})();
+
+} finally {
+await __jait_hook_316();
+}
+
 
 break;
 }

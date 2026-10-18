@@ -1,14 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/registry.test.ts; expected literals are in tail_static.rs.
-import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { createToolRegistry, type ToolRegistryDeps } from "../../../../packages/gateway/src/tools/index.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+// Translated fixture from packages/gateway/src/tools/os-tools.test.ts; expected literals are in tail_static.rs.
+
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/registry.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/os-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,894 +32,411 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_35_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_12_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = createToolRegistry(new SurfaceRegistry(), {
-      projectService: {},
-      repoService: {},
-    } as any);
-
-    __jait_capture(0, (registry.get("project.create")?.description));
-    __jait_capture(1, (registry.get("project.assign_repository")?.description));
-    __jait_capture(2, (registry.get("project.transfer")?.description));
-    __jait_captureType(3, (registry.get("workspace.create")));
-    __jait_captureType(4, (registry.get("workspace.assign_repository")));
+    execAsync.mockRejectedValue(new Error("Command unavailable"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query: "info" }, context)), ({
+      ok: true, data: { platform: process.platform, pid: process.pid, cwd: process.cwd() },
+    }));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_48_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const query = "processes";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = createToolRegistry(new SurfaceRegistry(), {
-      sessionSearchService: { search: () => [] },
-    } as any);
-
-    __jait_capture(0, (registry.get("session.search")?.description));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_56_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const query = "disk";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "builtin.echo",
-      description: "echo text",
-      parameters: { type: "object", properties: {} },
-      execute: async () => ({ ok: true, message: "ok" }),
-    });
-
-    __jait_capture(0, (registry.get("builtin.echo")));
-    __jait_capture(1, (registry.listInfo()));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_76_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const query = "processes";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.registerPluginTools(
-      { id: "demo-plugin", displayName: "Demo Plugin" },
-      [{
-        name: "demo.echo",
-        description: "echo from plugin",
-        parameters: { type: "object", properties: {} },
-        tier: "external",
-        category: "external",
-        risk: "high",
-        defaultConsentLevel: "dangerous",
-        execute: async () => ({ ok: true, message: "plugin" }),
-      }],
-    );
-
-    __jait_capture(0, (registry.get("demo.echo")));
-    __jait_capture(1, (registry.listInfo()));
+    execAsync.mockRejectedValue(new Error("Permission denied"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_115_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const query = "disk";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "echo",
-      description: "echo text",
-      parameters: {
-        type: "object",
-        properties: { text: { type: "string" } },
-        required: ["text"],
-      },
-      execute: async (input: { text: string }) => ({ ok: true, message: input.text }),
-    });
+    execAsync.mockRejectedValue(new Error("Permission denied"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
+  
+})();
 
-    const writes: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        writes.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
+} finally {
+await __jait_hook_566();
+}
+}
+}
 
-    const result = await registry.execute("echo", {}, context(), audit);
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_25_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+await __jait_hook_461();
+try {
+await (async()=>{
 
+    vi.stubEnv("JAIT_PRIVATE_TEST_TOKEN", "must-not-leak");
+    const result = await createOsQueryTool().execute({ query: "env" }, context);
     __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
-    __jait_capture(3, (writes[0]));
+    __jait_capture(1, (JSON.stringify(result)));
+    __jait_capture(2, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_144_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "ok.tool",
-      description: "returns success",
-      parameters: { type: "object", properties: {} },
-      execute: async () => ({ ok: true, message: "done", data: { ok: true } }),
-    });
-
-    const writes: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        writes.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute("ok.tool", {}, context(), audit);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
-    __jait_capture(2, (writes[0]));
-    __jait_capture(3, (writes[1]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_169_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
 /*__jait_scope_open__*/{
-
+const manager = "apt";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register({
-      name: "boom.tool",
-      description: "throws",
-      parameters: { type: "object", properties: {} },
-      execute: async () => {
-        throw new Error("kaboom");
-      },
-    });
-
-    const writes: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        writes.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute("boom.tool", {}, context(), audit);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
-    __jait_capture(3, (writes[0]));
-    __jait_capture(4, (writes[1]));
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_199_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "preview.open", "Open a live preview of the web application");
-    registerDiscoveryTool(registry, "browser.click", "Click an interactive browser element");
-    registerDiscoveryTool(registry, "network.scan", "Scan the local network for reachable hosts");
-    registerDiscoveryTool(registry, "ssh.run", "Run a command on a remote server over SSH");
-    registerDiscoveryTool(registry, "memory.search", "Search remembered preferences and durable facts");
-
-    __jait_capture(0, (registry.search("show app")[0]?.name));
-    __jait_capture(1, (registry.search("control browser").map((tool) => tool.name)));
-    __jait_capture(2, (registry.search("scan my network")[0]?.name));
-    __jait_capture(3, (registry.search("ssh machine")[0]?.name));
-    __jait_capture(4, (registry.search("what do you remember about my preferences")[0]?.name));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_214_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
 /*__jait_scope_open__*/{
-
+const manager = "brew";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "preview.open", "Open the application preview");
-    registerDiscoveryTool(registry, "deploy.basic", "Deploy the current application");
-    registerDiscoveryTool(registry, "deploy.preferred", "Deploy the current application safely", { priority: 50 });
-
-    __jait_capture(0, (registry.search("prevew")[0]?.name));
-    __jait_capture(1, (registry.search("deploy")[0]?.name));
-    __jait_capture(2, (registry.search("deploy", { limit: 1 })));
-    __jait_capture(3, (registry.search("deploy", { disabledTools: new Set(["deploy.preferred"]) })[0]?.name));
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_226_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each2": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "todo", "Track multi-step work", { tier: "core" });
-    registerDiscoveryTool(registry, "user.ask", "Ask the user for a decision", { tier: "core" });
-    registerDiscoveryTool(registry, "tools.list", "List tools", { tier: "core" });
-    registerDiscoveryTool(registry, "tools.search", "Search tools", { tier: "core" });
-    registerDiscoveryTool(registry, "read", "Read project files", { tier: "core" });
-    registerDiscoveryTool(registry, "preview.open", "Open a preview");
-    registerDiscoveryTool(registry, "plugin.deploy", "Deploy through a plugin", { tier: "external", source: "plugin:deploy" });
-    registerDiscoveryTool(registry, "mcp.github.issue", "Create a GitHub issue", { tier: "external", source: "mcp" });
-
-    __jait_capture(0, (registry.listForMcp().map((tool) => tool.name)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_255_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
 /*__jait_scope_open__*/{
-
+const manager = "winget";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const deps: ToolRegistryDeps = { agentGithubAppService: {} as any };
-    const early = createToolRegistry(new SurfaceRegistry(), deps);
-    __jait_capture(0, (early.listNames()));
-
-    Object.assign(deps, { startedAt: Date.now() } satisfies Partial<ToolRegistryDeps>);
-    const late = createToolRegistry(new SurfaceRegistry(), deps);
-
-    __jait_capture(1, (late.listNames()));
-    // The old wiring (a late literal omitting the service) is what produced the
-    // unknown-tool failure for an advertised tool.
-    const drifted = createToolRegistry(new SurfaceRegistry(), { startedAt: Date.now() });
-    __jait_capture(2, (drifted.listNames()));
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_271_1": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
-
-try {
-await (async()=>{
-
-  const registry = new ToolRegistry();
-  registerDiscoveryTool(registry, "file.read", "Read constructor source files");
-  __jait_thrown(0, () => registry.rankSearch("inspect constructor source"));
-  __jait_capture(1, (registry.search("constructor")[0]?.name));
-
-})();
-
-} finally {
-
-}
-
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_280_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const pkg = "ripgrep;echo injected";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
-    for (let index = 0; index < 300; index++) {
-      registerDiscoveryTool(registry, `tool${index}.inspect`, context);
-    }
-    registerDiscoveryTool(registry, "network.scan", "Discover reachable network hosts");
-    const started = performance.now();
-    const matches = registry.search(`scan network ${context} scan network`, { limit: 10 });
-    __jait_capture(0, (matches));
-    // A generous budget catches the multi-minute freeze without relying on
-    // small timing differences between CI machines.
-    __jait_capture(1, (performance.now() - started));
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_295_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const pkg = "$(echo injected)";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "network.scan", "Discover network hosts");
-    registerDiscoveryTool(registry, "preview.open", "Open an application preview");
-    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
-    const names = registry.search(`scan network ${context} open preview`).map(tool => tool.name);
-    __jait_capture(0, (names));
-    __jait_capture(1, (names));
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_305_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each2": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const pkg = "ripgrep\nwhoami";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "preview.open", "Open the application preview");
-    __jait_capture(0, (registry.search(`${"x".repeat(500000)} prevew`)[0]?.name));
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_registry_test_ts_311_3": {
-
-
-function context() {
-  return {
-    sessionId: "s-registry",
-    actionId: "a-registry",
-    projectRoot: process.cwd(),
-    requestedBy: "test",
-  };
-}
-function registerDiscoveryTool(
-  registry: ToolRegistry,
-  name: string,
-  description: string,
-  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
-): void {
-  registry.register({
-    name,
-    description,
-    tier: options.tier ?? "standard",
-    category: options.source === "mcp" ? "external" : "meta",
-    source: options.source ?? "builtin",
-    discovery: options.priority == null ? undefined : { priority: options.priority },
-    parameters: { type: "object", properties: {} },
-    execute: async () => ({ ok: true, message: "completed" }),
-  });
-}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-
+/*__jait_scope_open__*/{
+const pkg = "--allow-unauthenticated";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registerDiscoveryTool(registry, "file.read", "Read files");
-    registerDiscoveryTool(registry, "file.list", "List files");
-    const rank = vi.spyOn(registry, "rankSearch");
-    const fetcher = vi.fn().mockResolvedValue(new Response("unavailable", { status: 503 }));
-    vi.stubGlobal("fetch", fetcher);
-    try {
-      const matches = await registry.rankSearchWithSystemOne("files", { limit: 1 }, { JEV_API_KEY: "bounded-search-regression" });
-      __jait_capture(0, (rank.mock.calls));
-      __jait_capture(1, (matches));
-      __jait_capture(2, (fetcher.mock.calls));
-    } finally {
-      vi.unstubAllGlobals();
-    }
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
   
 })();
 
 } finally {
+await __jait_hook_566();
+}
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_43_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    execAsync.mockRejectedValue(new Error("Package not found"));
+    __jait_capture(0, (await createOsInstallTool().execute({ package: "missing-package", manager: "apt" }, context)));
+  
+})();
+
+} finally {
+await __jait_hook_566();
 }
 }
 

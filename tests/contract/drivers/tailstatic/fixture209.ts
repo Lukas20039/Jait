@@ -1,15 +1,13 @@
-// Translated fixture from packages/gateway/src/services/thread-checkpoint.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { buildThreadHistoryReplayPrompt } from "../../../../packages/gateway/src/services/thread-history.js";
-import { routeThread } from "../../../../packages/gateway/src/services/thread-router.js";
-import { ExecutionGuard } from "../../../../packages/gateway/src/services/execution-guard.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/static-asset-cache.test.ts; expected literals are in tail_static.rs.
+
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { resolve, join } from "node:path";
+import { registerStaticAssetCache } from "../../../../packages/gateway/src/services/static-asset-cache.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/thread-checkpoint.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/static-asset-cache.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,106 +34,52 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_thread_checkpoint_test_ts_11_3": {
+case "tailstatic_packages_gateway_src_services_static_asset_cache_test_ts_7_1": {
 
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 
-let opened: Awaited<ReturnType<typeof openDatabase>> | undefined;
-const __jait_hook_414 = () => { opened?.sqlite.close(); opened = undefined; vi.restoreAllMocks(); };
-/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    const service = new ThreadService(opened.db);
-    const thread = service.create({ title: "fixture", providerId: "jait", workingDirectory: "/tmp/project", branch: "delivery" });
-    service.addActivity(thread.id, "message", "original", { role: "user", content: "Implement parser recovery." });
-    service.addActivity(thread.id, "message", "steering", { role: "user", content: "Only change the parser; preserve the public API." });
-    for (let i = 0; i < 2100; i++) service.addActivity(thread.id, "activity", `noise ${i}`);
-    service.addActivity(thread.id, "message", "recovery", { role: "user", content: "The gateway process terminated during the previous turn.", recovery: true });
-    service.addActivity(thread.id, "todo", "plan", { items: [{ title: "Run parser regression", status: "in-progress" }] });
-    const guard = new ExecutionGuard(); guard.beforeCall(); guard.record("read", { ok: false, message: "Source chat not found" });
-    service.addActivity(thread.id, "execution.checkpoint", "limits", guard.snapshot());
-    const restored = new ThreadService(opened.db);
-    const prompt = buildThreadHistoryReplayPrompt(restored, thread.id)!;
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (restored.getExecutionCheckpoint(thread.id)?.calls));
-    __jait_capture(5, (restored.getTaskContext(thread.id).originalTask));
-    __jait_capture(6, (restored.getTaskContext(thread.id).latestInstruction));
-  
+  const output = resolve(__jait_original_dir, "../../../../.jait/artifacts/static-cache-tests");
+  await mkdir(output, { recursive: true });
+  const directory = await mkdtemp(join(output, "cache-"));
+  const assets = join(directory, "assets");
+  await mkdir(assets);
+  const file = join(assets, "app-abcdefgh.js");
+  await writeFile(file, "cached asset");
+  const app = Fastify();
+  registerStaticAssetCache(app, directory);
+  app.get("/*", async () => "fallback");
+  try {
+    const first = await app.inject({ url: "/assets/app-abcdefgh.js" });
+    __jait_capture(0, (first.body));
+    __jait_capture(1, (first.headers["cache-control"]));
+    await rm(file);
+    const second = await app.inject({ url: "/assets/app-abcdefgh.js?version=1" });
+    __jait_capture(2, (second.body));
+    __jait_capture(3, ((await app.inject({ url: "/assets/missing-abcdefgh.js" })).body));
+    __jait_capture(4, ((await app.inject({ url: "/index.html" })).body));
+    __jait_capture(5, ((await app.inject({ url: "/assets/app-abcdefgh.js", headers: { range: "bytes=0-1" } })).body));
+  } finally {
+    await app.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+
 })();
 
 } finally {
-await __jait_hook_414();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_thread_checkpoint_test_ts_33_3": {
-
-
-let opened: Awaited<ReturnType<typeof openDatabase>> | undefined;
-const __jait_hook_414 = () => { opened?.sqlite.close(); opened = undefined; vi.restoreAllMocks(); };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.spyOn(Date, "now").mockReturnValue(1_800_000_000_000);
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    const service = new ThreadService(opened.db);
-    const thread = service.create({ title: "same millisecond", providerId: "jait" });
-    service.addActivity(thread.id, "message", "original", { role: "user", content: "Original instruction" });
-    service.addActivity(thread.id, "message", "steering", { role: "user", content: "Latest instruction" });
-    service.addActivity(thread.id, "execution.checkpoint", "old", { calls: 1, windowCalls: 1, evidence: [], failures: {} });
-    service.addActivity(thread.id, "execution.checkpoint", "new", { calls: 2, windowCalls: 2, evidence: [], failures: {} });
-    for (let i = 0; i < 2001; i++) service.addActivity(thread.id, "activity", "noise");
-    __jait_capture(0, (service.getTaskContext(thread.id)));
-    __jait_capture(1, (service.getExecutionCheckpoint(thread.id)?.calls));
-    const prompt = buildThreadHistoryReplayPrompt(service, thread.id)!;
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-  
-})();
-
-} finally {
-await __jait_hook_414();
-}
 }
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_thread_checkpoint_test_ts_50_3": {
-
-
-let opened: Awaited<ReturnType<typeof openDatabase>> | undefined;
-const __jait_hook_414 = () => { opened?.sqlite.close(); opened = undefined; vi.restoreAllMocks(); };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const plan = routeThread({ message: "The gateway process terminated during the previous turn. Continue the unfinished task from the saved thread conversation, activity log and current workspace state. Verify completed tool calls before repeating actions.",
-      availableSkills: [{ id: "voice-call", name: "voice-call", description: "Start voice calls via the OpenClaw voice-call plugin.", enabled: true } as any] });
-    __jait_capture(0, (plan.suggestedSkillIds));
-  
-})();
-
-} finally {
-await __jait_hook_414();
-}
-}
 
 break;
 }

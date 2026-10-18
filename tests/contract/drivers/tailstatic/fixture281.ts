@@ -1,15 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/preview-tools.test.ts; expected literals are in tail_static.rs.
-import { createPreviewInspectTool, createPreviewOpenTool, createPreviewRestartTool } from "../../../../packages/gateway/src/tools/preview-tools.js";
+// Translated fixture from packages/gateway/src/tools/link-tools.test.ts; expected literals are in tail_static.rs.
+import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
+import { jaitLinkTool } from "../../../../packages/gateway/src/tools/link-tools.js";
+import { ASK_MODE_TOOLS, SWARM_ORCHESTRATION_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/preview-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/link-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,27 +36,26 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_12_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tools = createToolRegistry(new SurfaceRegistry());
-    const schemas = buildToolSchemas(tools);
-    const names = new Set(schemas.map((schema) => schema.function.name));
-
-    __jait_capture(0, (names.has("preview_open")));
-    __jait_capture(1, (names.has("preview_start")));
+    __jait_capture(0, (await jaitLinkTool.execute({ href: "/agents", label: "  View the updated team  " }, context)));
+    __jait_capture(1, (jaitLinkTool.defaultConsentLevel));
+    __jait_capture(2, (ASK_MODE_TOOLS.has("jait.link")));
+    __jait_capture(3, (SWARM_ORCHESTRATION_TOOLS.has("jait.link")));
   
 })();
 
@@ -67,50 +66,333 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each0": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/jobs";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/network";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/settings";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/chat?sessionId=abc%26def";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each4": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/threads?threadId=thread-1";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each0": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/emails";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/email";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/settings";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/todo";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each4": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/messenger";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each5": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/chat";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each6": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_32_3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const mockSession = {
-      id: "preview-session-123",
-      sessionId: "session-123",
-      status: "ready",
-      url: "http://127.0.0.1:5173/",
-      target: "3000",
-      mode: "local",
-      logs: [],
-      browserEvents: [],
-    };
-    const previewService = {
-      start: vi.fn().mockResolvedValue(mockSession),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "session-123",
-      actionId: "action-123",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    };
-
-    const result = await tool.execute({ target: "3000" }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (previewService.start.mock.calls));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
+    const result = await jaitLinkTool.execute({ href: "/settings?tab=tools&toolsQ=file&q=old", label: "Tools", search: "" }, context);
+    __jait_capture(0, (result.data));
   
 })();
 
@@ -121,45 +403,17 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_36_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "http://127.0.0.1:8765/",
-        target: "8765",
-        mode: "url",
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "mcp-session",
-      actionId: "action-456",
-      projectRoot: "/project/mcp",
-      requestedBy: "mcp-client",
-    };
-
-    const result = await tool.execute({ target: "8765" }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (previewService.start.mock.calls));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/jobs", label: "Jobs", search: "test" }, context)).ok));
+    __jait_capture(1, ((await jaitLinkTool.execute({ href: "/emails", label: "Mail", search: "a".repeat(4096) }, context)).ok));
   
 })();
 
@@ -170,43 +424,20 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_40_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-999",
-        sessionId: "session-999",
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        mode: "local",
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "session-999",
-      actionId: "action-999",
-      projectRoot: "/project/live",
-      requestedBy: "assistant",
-      userId: "user-999",
-    };
-
-    const result = await tool.execute({ projectRoot: "/project/live" }, context);
-
-    __jait_capture(0, (result.ok));
+    const registry = new ToolRegistry();
+    registry.register(jaitLinkTool);
+    const result = await createJaitCatalogTool(registry).execute({ pageId: "settings" }, context);
+    __jait_capture(0, (result.data));
+    __jait_capture(1, (registry.listForMcp().find(tool => tool.name === "jait.link")?.parameters));
   
 })();
 
@@ -217,49 +448,18 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each0": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "https://evil.test";
 
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-error",
-        sessionId: "session-error",
-        status: "error",
-        url: null,
-        target: "3000",
-        mode: "local",
-        lastError: "Preview server did not become ready",
-        logs: [],
-        browserEvents: [],
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const result = await tool.execute({ target: "3000" }, {
-      sessionId: "session-error",
-      actionId: "action-error",
-      projectRoot: "/project/error",
-      requestedBy: "assistant",
-      userId: "user-error",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -267,55 +467,22 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each1": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "//evil.test/agents";
 
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const syncPreviewSession = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-error",
-        sessionId: "session-error",
-        status: "error",
-        url: null,
-        target: "3000",
-        mode: "local",
-        lastError: "Preview server did not become ready",
-        logs: [],
-        browserEvents: [],
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-      { syncPreviewSession } as any,
-    );
-
-    const result = await tool.execute({ target: "3000" }, {
-      sessionId: "session-error",
-      actionId: "action-error",
-      projectRoot: "/project/error",
-      requestedBy: "assistant",
-      userId: "user-error",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (syncPreviewSession.mock.calls));
-    __jait_capture(4, (broadcast.mock.calls));
-    __jait_capture(5, (set.mock.calls));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -323,47 +490,22 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each2": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "javascript:alert(1)";
 
 try {
 await (async()=>{
 
-    const previewService = {
-      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
-      assertAgentControl: vi.fn(),
-      inspect: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        logs: [{ id: 1, stream: "system", text: "ready", timestamp: "2026-03-27T00:00:00.000Z" }],
-        browserEvents: [
-          { type: "console", text: "ready" },
-          { type: "pageerror", text: "boom" },
-          { type: "response", status: 500, url: "http://127.0.0.1:4173/api" },
-        ],
-        screenshot: "base64-image",
-        page: { title: "Preview App" },
-        snapshot: "Title: Preview App",
-      }),
-    };
-    const tool = createPreviewInspectTool(previewService as any);
-
-    const result = await tool.execute({}, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.message));
-    __jait_capture(3, (result.data));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -371,42 +513,22 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/api/auth";
 
 try {
 await (async()=>{
 
-    const previewService = {
-      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
-      assertAgentControl: vi.fn(),
-      inspect: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        logs: [],
-        browserEvents: [],
-        screenshot: "base64-image",
-        page: null,
-        snapshot: null,
-      }),
-    };
-    const tool = createPreviewInspectTool(previewService as any);
-
-    const result = await tool.execute({ screenshot: true }, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -414,44 +536,189 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each4": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/agents#unsupported";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each5": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/\\evil.test";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each6": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/agents\n";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each0": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "  ";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "x".repeat(161);
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "label\ncontrol";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_53_3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const restartedSession = {
-      id: "preview-session-1",
-      sessionId: "session-1",
-      projectRoot: "/project/app",
-      target: "http://127.0.0.1:5173/",
-      status: "ready",
-      url: "/noVNC/vnc_lite.html?path=api/live-view/38345/websockify",
-      mode: "url",
-      logs: [],
-      browserEvents: [],
-    };
-    const previewService = {
-      restart: vi.fn().mockResolvedValue(restartedSession),
-    };
-    const tool = createPreviewRestartTool(
-      previewService as any,
-    );
-
-    const result = await tool.execute({}, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-      userId: "user-1",
-    });
-
-    __jait_capture(0, (result.ok));
+    const registry = new ToolRegistry();
+    registry.register(jaitLinkTool);
+    __jait_capture(0, (registry.listForMcp().map(tool => tool.name)));
+    __jait_capture(1, (registry.search("render link")[0].name));
+    const catalog = await createJaitCatalogTool(registry).execute({ pageId: "chat" }, context);
+    __jait_capture(2, ((catalog.data as { matches: { name: string }[] }).matches.map(tool => tool.name)));
+    const result = await jaitLinkTool.execute({ href: "/agents", label: "View team" }, context);
+    const text = (mcpContentForToolResult(result)[0] as { text: string }).text;
+    __jait_capture(3, (JSON.parse(text.slice(text.indexOf("{")))));
   
 })();
 

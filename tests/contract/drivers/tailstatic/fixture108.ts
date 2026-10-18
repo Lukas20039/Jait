@@ -1,16 +1,19 @@
-// Translated fixture from packages/gateway/src/routes/security-workbench.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/routes/repo-proposals-generate.test.ts; expected literals are in tail_static.rs.
 
-import { createServer } from "node:http";
-import { registerSecurityWorkbenchRoutes } from "../../../../packages/gateway/src/routes/security-workbench.js";
 import { loadConfig } from "../../../../packages/gateway/src/config.js";
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import type { CliProviderAdapter, ProviderEvent, ProviderId, ProviderInfo, ProviderSession, RuntimeMode, StartSessionOptions } from "../../../../packages/gateway/src/providers/contracts.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
 import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { getAssessmentService } from "../../../../packages/gateway/src/security/assessment.js";
-import { getSecurityWorkbench } from "../../../../packages/gateway/src/security/workbench.js";
+import { RepositoryService } from "../../../../packages/gateway/src/services/repositories.js";
+import { RepoProposalService } from "../../../../packages/gateway/src/services/repo-proposals.js";
+import { registerRepoProposalRoutes } from "../../../../packages/gateway/src/routes/repo-proposals.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/routes/security-workbench.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/routes/repo-proposals-generate.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -37,58 +40,319 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_security_workbench_test_ts_11_1": {
+case "tailstatic_packages_gateway_src_routes_repo_proposals_generate_test_ts_90_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-const cleanup:Array<()=>Promise<unknown>>=[];
-const __jait_hook_474 = async()=>{await Promise.all(cleanup.splice(0).map(fn=>fn()))};
+class StubCliProvider implements CliProviderAdapter {
+  readonly id: ProviderId = "codex";
+  readonly info: ProviderInfo = {
+    id: "codex",
+    name: "Stub Codex",
+    description: "Test provider",
+    available: true,
+    modes: ["full-access", "supervised"],
+  };
+
+  private listeners = new Set<(event: ProviderEvent) => void>();
+  public lastStartOptions: StartSessionOptions | null = null;
+  public lastMessage: string | null = null;
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    return {
+      id: "stub-session",
+      providerId: "codex",
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.lastMessage = message;
+    for (const listener of this.listeners) {
+      listener({
+        type: "message",
+        sessionId,
+        role: "assistant",
+        content: JSON.stringify([{ message: "Use selected provider for todo generation", priority: "normal", tags: ["provider"], dueDate: null }]),
+      });
+      listener({ type: "turn.completed", sessionId });
+    }
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(listener: (event: ProviderEvent) => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+}
+async function authHeader(jwtSecret: string, userId = "test-user") {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+let sqlite: ReturnType<typeof openDatabase>["sqlite"] | null = null;
+const originalFetch = globalThis.fetch;
+const __jait_hook_2696 = () => {
+    globalThis.fetch = originalFetch;
+    sqlite?.close();
+    sqlite = null;
+  };
 
 try {
 await (async()=>{
 
- const app=Fastify();cleanup.push(()=>app.close());
- const config={...loadConfig(),jwtSecret:"security-workbench-test"};
- registerSecurityWorkbenchRoutes(app,config);
- const owner={authorization:"Bearer "+await signAuthToken({id:"workbench-route",username:"owner"},config.jwtSecret)};
- const other={authorization:"Bearer "+await signAuthToken({id:"other-route",username:"other"},config.jwtSecret)};
- for(const url of ["/api/security/workbench","/api/security/engines","/api/security/checks/unknown","/api/security/checks/unknown/report","/api/security/findings/unknown/plan"])
-  __jait_capture(0, ((await app.inject({url})).statusCode));
- const server=createServer((_req,res)=>res.end("secret discarded"));
- await new Promise<void>(resolve=>server.listen(0,"127.0.0.1",resolve));cleanup.push(()=>new Promise<void>(resolve=>server.close(()=>resolve())));
- const address=server.address();if(!address||typeof address==="string")throw new Error("port");
- const scope=getAssessmentService().createScope({targets:["127.0.0.1"],exclusions:[],ports:[address.port],methods:["http"],authorized:true,expiresAt:new Date(Date.now()+60_000).toISOString()},"workbench-route");
- const payload={scopeId:scope.id,profile:"http",target:"127.0.0.1",port:address.port};
- __jait_capture(1, ((await app.inject({method:"POST",url:"/api/security/checks",headers:other,payload})).statusCode));
- const result=await app.inject({method:"POST",url:"/api/security/checks",headers:owner,payload});
- __jait_capture(2, (result.statusCode));
- const run=await getSecurityWorkbench().wait(result.json().id,"workbench-route");__jait_capture(3, (run.status));
- for(const url of ["/api/security/checks/"+run.id,"/api/security/checks/"+run.id+"/report","/api/security/findings/"+run.findingIds[0]+"/plan"])
-  __jait_capture(4, ((await app.inject({url,headers:other})).statusCode));
- __jait_capture(5, ((await app.inject({url:"/api/security/workbench",headers:other})).json()));
- __jait_capture(6, ((await app.inject({method:"POST",url:"/api/security/comparisons",headers:other,payload:{beforeRunId:run.id,afterRunId:run.id}})).statusCode));
- __jait_capture(7, ((await app.inject({method:"POST",url:"/api/security/comparisons",headers:owner,payload:{beforeRunId:run.id,afterRunId:run.id}})).json().comparable));
- const report=await app.inject({url:"/api/security/checks/"+run.id+"/report",headers:owner});
- __jait_capture(8, (report.statusCode));__jait_capture(9, (report.body));__jait_capture(10, (report.body));
- const finding=run.findingIds[0];
- __jait_capture(11, ((await app.inject({method:"POST",url:"/api/security/findings/"+finding+"/decision",headers:owner,payload:{disposition:"verified-absent"}})).statusCode));
- __jait_capture(12, ((await app.inject({method:"POST",url:"/api/security/findings/"+finding+"/decision",headers:owner,payload:{disposition:"accepted-risk"}})).json().disposition));
- __jait_capture(13, ((await app.inject({method:"DELETE",url:"/api/security/checks/"+run.id,headers:other})).statusCode));
- __jait_capture(14, ((await app.inject({method:"DELETE",url:"/api/security/checks/"+run.id,headers:owner})).statusCode));
- __jait_capture(15, ((await app.inject({url:"/api/security/checks/"+run.id,headers:owner})).statusCode));
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
 
+    const app = Fastify({ logger: false });
+    const config = {
+      ...loadConfig(),
+      jwtSecret: "test-jwt-secret",
+      logLevel: "silent" as const,
+      llmProvider: "openai" as const,
+      openaiApiKey: "test-key",
+    };
+    const repoService = new RepositoryService(opened.db);
+    const repoProposalService = new RepoProposalService(opened.db);
+
+    registerRepoProposalRoutes(app, config, {
+      repoService,
+      repoProposalService,
+    });
+
+    const repo = repoService.create({
+      userId: "test-user",
+      name: "repo",
+      localPath: process.cwd(),
+    });
+    repoProposalService.create({
+      repoId: repo.id,
+      userId: "test-user",
+      message: "Add unit tests for todo generation",
+    });
+
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({
+      choices: [{
+        message: {
+          content: JSON.stringify([
+            {
+              message: "Add unit tests for todo generation",
+              priority: "normal",
+              tags: ["tests"],
+              dueDate: null,
+            },
+            {
+              message: "Review Todo page empty states",
+              priority: "high",
+              tags: ["ui", "todo"],
+              dueDate: null,
+            },
+            {
+              message: "Document the release workflow",
+              priority: "low",
+              tags: ["docs"],
+              dueDate: "2026-05-10",
+            },
+          ]),
+        },
+      }],
+    }), { status: 200 }));
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/repos/${repo.id}/todos/generate`,
+      headers: await authHeader(config.jwtSecret),
+      payload: {},
+    });
+
+    __jait_capture(0, (res.statusCode));
+    const body = res.json() as { generated: number; todos: Array<{ message: string; priority: string; dueDate: string | null; tags: string }> };
+    __jait_capture(1, (body.generated));
+    __jait_capture(2, (body.todos.map((todo) => todo.message)));
+    __jait_capture(3, (body.todos[0]), ({
+      priority: "high",
+      dueDate: null,
+      tags: JSON.stringify(["ui", "todo"]),
+    }));
+
+    const saved = repoProposalService.listByRepo(repo.id);
+    __jait_capture(4, (saved));
+
+    await app.close();
+  
 })();
 
 } finally {
-await __jait_hook_474();
+await __jait_hook_2696();
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_routes_repo_proposals_generate_test_ts_176_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+class StubCliProvider implements CliProviderAdapter {
+  readonly id: ProviderId = "codex";
+  readonly info: ProviderInfo = {
+    id: "codex",
+    name: "Stub Codex",
+    description: "Test provider",
+    available: true,
+    modes: ["full-access", "supervised"],
+  };
+
+  private listeners = new Set<(event: ProviderEvent) => void>();
+  public lastStartOptions: StartSessionOptions | null = null;
+  public lastMessage: string | null = null;
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    return {
+      id: "stub-session",
+      providerId: "codex",
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.lastMessage = message;
+    for (const listener of this.listeners) {
+      listener({
+        type: "message",
+        sessionId,
+        role: "assistant",
+        content: JSON.stringify([{ message: "Use selected provider for todo generation", priority: "normal", tags: ["provider"], dueDate: null }]),
+      });
+      listener({ type: "turn.completed", sessionId });
+    }
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(listener: (event: ProviderEvent) => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+}
+async function authHeader(jwtSecret: string, userId = "test-user") {
+  const token = await signAuthToken({ id: userId, username: `${userId}-name` }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+let sqlite: ReturnType<typeof openDatabase>["sqlite"] | null = null;
+const originalFetch = globalThis.fetch;
+const __jait_hook_2696 = () => {
+    globalThis.fetch = originalFetch;
+    sqlite?.close();
+    sqlite = null;
+  };
+
+try {
+await (async()=>{
+
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+
+    const app = Fastify({ logger: false });
+    const config = { ...loadConfig(), jwtSecret: "test-jwt-secret", logLevel: "silent" as const };
+    const repoService = new RepositoryService(opened.db);
+    const repoProposalService = new RepoProposalService(opened.db);
+    const providerRegistry = new ProviderRegistry();
+    const stubProvider = new StubCliProvider();
+    providerRegistry.register(stubProvider);
+
+    registerRepoProposalRoutes(app, config, {
+      repoService,
+      repoProposalService,
+      providerRegistry,
+    });
+
+    const repo = repoService.create({
+      userId: "test-user",
+      name: "repo",
+      localPath: process.cwd(),
+    });
+
+    const runtimeMode: RuntimeMode = "supervised";
+    const res = await app.inject({
+      method: "POST",
+      url: `/api/repos/${repo.id}/todos/generate`,
+      headers: await authHeader(config.jwtSecret),
+      payload: {
+        provider: "codex",
+        model: "gpt-5-codex",
+        runtimeMode,
+      },
+    });
+
+    __jait_capture(0, (res.statusCode));
+    __jait_capture(1, (stubProvider.lastStartOptions?.workingDirectory), (repo.localPath));
+    __jait_capture(2, (stubProvider.lastStartOptions?.model));
+    __jait_capture(3, (stubProvider.lastStartOptions?.mode));
+    __jait_capture(4, (stubProvider.lastMessage));
+
+    const body = res.json() as { generated: number; todos: Array<{ message: string }> };
+    __jait_capture(5, (body.generated));
+    __jait_capture(6, (body.todos[0]?.message));
+
+    await app.close();
+  
+})();
+
+} finally {
+await __jait_hook_2696();
+}
+}
 
 break;
 }

@@ -58,10 +58,10 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
@@ -8711,8 +8711,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_45933 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_45933();
+const __jait_hook_46164 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_46164();
 try {
 await (async()=>{
 
@@ -8828,8 +8828,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_45933 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_45933();
+const __jait_hook_46164 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_46164();
 try {
 await (async()=>{
 
@@ -8940,8 +8940,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_47370 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_47370();
+const __jait_hook_47601 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_47601();
 try {
 await (async()=>{
 
@@ -9055,8 +9055,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_48325 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_48325();
+const __jait_hook_48556 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_48556();
 try {
 await (async()=>{
 
@@ -9167,8 +9167,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_48325 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_48325();
+const __jait_hook_48556 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_48556();
 try {
 await (async()=>{
 
@@ -9277,8 +9277,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_48325 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_48325();
+const __jait_hook_48556 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_48556();
 try {
 await (async()=>{
 
@@ -9401,8 +9401,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_48325 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_48325();
+const __jait_hook_48556 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_48556();
 try {
 await (async()=>{
 
@@ -9501,8 +9501,8 @@ function modelLabels(sent: OutboundMessage): string[] {
 }
 /*__jait_scope_open__*/{
 let sqlite: SqliteDatabase;
-const __jait_hook_48325 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_48325();
+const __jait_hook_48556 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_48556();
 try {
 await (async()=>{
 
@@ -10220,8 +10220,8 @@ function managerWithRealGenerator(fetchImpl: typeof fetch) {
     mgr.register(connector);
     return { mgr, connector, restore: () => { globalThis.fetch = original; } };
   }
-const __jait_hook_52852 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_52852();
+const __jait_hook_53083 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_53083();
 try {
 await (async()=>{
 
@@ -10370,8 +10370,8 @@ function managerWithRealGenerator(fetchImpl: typeof fetch) {
     mgr.register(connector);
     return { mgr, connector, restore: () => { globalThis.fetch = original; } };
   }
-const __jait_hook_52852 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_52852();
+const __jait_hook_53083 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_53083();
 try {
 await (async()=>{
 
@@ -10515,8 +10515,8 @@ function managerWithRealGenerator(fetchImpl: typeof fetch) {
     mgr.register(connector);
     return { mgr, connector, restore: () => { globalThis.fetch = original; } };
   }
-const __jait_hook_52852 = async () => { sqlite = await openRawSqlite(":memory:"); };
-await __jait_hook_52852();
+const __jait_hook_53083 = async () => { sqlite = await openRawSqlite(":memory:"); };
+await __jait_hook_53083();
 try {
 await (async()=>{
 

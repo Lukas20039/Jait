@@ -1,12 +1,14 @@
-// Translated fixture from packages/gateway/src/services/mobile-push.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { attentionRevokeTargets, MobilePushService } from "../../../../packages/gateway/src/services/mobile-push.js";
+// Translated fixture from packages/gateway/src/services/jait-models.test.ts; expected literals are in tail_static.rs.
+
+import type { AppConfig } from "../../../../packages/gateway/src/config.js";
+import { resetModelFetcherCaches } from "../../../../packages/gateway/src/providers/model-fetchers.js";
+import { listJaitModels } from "../../../../packages/gateway/src/services/jait-models.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/mobile-push.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/jait-models.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,238 +35,110 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_11_3": {
+case "tailstatic_packages_gateway_src_services_jait_models_test_ts_24_3": {
 
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
+const { decodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const config = {
+  openaiApiKey: "",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  openaiModel: "gpt-4o",
+  ollamaUrl: "http://localhost:11434",
+  omnirouteBaseUrl: "http://localhost:20128/v1",
+} as AppConfig;
+const originalFetch = globalThis.fetch;
+const __jait_hook_570 = () => {
+  globalThis.fetch = originalFetch;
+  resetModelFetcherCaches();
+  vi.restoreAllMocks();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (attentionRevokeTargets(registrations, "watch")), ([registrations[0]]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_15_3": {
-
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (attentionRevokeTargets(registrations, null)), (registrations));
-    __jait_capture(1, (attentionRevokeTargets(registrations, "desktop-desktop")), (registrations));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_20_3": {
-
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const send = vi.fn(async (_url: unknown, _init?: RequestInit) => new Response("{}", { status: 200 }));
-      const service = new MobilePushService(db, {
-        project_id: "test", client_email: "test@example.com", private_key: "unused",
-      }, send as typeof fetch);
-      Object.assign(service, { accessToken: { value: "test-token", expiresAt: Date.now() + 3600_000 } });
-      service.register("phone-a", "user-a", "token-a");
-      service.register("phone-b", "user-b", "token-b");
-      await service.sendChatCompleted("user-a", { id: "chat-complete:s:1", title: "Chat finished", body: "Done", replaceId: "chat-complete:s", sessionId: "s", link: "/chat?sessionId=s&projectId=p" });
-      __jait_capture(0, (send.mock.calls));
-      __jait_capture(1, (JSON.parse(send.mock.calls[0]![1]!.body as string)));
-    } finally { sqlite.close(); }
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_41_3": {
-
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    try {
-      const send = vi.fn(async (_url: unknown, init?: RequestInit) => {
-        const token = JSON.parse(init!.body as string).message.token;
-        return new Response("{}", { status: token === "bad-token" ? 503 : 200 });
+    globalThis.fetch = vi.fn(async (input: string | URL | Request) => {
+      const url = String(input);
+      const model = url.includes("desktop") ? "qwen3:8b" : "qwen3:32b";
+      return new Response(JSON.stringify({ models: [{ name: model }] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
       });
-      const service = new MobilePushService(db, {
-        project_id: "test", client_email: "test@example.com", private_key: "unused",
-      }, send as typeof fetch);
-      Object.assign(service, { accessToken: { value: "test-token", expiresAt: Date.now() + 3600_000 } });
-      service.register("stale", "user-a", "bad-token");
-      service.register("phone-a", "user-a", "token-a");
-      service.register("phone-b", "user-b", "token-b");
-      await service.sendChatNotificationRead("user-a", {
-        id: "completion-1", sessionId: "s", replaceId: "chat-complete:s", read: true,
-      });
-      const messages = send.mock.calls.map((call) => JSON.parse(call[1]!.body as string).message);
-      __jait_capture(0, (messages));
-      __jait_capture(1, (messages.map((message) => message.token).sort()));
-      __jait_capture(2, (messages.find((message) => message.token === "token-a")));
-      __jait_capture(3, (warn.mock.calls));
-    } finally { warn.mockRestore(); sqlite.close(); }
+    }) as unknown as typeof fetch;
+
+    const models = await listJaitModels({
+      config,
+      fallbackModels: [],
+      apiKeys: {
+        JAIT_BACKEND_INSTANCES: serializeJaitBackendInstances([
+          {
+            id: "desktop",
+            type: "ollama",
+            name: "Desktop",
+            baseUrl: "http://desktop:11434",
+          },
+          {
+            id: "server",
+            type: "ollama",
+            name: "Server",
+            baseUrl: "http://server:11434",
+          },
+        ]),
+      },
+    });
+
+    __jait_capture(0, (models));
+    __jait_capture(1, (models.map((model) => decodeJaitModelId(model.id))));
+    __jait_capture(2, (models.map((model) => model.group)));
   
 })();
 
 } finally {
-
+await __jait_hook_570();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_70_3": {
+case "tailstatic_packages_gateway_src_services_jait_models_test_ts_68_1": {
 
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const send = vi.fn(async (_url: unknown, _init?: RequestInit) => new Response("{}", { status: 200 }));
-      const service = new MobilePushService(db, {
-        project_id: "test", client_email: "test@example.com", private_key: "unused",
-      }, send as typeof fetch);
-      Object.assign(service, { accessToken: { value: "test-token", expiresAt: Date.now() + 3600_000 } });
-      service.register("phone", "user-a", "token-phone");
-      await service.sendAttention({ key: "question:q1", kind: "question", requestId: "q1", sessionId: "s1",
-        userId: "user-a", title: "Question", body: "Choose", urgent: false, actions: [], link: "/",
-        createdAt: new Date().toISOString(), expiresAt: null });
-      const body = JSON.parse(send.mock.calls[0]![1]!.body as string);
-      __jait_capture(0, (body.message.android));
-      __jait_captureType(1, (JSON.parse(body.message.data.item).expiresAt));
-    } finally { sqlite.close(); }
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_89_3": {
-
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
+const { decodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const config = {
+  openaiApiKey: "",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  openaiModel: "gpt-4o",
+  ollamaUrl: "http://localhost:11434",
+  omnirouteBaseUrl: "http://localhost:20128/v1",
+} as AppConfig;
+const originalFetch = globalThis.fetch;
+const __jait_hook_570 = () => {
+  globalThis.fetch = originalFetch;
+  resetModelFetcherCaches();
+  vi.restoreAllMocks();
+};
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    new MobilePushService(db, null).register("android-primary", "user-a", "token-a");
-    __jait_capture(0, (new MobilePushService(db, null).list("user-a")));
-    sqlite.close();
-  
+  globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({data: [{id: "glm-5.2"}]}))) as typeof fetch;
+  const models = await listJaitModels({ config, fallbackModels: [], apiKeys: {
+    JAIT_BACKEND_INSTANCES: JSON.stringify([{id: "go", type: "opencode-go", name: "My Go", baseUrl: "https://opencode.ai/zen/go/v1", apiKey: "go-key"}]),
+  }});
+  __jait_capture(0, (models.map(m => decodeJaitModelId(m.id))));
+  __jait_capture(1, (models[0]?.group));
+
 })();
 
 } finally {
-
+await __jait_hook_570();
 }
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_mobile_push_test_ts_99_3": {
-
-
-const registrations = [
-  { deviceId: "phone", userId: "user-a", token: "token-phone" },
-  { deviceId: "watch", userId: "user-a", token: "token-watch" },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const service = new MobilePushService(db, null);
-    service.register("android-primary", "user-a", "old-token");
-    service.register("android-primary", "user-a", "new-token");
-    service.register("android-secondary", "user-b", "other-token");
-    __jait_capture(0, (service.list("user-a")));
-    __jait_capture(1, (service.unregister("android-primary", "user-b")));
-    __jait_capture(2, (service.unregister("android-primary", "user-a")));
-    __jait_capture(3, (service.list("user-a")));
-    __jait_capture(4, (service.list("user-b")));
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
 
 break;
 }

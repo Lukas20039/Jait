@@ -1,19 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/elevated-tools.test.ts; expected literals are in tail_static.rs.
-import { EventEmitter } from "node:events";
-import { PassThrough } from "node:stream";
-import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createElevatedRunTool, type ElevatedSpawnFactory } from "../../../../packages/gateway/src/tools/elevated-tools.js";
+// Translated fixture from packages/gateway/src/tools/computer-tools.test.ts; expected literals are in tail_static.rs.
+import type { NodeState } from "@jait/shared";
+import { ComputerControlSessionService } from "../../../../packages/gateway/src/services/computer-control.js";
+import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+import { createComputerTools } from "../../../../packages/gateway/src/tools/computer-tools.js";
+import type { ToolContext, ToolDefinition } from "../../../../packages/gateway/src/tools/contracts.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/elevated-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/computer-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,114 +36,335 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3": {
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_65_3": {
 
 
-function context(overrides: Record<string, unknown> = {}) {
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
   return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
     ...overrides,
   };
 }
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
 }
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { service, requests, secret } = autoSubmitSecret();
-    const { factory, calls } = fakeSpawnFactory();
-    const registry = new ToolRegistry();
-    registry.register(createElevatedRunTool(service, factory, {
-      platform: () => "linux",
-      getuid: () => 1000,
-    }));
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "elevated.run",
-      {
-        command: "apt-get update",
-        reason: "install system packages",
+    const oldNode = windowsNode({
+      id: "old-windows",
+      capabilities: {
+        ...windowsNode().capabilities,
+        tools: ["terminal.run"],
       },
-      context(),
-      audit,
+    });
+    const { tools } = setup([windowsNode(), oldNode, windowsNode({ id: "linux-a", platform: "linux" })]);
+
+    const result = await tool<Record<string, never>>(tools, "computer.targets").execute({}, context);
+    const targets = (result.data as { targets: Array<{ nodeId: string; available: boolean; reason?: string }> }).targets;
+
+    __jait_capture(0, (targets));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_85_3": {
+
+
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
+  return {
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
+    ...overrides,
+  };
+}
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
+}
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { tools, proxyToolOp } = setup();
+    const started = await tool<{ action: "start"; nodeId: string }>(tools, "computer.session")
+      .execute({ action: "start", nodeId: "windows-a" }, context);
+
+    __jait_capture(0, (started.ok));
+    const sessionId = (started.data as { session: { id: string } }).session.id;
+    __jait_capture(1, (proxyToolOp.mock.calls), ([sessionId]));
+
+    const acted = await tool<Record<string, unknown>>(tools, "computer.act").execute({
+      sessionId,
+      action: "type",
+      text: "hello im jait",
+      includeScreenshot: false,
+    }, context);
+    __jait_capture(2, (acted.ok));
+    __jait_capture(3, (proxyToolOp.mock.calls), ([sessionId]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_114_3": {
+
+
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
+  return {
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
+    ...overrides,
+  };
+}
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
+}
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { tools, proxyToolOp } = setup();
+    const result = await tool<Record<string, unknown>>(tools, "computer.act").execute({
+      sessionId: "missing",
+      action: "click",
+      x: 10,
+    }, context);
+
+    __jait_capture(0, (result));
+    __jait_capture(1, (proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_126_3": {
+
+
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
+  return {
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
+    ...overrides,
+  };
+}
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
+}
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { tools, proxyToolOp } = setup();
+    const started = await tool<{ action: "start" }>(tools, "computer.session")
+      .execute({ action: "start" }, context);
+    const sessionId = (started.data as { session: { id: string } }).session.id;
+    proxyToolOp.mockClear();
+
+    const result = await tool<Record<string, unknown>>(tools, "computer.observe").execute(
+      { sessionId },
+      { ...context, sessionId: "chat-b" },
     );
 
     __jait_capture(0, (result.ok));
-    __jait_capture(1, ((result.data as { output: string }).output));
-    __jait_capture(2, (requests));
-    __jait_capture(3, (calls[0]?.command));
-    __jait_capture(4, (calls[0]?.args));
-    __jait_capture(5, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(6, (auditEntries[0]));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (proxyToolOp.mock.calls));
   
 })();
 
@@ -158,84 +375,77 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3": {
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_143_3": {
 
 
-function context(overrides: Record<string, unknown> = {}) {
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
   return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
     ...overrides,
   };
 }
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
 }
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tools = createToolRegistry(new SurfaceRegistry(), {
-      secretInputService: new SecretInputService(),
-    });
+    const { tools, proxyToolOp } = setup();
+    const sessionTool = tool<Record<string, unknown>>(tools, "computer.session");
+    const started = await sessionTool.execute({ action: "start" }, context);
+    const sessionId = (started.data as { session: { id: string } }).session.id;
+    proxyToolOp.mockRejectedValueOnce(new Error("node disconnected"));
 
-    const schemas = buildToolSchemas(tools);
-    const byName = new Map(schemas.map((schema) => [schema.function.name, schema]));
+    const stopped = await sessionTool.execute({ action: "stop", sessionId }, context);
+    const status = await sessionTool.execute({ action: "status" }, context);
 
-    __jait_capture(0, (byName.has("elevated_run")));
-    __jait_capture(1, (byName.get("elevated_run")?.function.parameters));
+    __jait_capture(0, (stopped));
+    __jait_capture(1, (status));
   
 })();
 
@@ -246,233 +456,73 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3": {
+case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_156_3": {
 
 
-function context(overrides: Record<string, unknown> = {}) {
+const context: ToolContext = {
+  sessionId: "chat-a",
+  actionId: "action-a",
+  projectRoot: "/workspace",
+  requestedBy: "assistant",
+};
+function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
   return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
+    id: "windows-a",
+    name: "Windows PC",
+    platform: "windows",
+    role: "desktop",
+    lifecycle: "ready",
+    protocolVersion: 1,
+    capabilities: {
+      providers: [],
+      surfaces: ["computer"],
+      tools: ["computer.session", "computer.observe", "computer.act"],
+      screenShare: true,
+      voice: false,
+      preview: false,
+    },
+    connectedAt: new Date(0).toISOString(),
+    lastSeenAt: new Date(0).toISOString(),
     ...overrides,
   };
 }
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
+function setup(nodes: NodeState[] = [windowsNode()]) {
+  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
+    ok: true,
+    message: `${tool} completed`,
+    data: { accepted: true },
+  }));
+  const ws = {
+    getNodeRegistry: () => ({
+      version: 1,
+      serverTime: new Date().toISOString(),
+      nodes,
+    }),
+    proxyToolOp,
+  } as unknown as WsControlPlane;
+  const sessions = new ComputerControlSessionService();
+  const tools = new Map(
+    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
+  );
+  return { tools, proxyToolOp, sessions };
 }
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
+function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
+  const found = tools.get(name);
+  if (!found) throw new Error(`Missing tool ${name}`);
+  return found as ToolDefinition<T>;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
-      if (command !== "powershell.exe") return;
-      queueMicrotask(() => {
-        __jait_capture(0, (args));
-        // Decode the EncodedCommand and verify it uses -Verb RunAs (UAC path)
-        const encodedIdx = args.indexOf("-EncodedCommand");
-        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
-        __jait_capture(1, (script));
-        __jait_capture(2, (script));
-        proc.stdout.write(JSON.stringify({
-          exitCode: 0,
-          stdout: "uac-elevated-output\n",
-          stderr: "",
-        }));
-        proc.emit("close", 0, null);
-      });
-    });
-    const tool = createElevatedRunTool(undefined, factory, {
-      platform: () => "win32",
-      getuid: () => undefined,
-    });
-
-    const result = await tool.execute({
-      command: "Get-Service",
-    }, context());
-
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, ((result.data as { output: string }).output));
-    // UAC mode should not require the secret input service at all
-    __jait_capture(5, (calls[0]?.command));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3": {
-
-
-function context(overrides: Record<string, unknown> = {}) {
-  return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
-}
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { service, requests, secret } = autoSubmitSecret();
-    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
-      if (command !== "powershell.exe") return;
-      queueMicrotask(() => {
-        __jait_capture(0, (args));
-        // Verify credential-based path (not UAC) when username is provided
-        const encodedIdx = args.indexOf("-EncodedCommand");
-        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
-        __jait_capture(1, (script));
-        __jait_capture(2, (script));
-        proc.stdout.write(JSON.stringify({
-          exitCode: 0,
-          stdout: "windows-admin-output\n",
-          stderr: "",
-        }));
-        proc.emit("close", 0, null);
-      });
-    });
-    const registry = new ToolRegistry();
-    registry.register(createElevatedRunTool(service, factory, {
-      platform: () => "win32",
-      getuid: () => undefined,
-    }));
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "elevated.run",
-      {
-        command: "Get-Service",
-        username: ".\\Administrator",
-        reason: "inspect local services",
-      },
-      context(),
-      audit,
-    );
-
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, ((result.data as { output: string }).output));
-    __jait_capture(5, (requests));
-    __jait_capture(6, (calls[0]?.command));
-    __jait_capture(7, (JSON.stringify(calls[0])), (secret));
-    __jait_capture(8, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(9, (auditEntries[0]));
+    const { tools, proxyToolOp, sessions } = setup();
+    proxyToolOp.mockRejectedValueOnce(new Error("Tool 'computer.session' timed out"));
+    const result = await tool<Record<string, unknown>>(tools, "computer.session")
+      .execute({ action: "start" }, context);
+    __jait_capture(0, (result));
+    __jait_capture(1, (proxyToolOp.mock.calls), ([context.sessionId]));
+    __jait_capture(2, (sessions.listForOwner(context.sessionId)));
   
 })();
 

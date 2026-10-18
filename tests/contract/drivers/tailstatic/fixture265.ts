@@ -1,12 +1,18 @@
-// Translated fixture from packages/gateway/src/tools/cron-tools.test.ts; expected literals are in tail_static.rs.
-import type { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
-import { createCronAddTool, createCronListTool, createCronRemoveTool, createCronUpdateTool } from "../../../../packages/gateway/src/tools/cron-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/channel-tools.test.ts; expected literals are in tail_static.rs.
+import {
+  createChannelRemindTool,
+  createChannelSendTool,
+  cronForLocalStamp,
+  parseChannelSessionId,
+  parseLocalStamp,
+  type ChannelToolDeps,
+} from "../../../../packages/gateway/src/tools/channel-tools.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/cron-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/channel-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,34 +39,52 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_45_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, (await createCronAddTool(f.service).execute({ name: "Inventory", cron: "0 8 * * *", toolName: " file_list " }, context)));
-    __jait_capture(1, (f.scheduler.create.mock.calls));
+    __jait_capture(0, (parseChannelSessionId("channel:telegram:4242")));
+    __jait_capture(1, (parseChannelSessionId("channel:whatsapp:4915112345678@s.whatsapp.net:12")));
   
 })();
 
@@ -71,27 +95,47 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3": {
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_56_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    f.scheduler.create.mockImplementation(() => { throw new Error("Invalid cron expression"); });
-    await __jait_rejected(0, createCronAddTool(f.service).execute({ name: "Inventory", cron: "invalid", toolName: "file.list" }, context));
+    __jait_captureType(0, (parseChannelSessionId("web-chat-42")));
+    __jait_captureType(1, (parseChannelSessionId("channel:telegram")));
+    __jait_captureType(2, (parseChannelSessionId("channel:telegram:")));
+    __jait_captureType(3, (parseChannelSessionId(undefined)));
   
 })();
 
@@ -102,29 +146,348 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3": {
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_65_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    const result = await createCronListTool(f.service).execute({}, context);
-    __jait_capture(0, (f.scheduler.list.mock.calls));
+    __jait_capture(0, (parseLocalStamp("2026-08-09T05:00")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_71_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_captureType(0, (parseLocalStamp("2026-08-09T05:00:00Z")));
+    __jait_captureType(1, (parseLocalStamp("2026-08-09T05:00+02:00")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_76_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_captureType(0, (parseLocalStamp("2026-13-09T05:00")));
+    __jait_captureType(1, (parseLocalStamp("2026-08-09T25:00")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_81_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (cronForLocalStamp({ year: 2026, month: 8, day: 9, hour: 5, minute: 0 })));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_87_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d, delivered } = deps();
+    const result = await createChannelSendTool(d).execute({ text: "done" }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (delivered));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_97_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d, delivered } = deps();
+    await createChannelSendTool(d).execute(
+      { text: "hi", channelId: "whatsapp", conversationId: "999" },
+      context(),
+    );
+    __jait_capture(0, (delivered[0]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_106_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d, delivered } = deps();
+    const result = await createChannelSendTool(d).execute({ text: "hi" }, context({ sessionId: "web-1" }));
+
+    __jait_capture(0, (result.ok));
     __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data), ({ jobs: f.scheduler.list.mock.results[0]!.value }));
+    __jait_capture(2, (delivered));
   
 })();
 
@@ -135,97 +498,50 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0": {
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_115_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
 }
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const removed = true;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.scheduler.remove.mockReturnValue(removed);
-    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
-    __jait_capture(1, (f.scheduler.remove.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const removed = false;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.scheduler.remove.mockReturnValue(removed);
-    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
-    __jait_capture(1, (f.scheduler.remove.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
+  return { deps: base, created, delivered };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createCronUpdateTool(f.service).execute({ id: "job-1", enabled: false }, context)).ok));
-    __jait_capture(1, (f.scheduler.update.mock.calls));
+    const { deps: d } = deps({
+      channels: { deliver: async () => { throw new Error("channel is stopped"); } },
+    });
+    const result = await createChannelSendTool(d).execute({ text: "hi" }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 
@@ -236,27 +552,381 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3": {
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_127_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
   };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    f.scheduler.update.mockReturnValue(undefined as never);
-    __jait_capture(0, (await createCronUpdateTool(f.service).execute({ id: "foreign-job" }, context)));
+    const { deps: d, created } = deps();
+    const result = await createChannelRemindTool(d).execute(
+      { at: "2026-08-09T05:00", text: "Anlage prüfen" },
+      context({ userId: "user-1" }),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (created));
+    __jait_capture(2, (created[0]));
+    __jait_capture(3, (created[0]!["input"]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_150_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d, created } = deps();
+    const result = await createChannelRemindTool(d).execute(
+      { cron: "0 7 * * 1-5", prompt: "Summarise today's calendar" },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    const input = created[0]!["input"] as Record<string, unknown>;
+    __jait_capture(1, (input["prompt"]));
+    __jait_capture(2, (input["__jaitJobMeta"]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_163_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // 09:00 UTC is 11:00 in Vienna, so 10:00 local is behind us.
+    const { deps: d, created } = deps();
+    const result = await createChannelRemindTool(d).execute(
+      { at: "2026-08-08T10:00", text: "too late" },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (created));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_176_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // 10:00 in Tokyo on the 8th is already past 09:00 UTC; 20:00 is not.
+    const { deps: d, created } = deps();
+    const remind = createChannelRemindTool(d);
+
+    __jait_capture(0, ((await remind.execute({ at: "2026-08-08T10:00", text: "x", timeZone: "Asia/Tokyo" }, context())).ok));
+    __jait_capture(1, ((await remind.execute({ at: "2026-08-08T20:00", text: "x", timeZone: "Asia/Tokyo" }, context())).ok));
+    __jait_capture(2, ((created[0]!["input"] as Record<string, unknown>)["__jaitJobMeta"]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_189_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d } = deps();
+    const remind = createChannelRemindTool(d);
+
+    __jait_capture(0, ((await remind.execute({ text: "x" }, context())).message));
+    __jait_capture(1, ((await remind.execute({ at: "2026-08-09T05:00" }, context())).message));
+    __jait_capture(2, ((await remind.execute({ at: "2026-08-09T05:00", cron: "* * * * *", text: "x" }, context())).message));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_199_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d } = deps({ scheduler: undefined });
+    const result = await createChannelRemindTool(d).execute(
+      { at: "2026-08-09T05:00", text: "x" },
+      context(),
+    );
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_channel_tools_test_ts_209_3": {
+
+
+const NOW = new Date("2026-08-08T09:00:00Z");
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "channel:telegram:4242",
+    actionId: "action-1",
+    projectRoot: "/tmp/project",
+    requestedBy: "channel:telegram",
+    ...overrides,
+  };
+}
+function deps(overrides: Partial<ChannelToolDeps> = {}) {
+  const created: Array<Record<string, unknown>> = [];
+  const delivered: Array<Record<string, unknown>> = [];
+  const base: ChannelToolDeps = {
+    channels: {
+      deliver: async (params) => { delivered.push(params); },
+    },
+    scheduler: {
+      create: (params: Record<string, unknown>) => {
+        created.push(params);
+        return { id: "job-1", ...params };
+      },
+    } as unknown as ChannelToolDeps["scheduler"],
+    defaultTimeZone: () => "Europe/Vienna",
+    now: () => NOW,
+    ...overrides,
+  };
+  return { deps: base, created, delivered };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { deps: d, created } = deps();
+    await createChannelRemindTool(d).execute(
+      { at: "2026-08-09T05:00", text: "Bring the car in for its service" },
+      context(),
+    );
+    __jait_capture(0, (created[0]!["name"]));
   
 })();
 

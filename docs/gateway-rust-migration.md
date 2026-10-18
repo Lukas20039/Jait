@@ -1,6 +1,37 @@
 # Gateway migration to Rust
 
-Status: Rust test-suite reconstruction first; no gateway implementation has been migrated.
+Status: parallel Rust implementation and reference-test reconstruction. The initial standalone native gateway is in `packages/gateway-rust`; production remains the TypeScript gateway.
+
+## Native implementation checkpoint — 2026-10-18
+
+The focused native component check now passes **8 / 361 components (2.22%)**,
+including health, UUIDv7, state paths, SQLite connection/migrations, authentication,
+ownership and the user repository. This supersedes the initial one-component
+implementation checkpoint, while historical declaration-parity percentages below
+continue to describe a separate prerequisite lane. Equal-weight source-component
+coverage is not an effort estimate or replacement readiness score.
+
+`bun run test:gateway:rust` checks format, strict native Clippy and four native
+contract targets (42 tests, including duplicated transport-helper tests). It binds
+evidence to source hashes before/after execution and refuses reference drift.
+The manifest is `packages/gateway-rust/native-coverage.json`; the latest report is
+`.jait/artifacts/gateway-rust/native-progress/report.json`. Workspace TypeScript
+checks pass. The inventory was recaptured after reviewing the password fix and
+adding its regression declarations; no reference-test parity credit was inferred
+from implementation work.
+
+The migration uncovered a corrupt-password-hash defect: malformed hex could
+produce a zero-byte credential comparison. The original TypeScript regression had
+four failures before a strict 64-byte hex check and eight passes afterward; native
+user parity also fails before that reference correction and passes afterward.
+Valid password hashes keep the existing format. Evidence is in
+`.jait/artifacts/gateway-rust/password-before.log` and `password-after.log`.
+
+The standalone binary still exposes only health, with no database or credentials
+opened at startup. New storage/auth/user modules are real native libraries tested
+against disposable databases and the actual TypeScript functions. Next: connect
+these boundaries to authenticated HTTP routes, then owned session APIs. R00–R08
+and full replacement gates remain open; no production cutover has occurred.
 
 ## Scope and completion
 
@@ -24,7 +55,7 @@ Concurrent Messenger changes invalidated the global source-bound report. A priva
 
 ## Reviewed parity continuation — 2026-10-17
 
-The latest source-bound audit credits **2,124 / 2,761 declarations (76.93%)**,
+The 2026-10-17 source-bound audit credited **2,124 / 2,761 declarations (76.93%)**,
 including the retained regression declaration. This supersedes the historical
 10.96% checkpoint above. The current batch adds 156 reviewed declarations with
 574 live comparisons and 1,148 agreeing Vitest/Rust pass/counterexample verdicts.
@@ -48,9 +79,82 @@ are under `.jait/artifacts/parity-resume/`. This is progress on the Rust-owned
 reference test prerequisite. R00–R08 remain open and no R09 gateway implementation
 port has begun.
 
-## Rust-first prerequisite and parallel test lanes
+## Reviewed parity continuation — 2026-10-18
 
-The complete gateway test suite must be reconstructed in Rust and pass against the existing TypeScript gateway **before R09 or any subsequent gateway implementation port begins**. Expanding or fixing TypeScript tests is not the migration deliverable. Existing TypeScript tests are the behavioral specification and baseline; expose uncertain or failing behaviors as gaps instead of silently changing their assertions.
+The refreshed inventory audit credits **2,486 / 2,776 declarations (89.55%)**,
+including the retained regression declaration. This batch applies 353 reviewed
+translations and 14 manually reviewed helper declarations. Five historical
+reviews for changed declarations are preserved as superseded records in
+`parity-safety-reviewed.json`; their new source-bound reviews replace them.
+
+Execution evidence is bound to the isolated source checkpoint under
+`.jait/artifacts/parity-continue/source-checkpoint/`. The complete translated
+profile passes 3,059 checks with zero failures and 50 retained skips. The internal
+profile passes 395 scenarios, and managed acceptance and independent contracts
+pass. The 353 reviewed declarations have 1,445 observed comparisons and 2,890
+agreeing Vitest/Rust baseline and opposing-counterexample verdicts. Original
+retry failures remain in the evidence. This checkpoint avoids concurrent native
+gateway source edits invalidating execution; it does not certify freshness of
+the changing live gateway implementation.
+
+The ordinary inventory audit passes after recapture. Strict parity still fails
+with **650 requirements: 290 declarations and 360 runtime-source coverage
+requirements**. Newly added password tests are included in the denominator.
+Parameterized variants, assertion mismatches and explicit environment skips
+remain pending until individually reviewed. The corrected review index finds
+all 3,093 generated registrations, including raw-string and parameterized forms;
+registration presence grants no equivalence credit. R00–R08 remain open.
+
+Reviewed mappings are in `parity-continue-reviewed.json` and
+`parity-helper-completion-reviewed.json`; execution reports, comparison evidence
+and audit logs are under `.jait/artifacts/parity-continue/`.
+
+## Parallel implementation decision — 2026-10-17
+
+The maintainer authorized starting the Rust gateway in a separate folder while reference-test reconstruction continues. This supersedes the earlier implementation-start prerequisite below. R00–R08 remain open and are still replacement/cutover gates. Their historical evidence and pending counts above are unchanged by this implementation work.
+
+`packages/gateway-rust` now provides a native Tokio/Axum HTTP process with loopback-only bootstrap configuration, structured lifecycle logs, bounded graceful shutdown, and a port of `routes/health.ts`. `tests/contract/tests/gateway_rust.rs` compiles the production entrypoint and tests real HTTP plus the TypeScript health handler. The only normalized response field is uptime; counts, provider branches, null/omitted fields and version remain exact. The standalone binary reports empty state and never opens the live database or reads credentials. It cannot serve the application yet. See the [runtime README](../packages/gateway-rust/README.md) for commands and current coverage.
+
+Implementation can proceed per bounded component with Rust-owned checks of real code. Full-suite parity, authorization, storage/recovery, platform, resource and rollback evidence remain mandatory before replacing the gateway. Starting implementation earns no declaration-parity credit and does not mark R09 complete.
+
+Next implementation slices:
+
+1. Add a disposable SQLite repository boundary and validate schema/recovery against the existing corpus. Keep production databases closed until compatibility and rollback are demonstrated.
+2. Port identity/authentication and ownership checks before enabling data or execution routes. Reuse Rust acceptance cases and denied-write assertions.
+3. Port session CRUD, persisted state and idle SSE through the same HTTP contracts. Keep unsupported routes absent until they have real implementations and matching evidence.
+4. Expand providers, active streams, consent and scoped tools by domain, alongside the remaining reference-test lanes.
+
+## Foundation-first construction decision — 2026-10-18
+
+The maintainer requested establishing the directory structure and shared technology
+choices before continuing individual ports. The [foundation decision](gateway-rust-architecture.md)
+defines the modular native process, core and adapter library choices, domain
+ownership, performance targets and construction sequence. The scaffold now lives
+under `packages/gateway-rust/src`; reserved domains contain ownership documentation
+only. Runtime extraction preserves the public `Gateway` API. Shared blocking-work
+admission is available for subsequent database/CPU adapters; existing auth routes
+have not adopted it. Release-profile settings and native unit-test wiring are in place.
+
+Foundation validation passes formatting, strict Clippy, three native unit tests and
+42 tests across the four credited contract targets, with unchanged source hashes.
+The reviewed binding-source change is covered by foreign-owner rejection and
+same-owner idempotence before refreshing its fingerprint. The source-bound report
+is `.jait/artifacts/gateway-rust/native-progress/report.json`; the foundation summary
+is `.jait/artifacts/gateway-rust/foundation/report.json`.
+
+Foundation milestones are 100% complete. Native component coverage remains eight
+of 361 (2.22%); folder creation and technology selection earn no additional credit.
+The separate, uncredited auth HTTP suite hit a ten-second TypeScript fixture timeout
+in `origin_rejections_and_deleted_user_denials_prevent_effects`; ten other tests
+passed. That gap remains recorded, and all replacement gates remain.
+
+Next, implement shared runtime/storage/transport/policy infrastructure before
+migrating complete application domains. Performance targets still require matched
+application-level measurements.
+
+## Reference-test prerequisite and parallel test lanes
+
+The complete gateway test suite must be reconstructed in Rust and pass against the existing TypeScript gateway **before production replacement/cutover**. Expanding or fixing TypeScript tests is not the migration deliverable. Existing TypeScript tests are the behavioral specification and baseline; expose uncertain or failing behaviors as gaps instead of silently changing their assertions.
 
 `tests/contract/coverage.json` inventories every discovered gateway test declaration with its source location, name, describe hierarchy, modifiers, proposed test lane and replacement boundary. Every declaration starts pending, including skipped/parameterized declarations. It also inventories non-test gateway source files and their direct static test imports so previously untested areas require explicit review. Static imports do not prove coverage; declarations inside `each`/loops require runtime expansion review. AST capture cannot establish assertion equivalence or branch coverage.
 
@@ -70,7 +174,7 @@ Test work may proceed in parallel after harness interfaces are agreed:
 | Storage/scheduler | Schema/migrations, persistence, memory, jobs, backup/recovery and controlled time | Sanitized database corpus and fixture clock |
 | Native integrations | PTY/browser/node, email/calendar/channels, voice, plugins and screen transports | Local protocol/process peers and supported-platform runners |
 
-Each worker owns separate Rust scenario/fixture modules and maps exact existing assertions plus missing behaviors; shared harness changes require coordination. These lanes are parallel test reconstruction, not parallel gateway ports. R00–R08 are incomplete until these lanes and the strict inventory gate pass. A separate branch/contract inventory, mutation checks and supported-platform evidence remain required in addition to declaration mapping.
+Each worker owns separate Rust scenario/fixture modules and maps exact existing assertions plus missing behaviors; shared harness changes require coordination. These lanes reconstruct reference tests; the separate native implementation lane now proceeds alongside them. R00–R08 are incomplete until these lanes and the strict inventory gate pass. A separate branch/contract inventory, mutation checks and supported-platform evidence remain required in addition to declaration mapping.
 
 ### Declarative vector lanes
 
@@ -85,7 +189,7 @@ One lane is one `vectors/<lane>.json` plus one `drivers/<lane>.ts`, so lanes sha
 ## Execution rules
 
 - Add every route/tool/schema/event/config/CLI/database contract to an executable inventory before porting it. Include non-TypeScript bridges, root entrypoints, assets and package/runtime dependencies.
-- R09–R31 are blocked until the complete Rust suite has passed against TypeScript and the Rust-first parity gate above is satisfied. Work in order of dependencies below. Split a component into focused per-contract implementation items before starting it; all cases must stay mapped to the parent acceptance gate.
+- R09–R31 implementation may proceed in the isolated native lane; replacement/cutover is blocked until the complete Rust suite has passed against TypeScript and the parity gates above are satisfied. Work in order of dependencies below. Split a component into focused per-contract implementation items before starting it; all cases must stay mapped to the parent acceptance gate.
 - Preserve the existing gateway until each component has matching black-box results. Use disposable databases, local protocol servers and scoped filesystem/process fixtures. Never compare side-effectful requests by replaying them against production.
 - Every domain needs happy paths, invalid/boundary input, auth/user/project/node isolation, errors/timeouts/cancellation, persistence/restart and real native integration where applicable.
 - Port isolated unit tests into Rust as well as extending backend-independent contracts. Run deterministic fixture-driven tests without cloud models or real outbound messages. Exercise the real engine/transport in additional integration profiles.
@@ -169,7 +273,7 @@ Acceptance: Record repeatable TypeScript startup, idle/steady/peak RSS, throughp
 
 ### R09: Create the Rust gateway runtime foundation
 
-Depends on: R00–R08, every parallel test lane, and the strict Rust-first parity gate. Priority: high.
+Implementation may start alongside R00–R08 under the parallel decision above. Completion and cutover still depend on R00–R08, every test lane, and strict parity. Priority: high.
 
 Source areas: `packages/gateway-rust`, `packages/gateway/src/config.ts`, `packages/gateway/src/index.ts`.
 

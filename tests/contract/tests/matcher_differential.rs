@@ -58,7 +58,8 @@ fn rust_comparator_matches_vitest_verdicts() {
             "{id}: committed golden disagrees with the real Vitest verdict"
         );
 
-        let rust = tail_assertions::matches(&case["wire"]["observation"], &case["wire"]["rule"]);
+        let matches = tail_assertions::matches(&case["wire"]["observation"], &case["wire"]["rule"]);
+        let rust = matches != (case["wire"]["rule"]["negate"] == true);
         if rust != golden {
             mismatches.push(format!("{id}: rust={rust} vitest={golden}"));
         }

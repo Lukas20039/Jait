@@ -1,15 +1,20 @@
-// Translated fixture from packages/gateway/src/tools/screen-share-tools.test.ts; expected literals are in tail_static.rs.
-import type { ScreenShareService } from "@jait/screen-share";
+// Translated fixture from packages/gateway/src/tools/project-tools.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
+import { RepositoryService } from "../../../../packages/gateway/src/services/repositories.js";
 import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import {
-  createScreenShareTool, createScreenCaptureTool, createScreenRecordTool, createOsTool,
-} from "../../../../packages/gateway/src/tools/screen-share-tools.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createProjectCreateTool, createProjectMoveTool, createProjectTransferTool } from "../../../../packages/gateway/src/tools/project-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/screen-share-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,477 +41,791 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, (await createScreenShareTool(f.screenShare, f.control).execute({ action: "list-devices" }, context)));
+    const broadcastToUser = vi.fn();
+    const ws = { broadcastToUser } as unknown as WsControlPlane;
+    const tool = createProjectCreateTool({ projectService, repoService, ws });
+
+    const result = await tool.execute(
+      { title: "Agent Project", assignRepository: false },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(1, (broadcastToUser.mock.calls), ([project.id]));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+/*__jait_scope_open__*/{
+const existing = false;
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare, f.control).execute({ action: "connect", targetDeviceId: "host" }, context)).ok));
-    __jait_capture(1, (f.service.startShare.mock.calls));
-    __jait_capture(2, (f.ws.sendScreenShareStartRequest.mock.calls));
-    __jait_capture(3, (f.ws.sendUICommand.mock.calls));
+    const sessionService = new SessionService(db);
+    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
+    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
+    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
+    const broadcastToUser = vi.fn();
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
+    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
+    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
+    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_36_3": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare).execute({ action: "connect" }, context)).ok));
-    __jait_capture(1, (f.service.startShare.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_41_3": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare).execute({ action: "disconnect" }, context)).ok));
-    __jait_capture(1, (f.service.stopShare.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each0": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-const _name = "screen.capture";
-const factory = createScreenCaptureTool;
-const method = "captureScreen";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await factory(f.screenShare).execute({}, context)).ok));
-    __jait_capture(1, (f.service[method].mock.calls));
-  
-})();
-
-} finally {
-
+await __jait_hook_1564();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each1": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const _name = "screen.record";
-const factory = createScreenRecordTool;
-const method = "startRecording";
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
 /*__jait_scope_open__*/{
-
+const existing = true;
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await factory(f.screenShare).execute({}, context)).ok));
-    __jait_capture(1, (f.service[method].mock.calls));
+    const sessionService = new SessionService(db);
+    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
+    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
+    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
+    const broadcastToUser = vi.fn();
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
+    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
+    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
+    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each0": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os.tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const tool = createOsTool(fixture().screenShare, name);
-    __jait_capture(0, (tool.parameters.properties));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
+    const sessionService = new SessionService(db);
+    const chat = sessionService.create({ userId: "user-2", projectPath: "/old" });
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService });
+    await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    __jait_captureType(0, (sessionService.getById(chat.id)?.projectId));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each0": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os.tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    const tool = createOsTool(f.screenShare, name);
-    __jait_capture(0, ((await tool.execute({ action: "register-device", device: { id: "host", name: "Owned desktop", platform: "desktop", authorized: false } }, context)).ok));
-    __jait_capture(1, (f.service.registerDevice.mock.calls));
-    __jait_capture(2, ((await tool.execute({ action: "transfer-control", controllerDeviceId: "viewer" }, context)).ok));
-    __jait_capture(3, (f.service.transferControl.mock.calls));
+    const tool = createProjectMoveTool({ projectService, repoService });
+    const result = await tool.execute({}, context());
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each0": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os.tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createOsTool(f.screenShare, name).execute({ action: "transport-update" }, context)).ok));
-    __jait_capture(1, (f.service.updateViewerTransport.mock.calls));
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: join(source, "does-not-exist") },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    const unchanged = projectService.getById(project.id, "user-1");
+    __jait_capture(2, (unchanged?.rootPath), (source));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each1": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os_tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const tool = createOsTool(fixture().screenShare, name);
-    __jait_capture(0, (tool.parameters.properties));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
+    const source = makeDir();
+    const destination = makeDir();
+    const project = projectService.create({ userId: "user-1", title: "My Project", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: destination },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    const moved = projectService.getById(project.id, "user-1");
+    __jait_capture(1, (moved?.rootPath), (destination));
+    __jait_capture(2, (moved?.nodeId));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each1": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os_tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    const tool = createOsTool(f.screenShare, name);
-    __jait_capture(0, ((await tool.execute({ action: "register-device", device: { id: "host", name: "Owned desktop", platform: "desktop", authorized: false } }, context)).ok));
-    __jait_capture(1, (f.service.registerDevice.mock.calls));
-    __jait_capture(2, ((await tool.execute({ action: "transfer-control", controllerDeviceId: "viewer" }, context)).ok));
-    __jait_capture(3, (f.service.transferControl.mock.calls));
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: source },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 
 } finally {
-
-}
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each1": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
 /*__jait_scope_open__*/{
-const name = "os_tool";
-/*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createOsTool(f.screenShare, name).execute({ action: "transport-update" }, context)).ok));
-    __jait_capture(1, (f.service.updateViewerTransport.mock.calls));
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "remote-node-1", rootPath: "/remote/path" },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    const unchanged = projectService.getById(project.id, "user-1");
+    __jait_capture(2, (unchanged?.nodeId));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
 }
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const tool = createProjectMoveTool({ projectService, repoService });
+    const result = await tool.execute(
+      { projectId: "missing-project", nodeId: "gateway", rootPath: "/anywhere" },
+      context(),
+    );
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", title: "Move Me", rootPath: source, nodeId: "gateway" });
+    const transfer = vi.fn(async () => ({ output: "copied" }));
+    const proxyFsOp = vi.fn(async () => true);
+    const broadcastToUser = vi.fn();
+    const ws = {
+      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
+      proxyFsOp,
+      broadcastToUser,
+    } as unknown as WsControlPlane;
+    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
+
+    const result = await tool.execute({
+      projectId: project.id,
+      nodeId: "node-2",
+      rootPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+    }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (transfer.mock.calls), ([{
+      sourcePath: source,
+      destinationPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+      sshPort: undefined,
+    }]));
+    __jait_capture(2, (proxyFsOp.mock.calls));
+    __jait_capture(3, (projectService.getById(project.id, "user-1")));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const transfer = vi.fn(async () => { throw new Error("authentication failed"); });
+    const ws = {
+      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
+    } as unknown as WsControlPlane;
+    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
+
+    const result = await tool.execute({
+      projectId: project.id,
+      nodeId: "node-2",
+      rootPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+    }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (projectService.getById(project.id, "user-1")), ({ nodeId: "gateway", rootPath: source }));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
 }
 }
 

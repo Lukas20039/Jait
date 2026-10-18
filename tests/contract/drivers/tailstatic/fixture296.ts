@@ -1,11 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/security-tools.test.ts; expected literals are in tail_static.rs.
-import { createSecurityTools } from "../../../../packages/gateway/src/tools/security-tools.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/redeploy-tools.test.ts; expected literals are in tail_static.rs.
+
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/security-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/redeploy-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -32,52 +32,245 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1": {
-
-
-const context: ToolContext = { userId: "tool-owner", requestedBy: "agent", sessionId: "fixture", actionId: "fixture-action", projectRoot: "/fixture" };
-
+case "tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_29_3": {
+const execSyncMock = vi.fn();
+const spawnMock = vi.fn();
+await vi.mock("node:child_process", () => ({
+  execSync: (...args: unknown[]) => execSyncMock(...args),
+  spawn: (...args: unknown[]) => spawnMock(...args),
+}));
+const { EventEmitter } = await import("node:events");
+class FakeChildProcess extends EventEmitter {
+  pid = 4242;
+  unref = vi.fn();
+}
+/*__jait_scope_open__*/{
+const __jait_hook_475 = () => {
+    vi.useFakeTimers();
+    execSyncMock.mockReset();
+    spawnMock.mockReset();
+  };
+const __jait_hook_584 = () => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  };
+await __jait_hook_475();
 try {
 await (async()=>{
 
-  const tools = createSecurityTools();
-  const create = tools.find(t => t.name === "security.scope.create")!;
-  __jait_capture(0, (create.defaultConsentLevel));
-  const input = { targets: ["127.0.0.1"], exclusions: [], ports: [1], authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString() };
-  __jait_capture(1, ((await create.execute(input, { ...context, executionNodeId: "remote" })).ok));
-  const scope = await create.execute(input, context);
-  __jait_capture(2, (scope.ok));
-  const data = scope.data as { id: string; operatorId: string };
-  __jait_capture(3, (data.operatorId));
-  const scan = tools.find(t => t.name === "security.services.scan")!;
-  __jait_capture(4, ((await scan.execute({ scopeId: data.id }, { ...context, executionNodeId: "remote" })).ok));
-  __jait_capture(5, ((await scan.execute({ scopeId: data.id }, { ...context, userId: "other" })).ok));
-  const result = await scan.execute({ scopeId: data.id }, context);
-  __jait_capture(6, (result.ok));
-  const run = result.data as {id: string};
-  const get = tools.find(t => t.name === "security.assessments.get")!;
-  __jait_capture(7, ((await get.execute({ runId: run.id }, context)).ok));
-  __jait_capture(8, ((await get.execute({ runId: run.id }, { ...context, userId: "other" })).ok));
-  const list = tools.find(t => t.name === "security.assessments.list")!;
-  const summary = await list.execute({}, context);
-  const runs = (summary.data as {runs: Record<string, unknown>[]}).runs;
-  __jait_capture(9, (runs));
-  __jait_capture(10, (runs[0].performedChecks));
-  __jait_captureType(11, (runs[0].observations));
-
+    vi.stubEnv("JAIT_DESKTOP_HOST", "1");
+    const { createRedeployTool } = await import("../../../../packages/gateway/src/tools/redeploy-tools.js");
+    const shutdown = vi.fn();
+    const result = await createRedeployTool({ port: 18000, shutdown }).execute({}, {} as any);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (execSyncMock.mock.calls));
+    __jait_capture(3, (spawnMock.mock.calls));
+    __jait_capture(4, (shutdown.mock.calls));
+  
 })();
 
 } finally {
-
+await __jait_hook_584();
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_41_3": {
+const execSyncMock = vi.fn();
+const spawnMock = vi.fn();
+await vi.mock("node:child_process", () => ({
+  execSync: (...args: unknown[]) => execSyncMock(...args),
+  spawn: (...args: unknown[]) => spawnMock(...args),
+}));
+const { EventEmitter } = await import("node:events");
+class FakeChildProcess extends EventEmitter {
+  pid = 4242;
+  unref = vi.fn();
+}
+/*__jait_scope_open__*/{
+const __jait_hook_475 = () => {
+    vi.useFakeTimers();
+    execSyncMock.mockReset();
+    spawnMock.mockReset();
+  };
+const __jait_hook_584 = () => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  };
+await __jait_hook_475();
+try {
+await (async()=>{
+
+    const { systemdSwitchover } = await import("../../../../packages/gateway/src/tools/redeploy-tools.js");
+    execSyncMock.mockImplementation(() => {
+      throw new Error("Unit jait-gateway.service could not be found.");
+    });
+
+    const result = await systemdSwitchover("0.1.649", "0.1.650", { port: 4000, shutdown: vi.fn() }, () => {});
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (spawnMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_54_3": {
+const execSyncMock = vi.fn();
+const spawnMock = vi.fn();
+await vi.mock("node:child_process", () => ({
+  execSync: (...args: unknown[]) => execSyncMock(...args),
+  spawn: (...args: unknown[]) => spawnMock(...args),
+}));
+const { EventEmitter } = await import("node:events");
+class FakeChildProcess extends EventEmitter {
+  pid = 4242;
+  unref = vi.fn();
+}
+/*__jait_scope_open__*/{
+const __jait_hook_475 = () => {
+    vi.useFakeTimers();
+    execSyncMock.mockReset();
+    spawnMock.mockReset();
+  };
+const __jait_hook_584 = () => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  };
+await __jait_hook_475();
+try {
+await (async()=>{
+
+    const { systemdSwitchover } = await import("../../../../packages/gateway/src/tools/redeploy-tools.js");
+    execSyncMock.mockReturnValue("");
+    const restartChild = new FakeChildProcess();
+    spawnMock.mockReturnValue(restartChild);
+
+    const resultPromise = systemdSwitchover("0.1.649", "0.1.650", { port: 4000, shutdown: vi.fn() }, () => {});
+    const result = await resultPromise;
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (execSyncMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_70_3": {
+const execSyncMock = vi.fn();
+const spawnMock = vi.fn();
+await vi.mock("node:child_process", () => ({
+  execSync: (...args: unknown[]) => execSyncMock(...args),
+  spawn: (...args: unknown[]) => spawnMock(...args),
+}));
+const { EventEmitter } = await import("node:events");
+class FakeChildProcess extends EventEmitter {
+  pid = 4242;
+  unref = vi.fn();
+}
+/*__jait_scope_open__*/{
+const __jait_hook_475 = () => {
+    vi.useFakeTimers();
+    execSyncMock.mockReset();
+    spawnMock.mockReset();
+  };
+const __jait_hook_584 = () => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  };
+await __jait_hook_475();
+try {
+await (async()=>{
+
+    const { bareProcessSwitchover } = await import("../../../../packages/gateway/src/tools/redeploy-tools.js");
+    const child = new FakeChildProcess();
+    spawnMock.mockReturnValue(child);
+    const shutdown = vi.fn().mockResolvedValue(undefined);
+
+    const resultPromise = bareProcessSwitchover("0.1.649", "0.1.650", { port: 4000, shutdown }, () => {});
+    // Simulate the replacement dying (e.g. ENOENT / crash) inside the grace window.
+    child.emit("exit", 1, null);
+    await vi.advanceTimersByTimeAsync(2_000);
+    const result = await resultPromise;
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (shutdown.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_87_3": {
+const execSyncMock = vi.fn();
+const spawnMock = vi.fn();
+await vi.mock("node:child_process", () => ({
+  execSync: (...args: unknown[]) => execSyncMock(...args),
+  spawn: (...args: unknown[]) => spawnMock(...args),
+}));
+const { EventEmitter } = await import("node:events");
+class FakeChildProcess extends EventEmitter {
+  pid = 4242;
+  unref = vi.fn();
+}
+/*__jait_scope_open__*/{
+const __jait_hook_475 = () => {
+    vi.useFakeTimers();
+    execSyncMock.mockReset();
+    spawnMock.mockReset();
+  };
+const __jait_hook_584 = () => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+  };
+await __jait_hook_475();
+try {
+await (async()=>{
+
+    const { bareProcessSwitchover } = await import("../../../../packages/gateway/src/tools/redeploy-tools.js");
+    const child = new FakeChildProcess();
+    spawnMock.mockReturnValue(child);
+    const shutdown = vi.fn().mockResolvedValue(undefined);
+
+    const resultPromise = bareProcessSwitchover("0.1.649", "0.1.650", { port: 4000, shutdown }, () => {});
+    await vi.advanceTimersByTimeAsync(2_000);
+    const result = await resultPromise;
+
+    __jait_capture(0, (result.ok));
+    await vi.advanceTimersByTimeAsync(500);
+    __jait_capture(1, (shutdown.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
 
 break;
 }

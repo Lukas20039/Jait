@@ -37,6 +37,12 @@ jobs:
         run: |
           bun run test:contract:fmt
           bun run test:contract:lint
+      - name: Build and validate the native gateway lane
+        run: |
+          node packages/gateway-rust/run.mjs fmt
+          node packages/gateway-rust/run.mjs clippy --all-targets -- -D warnings
+          bun run build:gateway:rust
+          bun run test:gateway:rust
       - name: Test parity tooling and identity transport
         run: node --test tests/contract/tooling/*.test.mjs
       - name: Test contract parser and runner failure handling

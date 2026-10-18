@@ -1,10 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/agent-loop-connection-error.test.ts; expected literals are in tail_static.rs.
-import { formatConnectionError, isTransientTransportError } from "../../../../packages/gateway/src/tools/agent-loop.js";
+// Translated fixture from packages/gateway/src/surfaces/terminal-stop.test.ts; expected literals are in tail_static.rs.
+import { TerminalSurface } from "../../../../packages/gateway/src/surfaces/terminal.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-loop-connection-error.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/terminal-stop.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -31,415 +32,152 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_25_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_19_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
   };
-  return err;
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
 }
+const __jait_hook_112 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // Regression: an unreachable router used to surface as a bare "fetch failed",
-    // which says nothing about which backend or what to do next.
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://localhost:20128/v1",
-    });
-
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
-    __jait_capture(2, (message));
+    const { terminal, pty, exit } = pendingTerminal();
+    let stopped = false;
+    const stopping = terminal.stop().then(() => { stopped = true; });
+    await Promise.resolve();
+    __jait_capture(0, (pty.kill.mock.calls));
+    __jait_capture(1, (stopped));
+    __jait_capture(2, (terminal.state));
+    exit();
+    await stopping;
+    __jait_capture(3, (terminal.state));
   
 })();
 
 } finally {
-
+await __jait_hook_112();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_38_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_32_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
   };
-  return err;
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
 }
+const __jait_hook_112 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "ollama",
-      openaiBaseUrl: "http://localhost:11434/v1",
-    });
-
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
+    const { terminal, pty, exit } = pendingTerminal();
+    pty.kill.mockImplementation(exit);
+    await terminal.stop();
+    __jait_capture(0, (pty.onExit.mock.calls));
+    __jait_capture(1, (terminal.state));
   
 })();
 
 } finally {
-
+await __jait_hook_112();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_48_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_40_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
   };
-  return err;
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
 }
+const __jait_hook_112 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const dns = formatConnectionError(fetchFailure("ENOTFOUND"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://typo-host:20128/v1",
-    });
-    __jait_capture(0, (dns));
+    vi.useFakeTimers();
+    const { terminal } = pendingTerminal();
+    const stopping = terminal.stop();
+    await vi.advanceTimersByTimeAsync(6000);
+    await stopping;
+    __jait_capture(0, (terminal.state));
   
 })();
 
 } finally {
-
+await __jait_hook_112();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
   };
-  return err;
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
 }
+const __jait_hook_112 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const err = new Error("The operation was aborted due to timeout");
-    err.name = "TimeoutError";
-    __jait_capture(0, (formatConnectionError(err, { backend: "omniroute", openaiBaseUrl: "http://x/v1" })));
+    const terminal = new TerminalSurface("exited", { shell: "/bin/sh" });
+    await terminal.stop();
+    __jait_capture(0, (terminal.state));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_63_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // Regression: hung backends surface as `TypeError: fetch failed` with a
-    // HeadersTimeoutError cause, which used to fall through every check and
-    // end the agent loop as a bare error the user had to manually continue.
-    __jait_capture(0, (formatConnectionError(undiciHeadersTimeout(), { backend: "omniroute", openaiBaseUrl: "http://x/v1" })));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_71_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "openai",
-      openaiBaseUrl: "https://api.openai.com/v1",
-    });
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_80_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // Real bugs must keep propagating instead of being dressed up as network trouble.
-    __jait_captureType(0, (formatConnectionError(new Error("Cannot read properties of undefined"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://x/v1",
-    })));
-    __jait_captureType(1, (formatConnectionError(fetchFailure("EPIPE"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://x/v1",
-    })));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_94_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // These are worth retrying the same round: a healthy turn should not die
-    // to a one-off blip after tens of productive rounds.
-    __jait_capture(0, (isTransientTransportError(undiciHeadersTimeout())));
-
-    const bodyTimeout = fetchFailure("UND_ERR_BODY_TIMEOUT");
-    (bodyTimeout as { cause: { name?: string } }).cause.name = "BodyTimeoutError";
-    __jait_capture(1, (isTransientTransportError(bodyTimeout)));
-
-    __jait_capture(2, (isTransientTransportError(fetchFailure("UND_ERR_SOCKET"))));
-    __jait_capture(3, (isTransientTransportError(fetchFailure("UND_ERR_CONNECT_TIMEOUT"))));
-    __jait_capture(4, (isTransientTransportError(fetchFailure("ECONNRESET"))));
-    __jait_capture(5, (isTransientTransportError(fetchFailure("EPIPE"))));
-    __jait_capture(6, (isTransientTransportError(fetchFailure("ETIMEDOUT"))));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_110_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // Nothing to retry: the backend is not listening and DNS will not heal by
-    // re-issuing the request, so these must surface immediately.
-    __jait_capture(0, (isTransientTransportError(fetchFailure("ECONNREFUSED"))));
-    __jait_capture(1, (isTransientTransportError(fetchFailure("ENOTFOUND"))));
-    __jait_capture(2, (isTransientTransportError(fetchFailure("EAI_AGAIN"))));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_118_3": {
-
-
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
-}
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (isTransientTransportError(new TypeError("fetch failed"))));
-    __jait_capture(1, (isTransientTransportError(new Error("Cannot read properties of undefined"))));
-    __jait_capture(2, (isTransientTransportError(null)));
-    __jait_capture(3, (isTransientTransportError(undefined)));
-    __jait_capture(4, (isTransientTransportError("boom")));
-  
-})();
-
-} finally {
-
+await __jait_hook_112();
 }
 }
 

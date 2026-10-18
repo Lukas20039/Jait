@@ -1,15 +1,14 @@
-// Translated fixture from packages/gateway/src/tools/security-workbench-tools.test.ts; expected literals are in tail_static.rs.
-import { createSecurityWorkbenchTools } from "../../../../packages/gateway/src/tools/security-workbench-tools.js";
-import { getSecurityWorkbench } from "../../../../packages/gateway/src/security/workbench.js";
-import { getAssessmentService } from "../../../../packages/gateway/src/security/assessment.js";
-import type { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/registry.test.ts; expected literals are in tail_static.rs.
+import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { createToolRegistry, type ToolRegistryDeps } from "../../../../packages/gateway/src/tools/index.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/security-workbench-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/registry.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,92 +35,896 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_9_1": {
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_35_3": {
 
 
-const context: ToolContext = {userId:"monitor-owner",requestedBy:"agent",sessionId:"fixture",actionId:"fixture",projectRoot:process.cwd()};
-const __jait_hook_517 = ()=>vi.restoreAllMocks();
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
- const scope=getAssessmentService().createScope({targets:["127.0.0.1","127.0.0.2"],exclusions:[],ports:[80,443],methods:["http","tls"],authorized:true,expiresAt:new Date(Date.now()+60_000).toISOString()},"monitor-owner");
- const saved={scopeId:scope.id,profile:"http",target:"127.0.0.1",port:80,minutes:15};
- let job={id:"monitor-job",userId:"monitor-owner",enabled:true,toolName:"security.monitor.tick",input:saved};
- const fake={create:vi.fn(()=>job),update:vi.fn((_id,patch)=>{job={...job,...patch};return job}),get:vi.fn((_id,owner)=>owner===job.userId?job:null)};
- const tools=createSecurityWorkbenchTools(fake as unknown as SchedulerService);
- const schedule=tools.find(t=>t.name==="security.monitor.schedule")!;
- __jait_capture(0, (schedule.defaultConsentLevel));
- __jait_capture(1, ((await schedule.execute({...saved,minutes:1},context)).ok));
- __jait_capture(2, ((await schedule.execute(saved,context)).ok));
- const service=getSecurityWorkbench();
- const start=vi.spyOn(service,"start").mockReturnValue({id:"monitor-run"} as ReturnType<typeof service.start>);
- vi.spyOn(service,"history").mockReturnValue({runs:[],findings:[]});
- vi.spyOn(service,"wait").mockResolvedValue({id:"monitor-run",status:"completed",coverageGaps:[]} as Awaited<ReturnType<typeof service.wait>>);
- const tick=tools.find(t=>t.name==="security.monitor.tick")!;
- __jait_capture(3, ((await tick.execute({...saved,monitorJobId:job.id,target:"127.0.0.2",profile:"tls",port:443},context)).ok));
- __jait_capture(4, (start.mock.calls[0][0]), (saved));
- __jait_capture(5, ((await tick.execute({...saved,monitorJobId:job.id},{...context,userId:"other"})).ok));
- vi.spyOn(Date,"now").mockReturnValue(Date.parse(scope.expiresAt)+1);
- __jait_capture(6, ((await tick.execute({...saved,monitorJobId:job.id},context)).message));
- __jait_capture(7, (fake.update.mock.calls), ([job.id,{enabled:false},"monitor-owner"]));
- __jait_capture(8, (start.mock.calls));
+    const registry = createToolRegistry(new SurfaceRegistry(), {
+      projectService: {},
+      repoService: {},
+    } as any);
+
+    __jait_capture(0, (registry.get("project.create")?.description));
+    __jait_capture(1, (registry.get("project.assign_repository")?.description));
+    __jait_capture(2, (registry.get("project.transfer")?.description));
+    __jait_captureType(3, (registry.get("workspace.create")));
+    __jait_captureType(4, (registry.get("workspace.assign_repository")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_48_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = createToolRegistry(new SurfaceRegistry(), {
+      sessionSearchService: { search: () => [] },
+    } as any);
+
+    __jait_capture(0, (registry.get("session.search")?.description));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_56_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registry.register({
+      name: "builtin.echo",
+      description: "echo text",
+      parameters: { type: "object", properties: {} },
+      execute: async () => ({ ok: true, message: "ok" }),
+    });
+
+    __jait_capture(0, (registry.get("builtin.echo")));
+    __jait_capture(1, (registry.listInfo()));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_76_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registry.registerPluginTools(
+      { id: "demo-plugin", displayName: "Demo Plugin" },
+      [{
+        name: "demo.echo",
+        description: "echo from plugin",
+        parameters: { type: "object", properties: {} },
+        tier: "external",
+        category: "external",
+        risk: "high",
+        defaultConsentLevel: "dangerous",
+        execute: async () => ({ ok: true, message: "plugin" }),
+      }],
+    );
+
+    __jait_capture(0, (registry.get("demo.echo")));
+    __jait_capture(1, (registry.listInfo()));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_115_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registry.register({
+      name: "echo",
+      description: "echo text",
+      parameters: {
+        type: "object",
+        properties: { text: { type: "string" } },
+        required: ["text"],
+      },
+      execute: async (input: { text: string }) => ({ ok: true, message: input.text }),
+    });
+
+    const writes: unknown[] = [];
+    const audit = {
+      write: vi.fn((entry: unknown) => {
+        writes.push(entry);
+        return "audit-id";
+      }),
+    } as unknown as AuditWriter;
+
+    const result = await registry.execute("echo", {}, context(), audit);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
+    __jait_capture(3, (writes[0]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_144_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registry.register({
+      name: "ok.tool",
+      description: "returns success",
+      parameters: { type: "object", properties: {} },
+      execute: async () => ({ ok: true, message: "done", data: { ok: true } }),
+    });
+
+    const writes: unknown[] = [];
+    const audit = {
+      write: vi.fn((entry: unknown) => {
+        writes.push(entry);
+        return "audit-id";
+      }),
+    } as unknown as AuditWriter;
+
+    const result = await registry.execute("ok.tool", {}, context(), audit);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
+    __jait_capture(2, (writes[0]));
+    __jait_capture(3, (writes[1]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_169_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registry.register({
+      name: "boom.tool",
+      description: "throws",
+      parameters: { type: "object", properties: {} },
+      execute: async () => {
+        throw new Error("kaboom");
+      },
+    });
+
+    const writes: unknown[] = [];
+    const audit = {
+      write: vi.fn((entry: unknown) => {
+        writes.push(entry);
+        return "audit-id";
+      }),
+    } as unknown as AuditWriter;
+
+    const result = await registry.execute("boom.tool", {}, context(), audit);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, ((audit.write as unknown as ReturnType<typeof vi.fn>).mock.calls));
+    __jait_capture(3, (writes[0]));
+    __jait_capture(4, (writes[1]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_199_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "preview.open", "Open a live preview of the web application");
+    registerDiscoveryTool(registry, "browser.click", "Click an interactive browser element");
+    registerDiscoveryTool(registry, "network.scan", "Scan the local network for reachable hosts");
+    registerDiscoveryTool(registry, "ssh.run", "Run a command on a remote server over SSH");
+    registerDiscoveryTool(registry, "memory.search", "Search remembered preferences and durable facts");
+
+    __jait_capture(0, (registry.search("show app")[0]?.name));
+    __jait_capture(1, (registry.search("control browser").map((tool) => tool.name)));
+    __jait_capture(2, (registry.search("scan my network")[0]?.name));
+    __jait_capture(3, (registry.search("ssh machine")[0]?.name));
+    __jait_capture(4, (registry.search("what do you remember about my preferences")[0]?.name));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_214_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "preview.open", "Open the application preview");
+    registerDiscoveryTool(registry, "deploy.basic", "Deploy the current application");
+    registerDiscoveryTool(registry, "deploy.preferred", "Deploy the current application safely", { priority: 50 });
+
+    __jait_capture(0, (registry.search("prevew")[0]?.name));
+    __jait_capture(1, (registry.search("deploy")[0]?.name));
+    __jait_capture(2, (registry.search("deploy", { limit: 1 })));
+    __jait_capture(3, (registry.search("deploy", { disabledTools: new Set(["deploy.preferred"]) })[0]?.name));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_226_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "todo", "Track multi-step work", { tier: "core" });
+    registerDiscoveryTool(registry, "user.ask", "Ask the user for a decision", { tier: "core" });
+    registerDiscoveryTool(registry, "tools.list", "List tools", { tier: "core" });
+    registerDiscoveryTool(registry, "tools.search", "Search tools", { tier: "core" });
+    registerDiscoveryTool(registry, "read", "Read project files", { tier: "core" });
+    registerDiscoveryTool(registry, "preview.open", "Open a preview");
+    registerDiscoveryTool(registry, "plugin.deploy", "Deploy through a plugin", { tier: "external", source: "plugin:deploy" });
+    registerDiscoveryTool(registry, "mcp.github.issue", "Create a GitHub issue", { tier: "external", source: "mcp" });
+
+    __jait_capture(0, (registry.listForMcp().map((tool) => tool.name)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_255_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const deps: ToolRegistryDeps = { agentGithubAppService: {} as any };
+    const early = createToolRegistry(new SurfaceRegistry(), deps);
+    __jait_capture(0, (early.listNames()));
+
+    Object.assign(deps, { startedAt: Date.now() } satisfies Partial<ToolRegistryDeps>);
+    const late = createToolRegistry(new SurfaceRegistry(), deps);
+
+    __jait_capture(1, (late.listNames()));
+    // The old wiring (a late literal omitting the service) is what produced the
+    // unknown-tool failure for an advertised tool.
+    const drifted = createToolRegistry(new SurfaceRegistry(), { startedAt: Date.now() });
+    __jait_capture(2, (drifted.listNames()));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_271_1": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+
+try {
+await (async()=>{
+
+  const registry = new ToolRegistry();
+  registerDiscoveryTool(registry, "file.read", "Read constructor source files");
+  __jait_thrown(0, () => registry.rankSearch("inspect constructor source"));
+  __jait_capture(1, (registry.search("constructor")[0]?.name));
 
 })();
 
 } finally {
-await __jait_hook_517();
+
 }
 
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_33_1": {
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_280_3": {
 
 
-const context: ToolContext = {userId:"monitor-owner",requestedBy:"agent",sessionId:"fixture",actionId:"fixture",projectRoot:process.cwd()};
-const __jait_hook_517 = ()=>vi.restoreAllMocks();
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
- const expanded = getSecurityWorkbench();
- const native = getAssessmentService();
- const fakeRun = { id: "saved-expanded", operatorId: context.userId, status: "completed", evidence: [], findings: [] };
- const getExpanded = vi.spyOn(expanded, "get").mockImplementation((id, owner) => {
-   if (id === fakeRun.id && owner === context.userId) return fakeRun as ReturnType<typeof expanded.get>;
-   throw new Error("Security check not found");
- });
- const getNative = vi.spyOn(native, "getRun").mockImplementation((id, owner) => {
-   if (id === "saved-native" && owner === context.userId) return { id, status: "partial", observations: [] } as ReturnType<typeof native.getRun>;
-   throw new Error("Assessment not found");
- });
- const startExpanded = vi.spyOn(expanded, "start");
- const startNative = vi.spyOn(native, "start");
- const show = createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!;
- __jait_capture(0, (show.parameters.required));
- __jait_capture(1, (await show.execute({ runId: fakeRun.id }, context)), ({ ok: true, data: fakeRun }));
- __jait_capture(2, (await show.execute({ runId: "saved-native" }, context)));
- __jait_capture(3, ((await show.execute({ runId: fakeRun.id }, { ...context, userId: "other" })).ok));
- __jait_capture(4, ((await show.execute({ runId: "saved-native" }, { ...context, userId: "other" })).ok));
- __jait_capture(5, (getExpanded.mock.calls), ([fakeRun.id,context.userId]));
- __jait_capture(6, (getNative.mock.calls), (["saved-native",context.userId]));
- __jait_capture(7, (startExpanded.mock.calls));
- __jait_capture(8, (startNative.mock.calls));
-
+    const registry = new ToolRegistry();
+    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
+    for (let index = 0; index < 300; index++) {
+      registerDiscoveryTool(registry, `tool${index}.inspect`, context);
+    }
+    registerDiscoveryTool(registry, "network.scan", "Discover reachable network hosts");
+    const started = performance.now();
+    const matches = registry.search(`scan network ${context} scan network`, { limit: 10 });
+    __jait_capture(0, (matches));
+    // A generous budget catches the multi-minute freeze without relying on
+    // small timing differences between CI machines.
+    __jait_capture(1, (performance.now() - started));
+  
 })();
 
 } finally {
-await __jait_hook_517();
+
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_295_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "network.scan", "Discover network hosts");
+    registerDiscoveryTool(registry, "preview.open", "Open an application preview");
+    const context = Array.from({ length: 8000 }, (_, index) => `context${index}`).join(" ");
+    const names = registry.search(`scan network ${context} open preview`).map(tool => tool.name);
+    __jait_capture(0, (names));
+    __jait_capture(1, (names));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_305_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "preview.open", "Open the application preview");
+    __jait_capture(0, (registry.search(`${"x".repeat(500000)} prevew`)[0]?.name));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_registry_test_ts_311_3": {
+
+
+function context() {
+  return {
+    sessionId: "s-registry",
+    actionId: "a-registry",
+    projectRoot: process.cwd(),
+    requestedBy: "test",
+  };
+}
+function registerDiscoveryTool(
+  registry: ToolRegistry,
+  name: string,
+  description: string,
+  options: { tier?: "core" | "standard" | "external"; source?: "builtin" | "mcp" | `plugin:${string}`; priority?: number } = {},
+): void {
+  registry.register({
+    name,
+    description,
+    tier: options.tier ?? "standard",
+    category: options.source === "mcp" ? "external" : "meta",
+    source: options.source ?? "builtin",
+    discovery: options.priority == null ? undefined : { priority: options.priority },
+    parameters: { type: "object", properties: {} },
+    execute: async () => ({ ok: true, message: "completed" }),
+  });
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    registerDiscoveryTool(registry, "file.read", "Read files");
+    registerDiscoveryTool(registry, "file.list", "List files");
+    const rank = vi.spyOn(registry, "rankSearch");
+    const fetcher = vi.fn().mockResolvedValue(new Response("unavailable", { status: 503 }));
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      const matches = await registry.rankSearchWithSystemOne("files", { limit: 1 }, { JEV_API_KEY: "bounded-search-regression" });
+      __jait_capture(0, (rank.mock.calls));
+      __jait_capture(1, (matches));
+      __jait_capture(2, (fetcher.mock.calls));
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  
+})();
+
+} finally {
+
+}
+}
 
 break;
 }

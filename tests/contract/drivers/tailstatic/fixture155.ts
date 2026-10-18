@@ -1,15 +1,13 @@
-// Translated fixture from packages/gateway/src/services/code-graph/code-graphs.test.ts; expected literals are in tail_static.rs.
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { openDatabase } from "../../../../packages/gateway/src/db/connection.js";
-import { CodeGraphService, parseGraphifyGraph } from "../../../../packages/gateway/src/services/code-graph/code-graphs.js";
-import { GraphifyRunner } from "../../../../packages/gateway/src/services/code-graph/graphify-runner.js";
+// Translated fixture from packages/gateway/src/services/calendar/service.test.ts; expected literals are in tail_static.rs.
+import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/connection.js";
+import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
+import { UserSecretService } from "../../../../packages/gateway/src/services/user-secrets.js";
+import { CalendarService } from "../../../../packages/gateway/src/services/calendar/service.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/code-graph/code-graphs.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/calendar/service.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,664 +34,312 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_64_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_30_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    const parsed = parseGraphifyGraph(sampleGraph);
-
-    __jait_capture(0, (parsed.stats));
-    __jait_capture(1, (parsed.nodes.find((node) => node.label === "SessionStore")?.degree));
-    __jait_capture(2, (parsed.edges[1]));
+    __jait_capture(0, (service.isConfigured("u1")));
+    service.saveAppCredentials("u1", { clientId: "calendar-id", clientSecret: "calendar-secret" });
+    __jait_capture(1, (service.isConfigured("u1")));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_83_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_36_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    const parsed = parseGraphifyGraph({
-      nodes: sampleGraph.nodes.slice(0, 1),
-      links: sampleGraph.links,
+    secrets.save({
+      userId: "u1",
+      type: "email-oauth-app",
+      key: "gmail-client-id",
+      label: "Gmail client id",
+      value: "gmail-id",
     });
-
-    __jait_capture(0, (parsed.edges));
+    secrets.save({
+      userId: "u1",
+      type: "email-oauth-app",
+      key: "gmail-client-secret",
+      label: "Gmail client secret",
+      value: "gmail-secret",
+    });
+    __jait_capture(0, (service.resolveCredentials("u1")));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_137_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_54_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-let projectRoot: string;
-let dataRoot: string;
-let service: CodeGraphService;
-const __jait_hook_2520 = async () => {
-    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-project-"));
-    dataRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-data-"));
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE code_graph_indexes (
-        id TEXT PRIMARY KEY,
-        user_id TEXT,
-        repository_id TEXT,
-        project_root TEXT NOT NULL,
-        provider TEXT NOT NULL DEFAULT 'graphify',
-        status TEXT NOT NULL DEFAULT 'missing',
-        graph_path TEXT,
-        graph_version TEXT,
-        source_revision TEXT,
-        graphify_version TEXT,
-        stats TEXT,
-        graphrag_status TEXT NOT NULL DEFAULT 'not-prepared',
-        graphrag_path TEXT,
-        error TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE UNIQUE INDEX idx_code_graph_indexes_user_project ON code_graph_indexes(user_id, project_root)`);
-
-    const runner = new GraphifyRunner({
-      execute: async (_command, args) => {
-        if (args[0] === "--version") return { stdout: "graphify 0.9.25", stderr: "" };
-        const outIndex = args.indexOf("--out");
-        const outputDir = join(args[outIndex + 1]!, "graphify-out");
-        await mkdir(outputDir, { recursive: true });
-        await writeFile(join(outputDir, "graph.json"), JSON.stringify(sampleGraph), "utf8");
-        return { stdout: "indexed", stderr: "" };
-      },
-    });
-    service = new CodeGraphService(db, { dataRoot, runner });
-  };
-await __jait_hook_2520();
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    const index = await service.index({
-      projectRoot,
-      userId: "user-1",
-      repositoryId: "repo-1",
-    });
-
-    __jait_capture(0, (index), ({
-      projectRoot,
-      repositoryId: "repo-1",
-      status: "ready",
-      graphifyVersion: "graphify 0.9.25",
-    }));
-    __jait_capture(1, (index.graphPath), (dataRoot));
-    __jait_capture(2, (index.stats));
-
-    const snapshot = await service.snapshot({ projectRoot, userId: "user-1", maxNodes: 2 });
-    __jait_capture(3, (snapshot.nodes));
-    __jait_capture(4, (snapshot.truncated));
-    __jait_capture(5, (snapshot.edges.every((edge) => (
-      snapshot.nodes.some((node) => node.id === edge.source)
-      && snapshot.nodes.some((node) => node.id === edge.target)
-    ))));
+    service.saveAppCredentials("u1", { clientId: "calendar-id", clientSecret: "calendar-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", redirectUri: "https://jait.test/api/calendar/oauth/callback" });
+    const url = new URL(authUrl);
+    __jait_capture(0, (url.origin + url.pathname));
+    __jait_capture(1, (url.searchParams.get("client_id")));
+    __jait_capture(2, (url.searchParams.get("scope")));
+    __jait_capture(3, (url.searchParams.get("scope")));
+    __jait_capture(4, (url.searchParams.get("code_challenge_method")));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_162_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_65_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-let projectRoot: string;
-let dataRoot: string;
-let service: CodeGraphService;
-const __jait_hook_2520 = async () => {
-    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-project-"));
-    dataRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-data-"));
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE code_graph_indexes (
-        id TEXT PRIMARY KEY,
-        user_id TEXT,
-        repository_id TEXT,
-        project_root TEXT NOT NULL,
-        provider TEXT NOT NULL DEFAULT 'graphify',
-        status TEXT NOT NULL DEFAULT 'missing',
-        graph_path TEXT,
-        graph_version TEXT,
-        source_revision TEXT,
-        graphify_version TEXT,
-        stats TEXT,
-        graphrag_status TEXT NOT NULL DEFAULT 'not-prepared',
-        graphrag_path TEXT,
-        error TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE UNIQUE INDEX idx_code_graph_indexes_user_project ON code_graph_indexes(user_id, project_root)`);
-
-    const runner = new GraphifyRunner({
-      execute: async (_command, args) => {
-        if (args[0] === "--version") return { stdout: "graphify 0.9.25", stderr: "" };
-        const outIndex = args.indexOf("--out");
-        const outputDir = join(args[outIndex + 1]!, "graphify-out");
-        await mkdir(outputDir, { recursive: true });
-        await writeFile(join(outputDir, "graph.json"), JSON.stringify(sampleGraph), "utf8");
-        return { stdout: "indexed", stderr: "" };
-      },
-    });
-    service = new CodeGraphService(db, { dataRoot, runner });
-  };
-await __jait_hook_2520();
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    await service.index({ projectRoot, userId: "user-1" });
-
-    const result = await service.query({
-      projectRoot,
-      userId: "user-1",
-      query: "how does authentication reach the database",
-      mode: "hybrid",
-    });
-
-    __jait_capture(0, (result.nodes.map((node) => node.label)));
-    __jait_capture(1, (result.context));
-    __jait_capture(2, (result.context));
+    await __jait_rejected(0, service.completeConnect({ code: "code", state: "unknown" }));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_179_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_69_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-let projectRoot: string;
-let dataRoot: string;
-let service: CodeGraphService;
-const __jait_hook_2520 = async () => {
-    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-project-"));
-    dataRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-data-"));
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE code_graph_indexes (
-        id TEXT PRIMARY KEY,
-        user_id TEXT,
-        repository_id TEXT,
-        project_root TEXT NOT NULL,
-        provider TEXT NOT NULL DEFAULT 'graphify',
-        status TEXT NOT NULL DEFAULT 'missing',
-        graph_path TEXT,
-        graph_version TEXT,
-        source_revision TEXT,
-        graphify_version TEXT,
-        stats TEXT,
-        graphrag_status TEXT NOT NULL DEFAULT 'not-prepared',
-        graphrag_path TEXT,
-        error TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE UNIQUE INDEX idx_code_graph_indexes_user_project ON code_graph_indexes(user_id, project_root)`);
-
-    const runner = new GraphifyRunner({
-      execute: async (_command, args) => {
-        if (args[0] === "--version") return { stdout: "graphify 0.9.25", stderr: "" };
-        const outIndex = args.indexOf("--out");
-        const outputDir = join(args[outIndex + 1]!, "graphify-out");
-        await mkdir(outputDir, { recursive: true });
-        await writeFile(join(outputDir, "graph.json"), JSON.stringify(sampleGraph), "utf8");
-        return { stdout: "indexed", stderr: "" };
-      },
-    });
-    service = new CodeGraphService(db, { dataRoot, runner });
-  };
-await __jait_hook_2520();
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    await service.index({ projectRoot, userId: "user-1" });
+    const privateService = service as unknown as {
+      upsertAccount: (userId: string, email: string) => { id: string };
+      storeTokens: (accountId: string, userId: string, tokens: unknown) => void;
+    };
+    const first = privateService.upsertAccount("u1", "one@example.com");
+    privateService.upsertAccount("u2", "two@example.com");
+    privateService.storeTokens(first.id, "u1", {
+      accessToken: "access",
+      refreshToken: "refresh",
+      expiresAt: Date.now() + 60_000,
+    });
 
-    const result = await service.prepareGraphRag({ projectRoot, userId: "user-1" });
-
-    __jait_capture(0, (result.index.graphRagStatus));
-    __jait_capture(1, (result.manifest));
-    const entities = await readFile(result.manifest.entitiesPath, "utf8");
-    const relationships = await readFile(result.manifest.relationshipsPath, "utf8");
-    __jait_capture(2, (entities));
-    __jait_capture(3, (relationships));
+    __jait_capture(0, (service.listAccounts("u1").map((account) => account.email)));
+    __jait_capture(1, (service.listAccounts("u2").map((account) => account.email)));
+    __jait_capture(2, (secrets.list("u1", "calendar-account")));
+    __jait_capture(3, (service.disconnect("u1", first.id)));
+    __jait_capture(4, (service.listAccounts("u1")));
+    __jait_capture(5, (secrets.list("u1", "calendar-account")));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_code_graph_code_graphs_test_ts_196_3": {
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_90_3": {
 
 
-const sampleGraph = {
-  directed: true,
-  multigraph: false,
-  graph: { hyperedges: [] },
-  nodes: [
-    {
-      id: "src/auth.ts::AuthService",
-      label: "AuthService",
-      type: "class",
-      file_type: "code",
-      source_file: "src/auth.ts",
-      line: 10,
-      community: 1,
-    },
-    {
-      id: "src/session.ts::SessionStore",
-      label: "SessionStore",
-      type: "class",
-      file_type: "code",
-      source_file: "src/session.ts",
-      line: 5,
-      community: 1,
-    },
-    {
-      id: "src/db.ts::DatabasePool",
-      label: "DatabasePool",
-      type: "class",
-      file_type: "code",
-      source_file: "src/db.ts",
-      line: 8,
-      community: 2,
-    },
-  ],
-  links: [
-    {
-      source: "src/auth.ts::AuthService",
-      target: "src/session.ts::SessionStore",
-      relation: "calls",
-      confidence: "EXTRACTED",
-      source_file: "src/auth.ts",
-      line: 42,
-    },
-    {
-      source: "src/session.ts::SessionStore",
-      target: "src/db.ts::DatabasePool",
-      relation: "uses",
-      confidence: "INFERRED",
-      confidence_score: 0.85,
-      source_file: "src/session.ts",
-      line: 27,
-    },
-  ],
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_430 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_896 = () => {
+  sqlite.close();
 };
 /*__jait_scope_open__*/{
-let projectRoot: string;
-let dataRoot: string;
-let service: CodeGraphService;
-const __jait_hook_2520 = async () => {
-    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-project-"));
-    dataRoot = await mkdtemp(join(__jait_fixture_dir, "jait-code-graph-data-"));
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE code_graph_indexes (
-        id TEXT PRIMARY KEY,
-        user_id TEXT,
-        repository_id TEXT,
-        project_root TEXT NOT NULL,
-        provider TEXT NOT NULL DEFAULT 'graphify',
-        status TEXT NOT NULL DEFAULT 'missing',
-        graph_path TEXT,
-        graph_version TEXT,
-        source_revision TEXT,
-        graphify_version TEXT,
-        stats TEXT,
-        graphrag_status TEXT NOT NULL DEFAULT 'not-prepared',
-        graphrag_path TEXT,
-        error TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE UNIQUE INDEX idx_code_graph_indexes_user_project ON code_graph_indexes(user_id, project_root)`);
-
-    const runner = new GraphifyRunner({
-      execute: async (_command, args) => {
-        if (args[0] === "--version") return { stdout: "graphify 0.9.25", stderr: "" };
-        const outIndex = args.indexOf("--out");
-        const outputDir = join(args[outIndex + 1]!, "graphify-out");
-        await mkdir(outputDir, { recursive: true });
-        await writeFile(join(outputDir, "graph.json"), JSON.stringify(sampleGraph), "utf8");
-        return { stdout: "indexed", stderr: "" };
-      },
-    });
-    service = new CodeGraphService(db, { dataRoot, runner });
-  };
-await __jait_hook_2520();
+await __jait_hook_430();
 try {
 await (async()=>{
 
-    await service.index({ projectRoot, userId: "user-1" });
-
-    const result = await service.shortestPath({
-      projectRoot,
-      userId: "user-1",
-      source: "AuthService",
-      target: "DatabasePool",
+    const account = service.syncDeviceCalendar("u1", {
+      deviceId: "phone-1",
+      deviceName: "Samsung Galaxy",
+      calendars: [{
+        id: "7",
+        name: "Samsung Calendar",
+        description: "com.samsung.android.calendar",
+        timeZone: "Europe/Berlin",
+        primary: true,
+        selected: true,
+        accessRole: "reader",
+      }],
+      events: [{
+        id: "event-1",
+        calendarId: "7",
+        calendarName: "Samsung Calendar",
+        title: "Early shift",
+        description: "",
+        location: "Office",
+        start: "2026-08-02T05:00:00.000Z",
+        end: "2026-08-02T13:00:00.000Z",
+        allDay: false,
+        status: "confirmed",
+        organizer: "",
+        attendees: [],
+      }],
     });
 
-    __jait_capture(0, (result?.nodes.map((node) => node.label)));
-    __jait_capture(1, (result?.edges));
+    __jait_capture(0, (account));
+    await __jait_captureResolved(1, (service.listCalendars("u1", account.id)));
+    await __jait_captureResolved(2, (service.listEvents("u1", account.id, {
+      timeMin: "2026-08-01T00:00:00.000Z",
+      timeMax: "2026-08-03T00:00:00.000Z",
+      query: "office",
+    })));
+    __jait_capture(3, (service.disconnect("u1", account.id)));
+    __jait_capture(4, (service.listAccounts("u1")));
   
 })();
 
 } finally {
-
+await __jait_hook_896();
 }
 }
 

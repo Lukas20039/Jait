@@ -1,10 +1,13 @@
-// Translated fixture from packages/gateway/src/ws-computer-permissions.test.ts; expected literals are in tail_static.rs.
-import { nodeCapabilityForTool } from "../../../../packages/gateway/src/ws.js";
+// Translated fixture from packages/gateway/src/tools/tool-contracts.test.ts; expected literals are in tail_static.rs.
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { createToolRegistry, type ToolRegistryDeps } from "../../../../packages/gateway/src/tools/index.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/ws-computer-permissions.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/tool-contracts.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -31,30 +34,166 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_ws_computer_permissions_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_31_3_runtime": {
 
 
+const unavailableService = new Proxy({}, {
+  get(_target, property) {
+    throw new Error(`Unexpected service access: ${String(property)}`);
+  },
+});
+const deps = Object.fromEntries([
+  "scheduler", "sessionService", "ws", "memoryService", "voiceService",
+  "screenShare", "threadService", "providerRegistry", "projectService",
+  "repoService", "repoProposalService", "sessionSearchService",
+  "sessionSqlService", "chatTracesService", "maintenanceService",
+  "mobilePush", "previewService", "codeGraphService", "userQuestionService",
+  "emailService", "calendarService", "skillRegistry",
+].map((key) => [key, unavailableService])) as ToolRegistryDeps;
+deps.config = { host: "127.0.0.1", port: 8100 } as ToolRegistryDeps["config"];
+deps.shutdown = async () => { throw new Error("Unexpected shutdown"); };
+const registry = createToolRegistry(new SurfaceRegistry(), deps);
+const tools = registry.list();
+const context: ToolContext = {
+  sessionId: "contract-session", actionId: "contract-action",
+  projectRoot: process.cwd(), requestedBy: "test", userId: "contract-user",
+};
+/*__jait_loop_open__*/for (const __jait_variant_1464 of tools.map((tool) => [tool.name, tool] as const)) { const __jait_variant_1464_args=Array.isArray(__jait_variant_1464)?__jait_variant_1464:[__jait_variant_1464];
+const _name = __jait_variant_1464_args[0];
+const tool = __jait_variant_1464_args[1];
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (nodeCapabilityForTool("computer.session", { action: "start" })));
-    __jait_capture(1, (nodeCapabilityForTool("computer.act", { action: "click" })));
-    __jait_capture(2, (nodeCapabilityForTool("computer.observe", {})));
-    __jait_captureType(3, (nodeCapabilityForTool("computer.session", { action: "stop" })));
+    __jait_capture(0, (registry.listInfo()), ([tool.name]));
+    __jait_capture(1, (tool.description.length));
+    __jait_capture(2, (registry.search(tool.name, { limit: 20 }).map((match) => match.name)), (tool.name));
+    __jait_capture(3, (tool.parameters.type));
+    for (const required of tool.parameters.required ?? []) {
+      __jait_capture(4, (tool.parameters.properties), (required));
+    }
   
 })();
 
 } finally {
 
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_43_3_runtime": {
+
+
+const unavailableService = new Proxy({}, {
+  get(_target, property) {
+    throw new Error(`Unexpected service access: ${String(property)}`);
+  },
+});
+const deps = Object.fromEntries([
+  "scheduler", "sessionService", "ws", "memoryService", "voiceService",
+  "screenShare", "threadService", "providerRegistry", "projectService",
+  "repoService", "repoProposalService", "sessionSearchService",
+  "sessionSqlService", "chatTracesService", "maintenanceService",
+  "mobilePush", "previewService", "codeGraphService", "userQuestionService",
+  "emailService", "calendarService", "skillRegistry",
+].map((key) => [key, unavailableService])) as ToolRegistryDeps;
+deps.config = { host: "127.0.0.1", port: 8100 } as ToolRegistryDeps["config"];
+deps.shutdown = async () => { throw new Error("Unexpected shutdown"); };
+const registry = createToolRegistry(new SurfaceRegistry(), deps);
+const tools = registry.list();
+const context: ToolContext = {
+  sessionId: "contract-session", actionId: "contract-action",
+  projectRoot: process.cwd(), requestedBy: "test", userId: "contract-user",
+};
+/*__jait_loop_open__*/for (const __jait_variant_1464 of tools.map((tool) => [tool.name, tool] as const)) { const __jait_variant_1464_args=Array.isArray(__jait_variant_1464)?__jait_variant_1464:[__jait_variant_1464];
+const _name = __jait_variant_1464_args[0];
+const tool = __jait_variant_1464_args[1];
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const execute = vi.spyOn(tool, "execute");
+    try {
+      for (const input of ["invalid arguments", 123, []]) {
+        const result = await registry.execute(tool.name, input, context);
+        __jait_capture(0, (result.ok));
+        __jait_capture(1, (result.message));
+      }
+      __jait_capture(2, (execute.mock.calls));
+    } finally {
+      execute.mockRestore();
+    }
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_58_5_runtime_branch": {
+
+
+const unavailableService = new Proxy({}, {
+  get(_target, property) {
+    throw new Error(`Unexpected service access: ${String(property)}`);
+  },
+});
+const deps = Object.fromEntries([
+  "scheduler", "sessionService", "ws", "memoryService", "voiceService",
+  "screenShare", "threadService", "providerRegistry", "projectService",
+  "repoService", "repoProposalService", "sessionSearchService",
+  "sessionSqlService", "chatTracesService", "maintenanceService",
+  "mobilePush", "previewService", "codeGraphService", "userQuestionService",
+  "emailService", "calendarService", "skillRegistry",
+].map((key) => [key, unavailableService])) as ToolRegistryDeps;
+deps.config = { host: "127.0.0.1", port: 8100 } as ToolRegistryDeps["config"];
+deps.shutdown = async () => { throw new Error("Unexpected shutdown"); };
+const registry = createToolRegistry(new SurfaceRegistry(), deps);
+const tools = registry.list();
+const context: ToolContext = {
+  sessionId: "contract-session", actionId: "contract-action",
+  projectRoot: process.cwd(), requestedBy: "test", userId: "contract-user",
+};
+/*__jait_loop_open__*/for (const __jait_variant_1464 of tools.map((tool) => [tool.name, tool] as const)) { const __jait_variant_1464_args=Array.isArray(__jait_variant_1464)?__jait_variant_1464:[__jait_variant_1464];
+const _name = __jait_variant_1464_args[0];
+const tool = __jait_variant_1464_args[1];
+/*__jait_scope_open__*/{
+/*__jait_loop_open__*/if ((tool.parameters.required?.length ?? 0) > 0) {
+
+try {
+await (async()=>{
+
+      const execute = vi.spyOn(tool, "execute");
+      try {
+        const result = await registry.execute(tool.name, {}, context);
+        __jait_capture(0, (result.ok));
+        __jait_capture(1, (result.message));
+        __jait_capture(2, (execute.mock.calls));
+      } finally {
+        execute.mockRestore();
+      }
+    
+})();
+
+} finally {
+
+}
+}
 }
 }
 

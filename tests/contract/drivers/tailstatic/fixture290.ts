@@ -1,13 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/repo-proposal-tools.test.ts; expected literals are in tail_static.rs.
-import { createJaitTodosTool } from "../../../../packages/gateway/src/tools/repo-proposal-tools.js";
-import type { RepoRow } from "../../../../packages/gateway/src/services/repositories.js";
-import type { RepoProposalRow } from "../../../../packages/gateway/src/services/repo-proposals.js";
+// Translated fixture from packages/gateway/src/tools/preview-tools.test.ts; expected literals are in tail_static.rs.
+import { createPreviewInspectTool, createPreviewOpenTool, createPreviewRestartTool } from "../../../../packages/gateway/src/tools/preview-tools.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/repo-proposal-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/preview-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -34,68 +36,27 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
-};
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
-  return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {} as any,
-    });
+    const tools = createToolRegistry(new SurfaceRegistry());
+    const schemas = buildToolSchemas(tools);
+    const names = new Set(schemas.map((schema) => schema.function.name));
 
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.tier));
-    __jait_capture(2, (tool.parameters.properties.action.enum));
-    __jait_captureType(3, (tool.parameters.properties.todoId));
+    __jait_capture(0, (names.has("preview_open")));
+    __jait_capture(1, (names.has("preview_start")));
   
 })();
 
@@ -106,92 +67,50 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3": {
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
-};
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
-  return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const todos: RepoProposalRow[] = [];
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {
-        listByRepo: () => todos,
-        create: (params: any) => {
-          const todo = createTodo({
-            id: `todo-${todos.length + 1}`,
-            message: params.message,
-            priority: params.priority,
-            dueDate: params.dueDate,
-            tags: JSON.stringify(params.tags),
-          });
-          todos.unshift(todo);
-          return todo;
-        },
-      } as any,
-      threadService: { getById: () => ({ id: "thread-1", title: "Thread One" }) } as any,
-    });
+    const sendUICommand = vi.fn();
+    const broadcast = vi.fn();
+    const set = vi.fn();
+    const mockSession = {
+      id: "preview-session-123",
+      sessionId: "session-123",
+      status: "ready",
+      url: "http://127.0.0.1:5173/",
+      target: "3000",
+      mode: "local",
+      logs: [],
+      browserEvents: [],
+    };
+    const previewService = {
+      start: vi.fn().mockResolvedValue(mockSession),
+    };
+    const tool = createPreviewOpenTool(
+      { sendUICommand, broadcast } as any,
+      { set } as any,
+      previewService as any,
+    );
 
-    const addResult = await tool.execute({
-      action: "add",
-      message: "Polish todo tags",
-      priority: "high",
-      dueDate: "2026-05-10",
-      tags: ["UI", "todo"],
-    }, context);
-    const listResult = await tool.execute({ action: "list" }, context);
+    const context: ToolContext = {
+      sessionId: "session-123",
+      actionId: "action-123",
+      projectRoot: "/project/app",
+      requestedBy: "assistant",
+    };
 
-    __jait_capture(0, (addResult.ok));
-    __jait_capture(1, (addResult.message));
-    __jait_capture(2, ((addResult.data as any).todo), ({
-      message: "Polish todo tags",
-      priority: "high",
-      dueDate: "2026-05-10",
-      tags: JSON.stringify(["ui", "todo"]),
-    }));
-    __jait_capture(3, ((listResult.data as any).todos));
-    __jait_capture(4, (listResult.message));
-    __jait_capture(5, (listResult.message));
+    const result = await tool.execute({ target: "3000" }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (previewService.start.mock.calls));
+    __jait_capture(2, (sendUICommand.mock.calls));
+    __jait_capture(3, (broadcast.mock.calls));
+    __jait_capture(4, (set.mock.calls));
   
 })();
 
@@ -202,99 +121,337 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3": {
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
-};
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
-  return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
-  };
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const todos: RepoProposalRow[] = [createTodo({ id: "todo-1", message: "Original todo" })];
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {
-        getById: (id: string) => todos.find((todo) => todo.id === id),
-        update: (id: string, params: any) => {
-          const index = todos.findIndex((todo) => todo.id === id);
-          if (index === -1) return undefined;
-          todos[index] = createTodo({
-            ...todos[index],
-            message: params.message ?? todos[index].message,
-            status: params.status ?? todos[index].status,
-            priority: params.priority ?? todos[index].priority,
-            dueDate: params.dueDate ?? todos[index].dueDate,
-            tags: params.tags ? JSON.stringify(params.tags) : todos[index].tags,
-          });
-          return todos[index];
-        },
-        delete: (id: string) => {
-          const index = todos.findIndex((todo) => todo.id === id);
-          if (index !== -1) todos.splice(index, 1);
-        },
-      } as any,
+    const sendUICommand = vi.fn();
+    const broadcast = vi.fn();
+    const set = vi.fn();
+    const previewService = {
+      start: vi.fn().mockResolvedValue({
+        status: "ready",
+        url: "http://127.0.0.1:8765/",
+        target: "8765",
+        mode: "url",
+      }),
+    };
+    const tool = createPreviewOpenTool(
+      { sendUICommand, broadcast } as any,
+      { set } as any,
+      previewService as any,
+    );
+
+    const context: ToolContext = {
+      sessionId: "mcp-session",
+      actionId: "action-456",
+      projectRoot: "/project/mcp",
+      requestedBy: "mcp-client",
+    };
+
+    const result = await tool.execute({ target: "8765" }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (previewService.start.mock.calls));
+    __jait_capture(2, (sendUICommand.mock.calls));
+    __jait_capture(3, (broadcast.mock.calls));
+    __jait_capture(4, (set.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const sendUICommand = vi.fn();
+    const broadcast = vi.fn();
+    const set = vi.fn();
+    const previewService = {
+      start: vi.fn().mockResolvedValue({
+        id: "preview-session-999",
+        sessionId: "session-999",
+        status: "ready",
+        url: "/api/dev-proxy/4173/",
+        mode: "local",
+      }),
+    };
+    const tool = createPreviewOpenTool(
+      { sendUICommand, broadcast } as any,
+      { set } as any,
+      previewService as any,
+    );
+
+    const context: ToolContext = {
+      sessionId: "session-999",
+      actionId: "action-999",
+      projectRoot: "/project/live",
+      requestedBy: "assistant",
+      userId: "user-999",
+    };
+
+    const result = await tool.execute({ projectRoot: "/project/live" }, context);
+
+    __jait_capture(0, (result.ok));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const sendUICommand = vi.fn();
+    const broadcast = vi.fn();
+    const set = vi.fn();
+    const previewService = {
+      start: vi.fn().mockResolvedValue({
+        id: "preview-session-error",
+        sessionId: "session-error",
+        status: "error",
+        url: null,
+        target: "3000",
+        mode: "local",
+        lastError: "Preview server did not become ready",
+        logs: [],
+        browserEvents: [],
+      }),
+    };
+    const tool = createPreviewOpenTool(
+      { sendUICommand, broadcast } as any,
+      { set } as any,
+      previewService as any,
+    );
+
+    const result = await tool.execute({ target: "3000" }, {
+      sessionId: "session-error",
+      actionId: "action-error",
+      projectRoot: "/project/error",
+      requestedBy: "assistant",
+      userId: "user-error",
     });
 
-    const updateResult = await tool.execute({
-      action: "update",
-      todoId: "todo-1",
-      message: "Updated todo",
-      status: "in_progress",
-      priority: "high",
-      tags: ["future", "todo"],
-    }, context);
-    const removeResult = await tool.execute({
-      action: "remove",
-      todoId: "todo-1",
-    }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (sendUICommand.mock.calls));
+    __jait_capture(3, (broadcast.mock.calls));
+    __jait_capture(4, (set.mock.calls));
+  
+})();
 
-    __jait_capture(0, (updateResult.ok));
-    __jait_capture(1, ((updateResult.data as any).todo), ({
-      message: "Updated todo",
-      status: "in_progress",
-      priority: "high",
-      tags: JSON.stringify(["future", "todo"]),
-    }));
-    __jait_capture(2, (removeResult.ok));
-    __jait_capture(3, (todos));
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const sendUICommand = vi.fn();
+    const broadcast = vi.fn();
+    const set = vi.fn();
+    const syncPreviewSession = vi.fn();
+    const previewService = {
+      start: vi.fn().mockResolvedValue({
+        id: "preview-session-error",
+        sessionId: "session-error",
+        status: "error",
+        url: null,
+        target: "3000",
+        mode: "local",
+        lastError: "Preview server did not become ready",
+        logs: [],
+        browserEvents: [],
+      }),
+    };
+    const tool = createPreviewOpenTool(
+      { sendUICommand, broadcast } as any,
+      { set } as any,
+      previewService as any,
+      { syncPreviewSession } as any,
+    );
+
+    const result = await tool.execute({ target: "3000" }, {
+      sessionId: "session-error",
+      actionId: "action-error",
+      projectRoot: "/project/error",
+      requestedBy: "assistant",
+      userId: "user-error",
+    });
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (sendUICommand.mock.calls));
+    __jait_capture(3, (syncPreviewSession.mock.calls));
+    __jait_capture(4, (broadcast.mock.calls));
+    __jait_capture(5, (set.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const previewService = {
+      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
+      assertAgentControl: vi.fn(),
+      inspect: vi.fn().mockResolvedValue({
+        status: "ready",
+        url: "/api/dev-proxy/4173/",
+        logs: [{ id: 1, stream: "system", text: "ready", timestamp: "2026-03-27T00:00:00.000Z" }],
+        browserEvents: [
+          { type: "console", text: "ready" },
+          { type: "pageerror", text: "boom" },
+          { type: "response", status: 500, url: "http://127.0.0.1:4173/api" },
+        ],
+        screenshot: "base64-image",
+        page: { title: "Preview App" },
+        snapshot: "Title: Preview App",
+      }),
+    };
+    const tool = createPreviewInspectTool(previewService as any);
+
+    const result = await tool.execute({}, {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/project/app",
+      requestedBy: "assistant",
+    });
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (result.data));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const previewService = {
+      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
+      assertAgentControl: vi.fn(),
+      inspect: vi.fn().mockResolvedValue({
+        status: "ready",
+        url: "/api/dev-proxy/4173/",
+        logs: [],
+        browserEvents: [],
+        screenshot: "base64-image",
+        page: null,
+        snapshot: null,
+      }),
+    };
+    const tool = createPreviewInspectTool(previewService as any);
+
+    const result = await tool.execute({ screenshot: true }, {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/project/app",
+      requestedBy: "assistant",
+    });
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.data));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const restartedSession = {
+      id: "preview-session-1",
+      sessionId: "session-1",
+      projectRoot: "/project/app",
+      target: "http://127.0.0.1:5173/",
+      status: "ready",
+      url: "/noVNC/vnc_lite.html?path=api/live-view/38345/websockify",
+      mode: "url",
+      logs: [],
+      browserEvents: [],
+    };
+    const previewService = {
+      restart: vi.fn().mockResolvedValue(restartedSession),
+    };
+    const tool = createPreviewRestartTool(
+      previewService as any,
+    );
+
+    const result = await tool.execute({}, {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/project/app",
+      requestedBy: "assistant",
+      userId: "user-1",
+    });
+
+    __jait_capture(0, (result.ok));
   
 })();
 

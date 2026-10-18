@@ -54,3 +54,19 @@ test('fails closed on unmodeled enclosing blocks that can alias a helper', () =>
   const source = "function check() {}\n{ const alias = check; it('case', () => { alias() }) }"
   assert.throws(() => findUnusedAssertionHelpers(source, 2, 24), /enclosing scope/)
 })
+
+function reviewEach(setup, table, body) {
+  const source = `${setup}\nit.each(${table})('case', input => { ${body} })`
+  return findUnusedAssertionHelpers(source, source.split('\n').length, 1)
+}
+
+test('parameterized declarations retain callback and registration-table helper references', () => {
+  assert.deepEqual(reviewEach('function check() { expect(true).toBe(true) }', '[true, false]', 'check()').helpers, [])
+  assert.deepEqual(reviewEach('function check() { expect(true).toBe(true) }', '[check]', '').helpers, [])
+  const unused = reviewEach('function check() { expect(true).toBe(true) }', '[true, false]', 'expect(input).toBeDefined()')
+  assert.deepEqual(unused.helpers.map(helper => helper.name), ['check'])
+})
+
+test('parameterized declarations still fail closed on unknown registration bases', () => {
+  assert.throws(() => findUnusedAssertionHelpers("custom.each([true])('case', () => {})", 1, 1), /ambiguous test registration/)
+})

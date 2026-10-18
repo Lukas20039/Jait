@@ -1,12 +1,19 @@
-// Translated fixture from packages/gateway/src/services/opencode-go-headers.test.ts; expected literals are in tail_static.rs.
-import {runAgentLoop} from "../../../../packages/gateway/src/tools/agent-loop.js";
-import {callJaitLlmCompletion} from "../../../../packages/gateway/src/services/jait-llm.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/node-permissions.test.ts; expected literals are in tail_static.rs.
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import type { JaitDB, SqliteDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { consentLog, nodePermissions, nodes } from "../../../../packages/gateway/src/db/schema.js";
+
+import {
+  NodePermissionsService,
+  NODE_CAPABILITIES,
+  isNodeCapability,
+} from "../../../../packages/gateway/src/services/node-permissions.js";
+import type { NodeHelloPayload } from "@jait/shared";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/opencode-go-headers.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/node-permissions.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,59 +40,423 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_opencode_go_headers_test_ts_6_1": {
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_43_3": {
 
-
-const llm = {backend: "opencode-go" as const, openaiBaseUrl: "https://opencode.ai/zen/go/v1", openaiApiKey: "go-key", openaiModel: "glm-5.2", contextWindow: 128000};
-const __jait_hook_156 = () => vi.unstubAllGlobals();
-
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
 try {
 await (async()=>{
 
-  const fetcher = vi.fn(async () => new Response('data: {"choices":[{"delta":{"content":"done"},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n', {headers:{"content-type":"text/event-stream"}}));
-  vi.stubGlobal("fetch", fetcher);
-  const result = await runAgentLoop({llm, sessionId:"go-conversation", history:[{role:"user",content:"Check code"}], toolSchemas:[], hasTools:false, abort:new AbortController()}, async () => ({ok:true,message:"ok"}));
-  __jait_capture(0, (result.content));
-  const headers = new Headers(fetcher.mock.calls[0]?.[1]?.headers);
-  __jait_capture(1, (headers.get("x-opencode-session")));
-  __jait_capture(2, (headers.get("user-agent")));
-
+    const svc = service();
+    for (const cap of NODE_CAPABILITIES) {
+      __jait_capture(0, (svc.isGranted("ghost-node", cap)));
+    }
+  
 })();
 
 } finally {
-await __jait_hook_156();
+await __jait_hook_722();
 }
-
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_opencode_go_headers_test_ts_15_1": {
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_50_3": {
 
-
-const llm = {backend: "opencode-go" as const, openaiBaseUrl: "https://opencode.ai/zen/go/v1", openaiApiKey: "go-key", openaiModel: "glm-5.2", contextWindow: 128000};
-const __jait_hook_156 = () => vi.unstubAllGlobals();
-
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
 try {
 await (async()=>{
 
-  const fetcher=vi.fn(async () => new Response(JSON.stringify({choices:[{message:{content:"Title"}}]})));
-  vi.stubGlobal("fetch",fetcher);
-  await callJaitLlmCompletion(llm,[{role:"user",content:"Name the code change"}],{sessionId:"go-title"});
-  __jait_capture(0, (new Headers(fetcher.mock.calls[0]?.[1]?.headers).get("x-opencode-session")));
+    const svc = service();
+    svc.ensureNodeSeen(hello);
 
+    // nodes row exists
+    const nodeRows = db.select().from(nodes).where(eq(nodes.nodeId, hello.id)).all();
+    __jait_capture(0, (nodeRows));
+
+    // one deny-all row per capability
+    const permRows = db
+      .select()
+      .from(nodePermissions)
+      .where(eq(nodePermissions.nodeId, hello.id))
+      .all();
+    __jait_capture(1, (permRows), (NODE_CAPABILITIES.length));
+    for (const cap of NODE_CAPABILITIES) {
+      __jait_capture(2, (svc.isGranted(hello.id, cap)));
+    }
+
+    // second call must not throw and stays deny-all
+    __jait_thrown(3, () => svc.ensureNodeSeen(hello));
+    const permRowsAfter = db
+      .select()
+      .from(nodePermissions)
+      .where(eq(nodePermissions.nodeId, hello.id))
+      .all();
+    __jait_capture(4, (permRowsAfter), (NODE_CAPABILITIES.length));
+    for (const cap of NODE_CAPABILITIES) {
+      __jait_capture(5, (svc.isGranted(hello.id, cap)));
+    }
+  
 })();
 
 } finally {
-await __jait_hook_156();
+await __jait_hook_722();
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_82_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    const svc = service();
+    svc.ensureNodeSeen(hello);
+
+    __jait_capture(0, (svc.isGranted(hello.id, "terminal")));
+
+    svc.updatePermissions(hello.id, { terminal: true });
+    __jait_capture(1, (svc.isGranted(hello.id, "terminal")));
+
+    svc.updatePermissions(hello.id, { terminal: false });
+    __jait_capture(2, (svc.isGranted(hello.id, "terminal")));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_95_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    const svc = service();
+    svc.ensureNodeSeen(hello);
+    svc.updatePermissions(hello.id, { terminal: true, browser: true });
+
+    const perms = svc.getPermissions(hello.id);
+    __jait_capture(0, (Object.keys(perms).sort()), ([...NODE_CAPABILITIES].sort()));
+    __jait_capture(1, (perms.terminal));
+    __jait_capture(2, (perms.browser));
+    __jait_capture(3, (perms.filesystem));
+
+    const listed = svc.listNodePermissions();
+    __jait_capture(4, (listed));
+    __jait_capture(5, (listed[0]!.nodeId), (hello.id));
+    __jait_capture(6, (listed[0]!.permissions.terminal));
+    __jait_capture(7, (listed[0]!.permissions.browser));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_113_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    const svc = service();
+    svc.ensureNodeSeen(hello);
+    svc.updatePermissions(hello.id, { terminal: true });
+
+    __jait_capture(0, (svc.forgetNode(hello.id)));
+    __jait_capture(1, (svc.forgetNode(hello.id)));
+    __jait_capture(2, (db.select().from(nodes).where(eq(nodes.nodeId, hello.id)).all()));
+    __jait_capture(3, (db.select().from(nodePermissions).where(eq(nodePermissions.nodeId, hello.id)).all()));
+    __jait_capture(4, (svc.isGranted(hello.id, "terminal")));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_125_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    const svc = service();
+    svc.logDenied(hello.id, "terminal", "terminal denied by policy");
+
+    const rows = db.select().from(consentLog).all();
+    __jait_capture(0, (rows));
+    __jait_capture(1, (rows[0]!.decision));
+    __jait_capture(2, (rows[0]!.actionId), (`node-permission:${hello.id}:terminal`));
+    __jait_capture(3, (rows[0]!.toolName));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_136_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    const svc = service(null);
+    __jait_capture(0, (svc.isGranted("n", "terminal")));
+    __jait_capture(1, (svc.listNodePermissions()));
+    __jait_thrown(2, () => svc.ensureNodeSeen(hello));
+    __jait_thrown(3, () => svc.updatePermissions("n", { terminal: true }));
+    __jait_thrown(4, () => svc.logDenied("n", "terminal", "detail"));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_node_permissions_test_ts_145_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+async function freshDb(): Promise<void> {
+  const result = await openDatabase(":memory:");
+  sqlite = result.sqlite;
+  db = result.db;
+  migrateDatabase(sqlite);
+}
+const hello: NodeHelloPayload = {
+  id: "node-1",
+  name: "test-node",
+  platform: "linux",
+  role: "remote",
+};
+function service(d: JaitDB | null = db): NodePermissionsService {
+  return new NodePermissionsService(d);
+}
+const __jait_hook_673 = async () => {
+  await freshDb();
+};
+const __jait_hook_722 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_673();
+try {
+await (async()=>{
+
+    __jait_capture(0, (isNodeCapability("terminal")));
+    __jait_capture(1, (isNodeCapability("filesystem")));
+    __jait_capture(2, (isNodeCapability("not-a-capability")));
+    __jait_capture(3, (isNodeCapability(42)));
+  
+})();
+
+} finally {
+await __jait_hook_722();
+}
+}
 
 break;
 }

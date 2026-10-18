@@ -1,20 +1,14 @@
-// Translated fixture from packages/gateway/src/services/agent-control.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import {
-  AGENT_HALTED_CODE,
-  AgentControlService,
-  type AgentControlHooks,
-  AgentHaltedError,
-  RUNNING_STATE,
-  agentHaltedBody,
-  isAgentHaltedError,
-} from "../../../../packages/gateway/src/services/agent-control.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/security/worktree-sandbox.test.ts; expected literals are in tail_static.rs.
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { worktreeGitMountArgs } from "../../../../packages/gateway/src/security/worktree-sandbox.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/agent-control.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/worktree-sandbox.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,295 +35,119 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_20_3": {
+case "tailstatic_packages_gateway_src_security_worktree_sandbox_test_ts_22_3": {
 
 
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
+const scratch: string[] = [];
+function fixture() {
+  const root = mkdtempSync(join(__jait_fixture_dir, "jait-git-sandbox-")); scratch.push(root);
+  const repo = join(root, "repo"), worktree = join(root, "worktree"); mkdirSync(repo);
+  const git = (...args: string[]) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  git("init"); writeFileSync(join(repo, "owned.txt"), "before\n"); git("add", "owned.txt");
+  git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-m", "fixture");
+  git("worktree", "add", "-b", "delivery", worktree);
+  writeFileSync(join(worktree, "owned.txt"), "after\n");
+  return { root, repo, worktree };
 }
+const __jait_hook_1033 = () => { for (const root of scratch.splice(0)) rmSync(root, { recursive: true, force: true }); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { service, sqlite } = await makeService();
-    __jait_capture(0, (service.getState("fresh-user")), (RUNNING_STATE));
-    __jait_capture(1, (service.isHalted("fresh-user")));
-    // Absence of a row must be safe for empty ids too, so callers can pass an
-    // unresolved user without guarding every call site.
-    __jait_capture(2, (service.getState("")), (RUNNING_STATE));
-    __jait_capture(3, (service.isHalted("")));
-    __jait_thrown(4, () => service.assertCanRun("fresh-user"));
-    sqlite.close();
+    const { repo, worktree } = fixture();
+    __jait_capture(0, (worktreeGitMountArgs(worktree)), (["-v", `${repo}/.git:${repo}/.git:ro`]));
+    __jait_capture(1, (worktreeGitMountArgs(repo)));
   
 })();
 
 } finally {
-
+await __jait_hook_1033();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_32_3": {
+case "tailstatic_packages_gateway_src_security_worktree_sandbox_test_ts_27_3": {
 
 
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
+const scratch: string[] = [];
+function fixture() {
+  const root = mkdtempSync(join(__jait_fixture_dir, "jait-git-sandbox-")); scratch.push(root);
+  const repo = join(root, "repo"), worktree = join(root, "worktree"); mkdirSync(repo);
+  const git = (...args: string[]) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  git("init"); writeFileSync(join(repo, "owned.txt"), "before\n"); git("add", "owned.txt");
+  git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-m", "fixture");
+  git("worktree", "add", "-b", "delivery", worktree);
+  writeFileSync(join(worktree, "owned.txt"), "after\n");
+  return { root, repo, worktree };
 }
+const __jait_hook_1033 = () => { for (const root of scratch.splice(0)) rmSync(root, { recursive: true, force: true }); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const stopRunning = vi.fn(async () => 3);
-    const onChange = vi.fn();
-    const { service, sqlite } = await makeService({ stopRunning, onChange });
-
-    const result = await service.halt("user-1", { reason: "  runaway loop  " });
-
-    __jait_capture(0, (stopRunning.mock.calls));
-    __jait_capture(1, (result.stopped));
-    __jait_captureType(2, (result.stopError));
-    __jait_capture(3, (result.state));
-    __jait_captureType(4, (result.state.haltedAt));
-    __jait_capture(5, (service.isHalted("user-1")));
-
-    // A second user stays untouched: the stop is owner-wide, not global.
-    __jait_capture(6, (service.isHalted("user-2")));
-
-    __jait_thrown(7, () => service.assertCanRun("user-1"), (AgentHaltedError));
-    try {
-      service.assertCanRun("user-1", "send-message");
-      throw new Error("expected assertCanRun to throw");
-    } catch (error) {
-      __jait_capture(8, (isAgentHaltedError(error)));
-      __jait_capture(9, ((error as AgentHaltedError).code), (AGENT_HALTED_CODE));
-      __jait_capture(10, ((error as AgentHaltedError).action));
-      __jait_capture(11, ((error as AgentHaltedError).message));
-    }
-
-    __jait_capture(12, (onChange.mock.calls));
-    __jait_capture(13, (onChange.mock.calls[0]?.[0]));
-    sqlite.close();
+    const { root, worktree } = fixture();
+    const forged = join(root, "forged"); mkdirSync(forged);
+    writeFileSync(join(forged, ".git"), readFileSync(join(worktree, ".git")));
+    __jait_thrown(0, () => worktreeGitMountArgs(forged));
   
 })();
 
 } finally {
-
+await __jait_hook_1033();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_65_3": {
+case "tailstatic_packages_gateway_src_security_worktree_sandbox_test_ts_33_3": {
 
 
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
+const scratch: string[] = [];
+function fixture() {
+  const root = mkdtempSync(join(__jait_fixture_dir, "jait-git-sandbox-")); scratch.push(root);
+  const repo = join(root, "repo"), worktree = join(root, "worktree"); mkdirSync(repo);
+  const git = (...args: string[]) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  git("init"); writeFileSync(join(repo, "owned.txt"), "before\n"); git("add", "owned.txt");
+  git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-m", "fixture");
+  git("worktree", "add", "-b", "delivery", worktree);
+  writeFileSync(join(worktree, "owned.txt"), "after\n");
+  return { root, repo, worktree };
 }
+const __jait_hook_1033 = () => { for (const root of scratch.splice(0)) rmSync(root, { recursive: true, force: true }); };
 /*__jait_scope_open__*/{
+/*__jait_source_gate__ runIf process.env.JAIT_TEST_SANDBOX === "1" */
 
 try {
 await (async()=>{
 
-    const stopRunning = vi.fn(async () => 0);
-    const { service, sqlite } = await makeService({ stopRunning });
-
-    const first = await service.halt("user-1");
-    const second = await service.halt("user-1", { reason: "second thought" });
-
-    __jait_capture(0, (second.state.haltedAt), (first.state.haltedAt));
-    __jait_capture(1, (second.state.reason));
-    // Re-running the hook is deliberate: a runner that came up between the two
-    // calls would otherwise survive the stop.
-    __jait_capture(2, (stopRunning.mock.calls));
-    sqlite.close();
+    const { repo, worktree } = fixture();
+    const mainBefore = readFileSync(join(repo, "owned.txt"), "utf8");
+    // Reproduce the old mount configuration: the worktree's gitdir pointer
+    // points outside /project and Git cannot inspect this checkout.
+    __jait_thrown(0, () => execFileSync("docker", ["run", "--rm", "--network", "none", "--user", `${process.getuid!()}:${process.getgid!()}`,
+      "-e", "HOME=/tmp", "-v", `${worktree}:/project`, "-w", "/project", "jait/sandbox:latest", "git", "status", "--short"],
+      { encoding: "utf8", timeout: 20_000, stdio: ["ignore", "pipe", "pipe"] }));
+    const output = execFileSync("docker", ["run", "--rm", "--network", "none", "--user", `${process.getuid!()}:${process.getgid!()}`,
+      "-e", "HOME=/tmp", "-v", `${worktree}:/project`, ...worktreeGitMountArgs(worktree), "-w", "/project", "jait/sandbox:latest",
+      "sh", "-c", "git status --short && git diff --name-only"], { encoding: "utf8", timeout: 20_000 });
+    __jait_capture(1, (output));
+    __jait_capture(2, (output.trim().split("\n").at(-1)));
+    __jait_capture(3, (readFileSync(join(repo, "owned.txt"), "utf8")), (mainBefore));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_80_3": {
-
-
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { service, sqlite } = await makeService({
-      stopRunning: () => {
-        throw new Error("runner refused to die");
-      },
-    });
-
-    const result = await service.halt("user-1");
-
-    __jait_capture(0, (result.state.halted));
-    __jait_capture(1, (service.isHalted("user-1")));
-    __jait_capture(2, (result.stopped));
-    __jait_capture(3, (result.stopError));
-    __jait_thrown(4, () => service.assertCanRun("user-1"), (AgentHaltedError));
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_97_3": {
-
-
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const onChange = vi.fn();
-    const { service, sqlite } = await makeService({ onChange });
-
-    await service.halt("user-1", { reason: "incident" });
-    const state = service.resume("user-1");
-
-    __jait_capture(0, (state.halted));
-    __jait_captureType(1, (state.reason));
-    __jait_captureType(2, (state.haltedAt));
-    __jait_capture(3, (service.isHalted("user-1")));
-    __jait_thrown(4, () => service.assertCanRun("user-1"));
-    __jait_capture(5, (onChange.mock.calls));
-    __jait_capture(6, (onChange.mock.calls[1]?.[0]));
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_114_3": {
-
-
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { service, sqlite } = await makeService();
-    await __jait_rejected(0, service.halt(""));
-    __jait_thrown(1, () => service.resume(""));
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_121_3": {
-
-
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { service, sqlite } = await makeService();
-    await service.halt("user-1", { reason: "cost spike" });
-
-    const body = agentHaltedBody(service.getState("user-1"), "start-thread");
-
-    __jait_capture(0, (body), ({
-      code: AGENT_HALTED_CODE,
-      halted: true,
-      reason: "cost spike",
-      action: "start-thread",
-    }));
-    __jait_capture(1, (String(body.error)));
-
-    // A body without an action still names the code, so generic handlers work.
-    __jait_capture(2, (agentHaltedBody(service.getState("user-1"))));
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_agent_control_test_ts_140_3": {
-
-
-async function makeService(hooks: AgentControlHooks = {}) {
-  const { db, sqlite } = await openDatabase(":memory:");
-  migrateDatabase(sqlite);
-  return { service: new AgentControlService(db, hooks), sqlite };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (isAgentHaltedError(new AgentHaltedError())));
-    __jait_capture(1, (isAgentHaltedError({ code: AGENT_HALTED_CODE })));
-    __jait_capture(2, (isAgentHaltedError(new Error("other"))));
-    __jait_capture(3, (isAgentHaltedError(null)));
-  
-})();
-
-} finally {
-
+await __jait_hook_1033();
 }
 }
 

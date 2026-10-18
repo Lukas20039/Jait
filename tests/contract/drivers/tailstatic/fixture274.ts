@@ -1,13 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/memory-tools.test.ts; expected literals are in tail_static.rs.
-import type { MemoryEntry, MemoryService, SaveMemoryInput } from "../../../../packages/gateway/src/memory/contracts.js";
-import type { ReminderRow, ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createMemoryForgetTool, createMemoryHygieneTool, createMemoryListTool, createMemoryReviewChatsTool, createMemorySaveTool, createMemorySearchTool, createMemoryUpdateTool } from "../../../../packages/gateway/src/tools/memory-tools.js";
+// Translated fixture from packages/gateway/src/tools/cron-tools.test.ts; expected literals are in tail_static.rs.
+import type { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
+import { createCronAddTool, createCronListTool, createCronRemoveTool, createCronUpdateTool } from "../../../../packages/gateway/src/tools/cron-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/memory-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/cron-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -34,83 +33,98 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3": {
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
   };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const created = reminder();
-    const reminders = {
-      create: (params: { content: string; userId?: string; sessionId?: string | null }) => ({
-        ...created,
-        content: params.content,
-        userId: params.userId ?? null,
-        sessionId: params.sessionId ?? null,
-      }),
-    } as unknown as ReminderService;
-    const memory = {
-      save: async (input: SaveMemoryInput) => memoryEntry({ content: input.content }),
-      list: async () => [],
-    } as unknown as MemoryService;
-    const tool = createMemorySaveTool(memory, reminders);
+    const f = fixture();
+    __jait_capture(0, (await createCronAddTool(f.service).execute({ name: "Inventory", cron: "0 8 * * *", toolName: " file_list " }, context)));
+    __jait_capture(1, (f.scheduler.create.mock.calls));
+  
+})();
 
-    const result = await tool.execute({
-      kind: "reminder",
-      scope: "project",
-      content: "Remember this",
-      sourceType: "agent",
-      sourceId: "action-1",
-      sourceSurface: "chat",
-    }, context);
+} finally {
 
-    __jait_capture(0, (result.ok));
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3": {
+
+
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+  };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    f.scheduler.create.mockImplementation(() => { throw new Error("Invalid cron expression"); });
+    await __jait_rejected(0, createCronAddTool(f.service).execute({ name: "Inventory", cron: "invalid", toolName: "file.list" }, context));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3": {
+
+
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+  };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    const result = await createCronListTool(f.service).execute({}, context);
+    __jait_capture(0, (f.scheduler.list.mock.calls));
     __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data));
+    __jait_capture(2, (result.data), ({ jobs: f.scheduler.list.mock.results[0]!.value }));
   
 })();
 
@@ -121,65 +135,97 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3": {
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
   };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
 }
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const removed = true;
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    f.scheduler.remove.mockReturnValue(removed);
+    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
+    __jait_capture(1, (f.scheduler.remove.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1": {
+
+
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
   };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
+}
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const removed = false;
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    f.scheduler.remove.mockReturnValue(removed);
+    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
+    __jait_capture(1, (f.scheduler.remove.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3": {
+
+
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
+  };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const memory = {
-      list: async () => [memoryEntry()],
-      search: async () => [memoryEntry()],
-    } as unknown as MemoryService;
-    const reminders = {
-      list: () => [reminder()],
-    } as unknown as ReminderService;
-    const tool = createMemorySearchTool(memory, reminders);
-
-    const result = await tool.execute({ query: "remember", limit: 3 }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
-    __jait_capture(2, (result.message));
-    __jait_capture(3, (result.message));
-    __jait_capture(4, (result.message));
+    const f = fixture();
+    __jait_capture(0, ((await createCronUpdateTool(f.service).execute({ id: "job-1", enabled: false }, context)).ok));
+    __jait_capture(1, (f.scheduler.update.mock.calls));
   
 })();
 
@@ -190,327 +236,27 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3": {
+case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
+const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const scheduler = {
+    create: vi.fn().mockReturnValue({ id: "job-1" }),
+    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
+    remove: vi.fn().mockReturnValue(true),
+    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
   };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
+  return { scheduler, service: scheduler as unknown as SchedulerService };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const reminders = {
-      list: (options: { userId?: string; status?: string; limit?: number }) => [reminder({
-        userId: options.userId ?? null,
-        status: options.status === "archived" ? "archived" : "active",
-      })],
-    } as unknown as ReminderService;
-    const tool = createMemoryListTool(reminders);
-
-    const result = await tool.execute({ status: "archived", limit: 10 }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
-    __jait_capture(2, (result.message));
-    __jait_capture(3, (result.message));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3": {
-
-
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const reminders = {
-      update: (id: string, params: { content?: string; status?: string }, userId?: string) => reminder({
-        id,
-        userId: userId ?? null,
-        content: params.content ?? "Reminder",
-        status: params.status === "archived" ? "archived" : "active",
-      }),
-    } as unknown as ReminderService;
-    const tool = createMemoryUpdateTool(reminders);
-
-    const result = await tool.execute({ id: "reminder-1", content: "Updated", status: "archived" }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3": {
-
-
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const memory = {
-      list: async () => [],
-      forget: async () => false,
-    } as unknown as MemoryService;
-    const reminders = {
-      delete: () => true,
-    } as unknown as ReminderService;
-    const tool = createMemoryForgetTool(memory, reminders);
-
-    const result = await tool.execute({ id: "reminder-1" }, context);
-
-    __jait_capture(0, (result));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3": {
-
-
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    let receivedUserId: string | undefined;
-    const reminders = {
-      runHygiene: (userId?: string) => {
-        receivedUserId = userId;
-        return { archived: 1, flagged: 2 };
-      },
-    } as unknown as ReminderService;
-    const tool = createMemoryHygieneTool(reminders);
-
-    const result = await tool.execute({ userId: "other-user" } as never, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (receivedUserId));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3": {
-
-
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
-};
-function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-  return {
-    id: "memory-1",
-    scope: "project",
-    content: "Memory",
-    source: { type: "agent", id: "action-1", surface: "chat" },
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
-  return {
-    id: "reminder-1",
-    userId: "user-1",
-    projectId: "project-1",
-    sessionId: "session-1",
-    content: "Reminder",
-    sourceType: "agent",
-    sourceId: "action-1",
-    sourceSurface: "chat",
-    status: "active",
-    tags: "[]",
-    createdAt: "2026-05-07T00:00:00.000Z",
-    updatedAt: "2026-05-07T00:00:00.000Z",
-    ...overrides,
-  };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    let received: { userId?: string; limit?: number } = {};
-    const reminders = {
-      scanOldChatsForMemory: (userId?: string, limit?: number) => {
-        received = { userId, limit };
-        return { scanned: 3, created: 1 };
-      },
-    } as unknown as ReminderService;
-    const tool = createMemoryReviewChatsTool(reminders);
-
-    const result = await tool.execute({ userId: "other-user", limit: 25 } as { limit?: number }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (received));
+    const f = fixture();
+    f.scheduler.update.mockReturnValue(undefined as never);
+    __jait_capture(0, (await createCronUpdateTool(f.service).execute({ id: "foreign-job" }, context)));
   
 })();
 

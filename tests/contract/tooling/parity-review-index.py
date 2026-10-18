@@ -22,15 +22,15 @@ CASE_RE = re.compile(
     r"fn (?P<fn>tailstatic_[a-z0-9_]+)\(\) \{\n"
     r"\s*tail_assertions::check\(\n"
     r"\s*(?P<group>\d+),\n"
-    r'\s*r#"(?P<id>[^"]*)"#,\n'
-    r'\s*r#"(?P<rules>.*?)"#,\n'
+    r'\s*r(?P<id_hashes>#+)"(?P<id>.*?)"(?P=id_hashes),\n'
+    r'\s*r(?P<rules_hashes>#+)"(?P<rules>.*?)"(?P=rules_hashes),\n'
     r"\s*\);\n\}",
     re.S,
 )
 
 
-def load_cases():
-    text = open(CASES, encoding="utf-8").read()
+def load_cases(source=None):
+    text = open(CASES, encoding="utf-8").read() if source is None else source
     cases = {}
     for match in CASE_RE.finditer(text):
         rules = json.loads(match.group("rules"))
@@ -56,6 +56,18 @@ def case_id_for(declaration_id):
     return "tailstatic_%s_%s_%s" % (slug, line, column)
 
 
+def translated_variants(declaration_id, cases):
+    """Return generated registrations, without claiming variant completeness."""
+    case_id = case_id_for(declaration_id)
+    suffix = re.compile(r"^(?:_(?:for\d+|each\d+|runtime|branch))+$")
+    return [
+        case
+        for key, case in cases.items()
+        if key == case_id
+        or (key.startswith(case_id) and suffix.fullmatch(key[len(case_id):]))
+    ]
+
+
 def main():
     text, cases = load_cases()
     total_functions = len(re.findall(r"^fn tailstatic", text, re.M))
@@ -69,6 +81,7 @@ def main():
                 declaration = case["id"]
                 case_id = case_id_for(declaration)
                 translated = cases.get(case_id)
+                variants = translated_variants(declaration, cases)
                 row = {
                     "declaration": declaration,
                     "case": case_id,
@@ -78,13 +91,16 @@ def main():
                     "suite": case.get("suite") or [],
                     "name": case.get("name"),
                     "translated": translated is not None,
+                    "translation_variants": [
+                        {"case": v["id"], "ignored": v["ignored"]} for v in variants
+                    ],
                     "ignored": bool(translated and translated["ignored"]),
                     "rule_count": translated["rule_count"] if translated else 0,
                     "matchers": translated["matchers"] if translated else [],
                     "group": translated["group"] if translated else None,
                 }
                 rows.append(row)
-                if not translated:
+                if not variants and row["status"] == "pending":
                     unmatched.append(declaration)
 
     pending = [r for r in rows if r["status"] == "pending"]
@@ -96,7 +112,14 @@ def main():
         "pending": len(pending),
         "pending_with_executable_rust_case": len(translated_pending),
         "pending_ignored_rust_case": len([r for r in pending if r["translated"] and r["ignored"]]),
-        "pending_without_translation": len([r for r in pending if not r["translated"]]),
+        "pending_with_generated_variants": len([
+            r for r in pending if r["translation_variants"]
+        ]),
+        "pending_with_ignored_variant": len([
+            r for r in pending
+            if any(v["ignored"] for v in r["translation_variants"])
+        ]),
+        "pending_without_translation": len(unmatched),
         "verified": len([r for r in rows if r["status"] == "verified"]),
     }
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
@@ -105,6 +128,9 @@ def main():
             {
                 "summary": summary,
                 "pending_with_executable_rust_case": translated_pending,
+                "pending_with_generated_variants": [
+                    row for row in pending if row["translation_variants"]
+                ],
                 "pending_without_translation": unmatched,
                 "cases": cases,
             },

@@ -1,14 +1,16 @@
-// Translated fixture from packages/gateway/src/services/reminders.test.ts; expected literals are in tail_static.rs.
-
-import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/connection.js";
-import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
-import { messages, reminders, sessions } from "../../../../packages/gateway/src/db/schema.js";
-import { ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
+// Translated fixture from packages/gateway/src/services/provider-quota-fetchers.test.ts; expected literals are in tail_static.rs.
+import {
+  fetchOllamaUsageFrom,
+  isOllamaUsageResponse,
+  probeOllamaAccount,
+  describeOllamaUsageGap,
+} from "../../../../packages/gateway/src/services/provider-quota-fetchers.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/reminders.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-quota-fetchers.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,248 +37,415 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
+
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      projectId: "project-1",
-      sessionId: "session-1",
-      content: "Remember the deployment note",
-      tags: ["Deploy", "deploy", "Notes"],
-    });
-
-    __jait_capture(0, (created), ({
-      userId: "user-1",
-      projectId: "project-1",
-      sessionId: "session-1",
-      content: "Remember the deployment note",
-      status: "active",
-      tags: JSON.stringify(["deploy", "notes"]),
-    }));
-
-    __jait_capture(1, (service.list({ userId: "user-1", projectId: "project-1" })));
-    __jait_capture(2, (service.list({ userId: "user-2" })));
+    __jait_capture(0, (isOllamaUsageResponse({ limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } })));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_254();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_46_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
+
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      content: "Follow up later",
-    });
-
-    const archived = service.update(created.id, { status: "archived" }, "user-1");
-    __jait_capture(0, (archived?.status));
-    __jait_capture(1, (service.list({ userId: "user-1", status: "active" })));
-    __jait_capture(2, (service.delete(created.id, "user-2")));
-    __jait_capture(3, (service.delete(created.id, "user-1")));
+    __jait_capture(0, (isOllamaUsageResponse({
+        limits: {
+          session: { usage: 0.2, models: [] },
+          weekly: { usage: 0.4, models: [] },
+        },
+      })));
+    __jait_capture(1, (isOllamaUsageResponse({
+        limits: { monthly: { usage: 0.6, models: [] } },
+      })));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_254();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
+
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      projectId: "project-1",
-      content: "Use icon-only controls for compact todo metadata",
-      sourceType: "user",
-      sourceId: "session-1",
-      sourceSurface: "web",
-      tags: ["todo", "ui"],
-    });
-
-    __jait_capture(0, (created.usageCount));
-    __jait_captureType(1, (created.lastRetrievedAt));
-    __jait_capture(2, (service.markRetrieved([created.id], "user-1")));
-
-    const retrieved = service.getById(created.id, "user-1");
-    __jait_capture(3, (retrieved?.usageCount));
-    __jait_captureType(4, (retrieved?.lastRetrievedAt));
-
-    const markdown = service.exportMarkdown({ userId: "user-1" });
-    __jait_capture(5, (markdown));
-    __jait_capture(6, (markdown));
-    __jait_capture(7, (markdown));
-    __jait_capture(8, (markdown));
+    const activity = {
+      range: "7d", scope: "self", granularity: "day",
+      from: "2026-09-30T00:00:00Z", until: "2026-10-07T11:29:42Z",
+      totals: { request_count: 10388 },
+      buckets: [{ from: "2026-09-30T00:00:00Z", until: "2026-10-01T00:00:00Z", request_count: 81 }],
+    };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(activity)));
+    await __jait_captureResolved(0, (fetchOllamaUsageFrom("https://ollama.com", "test-key")), (activity));
+    __jait_capture(1, (isOllamaUsageResponse(activity)));
+    for (const count of [-1, "10388", null, Infinity]) {
+      __jait_capture(2, (isOllamaUsageResponse({ ...activity, totals: { request_count: count } })));
+    }
+    __jait_capture(3, (isOllamaUsageResponse({ ...activity, from: "invalid" })));
+    __jait_capture(4, (isOllamaUsageResponse({ ...activity, buckets: [{}] })));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_254();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_87_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
+
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    db.insert(sessions).values({
-      id: "session-1",
-      userId: "user-1",
-      projectId: "project-1",
-      name: "Chat",
-      createdAt: "2026-05-23T00:00:00.000Z",
-      lastActiveAt: "2026-05-23T00:00:00.000Z",
-    }).run();
-    db.insert(messages).values({
-      id: "message-1",
-      sessionId: "session-1",
-      role: "user",
-      content: "Remember that this project prefers slim todo controls.",
-      createdAt: "2026-05-23T00:01:00.000Z",
-    }).run();
-
-    __jait_capture(0, (service.scanOldChatsForMemory("user-1")));
-    const [created] = service.list({ userId: "user-1", status: "active" });
-    __jait_capture(1, (created));
-    __jait_capture(2, (service.scanOldChatsForMemory("user-1")));
+    __jait_capture(0, (isOllamaUsageResponse({ limits: {} })));
+    __jait_capture(1, (isOllamaUsageResponse({
+        limits: { monthly: { usage: "60%", models: [] } },
+      })));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_254();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_116_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
+
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const stale = service.create({
-      userId: "user-1",
-      content: "Old generated note",
-      sourceType: "background_memory_scan",
-      tags: ["old"],
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      __jait_capture(0, (url));
+      __jait_capture(1, ((init?.headers as Record<string, string> | undefined)?.Authorization));
+      return new Response(
+        JSON.stringify({ email: "me@example.com", name: "Me", plan: "pro" }),
+        { status: 200 },
+      );
     });
-    db.update(reminders).set({
-      updatedAt: "2025-01-01T00:00:00.000Z",
-    }).where(eq(reminders.id, stale.id)).run();
-    service.create({ userId: "user-1", content: "Use compact todo controls", tags: ["todo"] });
-    service.create({ userId: "user-1", content: "Do not use compact todo controls", tags: ["todo"] });
+    vi.stubGlobal("fetch", fetchMock);
 
-    const result = service.runHygiene("user-1");
-    __jait_capture(0, (result.archived));
-    __jait_capture(1, (result.flagged));
-    __jait_capture(2, (service.getById(stale.id, "user-1")?.status));
-    const active = service.list({ userId: "user-1", status: "active" });
-    __jait_capture(3, (active.some((row) => row.tags.includes("review:conflict"))));
+    const probe = await probeOllamaAccount({ baseUrl: "https://ollama.com/", apiKey: "key-1" });
+    __jait_capture(2, (probe));
+    __jait_capture(3, (fetchMock.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(
+      JSON.stringify({ Email: "me@example.com", Name: "Me", Plan: "pro" }),
+    )));
+    await __jait_captureResolved(0, (probeOllamaAccount({ baseUrl: "http://localhost:11434" })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 401 })));
+
+    const probe = await probeOllamaAccount({ apiKey: "bad" });
+    __jait_capture(0, (probe));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("ECONNREFUSED");
+      }),
+    );
+
+    const probe = await probeOllamaAccount({ baseUrl: "http://127.0.0.1:11434" });
+    __jait_capture(0, (probe));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (url: string) => {
+      __jait_capture(0, (url));
+      return new Response(
+        JSON.stringify({ limits: { weekly: { usage: 0.3, models: [{ name: "llama3", requestCount: 2 }] } } }),
+        { status: 200 },
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const usage = await fetchOllamaUsageFrom("http://127.0.0.1:11434/");
+    __jait_capture(1, (usage.limits.weekly?.usage));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("unauthorized", { status: 401 })));
+
+    await __jait_captureRejected(0, (fetchOllamaUsageFrom("https://ollama.com", "bad")));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: false, account: null },
+    });
+    __jait_capture(0, (hint));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const hint = describeOllamaUsageGap({
+      baseUrl: "https://ollama.com",
+      cloud: true,
+      probe: { reachable: true, account: null },
+    });
+    __jait_capture(0, (hint));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: true, account: null },
+    });
+    __jait_capture(0, (hint));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: {
+        reachable: true,
+        account: { email: "jakob@example.com", name: "Jakob", plan: "pro" },
+      },
+    });
+    __jait_capture(0, (hint));
+    __jait_capture(1, (hint));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: true, account: { email: null, name: "Jakob", plan: null } },
+    });
+    __jait_capture(0, (hint));
+    __jait_capture(1, (hint));
+  
+})();
+
+} finally {
+
 }
 }
 

@@ -1,18 +1,27 @@
-// Translated fixture from packages/gateway/src/tools/sandbox-tools.test.ts; expected literals are in tail_static.rs.
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import type { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
-import {
-  createLinuxDesktopSandboxStartTool,
-  createLinuxDesktopSandboxStopTool,
-  createWindowsSandboxStartTool,
-  createWindowsSandboxStopTool,
-} from "../../../../packages/gateway/src/tools/sandbox-tools.js";
+// Translated fixture from packages/gateway/src/tools/project-message-tool.test.ts; expected literals are in tail_static.rs.
+import { EventEmitter } from "node:events";
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import type {
+  CliProviderAdapter,
+  ProviderEvent,
+  ProviderInfo,
+  ProviderSession,
+  StartSessionOptions,
+} from "../../../../packages/gateway/src/providers/contracts.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
+import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
+import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+import { createProjectMessageTool } from "../../../../packages/gateway/src/tools/project-message-tool.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/sandbox-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-message-tool.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,99 +48,145 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
+    };
+  }
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
   return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
     ...overrides,
-  } as unknown as SandboxManager;
+  };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createWindowsSandboxStartTool(fakeManager({
-      startWindowsSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-windows-sb-test",
-          browserId: "jait-windows-sb-test",
-          rdpPort: 3390,
-          webViewerPort: 8007,
-          rdpUrl: "rdp://127.0.0.1:3390",
-          webViewerUrl: "http://127.0.0.1:8007/",
-          status: "running",
-          version: "10",
-          storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-          sshPort: 2223,
-          sshUsername: "Docker",
-          sshPassword: "admin",
-        };
-      },
-    }));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      const provider = new MockThreadProvider("codex");
+      providerRegistry.register(provider);
+      const broadcastToUser = vi.fn();
+      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
 
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
-    __jait_capture(3, (tool.parameters.properties));
-    __jait_capture(4, (tool.parameters.properties));
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+        ws,
+      });
 
-    const result = await tool.execute(
-      {
-        ramSize: "8G",
-        cpuCores: 8,
-        diskSize: "128G",
-        windowsVersion: "10",
-        rdpPort: 3390,
-        webViewerPort: 8007,
-        waitForWebViewer: true,
-      },
-      baseContext,
-    );
+      const result = await tool.execute(
+        {
+          projectRoot: "/tmp/other-project",
+          message: "The nightly build failed — please investigate.",
+          providerId: "codex",
+        },
+        makeContext(user.id),
+      );
 
-    __jait_capture(5, (calls));
-    __jait_capture(6, (result.ok));
-    __jait_capture(7, (result.data));
+      __jait_capture(0, (result.ok));
+      const data = result.data as {
+        project: { id: string; rootPath: string | null };
+        session: { id: string; projectId: string | null };
+      };
+      __jait_capture(1, (data.project.rootPath));
+      __jait_capture(2, (data.session.projectId), (data.project.id));
+      __jait_capture(3, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
+      __jait_capture(4, (broadcastToUser.mock.calls), ([user.id,data.project.id]));
+      __jait_capture(5, (broadcastToUser.mock.calls), ([user.id,data.project.id,data.session.id]));
+
+      // The message actually reached the provider as a turn.
+      __jait_capture(6, (provider.sendTurnCalls));
+      __jait_capture(7, (provider.sendTurnCalls[0]?.message));
+
+      // A real thread was created in the target project's working directory.
+      const threads = threadService.listBySession(data.session.id);
+      __jait_capture(8, (threads));
+      __jait_capture(9, (threads[0]?.workingDirectory));
+      __jait_capture(10, (threads[0]?.status));
+
+      // Re-using the same project root resolves the same project (no duplicate).
+      const projects = projectService.list(undefined, user.id);
+      __jait_capture(11, (projects.filter((p) => p.rootPath === "/tmp/other-project")));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
@@ -142,55 +197,120 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
+    };
+  }
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
   return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
     ...overrides,
-  } as unknown as SandboxManager;
+  };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createWindowsSandboxStartTool(fakeManager());
-    const result = await tool.execute({}, baseContext);
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-2", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      providerRegistry.register(new MockThreadProvider("codex"));
 
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.message));
+      const existingProject = projectService.create({
+        userId: user.id,
+        title: "Existing Project",
+        rootPath: "/tmp/existing-project",
+        nodeId: "gateway",
+      });
+
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+      });
+
+      const result = await tool.execute(
+        {
+          projectId: existingProject.id,
+          message: "Please check the flaky test.",
+          providerId: "codex",
+        },
+        makeContext(user.id),
+      );
+
+      __jait_capture(0, (result.ok));
+      const data = result.data as { project: { id: string } };
+      __jait_capture(1, (data.project.id), (existingProject.id));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
@@ -201,67 +321,150 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
+    };
+  }
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
   return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
     ...overrides,
-  } as unknown as SandboxManager;
+  };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<{ name: string; options: unknown }> = [];
-    const tool = createWindowsSandboxStopTool(fakeManager({
-      stopWindowsSandbox: async (name, options) => {
-        calls.push({ name, options });
-      },
-    }));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-live", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      // thread.control falls back to the user's last-selected provider ("jait").
+      const provider = new MockThreadProvider("jait");
+      providerRegistry.register(provider);
+      const broadcastToUser = vi.fn();
+      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
 
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.required));
+      // The chat the caller is currently in — NOT part of any project yet.
+      const currentChat = sessionService.create({ userId: user.id, name: "My Chat" });
 
-    const result = await tool.execute(
-      { containerName: "jait-windows-sb-test", removeStorage: true },
-      baseContext,
-    );
+      const existingProject = projectService.create({
+        userId: user.id,
+        title: "Target Project",
+        rootPath: "/tmp/target-project",
+        nodeId: "gateway",
+      });
 
-    __jait_capture(2, (calls));
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, (result.data));
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+        ws,
+      });
+
+      const result = await tool.execute(
+        { projectId: existingProject.id, message: "Look into the failing deploy." },
+        makeContext(user.id, { sessionId: currentChat.id }),
+      );
+
+      __jait_capture(0, (result.ok));
+      const data = result.data as {
+        project: { id: string };
+        session: { id: string; projectId: string | null };
+        assigned: boolean;
+      };
+
+      // The SAME chat is used — no new chat was created.
+      __jait_capture(1, (data.session.id), (currentChat.id));
+      const projectChats = sessionService.listByProject(data.project.id);
+      __jait_capture(2, (projectChats));
+      __jait_capture(3, (projectChats[0]?.id), (currentChat.id));
+
+      // ...and it was actually assigned to the project.
+      __jait_capture(4, (data.assigned));
+      __jait_capture(5, (data.session.projectId), (data.project.id));
+      const refetched = sessionService.getById(currentChat.id, user.id);
+      __jait_capture(6, (refetched?.projectId), (data.project.id));
+      __jait_capture(7, (refetched?.projectPath));
+
+      // The turn runs inside the reused chat, in the project's directory.
+      const threads = threadService.listBySession(currentChat.id);
+      __jait_capture(8, (threads));
+      __jait_capture(9, (threads[0]?.workingDirectory));
+      __jait_capture(10, (threads[0]?.status));
+      __jait_capture(11, (provider.sendTurnCalls));
+
+      // Clients are told the chat moved into the project.
+      __jait_capture(12, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
@@ -272,97 +475,98 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
+    };
+  }
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
   return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
     ...overrides,
-  } as unknown as SandboxManager;
+  };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
-      startLinuxDesktopSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-linux-desktop-sb-test",
-          novncUrl: "http://127.0.0.1:6081/vnc_lite.html",
-          vncPort: 5901,
-          novncPort: 6081,
-          cdpUrl: "http://127.0.0.1:9224",
-        };
-      },
-    }));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-3", "password");
+      const tool = createProjectMessageTool({
+        projectService: new ProjectService(db),
+        sessionService: new SessionService(db),
+        threadService: new ThreadService(db),
+        providerRegistry: new ProviderRegistry(),
+        userService,
+      });
 
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
-    __jait_capture(3, (tool.parameters.properties));
-
-    const result = await tool.execute(
-      {
-        screenRes: "1280x720x24",
-        mountMode: "read-write",
-        networkEnabled: false,
-        novncPort: 6081,
-        vncPort: 5901,
-        cdpPort: 9224,
-        waitForCdp: false,
-        hostGateway: true,
-      },
-      baseContext,
-    );
-
-    __jait_capture(4, (calls), ([
-      {
-        projectRoot: testProject,
-        screenRes: "1280x720x24",
-        mountMode: "read-write",
-        networkEnabled: false,
-        novncPort: 6081,
-        vncPort: 5901,
-        cdpPort: 9224,
-        waitForCdp: false,
-        hostGateway: true,
-      },
-    ]));
-    __jait_capture(5, (result.ok));
-    __jait_capture(6, (result.data));
+      const result = await tool.execute({ projectRoot: "/tmp/whatever" }, makeContext(user.id));
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.message));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
@@ -373,136 +577,98 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
+    };
+  }
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
   return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
     ...overrides,
-  } as unknown as SandboxManager;
+  };
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
-      startLinuxDesktopSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-linux-desktop-sb-test",
-          novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-          vncPort: 5900,
-          novncPort: 6080,
-        };
-      },
-    }));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-4", "password");
+      const tool = createProjectMessageTool({
+        projectService: new ProjectService(db),
+        sessionService: new SessionService(db),
+        threadService: new ThreadService(db),
+        providerRegistry: new ProviderRegistry(),
+        userService,
+      });
 
-    await tool.execute({}, baseContext);
-
-    __jait_capture(0, (calls[0]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const calls: string[] = [];
-    const tool = createLinuxDesktopSandboxStopTool(fakeManager({
-      stopLinuxDesktopSandbox: async (name) => {
-        calls.push(name);
-      },
-    }));
-
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.required));
-
-    const result = await tool.execute(
-      { containerName: "jait-linux-desktop-sb-test" },
-      baseContext,
-    );
-
-    __jait_capture(2, (calls));
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, (result.data));
+      const result = await tool.execute({ message: "hello" }, makeContext(user.id));
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.message));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 

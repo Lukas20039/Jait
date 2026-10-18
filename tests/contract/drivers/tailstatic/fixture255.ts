@@ -1,14 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/catalog-tools.test.ts; expected literals are in tail_static.rs.
-
-import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
-import type { ToolContext, ToolDefinition } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/agent-message-tool.test.ts; expected literals are in tail_static.rs.
+import { createAgentMessageTool } from "../../../../packages/gateway/src/tools/agent-message-tool.js";
+import { createSwarmRound, endSwarmRound } from "../../../../packages/gateway/src/tools/swarm-mailbox.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/catalog-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-message-tool.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,41 +33,31 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_15_3": {
+case "tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_14_3": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const baseContext: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/repo",
+  requestedBy: "test",
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    const catalog = createJaitCatalogTool(registry);
-    registry.register(catalog);
-    registry.register(stub("agent.profiles"));
-    registry.register(stub("agent.profiles.inspect"));
-    let result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(0, ((result.data as any).pages[0].tools.map((t: any) => t.name)));
-    registry.register({ ...stub("my.new.tool"), page: "agents" });
-    result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(1, ((result.data as any).pages[0].tools.map((t: any) => t.name)));
-    registry.unregister("agent.profiles");
-    result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(2, ((result.data as any).pages[0].features[0].missingToolRefs));
-    __jait_capture(3, ((result.data as any).matches.map((t: any) => t.name)));
+    const tool = createAgentMessageTool();
+    const result = await tool.execute({}, baseContext);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 
@@ -80,30 +68,32 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_31_3": {
+case "tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_21_3": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const baseContext: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/repo",
+  requestedBy: "test",
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register(stub("agent.profiles"));
-    const catalog = createJaitCatalogTool(registry);
-    const data = (await catalog.execute({ query: "Scrum team" }, context)).data as any;
-    __jait_capture(0, (data.pages[0].id));
-    __jait_capture(1, (data.matches));
-    __jait_capture(2, (data.pageLinks[0]));
-    const all = (await catalog.execute({}, context)).data as any;
-    __jait_capture(3, (all.pages), (JAIT_PAGE_IDS.length));
-    __jait_capture(4, (all.matches));
+    createSwarmRound("round-1", 2);
+    try {
+      const tool = createAgentMessageTool();
+      const result = await tool.execute(
+        {},
+        { ...baseContext, swarmRoundId: "round-1", swarmParticipant: "Research Specialist" },
+      );
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.message));
+    } finally {
+      endSwarmRound("round-1");
+    }
   
 })();
 
@@ -114,33 +104,46 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_43_3": {
+case "tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_36_3": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const baseContext: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/repo",
+  requestedBy: "test",
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register({ ...stub("edit", "filesystem"), tier: "core" });
-    registry.register(stub("agent.profiles"));
-    const catalog = createJaitCatalogTool(registry);
-    registry.register(catalog);
-    __jait_capture(0, (registry.listForMcp().map((t) => t.name)));
-    const data = (await catalog.execute({ pageId: "chat" }, { ...context, requestedBy: "mcp-client" })).data as any;
-    __jait_capture(1, (data.pages[0].tools.map((t: any) => t.name)));
-    const changed = await registry.execute("agent.profiles", {}, context);
-    __jait_capture(2, (changed.data));
-    registry.register(stub("custom.adapter", "external"));
-    const settings = (await catalog.execute({ pageId: "settings" }, context)).data as any;
-    __jait_capture(3, (settings.pages[0].tools.map((t: any) => t.name)));
+    createSwarmRound("round-2", 2);
+    try {
+      const tool = createAgentMessageTool();
+
+      const posted = await tool.execute(
+        { note: "found the bug in auth.ts" },
+        { ...baseContext, swarmRoundId: "round-2", swarmParticipant: "Research Specialist" },
+      );
+      __jait_capture(0, (posted.ok));
+      __jait_capture(1, (posted.message));
+
+      const peeked = await tool.execute(
+        {},
+        { ...baseContext, swarmRoundId: "round-2", swarmParticipant: "Fix Specialist" },
+      );
+      __jait_capture(2, (peeked.ok));
+      __jait_capture(3, (peeked.message));
+
+      const posted2 = await tool.execute(
+        { note: "patched, running tests" },
+        { ...baseContext, swarmRoundId: "round-2", swarmParticipant: "Fix Specialist" },
+      );
+      __jait_capture(4, (posted2.message));
+    } finally {
+      endSwarmRound("round-2");
+    }
   
 })();
 
@@ -151,36 +154,28 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_58_3": {
+case "tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_67_3": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const baseContext: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/repo",
+  requestedBy: "test",
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    for (let index = 0; index < 20; index++) registry.register(stub(`agent.profiles.custom${index}`));
-    registry.register({ ...stub("agent.profiles.huge"), parameters: { type: "object", properties: {
-      payload: { type: "string", description: "x".repeat(50_000) },
-    } } });
-    const catalog = createJaitCatalogTool(registry);
-    const first = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(0, ((first.data as any).pages[0]));
-    __jait_capture(1, ((first.data as any).pages[0].tools));
-    const next = await catalog.execute({ pageId: "agents", toolOffset: 15 }, context);
-    __jait_capture(2, ((next.data as any).pages[0].tools));
-    __jait_capture(3, ((next.data as any).schemaLookupRequired));
-    const content = mcpContentForToolResult(next);
-    const text = (content[0] as { text: string }).text;
-    __jait_capture(4, (text.length));
-    __jait_thrown(5, () => JSON.parse(text.slice(text.indexOf("{"))));
+    createSwarmRound("round-3", 1);
+    try {
+      const tool = createAgentMessageTool();
+      const result = await tool.execute({ note: "hi" }, { ...baseContext, swarmRoundId: "round-3" });
+      __jait_capture(0, (result.message));
+    } finally {
+      endSwarmRound("round-3");
+    }
   
 })();
 

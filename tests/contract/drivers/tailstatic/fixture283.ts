@@ -1,27 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/project-message-tool.test.ts; expected literals are in tail_static.rs.
-import { EventEmitter } from "node:events";
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import type {
-  CliProviderAdapter,
-  ProviderEvent,
-  ProviderInfo,
-  ProviderSession,
-  StartSessionOptions,
-} from "../../../../packages/gateway/src/providers/contracts.js";
-import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
-import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { createProjectMessageTool } from "../../../../packages/gateway/src/tools/project-message-tool.js";
+// Translated fixture from packages/gateway/src/tools/memory-tools.test.ts; expected literals are in tail_static.rs.
+import type { MemoryEntry, MemoryService, SaveMemoryInput } from "../../../../packages/gateway/src/memory/contracts.js";
+import type { ReminderRow, ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { vi } from '../tailmock.ts';
+import { createMemoryForgetTool, createMemoryHygieneTool, createMemoryListTool, createMemoryReviewChatsTool, createMemorySaveTool, createMemorySearchTool, createMemoryUpdateTool } from "../../../../packages/gateway/src/tools/memory-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-message-tool.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/memory-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -48,78 +34,48 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3": {
 
 
-class MockThreadProvider implements CliProviderAdapter {
-  readonly info: ProviderInfo;
-  private emitter = new EventEmitter();
-  lastStartOptions: StartSessionOptions | null = null;
-  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
-
-  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
-    this.info = {
-      id,
-      name: `Mock ${id}`,
-      description: "Test provider",
-      available: true,
-      modes: ["full-access", "supervised"],
-    };
-  }
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.lastStartOptions = options;
-    const sessionId = "mock-session-1";
-    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
-    return {
-      id: sessionId,
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sendTurnCalls.push({ sessionId, message });
-  }
-
-  async interruptTurn(): Promise<void> {
-    return;
-  }
-
-  async respondToApproval(): Promise<void> {
-    return;
-  }
-
-  async stopSession(): Promise<void> {
-    return;
-  }
-
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
   return {
-    sessionId: "originating-session",
-    actionId: "action-1",
-    projectRoot: "/tmp/originating-project",
-    requestedBy: "test",
-    userId,
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -128,65 +84,33 @@ function makeContext(userId: string, overrides: Partial<ToolContext> = {}): Tool
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const userService = new UserService(db);
-      const user = userService.createUser("cross-project-user", "password");
-      const projectService = new ProjectService(db);
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      const providerRegistry = new ProviderRegistry();
-      const provider = new MockThreadProvider("codex");
-      providerRegistry.register(provider);
-      const broadcastToUser = vi.fn();
-      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
+    const created = reminder();
+    const reminders = {
+      create: (params: { content: string; userId?: string; sessionId?: string | null }) => ({
+        ...created,
+        content: params.content,
+        userId: params.userId ?? null,
+        sessionId: params.sessionId ?? null,
+      }),
+    } as unknown as ReminderService;
+    const memory = {
+      save: async (input: SaveMemoryInput) => memoryEntry({ content: input.content }),
+      list: async () => [],
+    } as unknown as MemoryService;
+    const tool = createMemorySaveTool(memory, reminders);
 
-      const tool = createProjectMessageTool({
-        projectService,
-        sessionService,
-        threadService,
-        providerRegistry,
-        userService,
-        ws,
-      });
+    const result = await tool.execute({
+      kind: "reminder",
+      scope: "project",
+      content: "Remember this",
+      sourceType: "agent",
+      sourceId: "action-1",
+      sourceSurface: "chat",
+    }, context);
 
-      const result = await tool.execute(
-        {
-          projectRoot: "/tmp/other-project",
-          message: "The nightly build failed — please investigate.",
-          providerId: "codex",
-        },
-        makeContext(user.id),
-      );
-
-      __jait_capture(0, (result.ok));
-      const data = result.data as {
-        project: { id: string; rootPath: string | null };
-        session: { id: string; projectId: string | null };
-      };
-      __jait_capture(1, (data.project.rootPath));
-      __jait_capture(2, (data.session.projectId), (data.project.id));
-      __jait_capture(3, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
-      __jait_capture(4, (broadcastToUser.mock.calls), ([user.id,data.project.id]));
-      __jait_capture(5, (broadcastToUser.mock.calls), ([user.id,data.project.id,data.session.id]));
-
-      // The message actually reached the provider as a turn.
-      __jait_capture(6, (provider.sendTurnCalls));
-      __jait_capture(7, (provider.sendTurnCalls[0]?.message));
-
-      // A real thread was created in the target project's working directory.
-      const threads = threadService.listBySession(data.session.id);
-      __jait_capture(8, (threads));
-      __jait_capture(9, (threads[0]?.workingDirectory));
-      __jait_capture(10, (threads[0]?.status));
-
-      // Re-using the same project root resolves the same project (no duplicate).
-      const projects = projectService.list(undefined, user.id);
-      __jait_capture(11, (projects.filter((p) => p.rootPath === "/tmp/other-project")));
-    } finally {
-      sqlite.close();
-    }
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.data));
   
 })();
 
@@ -197,71 +121,41 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3": {
 
 
-class MockThreadProvider implements CliProviderAdapter {
-  readonly info: ProviderInfo;
-  private emitter = new EventEmitter();
-  lastStartOptions: StartSessionOptions | null = null;
-  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
-
-  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
-    this.info = {
-      id,
-      name: `Mock ${id}`,
-      description: "Test provider",
-      available: true,
-      modes: ["full-access", "supervised"],
-    };
-  }
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.lastStartOptions = options;
-    const sessionId = "mock-session-1";
-    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
-    return {
-      id: sessionId,
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sendTurnCalls.push({ sessionId, message });
-  }
-
-  async interruptTurn(): Promise<void> {
-    return;
-  }
-
-  async respondToApproval(): Promise<void> {
-    return;
-  }
-
-  async stopSession(): Promise<void> {
-    return;
-  }
-
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
   return {
-    sessionId: "originating-session",
-    actionId: "action-1",
-    projectRoot: "/tmp/originating-project",
-    requestedBy: "test",
-    userId,
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -270,47 +164,22 @@ function makeContext(userId: string, overrides: Partial<ToolContext> = {}): Tool
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const userService = new UserService(db);
-      const user = userService.createUser("cross-project-user-2", "password");
-      const projectService = new ProjectService(db);
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      const providerRegistry = new ProviderRegistry();
-      providerRegistry.register(new MockThreadProvider("codex"));
+    const memory = {
+      list: async () => [memoryEntry()],
+      search: async () => [memoryEntry()],
+    } as unknown as MemoryService;
+    const reminders = {
+      list: () => [reminder()],
+    } as unknown as ReminderService;
+    const tool = createMemorySearchTool(memory, reminders);
 
-      const existingProject = projectService.create({
-        userId: user.id,
-        title: "Existing Project",
-        rootPath: "/tmp/existing-project",
-        nodeId: "gateway",
-      });
+    const result = await tool.execute({ query: "remember", limit: 3 }, context);
 
-      const tool = createProjectMessageTool({
-        projectService,
-        sessionService,
-        threadService,
-        providerRegistry,
-        userService,
-      });
-
-      const result = await tool.execute(
-        {
-          projectId: existingProject.id,
-          message: "Please check the flaky test.",
-          providerId: "codex",
-        },
-        makeContext(user.id),
-      );
-
-      __jait_capture(0, (result.ok));
-      const data = result.data as { project: { id: string } };
-      __jait_capture(1, (data.project.id), (existingProject.id));
-    } finally {
-      sqlite.close();
-    }
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (result.message));
+    __jait_capture(4, (result.message));
   
 })();
 
@@ -321,71 +190,41 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3": {
 
 
-class MockThreadProvider implements CliProviderAdapter {
-  readonly info: ProviderInfo;
-  private emitter = new EventEmitter();
-  lastStartOptions: StartSessionOptions | null = null;
-  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
-
-  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
-    this.info = {
-      id,
-      name: `Mock ${id}`,
-      description: "Test provider",
-      available: true,
-      modes: ["full-access", "supervised"],
-    };
-  }
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.lastStartOptions = options;
-    const sessionId = "mock-session-1";
-    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
-    return {
-      id: sessionId,
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sendTurnCalls.push({ sessionId, message });
-  }
-
-  async interruptTurn(): Promise<void> {
-    return;
-  }
-
-  async respondToApproval(): Promise<void> {
-    return;
-  }
-
-  async stopSession(): Promise<void> {
-    return;
-  }
-
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
   return {
-    sessionId: "originating-session",
-    actionId: "action-1",
-    projectRoot: "/tmp/originating-project",
-    requestedBy: "test",
-    userId,
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -394,77 +233,20 @@ function makeContext(userId: string, overrides: Partial<ToolContext> = {}): Tool
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const userService = new UserService(db);
-      const user = userService.createUser("cross-project-user-live", "password");
-      const projectService = new ProjectService(db);
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      const providerRegistry = new ProviderRegistry();
-      // thread.control falls back to the user's last-selected provider ("jait").
-      const provider = new MockThreadProvider("jait");
-      providerRegistry.register(provider);
-      const broadcastToUser = vi.fn();
-      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
+    const reminders = {
+      list: (options: { userId?: string; status?: string; limit?: number }) => [reminder({
+        userId: options.userId ?? null,
+        status: options.status === "archived" ? "archived" : "active",
+      })],
+    } as unknown as ReminderService;
+    const tool = createMemoryListTool(reminders);
 
-      // The chat the caller is currently in — NOT part of any project yet.
-      const currentChat = sessionService.create({ userId: user.id, name: "My Chat" });
+    const result = await tool.execute({ status: "archived", limit: 10 }, context);
 
-      const existingProject = projectService.create({
-        userId: user.id,
-        title: "Target Project",
-        rootPath: "/tmp/target-project",
-        nodeId: "gateway",
-      });
-
-      const tool = createProjectMessageTool({
-        projectService,
-        sessionService,
-        threadService,
-        providerRegistry,
-        userService,
-        ws,
-      });
-
-      const result = await tool.execute(
-        { projectId: existingProject.id, message: "Look into the failing deploy." },
-        makeContext(user.id, { sessionId: currentChat.id }),
-      );
-
-      __jait_capture(0, (result.ok));
-      const data = result.data as {
-        project: { id: string };
-        session: { id: string; projectId: string | null };
-        assigned: boolean;
-      };
-
-      // The SAME chat is used — no new chat was created.
-      __jait_capture(1, (data.session.id), (currentChat.id));
-      const projectChats = sessionService.listByProject(data.project.id);
-      __jait_capture(2, (projectChats));
-      __jait_capture(3, (projectChats[0]?.id), (currentChat.id));
-
-      // ...and it was actually assigned to the project.
-      __jait_capture(4, (data.assigned));
-      __jait_capture(5, (data.session.projectId), (data.project.id));
-      const refetched = sessionService.getById(currentChat.id, user.id);
-      __jait_capture(6, (refetched?.projectId), (data.project.id));
-      __jait_capture(7, (refetched?.projectPath));
-
-      // The turn runs inside the reused chat, in the project's directory.
-      const threads = threadService.listBySession(currentChat.id);
-      __jait_capture(8, (threads));
-      __jait_capture(9, (threads[0]?.workingDirectory));
-      __jait_capture(10, (threads[0]?.status));
-      __jait_capture(11, (provider.sendTurnCalls));
-
-      // Clients are told the chat moved into the project.
-      __jait_capture(12, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
-    } finally {
-      sqlite.close();
-    }
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (result.message));
   
 })();
 
@@ -475,71 +257,41 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3": {
 
 
-class MockThreadProvider implements CliProviderAdapter {
-  readonly info: ProviderInfo;
-  private emitter = new EventEmitter();
-  lastStartOptions: StartSessionOptions | null = null;
-  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
-
-  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
-    this.info = {
-      id,
-      name: `Mock ${id}`,
-      description: "Test provider",
-      available: true,
-      modes: ["full-access", "supervised"],
-    };
-  }
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.lastStartOptions = options;
-    const sessionId = "mock-session-1";
-    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
-    return {
-      id: sessionId,
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sendTurnCalls.push({ sessionId, message });
-  }
-
-  async interruptTurn(): Promise<void> {
-    return;
-  }
-
-  async respondToApproval(): Promise<void> {
-    return;
-  }
-
-  async stopSession(): Promise<void> {
-    return;
-  }
-
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
   return {
-    sessionId: "originating-session",
-    actionId: "action-1",
-    projectRoot: "/tmp/originating-project",
-    requestedBy: "test",
-    userId,
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -548,25 +300,20 @@ function makeContext(userId: string, overrides: Partial<ToolContext> = {}): Tool
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const userService = new UserService(db);
-      const user = userService.createUser("cross-project-user-3", "password");
-      const tool = createProjectMessageTool({
-        projectService: new ProjectService(db),
-        sessionService: new SessionService(db),
-        threadService: new ThreadService(db),
-        providerRegistry: new ProviderRegistry(),
-        userService,
-      });
+    const reminders = {
+      update: (id: string, params: { content?: string; status?: string }, userId?: string) => reminder({
+        id,
+        userId: userId ?? null,
+        content: params.content ?? "Reminder",
+        status: params.status === "archived" ? "archived" : "active",
+      }),
+    } as unknown as ReminderService;
+    const tool = createMemoryUpdateTool(reminders);
 
-      const result = await tool.execute({ projectRoot: "/tmp/whatever" }, makeContext(user.id));
-      __jait_capture(0, (result.ok));
-      __jait_capture(1, (result.message));
-    } finally {
-      sqlite.close();
-    }
+    const result = await tool.execute({ id: "reminder-1", content: "Updated", status: "archived" }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
   
 })();
 
@@ -577,71 +324,41 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3": {
 
 
-class MockThreadProvider implements CliProviderAdapter {
-  readonly info: ProviderInfo;
-  private emitter = new EventEmitter();
-  lastStartOptions: StartSessionOptions | null = null;
-  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
-
-  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
-    this.info = {
-      id,
-      name: `Mock ${id}`,
-      description: "Test provider",
-      available: true,
-      modes: ["full-access", "supervised"],
-    };
-  }
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.lastStartOptions = options;
-    const sessionId = "mock-session-1";
-    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
-    return {
-      id: sessionId,
-      providerId: this.id,
-      threadId: options.threadId,
-      status: "running",
-      runtimeMode: options.mode,
-      startedAt: new Date().toISOString(),
-    };
-  }
-
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sendTurnCalls.push({ sessionId, message });
-  }
-
-  async interruptTurn(): Promise<void> {
-    return;
-  }
-
-  async respondToApproval(): Promise<void> {
-    return;
-  }
-
-  async stopSession(): Promise<void> {
-    return;
-  }
-
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
   return {
-    sessionId: "originating-session",
-    actionId: "action-1",
-    projectRoot: "/tmp/originating-project",
-    requestedBy: "test",
-    userId,
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -650,25 +367,150 @@ function makeContext(userId: string, overrides: Partial<ToolContext> = {}): Tool
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const userService = new UserService(db);
-      const user = userService.createUser("cross-project-user-4", "password");
-      const tool = createProjectMessageTool({
-        projectService: new ProjectService(db),
-        sessionService: new SessionService(db),
-        threadService: new ThreadService(db),
-        providerRegistry: new ProviderRegistry(),
-        userService,
-      });
+    const memory = {
+      list: async () => [],
+      forget: async () => false,
+    } as unknown as MemoryService;
+    const reminders = {
+      delete: () => true,
+    } as unknown as ReminderService;
+    const tool = createMemoryForgetTool(memory, reminders);
 
-      const result = await tool.execute({ message: "hello" }, makeContext(user.id));
-      __jait_capture(0, (result.ok));
-      __jait_capture(1, (result.message));
-    } finally {
-      sqlite.close();
-    }
+    const result = await tool.execute({ id: "reminder-1" }, context);
+
+    __jait_capture(0, (result));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let receivedUserId: string | undefined;
+    const reminders = {
+      runHygiene: (userId?: string) => {
+        receivedUserId = userId;
+        return { archived: 1, flagged: 2 };
+      },
+    } as unknown as ReminderService;
+    const tool = createMemoryHygieneTool(reminders);
+
+    const result = await tool.execute({ userId: "other-user" } as never, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (receivedUserId));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let received: { userId?: string; limit?: number } = {};
+    const reminders = {
+      scanOldChatsForMemory: (userId?: string, limit?: number) => {
+        received = { userId, limit };
+        return { scanned: 3, created: 1 };
+      },
+    } as unknown as ReminderService;
+    const tool = createMemoryReviewChatsTool(reminders);
+
+    const result = await tool.execute({ userId: "other-user", limit: 25 } as { limit?: number }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (received));
   
 })();
 

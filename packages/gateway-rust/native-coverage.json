@@ -1,0 +1,683 @@
+{
+  "format": 1,
+  "inventory": "tests/contract/coverage.json",
+  "inventory_total": 361,
+  "metric": "Equal weight per inventoried gateway source component with native implementation and reviewed focused contracts; not an estimate of effort or cutover readiness.",
+  "components": [
+    {
+      "reference": "packages/gateway/src/routes/health.ts",
+      "reference_sha256": "3dd84cafc344f3ce971a82c1f594b1525f26d7513f578a40feb61350c5d942ad",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/health.rs",
+        "packages/gateway-rust/src/runtime/server.rs",
+        "packages/gateway-rust/src/lib.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust.rs",
+        "tests/contract/drivers/nativehealth.ts"
+      ],
+      "targets": [
+        "gateway_rust"
+      ],
+      "review": "Health shape, provider branches, nullable and omitted fields, real HTTP, native lifecycle and configuration. Uptime alone is normalized."
+    },
+    {
+      "reference": "packages/gateway/src/state-directory.ts",
+      "reference_sha256": "4db8594365f86f95eb31c8acd68abecff6a76288e1368614f1774cf74a5f4944",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/state_directory.rs",
+        "packages/gateway-rust/src/text.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_storage.rs",
+        "tests/contract/drivers/nativestorage.ts"
+      ],
+      "targets": [
+        "gateway_rust_storage"
+      ],
+      "review": "State path and explicit DB path precedence, test-mode refusal and ECMAScript whitespace. Platform-specific path rules still need supported-platform validation."
+    },
+    {
+      "reference": "packages/gateway/src/db/uuidv7.ts",
+      "reference_sha256": "78406d61c0f4953e4582b69c6577299cd2691251ba39bd82e13dae4fbe061875",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/db/identifiers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_storage.rs",
+        "tests/contract/drivers/nativestorage.ts"
+      ],
+      "targets": [
+        "gateway_rust_storage"
+      ],
+      "review": "Exact UUID bytes under deterministic timestamp/entropy and UUIDv7 random uniqueness/layout."
+    },
+    {
+      "reference": "packages/gateway/src/db/connection.ts",
+      "reference_sha256": "f5f227422e0d9e23f05afcced86f15581b6fc8611b021d007540b3f0b5563ea5",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/db/mod.rs",
+        "packages/gateway-rust/src/db/migrations.rs",
+        "packages/gateway-rust/src/state_directory.rs",
+        "packages/gateway-rust/src/db/migrations.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_storage.rs",
+        "tests/contract/drivers/nativestorage.ts"
+      ],
+      "targets": [
+        "gateway_rust_storage"
+      ],
+      "review": "WAL, foreign keys and sync settings, migration error tracking, repair idempotence, rollback, backup and TypeScript reopen."
+    },
+    {
+      "reference": "packages/gateway/src/db/migrations.ts",
+      "reference_sha256": "6a5c9c35b52c25b583d245ee324707704e0f1a9e37f4a34aa7b86d1cdd5c62f7",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/db/migrations.rs",
+        "packages/gateway-rust/src/db/migrations.json",
+        "packages/gateway-rust/src/db/identifiers.rs",
+        "packages/gateway-rust/src/text.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_storage.rs",
+        "tests/contract/drivers/nativestorage.ts"
+      ],
+      "targets": [
+        "gateway_rust_storage"
+      ],
+      "review": "Every current-definition prefix 0..75 matches schema and populated workspace/session state; repository dedup/owner uniqueness and JSON-null failure. Historical released-schema corpus and platform recovery remain replacement gates."
+    },
+    {
+      "reference": "packages/gateway/src/security/http-auth.ts",
+      "reference_sha256": "78d20d47af2d2370631eb0fec3fc193d7b33889a26d9f04fe01132adb230e5f5",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/http_auth.rs",
+        "packages/gateway-rust/src/text.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_auth.rs",
+        "tests/contract/drivers/nativeauth.ts"
+      ],
+      "targets": [
+        "gateway_rust_auth"
+      ],
+      "review": "Bidirectional signed tokens, exact public paths and bearer parsing, missing/invalid/expired/not-yet-valid tokens, NumericDate types, purpose truthiness, HS256-only signatures, critical headers, cookie precedence and 401 responses. Signed duplicate b64 critical entries are accepted by the reference and retained; unsupported critical names and unencoded critical payloads are rejected."
+    },
+    {
+      "reference": "packages/gateway/src/security/ownership.ts",
+      "reference_sha256": "9f2999fea4032faabc55fbf2ad2a12b2d15c61037aa76bc61af607d51a85e463",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/ownership.rs",
+        "packages/gateway-rust/src/text.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_auth.rs",
+        "tests/contract/drivers/nativeauth.ts"
+      ],
+      "targets": [
+        "gateway_rust_auth"
+      ],
+      "review": "Missing, null-owned and foreign resources receive the same 404/error response; exact-owner resources succeed."
+    },
+    {
+      "reference": "packages/gateway/src/services/users.ts",
+      "reference_sha256": "ff344fbadd79bfa17a66581d7156a1fba6de61d494d43297cc01906320d7146d",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/users.rs",
+        "packages/gateway-rust/src/db/mod.rs",
+        "packages/gateway-rust/src/db/identifiers.rs",
+        "packages/gateway-rust/src/text.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_users.rs",
+        "tests/contract/drivers/nativeusers.ts",
+        "packages/gateway/src/services/users-password.test.ts"
+      ],
+      "targets": [
+        "gateway_rust_users"
+      ],
+      "review": "User lookup, Unicode normalization, fixed scrypt parameters and TS reopen of Rust credentials, malformed stored hashes rejected in both backends after a reproduced reference fix, owner-only hashed expiring/single-use invitations, settings defaults/malformed JSON/null patches/user isolation, last selection, internal session binding and owned archive cleanup. Internal binding must receive route-level authorization before any route is enabled. Foundation review 2026-10-18: reference binding now uses an atomic conditional UPDATE; native SQL matches. Focused repository contract verifies unowned claim, foreign-owner denial and same-owner idempotence; auth HTTP foreign-binding case also passed. No new component credit."
+    },
+    {
+      "reference": "packages/gateway/src/routes/auth.ts",
+      "reference_sha256": "4705ba74452535f06c52c5c1f781663f8c2f9fb77e2d2a40175f21b7be7ed1cf",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/db/worker.rs",
+        "packages/gateway-rust/src/runtime/blocking.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_http.rs",
+        "tests/contract/drivers/nativehttp.ts"
+      ],
+      "targets": [
+        "gateway_rust_http"
+      ],
+      "review": "All account route families over real HTTP: login/register/refresh/logout cookies, owner-only invitations, expiry and one-time use, settings filtering/nulls/model limits, tool locks, environment status, archived cleanup, session binding, deleted users and origin denials. Explicit database/secret configuration; production startup remains gated."
+    },
+    {
+      "reference": "packages/gateway/src/security/request-origin.ts",
+      "reference_sha256": "c32f2759a78a0d3a14714e8eb635788836221ef08150f550f092b69f8c363973",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/request_origin.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_http.rs",
+        "tests/contract/drivers/nativehttp.ts"
+      ],
+      "targets": [
+        "gateway_rust_http"
+      ],
+      "review": "Exact URL-origin comparison, same host, configured origins, native clients, desktop/mobile origins, rejected malformed/null/path/credentials/noncanonical URL origins and real HTTP origin denials."
+    },
+    {
+      "reference": "packages/gateway/src/security/ssrf-guard.ts",
+      "reference_sha256": "499b41da0b48973d28c73c4121bae7250085a9b2cf15b7e9d32b0380a3c415d6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/ssrf_guard.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_security.rs",
+        "tests/contract/drivers/nativesecurity.ts"
+      ],
+      "targets": [
+        "gateway_rust_security"
+      ],
+      "review": "Protocol and allowlist precedence, URL normalization, all IPv4 private/reserved subnet boundaries and IPv4-mapped forms, IPv6 private/link-local/multicast/documentation, localhost and explicit private override. Preserves syntactic reference behavior only; DNS, redirects and connection pinning remain transport gates."
+    },
+    {
+      "reference": "packages/gateway/src/security/preview-token.ts",
+      "reference_sha256": "a25ad80ecfd2f05cef66a3414dfc6378f4c8fb8706b2dcabee0f43a9a477ad16",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/preview_token.rs",
+        "packages/gateway-rust/src/security/http_auth.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_security.rs",
+        "tests/contract/drivers/nativesecurity.ts"
+      ],
+      "targets": [
+        "gateway_rust_security"
+      ],
+      "review": "Bidirectional HS256 tokens, exact one-hour expiry, subject/resource/purpose type boundaries, empty subjects, original secret bytes, empty-key rejection, NumericDates and critical headers; preview tokens cannot authenticate sessions and session tokens cannot authorize previews."
+    },
+    {
+      "reference": "packages/gateway/src/security/trust-engine.ts",
+      "reference_sha256": "014849dea8e89d77e0bb67eb64ec3eff2748ebaf0f23b469c9960b53ec3d66b5",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/trust_engine.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_state.rs",
+        "tests/contract/drivers/nativestate.ts"
+      ],
+      "targets": [
+        "gateway_rust_state"
+      ],
+      "review": "Memory and SQLite trust thresholds 0/3/10/25, per-action state, reverts/reset, insertion order, reopen, nullable defaults, level clamping, cached reads and non-fatal persistence failures compared with production reference."
+    },
+    {
+      "reference": "packages/gateway/src/services/node-credentials.ts",
+      "reference_sha256": "81100ba4f9e6eeb5bd4de131870c4e032b612e75c85492f4a3da20e5948d341f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/node_credentials.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_state.rs",
+        "tests/contract/drivers/nativestate.ts"
+      ],
+      "targets": [
+        "gateway_rust_state"
+      ],
+      "review": "Memory and SQLite ownership/binding, foreign claims, random credential shape, SHA256-only storage, rejection of unknown tokens, per-node revocation, reopen and owner revalidation; missing-node database behavior is retained. No native node transport is exposed yet."
+    },
+    {
+      "reference": "packages/gateway/src/services/session-state.ts",
+      "reference_sha256": "970be0d190ff44aa3a0d7f9c57f8d030aefa6909b4f2e4892624b4fce8403577",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/json_state.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_state.rs",
+        "tests/contract/drivers/nativestate.ts"
+      ],
+      "targets": [
+        "gateway_rust_state"
+      ],
+      "review": "Real SQLite reads/upserts/deletes, per-session and optional-key isolation, cross-session key lookup, primitive/nested JSON, empty/invalid/nullable stored JSON and proto-key JSON behavior. Repository boundary has no route authority; HTTP adapters must authorize access."
+    },
+    {
+      "reference": "packages/gateway/src/services/project-state.ts",
+      "reference_sha256": "d791b687c2bb8273814e0b2e824df2f4294a4e09a82d780277197af880387e6f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/json_state.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_state.rs",
+        "tests/contract/drivers/nativestate.ts"
+      ],
+      "targets": [
+        "gateway_rust_state"
+      ],
+      "review": "Real SQLite project state, filtered reads and writes, fragmented UI-state migration including exact trigger and durable side effects, legacy response retention, empty-filter behavior, nullish layout precedence and truthy existing UI values."
+    },
+    {
+      "reference": "packages/gateway/src/lib/command-timeout.ts",
+      "reference_sha256": "4c9f2bdfe16eb51cd90bdd9e87d65bc6d2e0f7a680b03221acb58017941bea74",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/execution/command_timeout.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_timeout.rs",
+        "tests/contract/drivers/nativetimeout.ts"
+      ],
+      "targets": [
+        "gateway_rust_timeout"
+      ],
+      "review": "Default/cap environment parsing, invalid/zero/negative/nonfinite inputs, JavaScript coercion of strings/booleans/null/arrays/objects, base-prefixed numbers, fractional rounding and reference clamp warnings. Preserves fractional environment configuration behavior. Native terminal execution remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/services/sessions.ts",
+      "reference_sha256": "1db6ecbcaacde0b7bc5934e2da204643e63b76ab1175eb00ab65c5b31eca4462",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/sessions.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_sessions.rs",
+        "tests/contract/drivers/nativesessions.ts"
+      ],
+      "targets": [
+        "gateway_rust_sessions"
+      ],
+      "review": "Session CRUD, nullable updates, optional owner filters, project and personal scopes, list limits, monotonic activity, observed viewed acknowledgements, metadata/error UTF-16 handling, immutable history forks and transactional rollback compared against disposable production SQLite. Library operations require caller authorization; session HTTP and streaming remain unported. Legacy malformed metadata and UTF-16 truncation retain reference behavior. Nullable legacy name/status columns and invalid activity errors are covered."
+    },
+    {
+      "reference": "packages/gateway/src/lib/bounded-json.ts",
+      "reference_sha256": "236bd21482d68beee5861c8bc9cd7a485aa2850abe657fe02e6cc70ded9e80eb",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/contracts/bounded_json.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_audit.rs",
+        "tests/contract/drivers/nativeaudit.ts"
+      ],
+      "targets": [
+        "gateway_rust_audit"
+      ],
+      "review": "Exact JSON retention and ECMAScript key/number ordering; progressively bounded compaction, depth/width/byte ceilings, shared/circular object identities, BigInt and undefined handling, UTF-16 surrogate-safe truncation, invalid serialized JSON fallback. Native JSON graph API represents non-JSON programmatic inputs without unsafe code. Finite integer storage budgets are typed at native boundaries."
+    },
+    {
+      "reference": "packages/gateway/src/services/audit.ts",
+      "reference_sha256": "a87bfe440c7711f50097b2e3f7ce41e19fb7ab9b6c33629ddaf7971d7a0b2389",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/audit.rs",
+        "packages/gateway-rust/src/contracts/bounded_json.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_audit.rs",
+        "tests/contract/drivers/nativeaudit.ts"
+      ],
+      "targets": [
+        "gateway_rust_audit"
+      ],
+      "review": "Disposable migrated SQLite comparisons for audit insertion, nullable optional fields, false/zero/empty values, 128000-byte field budgets, action lookup, per-session and all-record timestamp order, and persisted raw rows. Redaction and authorization remain caller responsibilities as in the reference; no live audit state is accessed."
+    },
+    {
+      "reference": "packages/gateway/src/scheduler/hooks.ts",
+      "reference_sha256": "8dfe55835f2654dcb48d958671e55ada80f4cce379ca0c12af4abfd80c27b611",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/scheduler/hooks.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_hooks.rs",
+        "tests/contract/drivers/nativehooks.ts"
+      ],
+      "targets": [
+        "gateway_rust_hooks"
+      ],
+      "review": "Ordered handler identities, deduplication, wildcard matching, unsubscribe, mutation during emission, nested events and handler failure propagation compared with production HookBus. Built-in bootstrap file order, project/default roots, invalid UTF-8 decoding, missing files and read errors compared on disposable project-local files. Subscription tombstones are reclaimed outside active emissions; built-in reads require a blocking worker. Scheduler jobs and production lifecycle integration remain unported."
+    },
+    {
+      "reference": "packages/gateway/src/services/projects.ts",
+      "reference_sha256": "809a2c185560f1614b225e3f5a0538174b87d316eaac727953bb70543a5cc11a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/projects.rs",
+        "packages/gateway-rust/src/services/sessions.rs",
+        "packages/gateway-rust/src/contracts/bounded_json.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_projects.rs",
+        "tests/contract/drivers/nativeprojects.ts"
+      ],
+      "targets": [
+        "gateway_rust_projects"
+      ],
+      "review": "Disposable SQLite comparison of create/read/update, null patches, root-derived kind, colors, optional ownership, limits, ancestor-preserving pagination with owned sessions, search and counts, directory adoption, move cycle/depth rejection, instruction inheritance and exact UTF-16 truncation, repository metadata, subtree archive/restore/delete and SQLite trigger partial failures. Legacy nullable columns and cycle guards are covered. Library caller authorization remains required; project/session HTTP adapters and streaming are not credited."
+    },
+    {
+      "reference": "packages/gateway/src/services/repositories.ts",
+      "reference_sha256": "717a8cf70b1bbfcab4443b35c4c9dc1eec6feea843a8701f1c217c3bd50dd061",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/repositories.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_automation.rs",
+        "tests/contract/drivers/nativeautomation.ts"
+      ],
+      "targets": [
+        "gateway_rust_automation"
+      ],
+      "review": "Production SQLite comparison of repository create/get/list/find/update/delete, owner/path uniqueness recovery, literal path identity, optional-owner filters, forge/legacy URL precedence, null patches, constraint errors and trigger-induced failures. Storage methods require caller ownership checks; no repository HTTP, Git or node execution is exposed."
+    },
+    {
+      "reference": "packages/gateway/src/services/repo-proposals.ts",
+      "reference_sha256": "e7293eafeab6b280032ef0ae27cc0402f766ffe721d472ce2fe8391199a7af60",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/repo_proposals.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_automation.rs",
+        "tests/contract/drivers/nativeautomation.ts"
+      ],
+      "targets": [
+        "gateway_rust_automation"
+      ],
+      "review": "Production SQLite comparison of todo/proposal CRUD, ECMAScript message trimming, nullable due dates, tags/source provenance, completion/reopen/recompletion transitions, malformed history filtering, extra-field retention, 100-entry history ceiling and atomic failed writes. Caller must authorize the repository; native DTOs accept Unicode scalar strings."
+    },
+    {
+      "reference": "packages/gateway/src/services/plans.ts",
+      "reference_sha256": "28734c36a02a490537ba6f5462c811ff7701615c29f2a87c36b8f16d6d38b1cd",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/plans.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_automation.rs",
+        "tests/contract/drivers/nativeautomation.ts"
+      ],
+      "targets": [
+        "gateway_rust_automation"
+      ],
+      "review": "Production SQLite comparison of plan CRUD, repository/user lists, draft defaults, exact task JSON persistence, malformed task JSON hydration, duplicate task IDs, per-task merge and legacy null-task failures; generated task ID shape checked. Caller must authorize the repository; native DTOs accept Unicode scalar strings."
+    },
+    {
+      "reference": "packages/gateway/src/services/node-permissions.ts",
+      "reference_sha256": "6b9f2c544ba1b60906ff6290972dfce05b42043297110fac36f348a3a49067ca",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/node_permissions.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_policy_state.rs",
+        "tests/contract/drivers/nativepolicystate.ts"
+      ],
+      "targets": [
+        "gateway_rust_policy_state"
+      ],
+      "review": "Production SQLite comparison of deny-all registration, identity preservation on repeat hello, exact capability names, explicit integer grants, unknown-key rejection, best-effort partial writes, absent/broken database failures, audit records and transactional forget rollback. Native transport and route-level node ownership enforcement remain unported; callers must authorize grant changes."
+    },
+    {
+      "reference": "packages/gateway/src/services/thread-defaults.ts",
+      "reference_sha256": "5841b6096aa13fc04679d5026463b9e16834cd05ceeedf7eba4252ba5a28f80b",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/thread_defaults.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_policy_state.rs",
+        "tests/contract/drivers/nativepolicystate.ts"
+      ],
+      "targets": [
+        "gateway_rust_policy_state"
+      ],
+      "review": "Production settings and session-state comparisons for trimmed identifiers, optional services, omitted fields, inherited provider/model/effort/runtime, invalid value shapes, 64-character reasoning-effort limits and storage error propagation. Resolver is an internal boundary; callers must authorize the user and session."
+    },
+    {
+      "reference": "packages/gateway/src/services/thread-history.ts",
+      "reference_sha256": "558ed027cf4fed5c82c7cd3ef37143f26c5c5646ca6e687cb422ee56fbbd4db4",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/thread_history.rs",
+        "packages/gateway-rust/src/contracts/bounded_json.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_replay.rs",
+        "tests/contract/drivers/nativereplay.ts"
+      ],
+      "targets": [
+        "gateway_rust_replay"
+      ],
+      "review": "Thread replay builder compared against the production TypeScript function over an explicit activity source: stable timestamp ordering and tie reversal, role/payload filtering, full-content precedence, 24-message and 12000 UTF-16-unit budgets, original-task preservation, task/location/execution checkpoints, six outcomes, latest todo, lone-surrogate truncation and source error propagation. Native activity sources supply decoded timestamps and authorization; thread storage/provider integration remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/services/static-asset-cache.ts",
+      "reference_sha256": "d957b5aaee34d1ca04c68985a53e597409baf2e8d1e8ec1e4c2b63a1ced51207",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/static_asset_cache.rs",
+        "packages/gateway-rust/src/runtime/server.rs",
+        "packages/gateway-rust/src/runtime/blocking.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_assets.rs",
+        "tests/contract/drivers/nativeassets.ts"
+      ],
+      "targets": [
+        "gateway_rust_assets"
+      ],
+      "review": "Actual Fastify/native HTTP comparisons for immutable asset names/types, querystrings, empty/binary bodies, conditional/range/non-GET fallthrough, immutable hits, missing files/directories/symlinks, 100KiB inclusive file ceiling, cached oversized misses, 256-entry LRU and 16MiB budget. Native reads have a bounded blocking lane and size-limited allocation; Unix inode checks reject replacement after metadata lookup. Cache mounting is opt-in; full frontend fallback, auth integration and supported-platform recovery remain replacement gates."
+    },
+    {
+      "reference": "packages/gateway/src/memory/sqlite-backend.ts",
+      "reference_sha256": "843f9ef5a95b602ceb5044f47124626c839acb77a553770bf9ecaa6e8af4542b",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/memory/sqlite_backend.rs",
+        "packages/gateway-rust/src/memory/entries.rs",
+        "packages/gateway-rust/src/services/storage.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_memory.rs",
+        "tests/contract/drivers/nativememory.ts"
+      ],
+      "targets": [
+        "gateway_rust_memory"
+      ],
+      "review": "Production SQLite comparison of memory save/update/list/forget/expiry, scope filtering, provenance, createdAt preservation, omitted nullable expiry, inclusive UTC expiry boundaries, no-delete listing, duplicate IDs, trigger rollback and missing tables. Unknown imported scopes and malformed expiry strings retain reference data/lexical behavior. Callers must authorize storage/project/contact access; retrieval/dedup/log export and memory HTTP/tools are unported."
+    },
+    {
+      "reference": "packages/gateway/src/memory/scoring.ts",
+      "reference_sha256": "51fe922074c0d0596796c717e5757817ddeb14d47ebff0d0f381abf946e52b62",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/memory/scoring.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_memory.rs",
+        "tests/contract/drivers/nativememory.ts"
+      ],
+      "targets": [
+        "gateway_rust_memory"
+      ],
+      "review": "Production BM25 comparisons for ASCII token boundaries, Unicode lowercasing cases, stop words, plural folding, query-term deduplication, document frequencies, length saturation, zero matches, document-order retention and a varied corpus. Floating scores use an explicit 1e-12 relative/absolute tolerance; items/tokens are exact. Callers scope the corpus before ranking; the memory retrieval engine is not credited."
+    },
+    {
+      "reference": "packages/gateway/src/memory/service.ts",
+      "reference_sha256": "3712593b3e1e5784b1ac7b209fc1328375aae3819566dd2ec01f4bc0834da92e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/memory/engine.rs",
+        "packages/gateway-rust/src/memory/entries.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_recall.rs",
+        "tests/contract/drivers/nativerecall.ts"
+      ],
+      "targets": [
+        "gateway_rust_recall"
+      ],
+      "review": "Caller-scoped engine over real SQLite: source/content replacement precedence and lexical threshold, stable creation time/provenance, inclusive expiry, relative BM25 cutoff and stable freshness ties, JS numeric slice limits, durable pre-compaction filtering/deduplication/20-fact ceiling, exact daily/curated log contents, failed storage and log writes with durable partial effects. Random IDs alone are canonicalized; raw ID layout is checked separately. Cutoff removal fails the retrieval contract; restoration passes. Freshness covers canonical ISO timestamps/date-only values and invalid dates; legacy implementation-specific Date.parse formats remain a compatibility limitation. Provider injection and HTTP/tool access remain unported."
+    },
+    {
+      "reference": "packages/gateway/src/security/control-access.ts",
+      "reference_sha256": "b72c93dbabb3258138b2c36f69ecb232cb8a2092db436fd01ab0318f1ad2320a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/control_access.rs",
+        "packages/gateway-rust/src/services/sessions.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_control.rs",
+        "tests/contract/drivers/nativecontrol.ts"
+      ],
+      "targets": [
+        "gateway_rust_control"
+      ],
+      "review": "Shared session/thread/surface/consent ownership checks: 108 user/resource combinations, owner overrides and fallback, pending-only consent, missing stores, two distinct owned default execution sessions, SQL failures. Real session storage; typed surface/consent/thread boundaries use fixture adapters. Relaxing an explicit surface owner fails the differential contract; restoration passes."
+    },
+    {
+      "reference": "packages/gateway/src/security/worktree-sandbox.ts",
+      "reference_sha256": "1cc8caa9ecf71ffae95bc28272e5749b69e719e76852c47190e00e8ea8dac8ae",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/worktree_sandbox.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_control.rs",
+        "tests/contract/drivers/nativecontrol.ts"
+      ],
+      "targets": [
+        "gateway_rust_control"
+      ],
+      "review": "Real filesystem comparisons for registered read-only common Git metadata mounts, spaces/relative pointers/CRLF/multiline markers, forged backlink/admin/common paths, colon rejection, symlink/dangling markers, ordinary checkouts and absent roots. Linux focused compatibility; platform mount execution remains a replacement gate."
+    },
+    {
+      "reference": "packages/gateway/src/services/device-registry.ts",
+      "reference_sha256": "106d0b7b101ae1c72e4086b015e03ed1307854eef1e88d965dcbe47eea6b4288",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/device_registry.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_control.rs",
+        "tests/contract/drivers/nativecontrol.ts"
+      ],
+      "targets": [
+        "gateway_rust_control"
+      ],
+      "review": "Register/reregister metadata, exact capability deduplication/order, preserved connection time, heartbeat existence/last-seen updates, stable ordering for equal canonical timestamps, count, empty IDs and Unicode. Hash lookup preserves constant-time updates."
+    },
+    {
+      "reference": "packages/gateway/src/surfaces/terminal-output.ts",
+      "reference_sha256": "f76aca5270d80e217df630b220ccd6d42f379e125d2789da90d2eb71aa02ba3f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/surfaces/terminal_output.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_terminal.rs",
+        "tests/contract/drivers/nativeterminal.ts"
+      ],
+      "targets": [
+        "gateway_rust_terminal"
+      ],
+      "review": "Retained-buffer offsets, partial-line prefix recovery, bounded command output bypassing live tail limits, end-marker trimming, empty buffers, fractional/nonfinite offsets and line limits across 218 cases. Removing command end bounds fails the same contract; restoration passes. Chunk-count input is the native nonnegative integer invariant."
+    },
+    {
+      "reference": "packages/gateway/src/tools/shell-prompt.ts",
+      "reference_sha256": "0a435556329bc1b3bff76356802697244e0cbfc14df25819e074d4e1f6f66d1f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/execution/shell_prompt.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_terminal.rs",
+        "tests/contract/drivers/nativeterminal.ts"
+      ],
+      "targets": [
+        "gateway_rust_terminal"
+      ],
+      "review": "168 shell/line pairs: PowerShell executable/path casing, host/user/path prompts, false positives and ECMAScript whitespace/line terminators. Detection only; process execution remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/routes/git-node-routing.ts",
+      "reference_sha256": "e6ae24689fcd03820e8b69104ff8a59d0510e972c73cc9fab5d4c81e0d0270de",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/nodes/git_routing.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_terminal.rs",
+        "tests/contract/drivers/nativeterminal.ts"
+      ],
+      "targets": [
+        "gateway_rust_terminal"
+      ],
+      "review": "100 routing cases: explicit gateway/remote/offline IDs, local-path precedence, Windows drive detection and platform selection, gateway filtering, empty nodes and ECMAScript trimming. Node transport execution remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/services/llm-headers.ts",
+      "reference_sha256": "a771dcf7bfde6506bd98ceed53984240e3c1d6af4a3baaf2dfc2e6a1e7edeb11",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/llm_headers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_terminal.rs",
+        "tests/contract/drivers/nativeterminal.ts"
+      ],
+      "targets": [
+        "gateway_rust_terminal"
+      ],
+      "review": "Exact base headers and Go URL/backend detection, explicit/configured/generated session precedence, repeated-config identity versus distinct configurations, empty IDs, host/path false positives. Only random UUID values canonicalized; native generated UUID version/variant verified. No requests or credentials are read from live configuration."
+    },
+    {
+      "reference": "packages/gateway/src/lib/persisted-tool-calls.ts",
+      "reference_sha256": "6817c212e5eeac13c5525c97f532e12026c194d4484161e0d4cb91f8da8ec1aa",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/persisted_tool_calls.rs",
+        "packages/gateway-rust/src/contracts/bounded_json.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_persisted.rs",
+        "tests/contract/drivers/nativepersisted.ts"
+      ],
+      "targets": [
+        "gateway_rust_persisted"
+      ],
+      "review": "Exact raw JSON retention, malformed/nonarray rejection, field type/default/optional metadata rules, three compaction passes, byte limits and floored minimum budgets, Unicode byte boundaries, metadata-only fallback and prefix truncation. Focused contracts use finite-number, well-formed Unicode JSON; JS-specific nonfinite overflow and unpaired surrogate parsing remain compatibility limits."
+    }
+  ]
+}

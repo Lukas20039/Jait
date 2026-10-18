@@ -1,0 +1,53 @@
+{
+  "review_scope": "parity-local-retry bounded source and semantics review",
+  "declarations": [
+    {
+      "id": "packages/gateway/src/routes/chat.external-providers.test.ts:544:3",
+      "status": "verified",
+      "parity_review": "Reviewed resolves supervised chat approval requests without leaving the stream open. Original body, setup, imports, lifecycle and every assertion operand match the bounded AST audit. The original waitForAssertion helper has been reviewed in full: it invokes the callback, returns only after success, catches failures between attempts and rethrows after its deadline. Retry classification requires the exact helper body, one unshadowed top-level binding and an awaited call. Four controls reject swallowing the final error, skipping the assertion and dropping await. Every observed retry, including 11 initially failing observations, has a real Vitest counterpart; each exercised site ends with a passing observation. Every observation and an opposing counterexample agree between real Vitest and Rust. Bindings, per-site counts and source hashes: .jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/parity-local-retry/combined-selected.json. Full translated, internal, managed, formatting and Clippy validation passed on the unchanged exception checkpoint. Candidate originals, peers, comparator and transport hashes also match the live checkout. The initial full report exposed a queue timing failure (expected 409, actual 200); that report and three isolated passing unmodified Vitest runs are retained in .jait/artifacts/parity-exceptions/queue-timing-observation.json. No queue assertion or application behavior was changed, and the subsequent complete full run passed. This establishes preservation of the exercised reference-test domains, not native runtime parity or absence of reference-test flakes.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_544_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/contracts/adc987e8-f0a9-4e1a-8fef-d84aed5f0189/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/routes/chat.external-providers.test.ts:893:3",
+      "status": "verified",
+      "parity_review": "Reviewed preserves a cancelled external-provider partial answer after reload. Original body, setup, imports, lifecycle and every assertion operand match the bounded AST audit. The original waitForAssertion helper has been reviewed in full: it invokes the callback, returns only after success, catches failures between attempts and rethrows after its deadline. Retry classification requires the exact helper body, one unshadowed top-level binding and an awaited call. Four controls reject swallowing the final error, skipping the assertion and dropping await. Every observed retry, including 11 initially failing observations, has a real Vitest counterpart; each exercised site ends with a passing observation. Every observation and an opposing counterexample agree between real Vitest and Rust. Bindings, per-site counts and source hashes: .jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/parity-local-retry/combined-selected.json. Full translated, internal, managed, formatting and Clippy validation passed on the unchanged exception checkpoint. Candidate originals, peers, comparator and transport hashes also match the live checkout. The initial full report exposed a queue timing failure (expected 409, actual 200); that report and three isolated passing unmodified Vitest runs are retained in .jait/artifacts/parity-exceptions/queue-timing-observation.json. No queue assertion or application behavior was changed, and the subsequent complete full run passed. This establishes preservation of the exercised reference-test domains, not native runtime parity or absence of reference-test flakes.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_893_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/contracts/adc987e8-f0a9-4e1a-8fef-d84aed5f0189/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/routes/chat.external-providers.test.ts:959:3",
+      "status": "verified",
+      "parity_review": "Reviewed clears streaming when cancellation interrupts a hung provider sendTurn request. Original body, setup, imports, lifecycle and every assertion operand match the bounded AST audit. The original waitForAssertion helper has been reviewed in full: it invokes the callback, returns only after success, catches failures between attempts and rethrows after its deadline. Retry classification requires the exact helper body, one unshadowed top-level binding and an awaited call. Four controls reject swallowing the final error, skipping the assertion and dropping await. Every observed retry, including 11 initially failing observations, has a real Vitest counterpart; each exercised site ends with a passing observation. Every observation and an opposing counterexample agree between real Vitest and Rust. Bindings, per-site counts and source hashes: .jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/parity-local-retry/combined-selected.json. Full translated, internal, managed, formatting and Clippy validation passed on the unchanged exception checkpoint. Candidate originals, peers, comparator and transport hashes also match the live checkout. The initial full report exposed a queue timing failure (expected 409, actual 200); that report and three isolated passing unmodified Vitest runs are retained in .jait/artifacts/parity-exceptions/queue-timing-observation.json. No queue assertion or application behavior was changed, and the subsequent complete full run passed. This establishes preservation of the exercised reference-test domains, not native runtime parity or absence of reference-test flakes.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_959_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/contracts/adc987e8-f0a9-4e1a-8fef-d84aed5f0189/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/routes/chat.external-providers.test.ts:1038:3",
+      "status": "verified",
+      "parity_review": "Reviewed stops a hung CLI session before restart and starts a fresh provider session. Original body, setup, imports, lifecycle and every assertion operand match the bounded AST audit. The original waitForAssertion helper has been reviewed in full: it invokes the callback, returns only after success, catches failures between attempts and rethrows after its deadline. Retry classification requires the exact helper body, one unshadowed top-level binding and an awaited call. Four controls reject swallowing the final error, skipping the assertion and dropping await. Every observed retry, including 11 initially failing observations, has a real Vitest counterpart; each exercised site ends with a passing observation. Every observation and an opposing counterexample agree between real Vitest and Rust. Bindings, per-site counts and source hashes: .jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/parity-local-retry/combined-selected.json. Full translated, internal, managed, formatting and Clippy validation passed on the unchanged exception checkpoint. Candidate originals, peers, comparator and transport hashes also match the live checkout. The initial full report exposed a queue timing failure (expected 409, actual 200); that report and three isolated passing unmodified Vitest runs are retained in .jait/artifacts/parity-exceptions/queue-timing-observation.json. No queue assertion or application behavior was changed, and the subsequent complete full run passed. This establishes preservation of the exercised reference-test domains, not native runtime parity or absence of reference-test flakes.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1038_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/parity-exceptions/source-checkpoint/.jait/artifacts/contracts/adc987e8-f0a9-4e1a-8fef-d84aed5f0189/report.json"
+        }
+      ]
+    }
+  ]
+}

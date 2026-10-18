@@ -1,10 +1,15 @@
-// Translated fixture from packages/gateway/src/services/live-view-manager.test.ts; expected literals are in tail_static.rs.
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/git-worktree-base.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, rm, mkdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { GitService } from "../../../../packages/gateway/src/services/git.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/live-view-manager.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/git-worktree-base.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -31,101 +36,298 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_live_view_manager_test_ts_26_3": {
-const startBrowserSandbox = vi.fn();
-const stopContainer = vi.fn();
-const reserveLocalPort = vi.fn();
-const spawn = vi.fn();
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/security/sandbox-manager.ts",import.meta.url)), () => ({
-  SandboxManager: vi.fn().mockImplementation(() => ({
-    startBrowserSandbox,
-    stopContainer,
-  })),
-  reserveLocalPort,
-}));
-await vi.mock("node:child_process", () => ({
-  spawn,
-}));
+case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_65_3": {
 
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
+}
 /*__jait_scope_open__*/{
-const __jait_hook_462 = () => {
-    vi.clearAllMocks();
-    reserveLocalPort.mockResolvedValue(6100);
+let root: string;
+let origin: string;
+let worktreesRoot: string;
+let svc: GitService;
+async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
+    const dir = join(root, name);
+    git(root, `clone "${origin}" "${dir}"`);
+    git(dir, "config user.email test@test.com");
+    git(dir, "config user.name Test");
+    git(dir, "checkout --detach refs/remotes/origin/main");
+    git(dir, "branch -D main");
+    if (opts.keepTrackingRef === false) {
+      git(dir, "update-ref -d refs/remotes/origin/main");
+    }
+    return dir;
+  }
+const expectedTip = () => git(origin, "rev-parse main");
+const __jait_hook_1100 = async () => {
+    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
+    origin = join(root, "origin");
+    worktreesRoot = join(root, "worktrees");
+    await mkdir(origin, { recursive: true });
+    await mkdir(worktreesRoot, { recursive: true });
+    git(origin, "init");
+    git(origin, "config user.email test@test.com");
+    git(origin, "config user.name Test");
+    await writeFile(join(origin, "file.txt"), "hello");
+    git(origin, "add -A");
+    git(origin, "commit -m initial");
+    git(origin, "branch -M main");
+    svc = new GitService();
   };
-await __jait_hook_462();
+const __jait_hook_1680 = async () => {
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1100();
 try {
 await (async()=>{
 
-    let finishFirst!: (value: unknown) => void;
-    startBrowserSandbox.mockImplementationOnce(() => new Promise((resolve) => { finishFirst = resolve; }));
-    startBrowserSandbox.mockResolvedValueOnce({
-      containerName: "browser-two", vncPort: 5902, novncPort: 6082, novncUrl: "ws://127.0.0.1:6082", cdpUrl: "http://127.0.0.1:9223",
-    });
-    const { startLiveView } = await import("../../../../packages/gateway/src/services/live-view-manager.js");
-    const first = startLiveView({ projectRoot: "/project/app" });
-    await vi.waitFor(() => __jait_capture(0, (startBrowserSandbox.mock.calls)));
-    const second = startLiveView({ projectRoot: "/project/app" });
-    await Promise.resolve();
-    __jait_capture(1, (startBrowserSandbox.mock.calls));
-    finishFirst({
-      containerName: "browser-one", vncPort: 5901, novncPort: 6081, novncUrl: "ws://127.0.0.1:6081", cdpUrl: "http://127.0.0.1:9222",
-    });
-    await __jait_captureResolved(2, (first));
-    await __jait_captureResolved(3, (second));
-    __jait_capture(4, (startBrowserSandbox.mock.calls));
+    const checkout = await prStyleCheckout("pr-checkout");
+    __jait_thrown(0, () => git(checkout, "rev-parse --verify refs/heads/main"));
+
+    const fast = await svc.createWorktree(
+      checkout,
+      "main",
+      "jait/aaaa1111",
+      join(worktreesRoot, "fast"),
+      { fastPath: true },
+    );
+    __jait_capture(1, (git(fast.path, "rev-parse HEAD")), (expectedTip()));
+    __jait_capture(2, (git(fast.path, "branch --show-current")));
+    __jait_capture(3, (existsSync(join(fast.path, "file.txt"))));
+    __jait_capture(4, (git(fast.path, "status --porcelain")));
+
+    const plain = await svc.createWorktree(
+      checkout,
+      "main",
+      "jait/bbbb2222",
+      join(worktreesRoot, "plain"),
+      { fastPath: false },
+    );
+    __jait_capture(5, (git(plain.path, "rev-parse HEAD")), (expectedTip()));
+    __jait_capture(6, (git(plain.path, "branch --show-current")));
+
+    // The base was only available as a remote-tracking ref here. Recording it
+    // as the new branch's upstream (git's default for that start point, logged
+    // as "branch 'x' set up to track 'origin/main'") would let an unattended
+    // push with push.default=current/upstream target the default branch.
+    for (const branch of ["jait/aaaa1111", "jait/bbbb2222"]) {
+      __jait_thrown(7, () => git(checkout, `config --get branch.${branch}.remote`));
+      __jait_thrown(8, () => git(checkout, `config --get branch.${branch}.merge`));
+    }
   
 })();
 
 } finally {
-
+await __jait_hook_1680();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_live_view_manager_test_ts_46_3": {
-const startBrowserSandbox = vi.fn();
-const stopContainer = vi.fn();
-const reserveLocalPort = vi.fn();
-const spawn = vi.fn();
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/security/sandbox-manager.ts",import.meta.url)), () => ({
-  SandboxManager: vi.fn().mockImplementation(() => ({
-    startBrowserSandbox,
-    stopContainer,
-  })),
-  reserveLocalPort,
-}));
-await vi.mock("node:child_process", () => ({
-  spawn,
-}));
+case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_101_3": {
 
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
+}
 /*__jait_scope_open__*/{
-const __jait_hook_462 = () => {
-    vi.clearAllMocks();
-    reserveLocalPort.mockResolvedValue(6100);
+let root: string;
+let origin: string;
+let worktreesRoot: string;
+let svc: GitService;
+async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
+    const dir = join(root, name);
+    git(root, `clone "${origin}" "${dir}"`);
+    git(dir, "config user.email test@test.com");
+    git(dir, "config user.name Test");
+    git(dir, "checkout --detach refs/remotes/origin/main");
+    git(dir, "branch -D main");
+    if (opts.keepTrackingRef === false) {
+      git(dir, "update-ref -d refs/remotes/origin/main");
+    }
+    return dir;
+  }
+const expectedTip = () => git(origin, "rev-parse main");
+const __jait_hook_1100 = async () => {
+    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
+    origin = join(root, "origin");
+    worktreesRoot = join(root, "worktrees");
+    await mkdir(origin, { recursive: true });
+    await mkdir(worktreesRoot, { recursive: true });
+    git(origin, "init");
+    git(origin, "config user.email test@test.com");
+    git(origin, "config user.name Test");
+    await writeFile(join(origin, "file.txt"), "hello");
+    git(origin, "add -A");
+    git(origin, "commit -m initial");
+    git(origin, "branch -M main");
+    svc = new GitService();
   };
-await __jait_hook_462();
+const __jait_hook_1680 = async () => {
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1100();
 try {
 await (async()=>{
 
-    startBrowserSandbox.mockRejectedValueOnce(new Error("docker run failed"));
+    const checkout = await prStyleCheckout("shallow-checkout", { keepTrackingRef: false });
+    __jait_thrown(0, () => git(checkout, "rev-parse --verify refs/remotes/origin/main"));
+    __jait_thrown(1, () => git(checkout, "rev-parse --verify refs/heads/main"));
 
-    const { startLiveView } = await import("../../../../packages/gateway/src/services/live-view-manager.js");
-
-    await __jait_rejected(0, startLiveView({ projectRoot: "/project/app" }));
-    __jait_capture(1, (spawn.mock.calls));
+    const result = await svc.createWorktree(
+      checkout,
+      "main",
+      "jait/cccc3333",
+      join(worktreesRoot, "fetched"),
+      { fastPath: false },
+    );
+    __jait_capture(2, (git(result.path, "rev-parse HEAD")), (expectedTip()));
+    __jait_capture(3, (git(result.path, "branch --show-current")));
+    __jait_capture(4, (existsSync(join(result.path, "file.txt"))));
   
 })();
 
 } finally {
+await __jait_hook_1680();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_118_3": {
+
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
+}
+/*__jait_scope_open__*/{
+let root: string;
+let origin: string;
+let worktreesRoot: string;
+let svc: GitService;
+async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
+    const dir = join(root, name);
+    git(root, `clone "${origin}" "${dir}"`);
+    git(dir, "config user.email test@test.com");
+    git(dir, "config user.name Test");
+    git(dir, "checkout --detach refs/remotes/origin/main");
+    git(dir, "branch -D main");
+    if (opts.keepTrackingRef === false) {
+      git(dir, "update-ref -d refs/remotes/origin/main");
+    }
+    return dir;
+  }
+const expectedTip = () => git(origin, "rev-parse main");
+const __jait_hook_1100 = async () => {
+    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
+    origin = join(root, "origin");
+    worktreesRoot = join(root, "worktrees");
+    await mkdir(origin, { recursive: true });
+    await mkdir(worktreesRoot, { recursive: true });
+    git(origin, "init");
+    git(origin, "config user.email test@test.com");
+    git(origin, "config user.name Test");
+    await writeFile(join(origin, "file.txt"), "hello");
+    git(origin, "add -A");
+    git(origin, "commit -m initial");
+    git(origin, "branch -M main");
+    svc = new GitService();
+  };
+const __jait_hook_1680 = async () => {
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1100();
+try {
+await (async()=>{
+
+    const clone = join(root, "normal-clone");
+    git(root, `clone "${origin}" "${clone}"`);
+    const result = await svc.createWorktree(
+      clone,
+      "main",
+      "jait/dddd4444",
+      join(worktreesRoot, "local"),
+      { fastPath: false },
+    );
+    __jait_capture(0, (git(result.path, "branch --show-current")));
+    __jait_capture(1, (git(result.path, "rev-parse HEAD")), (expectedTip()));
+  
+})();
+
+} finally {
+await __jait_hook_1680();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_git_worktree_base_test_ts_132_3": {
+
+
+function git(cwd: string, cmd: string) {
+  return execSync(`git ${cmd}`, { cwd, encoding: "utf-8" }).trim();
+}
+/*__jait_scope_open__*/{
+let root: string;
+let origin: string;
+let worktreesRoot: string;
+let svc: GitService;
+async function prStyleCheckout(name: string, opts: { keepTrackingRef?: boolean } = {}) {
+    const dir = join(root, name);
+    git(root, `clone "${origin}" "${dir}"`);
+    git(dir, "config user.email test@test.com");
+    git(dir, "config user.name Test");
+    git(dir, "checkout --detach refs/remotes/origin/main");
+    git(dir, "branch -D main");
+    if (opts.keepTrackingRef === false) {
+      git(dir, "update-ref -d refs/remotes/origin/main");
+    }
+    return dir;
+  }
+const expectedTip = () => git(origin, "rev-parse main");
+const __jait_hook_1100 = async () => {
+    root = await mkdtemp(join(__jait_fixture_dir, "git-worktree-base-"));
+    origin = join(root, "origin");
+    worktreesRoot = join(root, "worktrees");
+    await mkdir(origin, { recursive: true });
+    await mkdir(worktreesRoot, { recursive: true });
+    git(origin, "init");
+    git(origin, "config user.email test@test.com");
+    git(origin, "config user.name Test");
+    await writeFile(join(origin, "file.txt"), "hello");
+    git(origin, "add -A");
+    git(origin, "commit -m initial");
+    git(origin, "branch -M main");
+    svc = new GitService();
+  };
+const __jait_hook_1680 = async () => {
+    await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1100();
+try {
+await (async()=>{
+
+    const clone = await prStyleCheckout("missing-base");
+    await __jait_rejected(0, svc.createWorktree(
+        clone,
+        "does-not-exist",
+        "jait/eeee5555",
+        join(worktreesRoot, "missing"),
+        { fastPath: false },
+      ));
+  
+})();
+
+} finally {
+await __jait_hook_1680();
 }
 }
 

@@ -1,11 +1,17 @@
-// Translated fixture from packages/gateway/src/security/vnc-recovery.test.ts; expected literals are in tail_static.rs.
-import { readFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
+// Translated fixture from packages/gateway/src/security/security-results-consent.test.ts; expected literals are in tail_static.rs.
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createSecurityWorkbenchTools } from "../../../../packages/gateway/src/tools/security-workbench-tools.js";
+import { getSecurityWorkbench } from "../../../../packages/gateway/src/security/workbench.js";
+import { ConsentAwareExecutor } from "../../../../packages/gateway/src/security/consent-executor.js";
+import { ConsentManager } from "../../../../packages/gateway/src/security/consent-manager.js";
+import { TrustEngine } from "../../../../packages/gateway/src/security/trust-engine.js";
+import { extendProfile, getProfile } from "../../../../packages/gateway/src/security/tool-profiles.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/security/vnc-recovery.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/security/security-results-consent.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -32,40 +38,171 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_security_vnc_recovery_test_ts_6_3": {
+case "tailstatic_packages_gateway_src_security_security_results_consent_test_ts_10_1_each0": {
 
 
 /*__jait_scope_open__*/{
+const profile = "minimal";
 
 try {
 await (async()=>{
 
-    const source = readFileSync(new URL("./sandbox-manager.ts", __jait_original_url), "utf8");
-    const loops = [...source.matchAll(/while true; do(?:(?!\n\s*done)[\s\S])*?\n\s*done/g)].map(match => match[0]).filter(loop => loop.includes("x11vnc -display"));
-    __jait_capture(0, (loops));
-    for (const loop of loops) {
-      const result = spawnSync("bash", ["-c", `set -eu
-calls=0
-x11vnc() { calls=$((calls+1)); echo "attempt:$calls"; return 11; }
-sleep() { if [ "$calls" -ge 2 ]; then exit 0; fi; }
-${loop}`], { encoding: "utf8", timeout: 2000 });
-      __jait_capture(1, (result.stdout));
-      __jait_capture(2, (result.status));
-    }
-  
+  const service = getSecurityWorkbench();
+  const get = vi.spyOn(service, "get").mockImplementation((id, owner) => {
+    if (owner !== "saved-owner") throw new Error("Security check not found");
+    return { id, status: "completed", findings: [], evidence: [] } as ReturnType<typeof service.get>;
+  });
+  const start = vi.spyOn(service, "start");
+  const registry = new ToolRegistry();
+  registry.register(createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!);
+  const manager = new ConsentManager({ defaultTimeoutMs: 5000 });
+  const executor = new ConsentAwareExecutor({
+    toolRegistry: registry, consentManager: manager, trustEngine: new TrustEngine(),
+    permissions: getProfile(profile), sessionApprovals: new Set(), profileName: profile,
+  });
+  try {
+    const result = await executor.execute("security.results.show", { runId: "saved-run" }, {
+      userId: "saved-owner", sessionId: "saved-session", actionId: "show", requestedBy: "test", projectRoot: process.cwd(),
+    });
+    __jait_capture(0, (result));
+    __jait_capture(1, (manager.pendingCount));
+    __jait_capture(2, (get.mock.calls));
+    __jait_capture(3, (start.mock.calls));
+  } finally { vi.restoreAllMocks(); }
+
 })();
 
 } finally {
 
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_security_results_consent_test_ts_10_1_each1": {
+
+
+/*__jait_scope_open__*/{
+const profile = "coding";
+
+try {
+await (async()=>{
+
+  const service = getSecurityWorkbench();
+  const get = vi.spyOn(service, "get").mockImplementation((id, owner) => {
+    if (owner !== "saved-owner") throw new Error("Security check not found");
+    return { id, status: "completed", findings: [], evidence: [] } as ReturnType<typeof service.get>;
+  });
+  const start = vi.spyOn(service, "start");
+  const registry = new ToolRegistry();
+  registry.register(createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!);
+  const manager = new ConsentManager({ defaultTimeoutMs: 5000 });
+  const executor = new ConsentAwareExecutor({
+    toolRegistry: registry, consentManager: manager, trustEngine: new TrustEngine(),
+    permissions: getProfile(profile), sessionApprovals: new Set(), profileName: profile,
+  });
+  try {
+    const result = await executor.execute("security.results.show", { runId: "saved-run" }, {
+      userId: "saved-owner", sessionId: "saved-session", actionId: "show", requestedBy: "test", projectRoot: process.cwd(),
+    });
+    __jait_capture(0, (result));
+    __jait_capture(1, (manager.pendingCount));
+    __jait_capture(2, (get.mock.calls));
+    __jait_capture(3, (start.mock.calls));
+  } finally { vi.restoreAllMocks(); }
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_security_results_consent_test_ts_10_1_each2": {
+
+
+/*__jait_scope_open__*/{
+const profile = "full";
+
+try {
+await (async()=>{
+
+  const service = getSecurityWorkbench();
+  const get = vi.spyOn(service, "get").mockImplementation((id, owner) => {
+    if (owner !== "saved-owner") throw new Error("Security check not found");
+    return { id, status: "completed", findings: [], evidence: [] } as ReturnType<typeof service.get>;
+  });
+  const start = vi.spyOn(service, "start");
+  const registry = new ToolRegistry();
+  registry.register(createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!);
+  const manager = new ConsentManager({ defaultTimeoutMs: 5000 });
+  const executor = new ConsentAwareExecutor({
+    toolRegistry: registry, consentManager: manager, trustEngine: new TrustEngine(),
+    permissions: getProfile(profile), sessionApprovals: new Set(), profileName: profile,
+  });
+  try {
+    const result = await executor.execute("security.results.show", { runId: "saved-run" }, {
+      userId: "saved-owner", sessionId: "saved-session", actionId: "show", requestedBy: "test", projectRoot: process.cwd(),
+    });
+    __jait_capture(0, (result));
+    __jait_capture(1, (manager.pendingCount));
+    __jait_capture(2, (get.mock.calls));
+    __jait_capture(3, (start.mock.calls));
+  } finally { vi.restoreAllMocks(); }
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_security_security_results_consent_test_ts_35_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  const service = getSecurityWorkbench();
+  const get = vi.spyOn(service, "get").mockReturnValue({ id: "saved-run" } as ReturnType<typeof service.get>);
+  const registry = new ToolRegistry();
+  registry.register(createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!);
+  const manager = new ConsentManager({ defaultTimeoutMs: 5000 });
+  const executor = new ConsentAwareExecutor({
+    toolRegistry: registry, consentManager: manager, trustEngine: new TrustEngine(),
+    permissions: extendProfile("coding", [{ toolName: "security.results.show", consentLevel: "dangerous", risk: "high", description: "Explicit user restriction" }]),
+    sessionApprovals: new Set(), profileName: "coding",
+  });
+  try {
+    const pending = executor.execute("security.results.show", { runId: "saved-run" }, {
+      userId: "saved-owner", sessionId: "restricted-session", actionId: "show", requestedBy: "test", projectRoot: process.cwd(),
+    });
+    __jait_capture(0, (manager.pendingCount));
+    __jait_capture(1, (get.mock.calls));
+    manager.reject(manager.listPending()[0]!.id, "click", "User restriction");
+    __jait_capture(2, ((await pending).ok));
+    __jait_capture(3, (get.mock.calls));
+  } finally { vi.restoreAllMocks(); }
+
+})();
+
+} finally {
+
+}
+
 
 break;
 }

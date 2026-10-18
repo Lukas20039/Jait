@@ -1,16 +1,22 @@
-// Translated fixture from packages/gateway/src/tools/core/get-fs.test.ts; expected literals are in tail_static.rs.
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { FileSystemSurface } from "../../../../packages/gateway/src/surfaces/filesystem.js";
-import { RemoteFileSystemSurface } from "../../../../packages/gateway/src/surfaces/remote-filesystem.js";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { getFs, resolveProjectRoot } from "../../../../packages/gateway/src/tools/core/get-fs.js";
+// Translated fixture from packages/gateway/src/tools/browser-tools-integration.test.ts; expected literals are in tail_static.rs.
+import { createServer, type Server } from "node:http";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { BrowserSurface } from "../../../../packages/gateway/src/surfaces/browser.js";
+import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createScreenshotCaptureTool } from "../../../../packages/gateway/src/tools/screenshot-tools.js";
+import {
+  createBrowserNavigateTool, createBrowserSnapshotTool, createBrowserInspectTool,
+  createBrowserInteractionTools,
+} from "../../../../packages/gateway/src/tools/browser-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/core/get-fs.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/browser-tools-integration.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -37,382 +43,2917 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    await withRemoteSurface(registry);
-
-    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\README.md");
-    __jait_instance(0, fs, RemoteFileSystemSurface);
-    // Reading must be proxied to the remote node (no local ENOENT).
-    await __jait_captureResolved(1, (fs.read("E:\\Zinsrechner\\README.md")));
-  
+      __jait_capture(0, (await tools.execute("browser.navigate", { url }, context)), ([url]));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    await withRemoteSurface(registry);
-
-    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\src\\index.ts");
-    __jait_instance(0, fs, RemoteFileSystemSurface);
-    // The returned surface's root is the remote Windows path, not a mangled POSIX path.
-    const root = (fs.snapshot().metadata as Record<string, unknown>).projectRoot;
-    __jait_capture(1, (root));
-    __jait_capture(2, (String(root)));
-  
+      const result = await tools.execute("browser.snapshot", {}, context);
+      __jait_capture(0, (result));
+      __jait_capture(1, ((result.data as { interactiveElements: unknown[] }).interactiveElements));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    // No remote surface registered — the path is Windows but gateway is non-Windows.
-    await __jait_rejected(0, getFs(registry, createContext(), "E:\\Zinsrechner\\README.md"));
-  
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#save" }, context)));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#missing" }, context)));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    const local = new FileSystemSurface(`fs-${SESSION_ID}`);
-    await local.start({ sessionId: SESSION_ID, projectRoot: process.cwd() });
-    registry.registerInstance(local.id, local);
-
-    const fs = await getFs(registry, {
-      ...createContext(process.cwd()),
-      projectRoot: process.cwd(),
-    });
-    __jait_instance(0, fs, FileSystemSurface);
-  
+      __jait_capture(0, (await tools.execute("browser.click", { selector: "button:has-text('Save')" }, context)));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    void withRemoteSurface(registry, "E:\\Zinsrechner");
-
-    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
-    __jait_capture(0, (root));
-  
+      __jait_capture(0, ((await tools.execute("browser.type", { selector: "#asset", text: "workstation-01" }, context)).ok));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#asset" }, context)));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
 /*__jait_scope_open__*/{
-
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
-    __jait_capture(0, (root));
-  
+      __jait_capture(0, (await tools.execute("browser.select", { selector: "#status", value: "owned" }, context)));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1": {
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each0": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
 try {
 await (async()=>{
 
-  const registry = new SurfaceRegistry();
-  const root = "C:\\Users\\jakob\\Tankstelle";
-  await withRemoteSurface(registry, root);
-  const local = new FileSystemSurface(`fs-${SESSION_ID}`);
-  await local.start({ sessionId: SESSION_ID, projectRoot: `/home/jakob/${root}` });
-  registry.registerInstance(local.id, local);
-  __jait_capture(0, (resolveProjectRoot(registry, SESSION_ID, root)), (root));
-
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+      __jait_capture(1, ((await tools.execute("browser.scroll", { x: 0, y: 10000 }, context)).ok));
+      __jait_capture(2, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+    
 })();
 
 } finally {
-
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each0": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, ((await tools.execute("browser.wait", { selector: "#save", timeoutMs: 100 }, context)).ok));
+      const missing = await tools.execute("browser.wait", { selector: "#missing", timeoutMs: 100 }, context);
+      __jait_capture(1, (missing.ok));
+      __jait_capture(2, (missing.message));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each0": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const path = join(directory, "standalone.png");
+      const result = await createScreenshotCaptureTool().execute({ target: url, path, waitMs: 0 }, context);
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, ([...(await readFile(path)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each0": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await createScreenshotCaptureTool().execute({ target: url, waitMs: 0 }, { ...context, projectRoot: directory });
+      __jait_capture(0, (result.ok));
+      const data = result.data as { path: string; capturePath: string };
+      artifacts.push(data.path);
+      __jait_capture(1, (data.capturePath.startsWith(join(directory, ".jait", "shots") + "/")));
+      __jait_capture(2, ([...(await readFile(data.capturePath)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each0": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "in-process";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await tools.execute("browser.screenshot", { path: join(directory, "fixture.png") }, context);
+      __jait_capture(0, (result.ok));
+      const data = result.data as { result: { path: string } };
+      artifacts.push(data.result.path);
+      const bytes = await readFile(data.result.path);
+      __jait_capture(1, ([...bytes.subarray(0, 8)]));
+      __jait_capture(2, (bytes.length));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.navigate", { url }, context)), ([url]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await tools.execute("browser.snapshot", {}, context);
+      __jait_capture(0, (result));
+      __jait_capture(1, ((result.data as { interactiveElements: unknown[] }).interactiveElements));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#save" }, context)));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#missing" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.click", { selector: "button:has-text('Save')" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, ((await tools.execute("browser.type", { selector: "#asset", text: "workstation-01" }, context)).ok));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#asset" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.select", { selector: "#status", value: "owned" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+      __jait_capture(1, ((await tools.execute("browser.scroll", { x: 0, y: 10000 }, context)).ok));
+      __jait_capture(2, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, ((await tools.execute("browser.wait", { selector: "#save", timeoutMs: 100 }, context)).ok));
+      const missing = await tools.execute("browser.wait", { selector: "#missing", timeoutMs: 100 }, context);
+      __jait_capture(1, (missing.ok));
+      __jait_capture(2, (missing.message));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const path = join(directory, "standalone.png");
+      const result = await createScreenshotCaptureTool().execute({ target: url, path, waitMs: 0 }, context);
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, ([...(await readFile(path)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await createScreenshotCaptureTool().execute({ target: url, waitMs: 0 }, { ...context, projectRoot: directory });
+      __jait_capture(0, (result.ok));
+      const data = result.data as { path: string; capturePath: string };
+      artifacts.push(data.path);
+      __jait_capture(1, (data.capturePath.startsWith(join(directory, ".jait", "shots") + "/")));
+      __jait_capture(2, ([...(await readFile(data.capturePath)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each1": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await tools.execute("browser.screenshot", { path: join(directory, "fixture.png") }, context);
+      __jait_capture(0, (result.ok));
+      const data = result.data as { result: { path: string } };
+      artifacts.push(data.result.path);
+      const bytes = await readFile(data.result.path);
+      __jait_capture(1, ([...bytes.subarray(0, 8)]));
+      __jait_capture(2, (bytes.length));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.navigate", { url }, context)), ([url]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await tools.execute("browser.snapshot", {}, context);
+      __jait_capture(0, (result));
+      __jait_capture(1, ((result.data as { interactiveElements: unknown[] }).interactiveElements));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#save" }, context)));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#missing" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.click", { selector: "button:has-text('Save')" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, ((await tools.execute("browser.type", { selector: "#asset", text: "workstation-01" }, context)).ok));
+      __jait_capture(1, (await tools.execute("browser.inspect", { selector: "#asset" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.select", { selector: "#status", value: "owned" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+      __jait_capture(1, ((await tools.execute("browser.scroll", { x: 0, y: 10000 }, context)).ok));
+      __jait_capture(2, (await tools.execute("browser.inspect", { selector: "#footer" }, context)));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      __jait_capture(0, ((await tools.execute("browser.wait", { selector: "#save", timeoutMs: 100 }, context)).ok));
+      const missing = await tools.execute("browser.wait", { selector: "#missing", timeoutMs: 100 }, context);
+      __jait_capture(1, (missing.ok));
+      __jait_capture(2, (missing.message));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const path = join(directory, "standalone.png");
+      const result = await createScreenshotCaptureTool().execute({ target: url, path, waitMs: 0 }, context);
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, ([...(await readFile(path)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await createScreenshotCaptureTool().execute({ target: url, waitMs: 0 }, { ...context, projectRoot: directory });
+      __jait_capture(0, (result.ok));
+      const data = result.data as { path: string; capturePath: string };
+      artifacts.push(data.path);
+      __jait_capture(1, (data.capturePath.startsWith(join(directory, ".jait", "shots") + "/")));
+      __jait_capture(2, ([...(await readFile(data.capturePath)).subarray(0, 8)]));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each2": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_BROWSER_INTEGRATION"] !== "1" */
+/*__jait_scope_open__*/{
+const runtime = "packaged-node-bridge";
+/*__jait_scope_open__*/{
+let server: Server;
+let url: string;
+let surface: BrowserSurface;
+let tools: ToolRegistry;
+let directory: string;
+const artifacts: string[] = [];
+const context = {
+      sessionId: "browser-integration", actionId: "browser-integration-action",
+      projectRoot: process.cwd(), requestedBy: "test",
+    };
+const __jait_hook_1326 = async () => {
+      vi.stubEnv("BROWSER_LIVE_VIEW", "false");
+      vi.stubEnv("BROWSER_HEADLESS", "true");
+      vi.stubEnv("BROWSER_RUNTIME", runtime === "packaged-node-bridge" ? "node-bridge" : runtime);
+      vi.stubEnv("BROWSER_CHANNEL", "");
+      vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "");
+      directory = await mkdtemp(join(__jait_fixture_dir, "jait-browser-integration-"));
+      server = createServer((_request, response) => {
+        response.setHeader("Content-Type", "text/html");
+        response.end(`<!doctype html><title>Tool integration fixture</title>
+          <h1>Authorized asset inventory</h1>
+          <label>Asset <input id="asset" oninput="document.querySelector(\'#result\').textContent=this.value"></label>
+          <select id="status" onchange="document.querySelector('#result').textContent=this.value">
+            <option value="unknown">Unknown</option><option value="owned">Owned</option>
+          </select>
+          <button id="save" onclick="document.querySelector('#result').textContent='Asset saved'">Save</button>
+          <output id="result">Ready</output>
+          <div style="height:3000px"></div><p id="footer">Inventory footer</p>`);
+      });
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Fixture server has no TCP port");
+      url = `http://127.0.0.1:${address.port}/`;
+      let Surface = BrowserSurface;
+      if (runtime === "packaged-node-bridge") {
+        const compiled = await import("../../../../packages/gateway/dist/surfaces/browser.js");
+        Surface = compiled.BrowserSurface as typeof BrowserSurface;
+        // An installed gateway must work without finding this repository's src.
+        vi.spyOn(process, "cwd").mockReturnValue(directory);
+      }
+      surface = new Surface("preview-browser-browser-integration");
+      await surface.start(context);
+      const registry = { getSurface: () => surface } as unknown as SurfaceRegistry;
+      tools = new ToolRegistry();
+      tools.register(createBrowserNavigateTool(registry));
+      tools.register(createBrowserSnapshotTool(registry));
+      tools.register(createBrowserInspectTool(registry));
+      for (const tool of createBrowserInteractionTools(registry)) tools.register(tool);
+    };
+const __jait_hook_3679 = async () => { await surface.navigate(url); };
+const __jait_hook_3741 = async () => {
+      await Promise.all(artifacts.splice(0).map((path) => rm(path, { force: true })));
+    };
+const __jait_hook_3864 = async () => {
+      try { await surface?.stop(); } finally {
+        if (server?.listening) await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+        if (directory) await rm(directory, { recursive: true, force: true });
+        vi.unstubAllEnvs();
+        vi.restoreAllMocks();
+      }
+    };
+await __jait_hook_1326();
+await __jait_hook_3679();
+try {
+await (async()=>{
+
+      const result = await tools.execute("browser.screenshot", { path: join(directory, "fixture.png") }, context);
+      __jait_capture(0, (result.ok));
+      const data = result.data as { result: { path: string } };
+      artifacts.push(data.result.path);
+      const bytes = await readFile(data.result.path);
+      __jait_capture(1, ([...bytes.subarray(0, 8)]));
+      __jait_capture(2, (bytes.length));
+    
+})();
+
+} finally {
+await __jait_hook_3864();
+await __jait_hook_3741();
+}
+}
+}
 
 break;
 }

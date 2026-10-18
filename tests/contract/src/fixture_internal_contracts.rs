@@ -20,6 +20,35 @@ impl Case {
     }
 }
 
+// Required registrations for the reviewed token-estimation and validation tests.
+// The vectors carry the inputs and predicates; this list makes their removal fail.
+const REQUIRED_HELPER_CASE_IDS: &[&str] = &[
+    "internal.tailhelpers.plain-and-json-rounding",
+    "internal.tailhelpers.unsupported-json",
+    "internal.tailhelpers.message-tool-calls",
+    "internal.tailhelpers.hidden-thinking",
+    "internal.tailhelpers.large-thinking-usage",
+    "internal.tailhelpers.history-priming",
+    "internal.tailhelpers.usage-categories",
+    "internal.tailhelpers.empty-schemas",
+    "internal.tailhelpers.usage-summed-categories",
+    "internal.tailhelpers.coerce-nested-array",
+    "internal.tailhelpers.nested-required-path",
+    "internal.tailhelpers.invalid-array-item",
+    "internal.tailhelpers.parse-object-then-coerce",
+    "internal.tailhelpers.reject-nonfinite",
+];
+
+fn validate_required_helper_ids(cases: &[Case]) -> Result<()> {
+    for id in REQUIRED_HELPER_CASE_IDS {
+        ensure!(
+            cases.iter().filter(|case| case.id == *id).count() == 1,
+            "required helper case must be registered exactly once: {id}"
+        );
+    }
+    Ok(())
+}
+
 pub fn cases(root: &Path) -> Result<Vec<Case>> {
     let vectors = root.join("tests/contract/vectors");
     let mut paths: Vec<_> = fs::read_dir(&vectors)
@@ -54,6 +83,17 @@ pub fn cases(root: &Path) -> Result<Vec<Case>> {
             cases.push(case);
         }
     }
+    validate_required_helper_ids(&cases)?;
+    for id in [
+        "internal.passwords.existing-scrypt-credentials",
+        "internal.passwords.malformed-digests",
+        "internal.passwords.uppercase-digest",
+    ] {
+        ensure!(
+            cases.iter().filter(|case| case.id == id).count() == 1,
+            "required password case must be registered exactly once: {id}"
+        );
+    }
     Ok(cases)
 }
 
@@ -67,6 +107,38 @@ pub fn check(
     let actual = internal_driver::call_request(root, directory, &request, cancelled)?;
     validate(&actual, &case.assertions)
 }
+#[cfg(test)]
+mod helper_registration_tests {
+    use super::*;
+
+    fn helpers() -> Vec<Case> {
+        serde_json::from_str(include_str!("../vectors/tailhelpers.json")).unwrap()
+    }
+
+    #[test]
+    fn all_reviewed_helper_vectors_are_registered() {
+        validate_required_helper_ids(&helpers()).unwrap();
+    }
+
+    #[test]
+    fn removing_a_reviewed_helper_is_rejected() {
+        let mut cases = helpers();
+        let missing = cases.remove(0).id;
+        let error = validate_required_helper_ids(&cases).unwrap_err();
+        assert!(error.to_string().contains(&missing));
+    }
+
+    #[test]
+    fn duplicating_a_reviewed_helper_is_rejected() {
+        let mut cases = helpers();
+        let duplicate = helpers().remove(0);
+        let duplicate_id = duplicate.id.clone();
+        cases.push(duplicate);
+        let error = validate_required_helper_ids(&cases).unwrap_err();
+        assert!(error.to_string().contains(&duplicate_id));
+    }
+}
+
 fn validate(actual: &Value, assertions: &[Value]) -> Result<()> {
     ensure!(!assertions.is_empty(), "case requires assertions");
     for assertion in assertions {

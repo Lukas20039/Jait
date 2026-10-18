@@ -1,15 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/persona-agent-tools.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { createPersonaAgentTool, createPersonaAgentInspectTool } from "../../../../packages/gateway/src/tools/persona-agent-tools.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+// Translated fixture from packages/gateway/src/tools/homeassistant-tools.test.ts; expected literals are in tail_static.rs.
+import { createHomeAssistantStatesTool } from "../../../../packages/gateway/src/tools/homeassistant-tools.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { ASK_MODE_TOOLS, MUTATING_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/persona-agent-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/homeassistant-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -36,189 +33,130 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_23_3": {
 
 
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+function context(apiKeys: Record<string, string>): ToolContext {
+  return {
+    userId: "u1",
+    sessionId: "s1",
+    apiKeys,
+    signal: new AbortController().signal,
+  } as ToolContext;
+}
+const __jait_hook_381 = () => {
+  vi.unstubAllGlobals();
+  delete process.env["HA_URL"];
+  delete process.env["HA_TOKEN"];
+  delete process.env["HASS_URL"];
+  delete process.env["HASS_TOKEN"];
+};
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+
 try {
 await (async()=>{
 
-    const agent = await create(registry, "Developer");
-    const changed = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile: { paused: true } }, owner);
-    __jait_capture(1, (changed.ok));
-    __jait_capture(2, (service.getPersonaAgent(agent.id, "owner")));
-    const listed = await registry.execute("agent.profiles.inspect", { action: "list" }, owner);
-    __jait_capture(3, ((listed.data as any).agents));
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      entity_id: "person.alice",
+      state: "home",
+      attributes: { friendly_name: "Alice" },
+    }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await createHomeAssistantStatesTool().execute(
+      { entity_id: "person.alice" },
+      context({ HA_URL: "http://homeassistant.local:8123/", HA_TOKEN: "secret-token" }),
+    );
+
+    __jait_capture(0, (result));
+    __jait_capture(1, (fetchMock.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_381();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3": {
+case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_45_3": {
 
 
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+function context(apiKeys: Record<string, string>): ToolContext {
+  return {
+    userId: "u1",
+    sessionId: "s1",
+    apiKeys,
+    signal: new AbortController().signal,
+  } as ToolContext;
+}
+const __jait_hook_381 = () => {
+  vi.unstubAllGlobals();
+  delete process.env["HA_URL"];
+  delete process.env["HA_TOKEN"];
+  delete process.env["HASS_URL"];
+  delete process.env["HASS_TOKEN"];
+};
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+
 try {
 await (async()=>{
 
-    const agent = await create(registry, "Developer");
-    for (const action of ["get", "update", "delete"]) {
-      const result = await registry.execute("agent.profiles", { action, id: agent.id, profile: { name: "stolen" } }, { ...owner, userId: "other" });
-      __jait_capture(1, (result.ok));
-    }
-    __jait_capture(2, ((await registry.execute("agent.profiles.inspect", { action: "list" }, { ...owner, userId: undefined })).ok));
-    for (const profile of [{ providerId: "missing" }, { schedule: { kind: "cron", cron: "" } }, { notificationEvents: ["arbitrary"] }, { tasks: [{ id: "task", name: "Task", cron: "* * * * *" }] }]) {
-      const result = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile }, owner);
-      __jait_capture(3, (result.ok));
-    }
-    __jait_capture(4, (service.getPersonaAgent(agent.id, "owner")?.name));
+    process.env["HASS_URL"] = "http://legacy-ha:8123";
+    process.env["HASS_TOKEN"] = "legacy-token";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("[]", { status: 200 })));
+
+    const result = await createHomeAssistantStatesTool().execute({}, context({}));
+
+    __jait_capture(0, (result));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_381();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3": {
+case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_55_3": {
 
 
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+function context(apiKeys: Record<string, string>): ToolContext {
+  return {
+    userId: "u1",
+    sessionId: "s1",
+    apiKeys,
+    signal: new AbortController().signal,
+  } as ToolContext;
+}
+const __jait_hook_381 = () => {
+  vi.unstubAllGlobals();
+  delete process.env["HA_URL"];
+  delete process.env["HA_TOKEN"];
+  delete process.env["HASS_URL"];
+  delete process.env["HASS_TOKEN"];
+};
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+
 try {
 await (async()=>{
 
-    const lead = await create(registry, "Lead");
-    const worker = await create(registry, "Worker");
-    const setManager = (id: string, reportsToId: string | null) => registry.execute("agent.profiles", { action: "update", id, profile: { reportsToId } }, owner);
-    __jait_capture(1, ((await setManager(worker.id, lead.id)).ok));
-    __jait_capture(2, ((await setManager(lead.id, worker.id)).ok));
-    __jait_capture(3, ((await setManager(worker.id, worker.id)).ok));
-    __jait_capture(4, ((await setManager(worker.id, null)).ok));
-    await setManager(worker.id, lead.id);
-    const thread = service.create({ title: "Work", providerId: "codex", userId: "owner", personaAgentId: lead.id });
-    __jait_capture(5, ((await registry.execute("agent.profiles", { action: "delete", id: lead.id }, owner)).ok));
-    __jait_captureType(6, (service.getPersonaAgent(worker.id, "owner")?.reportsToId));
-    __jait_captureType(7, (service.getById(thread.id)?.personaAgentId));
+    const result = await createHomeAssistantStatesTool().execute({}, context({}));
+    __jait_capture(0, (result));
   
 })();
 
 } finally {
-await __jait_hook_1138();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3": {
-
-
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
-/*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
-try {
-await (async()=>{
-
-    __jait_capture(1, (ASK_MODE_TOOLS.has("agent.profiles.inspect")));
-    __jait_capture(2, (ASK_MODE_TOOLS.has("agent.profiles")));
-    __jait_capture(3, (MUTATING_TOOLS.has("agent.profiles")));
-    __jait_capture(4, ((await registry.execute("agent.profiles.inspect", { action: "delete", id: "x" }, owner)).ok));
-  
-})();
-
-} finally {
-await __jait_hook_1138();
+await __jait_hook_381();
 }
 }
 

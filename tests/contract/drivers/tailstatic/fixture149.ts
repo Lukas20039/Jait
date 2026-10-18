@@ -1,12 +1,14 @@
-// Translated fixture from packages/gateway/src/services/background-command-continuation.test.ts; expected literals are in tail_static.rs.
-import { buildBackgroundCommandContinuationPayload } from "../../../../packages/gateway/src/services/background-command-continuation.js";
-import type { SessionStateService } from "../../../../packages/gateway/src/services/session-state.js";
-import type { UserService } from "../../../../packages/gateway/src/services/users.js";
+// Translated fixture from packages/gateway/src/services/architecture-diagrams.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { openDatabase } from "../../../../packages/gateway/src/db/connection.js";
+import { ArchitectureDiagramService, DEFAULT_ARCHITECTURE_DIAGRAM_FILE } from "../../../../packages/gateway/src/services/architecture-diagrams.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/background-command-continuation.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/architecture-diagrams.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -33,40 +35,49 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_background_command_continuation_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_services_architecture_diagrams_test_ts_29_3": {
 
 
-function userService(
-  provider: "jait" | "codex" | "claude-code",
-  reasoningEffort?: string,
-): UserService {
-  return {
-    getSettings: () => ({ chatProvider: provider, reasoningEffort }),
-  } as unknown as UserService;
-}
-function sessionState(values: Record<string, unknown>): SessionStateService {
-  return {
-    get: () => values,
-  } as unknown as SessionStateService;
-}
 /*__jait_scope_open__*/{
-
+let service: ArchitectureDiagramService;
+let projectRoot: string;
+const __jait_hook_473 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE architecture_diagrams (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        project_root TEXT NOT NULL,
+        diagram TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE UNIQUE INDEX idx_architecture_diagrams_user_project ON architecture_diagrams(user_id, project_root)`);
+    service = new ArchitectureDiagramService(db);
+    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-architecture-"));
+  };
+await __jait_hook_473();
 try {
 await (async()=>{
 
-    __jait_capture(0, (buildBackgroundCommandContinuationPayload({
-      sessionId: "session-1",
-      notification: "tests passed",
+    const saved = await service.save({
       userId: "user-1",
-      userService: userService("jait"),
-    })));
+      projectRoot,
+      diagram: "flowchart LR\nA-->B",
+    });
+
+    const filePath = join(projectRoot, DEFAULT_ARCHITECTURE_DIAGRAM_FILE);
+    __jait_capture(0, (saved.filePath), (filePath));
+    __jait_capture(1, (await readFile(filePath, "utf8")));
+    __jait_capture(2, (service.getByProject(projectRoot, "user-1")?.source));
   
 })();
 
@@ -77,37 +88,46 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_background_command_continuation_test_ts_36_3": {
+case "tailstatic_packages_gateway_src_services_architecture_diagrams_test_ts_42_3": {
 
 
-function userService(
-  provider: "jait" | "codex" | "claude-code",
-  reasoningEffort?: string,
-): UserService {
-  return {
-    getSettings: () => ({ chatProvider: provider, reasoningEffort }),
-  } as unknown as UserService;
-}
-function sessionState(values: Record<string, unknown>): SessionStateService {
-  return {
-    get: () => values,
-  } as unknown as SessionStateService;
-}
 /*__jait_scope_open__*/{
-
+let service: ArchitectureDiagramService;
+let projectRoot: string;
+const __jait_hook_473 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE architecture_diagrams (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        project_root TEXT NOT NULL,
+        diagram TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE UNIQUE INDEX idx_architecture_diagrams_user_project ON architecture_diagrams(user_id, project_root)`);
+    service = new ArchitectureDiagramService(db);
+    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-architecture-"));
+  };
+await __jait_hook_473();
 try {
 await (async()=>{
 
-    __jait_capture(0, (buildBackgroundCommandContinuationPayload({
-      sessionId: "session-1",
-      notification: "tests passed",
+    const created = await service.save({
       userId: "user-1",
-      userService: userService("codex"),
-      sessionState: sessionState({
-        "chat.providerRuntimeMode": "full-access",
-        "chat.cliModels": { codex: "gpt-5.4" },
-      }),
-    })));
+      projectRoot,
+      diagram: "flowchart LR\nA-->B",
+    });
+    const updated = await service.save({
+      userId: "user-1",
+      projectRoot,
+      diagram: "flowchart LR\nA-->C",
+    });
+
+    __jait_capture(0, (updated.id), (created.id));
+    __jait_capture(1, (updated.diagram));
+    __jait_capture(2, (await readFile(updated.filePath, "utf8")));
   
 })();
 
@@ -118,72 +138,51 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_background_command_continuation_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_services_architecture_diagrams_test_ts_59_3": {
 
 
-function userService(
-  provider: "jait" | "codex" | "claude-code",
-  reasoningEffort?: string,
-): UserService {
-  return {
-    getSettings: () => ({ chatProvider: provider, reasoningEffort }),
-  } as unknown as UserService;
-}
-function sessionState(values: Record<string, unknown>): SessionStateService {
-  return {
-    get: () => values,
-  } as unknown as SessionStateService;
-}
 /*__jait_scope_open__*/{
-
+let service: ArchitectureDiagramService;
+let projectRoot: string;
+const __jait_hook_473 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE architecture_diagrams (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        project_root TEXT NOT NULL,
+        diagram TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE UNIQUE INDEX idx_architecture_diagrams_user_project ON architecture_diagrams(user_id, project_root)`);
+    service = new ArchitectureDiagramService(db);
+    projectRoot = await mkdtemp(join(__jait_fixture_dir, "jait-architecture-"));
+  };
+await __jait_hook_473();
 try {
 await (async()=>{
 
-    __jait_capture(0, (buildBackgroundCommandContinuationPayload({
-      sessionId: "session-1",
-      notification: "tests passed",
+    const saved = await service.save({
       userId: "user-1",
-      userService: userService("jait", "low"),
-      sessionMetadata: JSON.stringify({ chat: { reasoningEffort: null } }),
-    })));
-  
-})();
+      projectRoot,
+      diagram: "flowchart LR\nA-->B",
+    });
 
-} finally {
+    await writeFile(saved.filePath, "", "utf8");
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_background_command_continuation_test_ts_66_3": {
-
-
-function userService(
-  provider: "jait" | "codex" | "claude-code",
-  reasoningEffort?: string,
-): UserService {
-  return {
-    getSettings: () => ({ chatProvider: provider, reasoningEffort }),
-  } as unknown as UserService;
-}
-function sessionState(values: Record<string, unknown>): SessionStateService {
-  return {
-    get: () => values,
-  } as unknown as SessionStateService;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildBackgroundCommandContinuationPayload({
-      sessionId: "session-1",
-      notification: "tests passed",
+    const legacyProject = await mkdtemp(join(__jait_fixture_dir, "jait-architecture-legacy-"));
+    const legacy = await service.save({
       userId: "user-1",
-      userService: userService("jait", "low"),
-      sessionMetadata: { chat: { reasoningEffort: "high" } },
-    })));
+      projectRoot: legacyProject,
+      diagram: "flowchart LR\nLegacy-->Diagram",
+    });
+    await writeFile(legacy.filePath, "", "utf8");
+
+    const loaded = service.getByProject(legacyProject, "user-1");
+    __jait_capture(0, (loaded?.diagram));
+    __jait_capture(1, (loaded?.source));
   
 })();
 

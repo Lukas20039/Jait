@@ -1,6 +1,4 @@
-// Translated fixture from packages/gateway/src/services/email/remote-images.test.ts; expected literals are in tail_static.rs.
-
-
+// Translated fixture from packages/gateway/src/services/email/connection.test.ts; expected literals are in tail_static.rs.
 
 
 import { vi } from '../tailmock.ts';
@@ -8,7 +6,7 @@ import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/email/remote-images.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/email/connection.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -35,282 +33,357 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_29_3": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_9_3_each0": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
-await __jait_hook_526();
+/*__jait_scope_open__*/{
+const host = "127.0.0.1";
+await __jait_hook_396();
 try {
 await (async()=>{
 
-    const result = await loadMailImage("https://images.example.com/banner.png?size=2");
-    __jait_capture(0, (result), ("data:image/png;base64," + payload.toString("base64")));
-    __jait_capture(1, (request.mock.calls));
-    const options = vi.mocked(request).mock.calls[0][0] as { headers: Record<string, unknown> };
-    __jait_capture(2, (options.headers));
-    __jait_capture(3, (options.headers));
+    await __jait_rejected(0, publicMailServer({ ...server, host }));
+    __jait_capture(1, (lookup.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1271();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_37_3_each0": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "http://example.com/a";
-await __jait_hook_526();
-try {
-await (async()=>{
-
-    await __jait_rejected(0, loadMailImage(url));
-    __jait_capture(1, (request.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_1271();
+await __jait_hook_450();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_37_3_each1": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_9_3_each1": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
-const url = "https://name:secret@example.com/a";
-await __jait_hook_526();
+const host = "::1";
+await __jait_hook_396();
 try {
 await (async()=>{
 
-    await __jait_rejected(0, loadMailImage(url));
-    __jait_capture(1, (request.mock.calls));
+    await __jait_rejected(0, publicMailServer({ ...server, host }));
+    __jait_capture(1, (lookup.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1271();
+await __jait_hook_450();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_37_3_each2": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_9_3_each2": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
-const url = "https://example.com:8443/a";
-await __jait_hook_526();
+const host = "169.254.169.254";
+await __jait_hook_396();
 try {
 await (async()=>{
 
-    await __jait_rejected(0, loadMailImage(url));
-    __jait_capture(1, (request.mock.calls));
+    await __jait_rejected(0, publicMailServer({ ...server, host }));
+    __jait_capture(1, (lookup.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1271();
+await __jait_hook_450();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_41_3": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_9_3_each3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
-await __jait_hook_526();
+/*__jait_scope_open__*/{
+const host = "localhost";
+await __jait_hook_396();
 try {
 await (async()=>{
 
-    status = 302;
-    await __jait_rejected(0, loadMailImage("https://example.com/a"));
-    __jait_capture(1, (request.mock.calls));
+    await __jait_rejected(0, publicMailServer({ ...server, host }));
+    __jait_capture(1, (lookup.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1271();
+await __jait_hook_450();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_email_remote_images_test_ts_46_3": {
-await vi.mock("node:https", () => ({ request: vi.fn() }));
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/email/connection.ts",import.meta.url)), () => ({ publicMailServer: vi.fn(async config => ({ ...config, host: "1.1.1.1", servername: config.host })) }));
-const { EventEmitter } = await import("node:events");
-const { Readable } = await import("node:stream");
-const { request } = await import("node:https");
-const { loadMailImage } = await import("../../../../packages/gateway/src/services/email/remote-images.js");
-let status = 200;
-let type = "image/png";
-let payload = Buffer.from("image-bytes");
-const __jait_hook_526 = () => {
-  status = 200; type = "image/png"; payload = Buffer.from("image-bytes");
-  vi.mocked(request).mockReset();
-  vi.mocked(request).mockImplementation((options: unknown, callback: unknown) => {
-    const req = new EventEmitter() as EventEmitter & { end: () => void; destroy: (error: Error) => void };
-    req.destroy = error => { req.emit("error", error); req.emit("close"); };
-    req.end = () => {
-      const res = Readable.from([payload]) as Readable & { statusCode: number; headers: Record<string, string> };
-      res.statusCode = status; res.headers = { "content-type": type };
-      res.on("close", () => req.emit("close"));
-      (callback as (response: unknown) => void)(res);
-    };
-    return req as never;
-  });
-};
-const __jait_hook_1271 = () => vi.clearAllMocks();
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_13_3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
-await __jait_hook_526();
+await __jait_hook_396();
 try {
 await (async()=>{
 
-    type = "image/svg+xml";
-    await __jait_rejected(0, loadMailImage("https://example.com/a"));
-    type = "image/png"; payload = Buffer.alloc(1024 * 1024 + 1);
-    await __jait_rejected(1, loadMailImage("https://example.com/a"));
+    vi.mocked(lookup).mockResolvedValue([{ address: "1.1.1.1", family: 4 }, { address: "10.0.0.1", family: 4 }] as never);
+    await __jait_rejected(0, publicMailServer(server));
   
 })();
 
 } finally {
-await __jait_hook_1271();
+await __jait_hook_450();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_17_3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.mocked(lookup).mockResolvedValue([{ address: "1.1.1.1", family: 4 }] as never);
+    const pinned = await publicMailServer(server);
+    __jait_capture(0, (pinned.host));
+    __jait_capture(1, (pinned.servername));
+    __jait_capture(2, (lookup.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_24_3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.useFakeTimers();
+    vi.mocked(lookup).mockReturnValue(new Promise(() => {}) as never);
+    const check = __jait_rejected(0, publicMailServer(server));
+    await vi.advanceTimersByTimeAsync(8001);
+    await check;
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_31_3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    for (const imap of [{ ...server, host: "mail.example.com/path" }, { ...server, port: 0 }, { ...server, user: "a\r\nAUTH evil" }]) {
+      __jait_capture(0, (connectMailboxSchema.safeParse({ email: "user@example.com", imap, smtp: server }).success));
+    }
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_38_3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    const fetch = vi.fn().mockResolvedValue(new Response(`<clientConfig><emailProvider><displayName>Example Mail</displayName><incomingServer type="imap"><hostname>imap.example.com</hostname><port>993</port><socketType>SSL</socketType><username>%EMAILADDRESS%</username></incomingServer><outgoingServer type="smtp"><hostname>smtp.example.com</hostname><port>587</port><socketType>STARTTLS</socketType><username>%EMAILLOCALPART%</username></outgoingServer></emailProvider></clientConfig>`));
+    vi.stubGlobal("fetch", fetch);
+    const result = await discoverMailSettings("person@example.com");
+    __jait_capture(0, (fetch.mock.calls[0][0]));
+    __jait_capture(1, (fetch.mock.calls[0][1]));
+    __jait_capture(2, (result.imap));
+    __jait_capture(3, (result.smtp));
+    __jait_capture(4, (JSON.stringify(result)));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_48_3_each0": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const xml = "<!DOCTYPE x><x/>";
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(xml)));
+    await __jait_rejected(0, discoverMailSettings("person@example.com"));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_48_3_each1": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const xml = "<!ENTITY x 'oops'>";
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(xml)));
+    await __jait_rejected(0, discoverMailSettings("person@example.com"));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_48_3_each2": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const xml = "x".repeat(65_537);
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(xml)));
+    await __jait_rejected(0, discoverMailSettings("person@example.com"));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_connection_test_ts_48_3_each3": {
+await vi.mock("node:dns/promises", () => ({ lookup: vi.fn() }));
+const { lookup } = await import("node:dns/promises");
+const { connectMailboxSchema, discoverMailSettings, publicMailServer } = await import("../../../../packages/gateway/src/services/email/connection.js");
+const server = { host: "mail.example.com", port: 993, secure: true, user: "user@example.com", password: "test-password" };
+const __jait_hook_396 = () => { vi.mocked(lookup).mockReset(); };
+const __jait_hook_450 = () => { vi.unstubAllGlobals(); vi.useRealTimers(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const xml = "<clientConfig/>";
+await __jait_hook_396();
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(xml)));
+    await __jait_rejected(0, discoverMailSettings("person@example.com"));
+  
+})();
+
+} finally {
+await __jait_hook_450();
+}
 }
 }
 

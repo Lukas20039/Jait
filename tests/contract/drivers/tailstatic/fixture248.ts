@@ -1,18 +1,18 @@
-// Translated fixture from packages/gateway/src/tools/agent-tools.test.ts; expected literals are in tail_static.rs.
-import { EventEmitter } from "node:events";
-import { createAgentSpawnTool } from "../../../../packages/gateway/src/tools/agent-tools.js";
-import { createAgentTool } from "../../../../packages/gateway/src/tools/core/agent.js";
-import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
-import type { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import type { CliProviderAdapter, ProviderEvent, ProviderSession, StartSessionOptions } from "../../../../packages/gateway/src/providers/contracts.js";
-import type { LLMConfig } from "../../../../packages/gateway/src/tools/agent-loop.js";
+// Translated fixture from packages/gateway/src/thread-review-sync.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { ThreadReviewSyncService } from "../../../../packages/gateway/src/services/thread-review-sync.js";
+import type { GitForge } from "../../../../packages/gateway/src/services/git-forge.js";
+import type { ParsedRemote } from "../../../../packages/gateway/src/services/git.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/thread-review-sync.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,479 +39,91 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_43_3": {
+case "tailstatic_packages_gateway_src_thread_review_sync_test_ts_12_3": {
 
 
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const provider = new FakeAcpProvider();
-    const providerRegistry = new ProviderRegistry();
-    providerRegistry.register(provider);
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
 
-    const getLLMConfig = vi.fn<() => LLMConfig>();
-    const tool = createAgentSpawnTool({
-      toolRegistry: {} as ToolRegistry,
-      getLLMConfig,
-      providerRegistry,
-      gatewayAddress: { host: "127.0.0.1", port: 8000 },
+    const cwd = await mkdtemp(join(__jait_fixture_dir, "jait-thread-review-sync-"));
+    const threadService = new ThreadService(db);
+    const thread = threadService.create({
+      userId: "review-sync-user",
+      title: "Thread",
+      providerId: "codex",
+      workingDirectory: cwd,
+      branch: "feature/test-branch",
+      kind: "delivery",
+    });
+    threadService.update(thread.id, {
+      prState: "open",
+      prUrl: "https://github.com/acme/repo/pull/42",
+      prNumber: 42,
+      prTitle: "Existing PR",
+      providerSessionId: "provider-session-1",
     });
 
-    const result = await tool.execute(
-      { prompt: "do the thing", description: "test task" },
-      { ...baseContext, providerId: "claude-code", model: "opus" },
-    );
+    const mockForge: Pick<GitForge, "findExistingPr"> = {
+      findExistingPr: vi.fn(async (_execCwd: string, _remote: ParsedRemote, _headBranch: string) => ({
+        status: "opened_existing",
+        url: "https://github.com/acme/repo/pull/42",
+        number: 42,
+        title: "Existing PR",
+        baseBranch: "main",
+        headBranch: "feature/test-branch",
+        state: "merged",
+      })),
+    };
+    const broadcastAll = vi.fn();
 
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    // Must never touch the HTTP LLM path for an ACP provider — that's the
-    // exact bug (bare CLI alias like "opus" sent to the wrong HTTP backend).
-    __jait_capture(2, (getLLMConfig.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_68_3": {
-
-
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const getLLMConfig = vi.fn<() => LLMConfig>();
-    const tool = createAgentSpawnTool({
-      toolRegistry: {} as ToolRegistry,
-      getLLMConfig,
+    const service = new ThreadReviewSyncService({
+      threadService,
+      gitService: {
+        getPreferredRemote: vi.fn(async () => "origin"),
+        getRemoteUrl: vi.fn(async () => "https://github.com/acme/repo.git"),
+      },
+      resolveForge: () => mockForge as GitForge,
+      ws: {
+        broadcastAll,
+        getFsNodes: () => [],
+      } as never,
+      log: { error: vi.fn() },
     });
 
-    const result = await tool.execute(
-      { prompt: "do the thing", description: "test task" },
-      { ...baseContext, providerId: "claude-code", model: "opus" },
-    );
+    try {
+      await service.tick();
 
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (getLLMConfig.mock.calls));
-  
-})();
+      const updated = threadService.getById(thread.id);
+      __jait_capture(0, (updated?.prState));
+      __jait_capture(1, (updated?.prBaseBranch));
+      __jait_captureType(2, (updated?.providerSessionId));
+      __jait_captureType(3, (updated?.workingDirectory));
+      __jait_capture(4, (updated?.branch));
 
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_85_3": {
-
-
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const toolRegistry = {
-      has: () => true,
-      list: () => [],
-      execute: vi.fn(),
-    } as unknown as ToolRegistry;
-    const getLLMConfig = vi.fn<() => LLMConfig>().mockReturnValue({
-      openaiApiKey: "key",
-      openaiBaseUrl: "http://127.0.0.1:11434/v1",
-      openaiModel: "deepseek-v4-flash:0731-cloud",
-      contextWindow: 32768,
-    });
-
-    const tool = createAgentSpawnTool({ toolRegistry, getLLMConfig });
-
-    // Pre-aborted signal so the loop short-circuits right after resolving
-    // the LLM config instead of making a real network call — this test only
-    // cares that the "jait" provider still reaches getLLMConfig (the HTTP
-    // path), not that a full sub-agent turn succeeds.
-    const result = await tool.execute(
-      { prompt: "do the thing", description: "test task", allowedTools: "" },
-      { ...baseContext, providerId: "jait", signal: AbortSignal.abort() },
-    );
-
-    __jait_capture(0, (result.message));
-    __jait_capture(1, (getLLMConfig.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_119_3": {
-
-
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_4489 = () => {
-    vi.restoreAllMocks();
-  };
-
-try {
-await (async()=>{
-
-    const spawn = createAgentSpawnTool({ toolRegistry: {} as ToolRegistry, getLLMConfig: vi.fn<() => LLMConfig>() });
-    const core = createAgentTool({ toolRegistry: {} as ToolRegistry, getLLMConfig: vi.fn<() => LLMConfig>() });
-
-    // A cap the model can set is a cap the model *will* set — it truncates the
-    // specialist mid-task and the partial work comes back looking finished.
-    for (const def of [spawn, core]) {
-      const props = (def.parameters as { properties: Record<string, unknown> }).properties;
-      __jait_capture(0, (Object.keys(props)));
+      const activities = threadService.getActivities(thread.id, 10);
+      __jait_capture(5, (activities.some((activity) => activity.summary.includes("Pull request merged"))));
+      __jait_capture(6, (broadcastAll.mock.calls));
+    } finally {
+      await rm(cwd, { recursive: true, force: true });
+      sqlite.close();
     }
   
 })();
 
 } finally {
-await __jait_hook_4489();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_131_3": {
-
-
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_4489 = () => {
-    vi.restoreAllMocks();
-  };
-
-try {
-await (async()=>{
-
-    // Four tool rounds, then a final tagged answer. If a cap were still applied
-    // the run would stop at round 2 with truncated, untagged output.
-    const toolRound = [
-      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-1","type":"function","function":{"name":"file_read","arguments":"{}"}}]}}]}\n\n',
-      'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\n',
-      "data: [DONE]\n\n",
-    ];
-    const finalRound = [
-      'data: {"choices":[{"delta":{"content":"[INFORM] implemented and verified"}}]}\n\n',
-      'data: {"choices":[{"delta":{},"finish_reason":"stop"}]}\n\n',
-      "data: [DONE]\n\n",
-    ];
-    let round = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      const chunks = round++ < 4 ? toolRound : finalRound;
-      return new Response(new ReadableStream<Uint8Array>({
-        start(controller) {
-          const encoder = new TextEncoder();
-          for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
-          controller.close();
-        },
-      }), { status: 200 });
-    });
-
-    const fileReadDef = {
-      name: "file.read",
-      description: "Read a file",
-      parameters: { type: "object", properties: {} },
-    };
-    let call = 0;
-    const toolRegistry = {
-      has: () => true,
-      get: () => fileReadDef,
-      list: () => [fileReadDef],
-      // Vary the result so duplicate-call loop detection doesn't end the run.
-      execute: async () => ({ ok: true, message: `finding ${++call}` }),
-    } as unknown as ToolRegistry;
-
-    const tool = createAgentSpawnTool({
-      toolRegistry,
-      getLLMConfig: () => ({
-        openaiApiKey: "test-key",
-        openaiBaseUrl: "https://llm.test",
-        openaiModel: "test-model",
-        contextWindow: 100_000,
-      }),
-    });
-
-    const result = await tool.execute(
-      // Passed anyway — the schema no longer advertises it, so it must be ignored.
-      { prompt: "implement the thing", description: "Developer", allowedTools: "file.read", maxRounds: 2 } as never,
-      { ...baseContext, providerId: "jait" },
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data));
-    __jait_capture(3, (round));
-  
-})();
-
-} finally {
-await __jait_hook_4489();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_tools_test_ts_198_3": {
-
-
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access"] as const, auth: { login: false, logout: false, deviceCode: false } };
-  readonly emitter = new EventEmitter();
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    return { id: "sess-1", providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string): Promise<void> {
-    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] specialist result" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const baseContext: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/repo",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_7657 = () => {
-    vi.restoreAllMocks();
-  };
-
-try {
-await (async()=>{
-
-    const rounds = [
-      [
-        'data: {"choices":[{"delta":{"content":"Looking at the config first."}}]}\n\n',
-        'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-1","type":"function","function":{"name":"file_read","arguments":"{}"}}]}}]}\n\n',
-        'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\n',
-        "data: [DONE]\n\n",
-      ],
-      [
-        'data: {"choices":[{"delta":{"content":"[INFORM] the config sets the port"}}]}\n\n',
-        'data: {"choices":[{"delta":{},"finish_reason":"stop"}]}\n\n',
-        "data: [DONE]\n\n",
-      ],
-    ];
-    let round = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      const chunks = rounds[Math.min(round++, rounds.length - 1)]!;
-      return new Response(new ReadableStream<Uint8Array>({
-        start(controller) {
-          const encoder = new TextEncoder();
-          for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
-          controller.close();
-        },
-      }), { status: 200 });
-    });
-
-    const fileReadDef = { name: "file.read", description: "Read a file", parameters: { type: "object", properties: {} } };
-    const toolRegistry = {
-      has: () => true,
-      get: () => fileReadDef,
-      list: () => [fileReadDef],
-      execute: async () => ({ ok: true, message: "port = 8000" }),
-    } as unknown as ToolRegistry;
-
-    const tool = createAgentSpawnTool({
-      toolRegistry,
-      getLLMConfig: () => ({
-        openaiApiKey: "test-key",
-        openaiBaseUrl: "https://llm.test",
-        openaiModel: "test-model",
-        contextWindow: 100_000,
-      }),
-    });
-
-    const result = await tool.execute(
-      { prompt: "find the port", description: "Researcher", allowedTools: "file.read" },
-      { ...baseContext, providerId: "jait" },
-    );
-
-    // The prose the specialist wrote before delegating to a tool has to stay
-    // *before* that tool call — this ordering is the whole point of shipping
-    // segments, since the flat toolCalls list can only be rendered as one lump.
-    __jait_capture(0, (result.data));
-  
-})();
-
-} finally {
-await __jait_hook_7657();
 }
 }
 

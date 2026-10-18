@@ -1,11 +1,11 @@
-// Translated fixture from packages/gateway/src/services/calendar/google.test.ts; expected literals are in tail_static.rs.
-import { GoogleCalendarClient } from "../../../../packages/gateway/src/services/calendar/google.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/audit.test.ts; expected literals are in tail_static.rs.
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/calendar/google.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/audit.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -32,134 +32,48 @@ export async function run(name: string): Promise<unknown> {
  const __jait_capture=(slot:number,actual:any,...other:any[])=>{const row:any={slot,actual:__jait_boxed(actual),ref:__jait_ref(actual)};if(Array.isArray(actual)||actual instanceof Set)row.itemRefs=Array.from(actual,__jait_ref);if(other.length){row.other=__jait_boxed(other[0]);row.otherRef=__jait_ref(other[0])}__jait_record(row)};
  const __jait_captureType=(slot:number,actual:any)=>__jait_record({slot,actual:(typeof actual==='object'&&actual!==null)?{type:'object',value:{}}:__jait_boxed(actual)});
  const __jait_captureResolved=async(slot:number,p:Promise<unknown>,...other:any[])=>__jait_capture(slot,await p,...other);
- const __jait_errorRow=(slot:number,e:any)=>{const errorTypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);p=Object.getPrototypeOf(p)}return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes}};
- const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e)}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
- const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_errorRow=(slot:number,e:any,expected?:any)=>{const errorTypes=[],prototypes=[];let p=e&&typeof e==='object'?Object.getPrototypeOf(e):null;while(p){if(p.constructor?.name)errorTypes.push(p.constructor.name);prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}const identity=typeof expected==='function';if(identity&&(expected[Symbol.hasInstance]!==Function.prototype[Symbol.hasInstance]||expected.prototype===null||typeof expected.prototype!=='object'))throw new Error('unsupported exception constructor identity');return {slot,threw:true,error:String(e instanceof Error?e.message:e),errorTypes,...(identity?{prototypes,expectedPrototype:__jait_ref(expected.prototype)}:{})}};
+ const __jait_thrown=(slot:number,fn:()=>unknown,...other:any[])=>{let row:any;try{fn();row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_rejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{await p;row={slot,threw:false}}catch(e){row=__jait_errorRow(slot,e,other[0])}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
+ const __jait_captureRejected=async(slot:number,p:Promise<unknown>,...other:any[])=>{let row:any;try{const actual=await p;row={slot,threw:false,actual:__jait_boxed(actual)}}catch(e){row={...__jait_errorRow(slot,e,other[0]),actual:__jait_boxed(e)}}if(other.length)row.other=__jait_boxed(other[0]);__jait_record(row)};
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_calendar_google_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_services_audit_test_ts_6_3": {
 
 
-const __jait_hook_115 = () => {
-  vi.unstubAllGlobals();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      items: [
-        {
-          id: "primary@example.com",
-          summary: "Personal",
-          primary: true,
-          selected: true,
-          accessRole: "owner",
-          timeZone: "Europe/Berlin",
-          backgroundColor: "#00aaff",
-        },
-        { id: "hidden", summary: "Hidden", hidden: true },
-      ],
-    }), { status: 200, headers: { "Content-Type": "application/json" } }));
-    vi.stubGlobal("fetch", fetchMock);
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const audit = new AuditWriter(db);
+      audit.write({
+        actionId: "large-audit-action",
+        actionType: "tool_call",
+        toolName: "terminal.run",
+        inputs: { command: "x".repeat(300_000) },
+        outputs: { output: "y".repeat(300_000) },
+        sideEffects: { changed: false },
+        status: "executed",
+      });
 
-    const calendars = await new GoogleCalendarClient().listCalendars("access-token");
-
-    __jait_capture(0, (calendars));
-    __jait_capture(1, (fetchMock.mock.calls));
+      const [entry] = audit.getAll();
+      __jait_capture(0, (entry?.actionId));
+      __jait_capture(1, (Buffer.byteLength(entry?.inputs ?? "", "utf8")));
+      __jait_capture(2, (Buffer.byteLength(entry?.outputs ?? "", "utf8")));
+      __jait_capture(3, (JSON.parse(entry?.sideEffects ?? "{}")));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_115();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_calendar_google_test_ts_41_3": {
-
-
-const __jait_hook_115 = () => {
-  vi.unstubAllGlobals();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      items: [
-        {
-          id: "timed",
-          summary: "Early shift",
-          location: "Office",
-          start: { dateTime: "2026-08-01T06:00:00+02:00" },
-          end: { dateTime: "2026-08-01T14:00:00+02:00" },
-          organizer: { email: "boss@example.com" },
-          attendees: [{ email: "me@example.com", responseStatus: "accepted" }],
-        },
-        {
-          id: "birthday",
-          summary: "Birthday",
-          start: { date: "2026-08-02" },
-          end: { date: "2026-08-03" },
-        },
-      ],
-    }), { status: 200, headers: { "Content-Type": "application/json" } }));
-    vi.stubGlobal("fetch", fetchMock);
-
-    const events = await new GoogleCalendarClient().listEvents(
-      "access-token",
-      { id: "primary@example.com", name: "Personal" },
-      {
-        timeMin: "2026-08-01T00:00:00.000Z",
-        timeMax: "2026-08-08T00:00:00.000Z",
-        query: "shift",
-        limit: 20,
-      },
-    );
-
-    __jait_capture(0, (events));
-    const requestUrl = new URL(String(fetchMock.mock.calls[0]?.[0]));
-    __jait_capture(1, (requestUrl.searchParams.get("q")));
-    __jait_capture(2, (requestUrl.searchParams.get("singleEvents")));
-    __jait_capture(3, (requestUrl.searchParams.get("orderBy")));
-    __jait_capture(4, (requestUrl.searchParams.get("maxResults")));
-  
-})();
-
-} finally {
-await __jait_hook_115();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_calendar_google_test_ts_85_3": {
-
-
-const __jait_hook_115 = () => {
-  vi.unstubAllGlobals();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      error: { message: "Calendar API is disabled" },
-    }), { status: 403, headers: { "Content-Type": "application/json" } })));
-
-    await __jait_rejected(0, new GoogleCalendarClient().listCalendars("bad-token"));
-  
-})();
-
-} finally {
-await __jait_hook_115();
 }
 }
 

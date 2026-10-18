@@ -15,10 +15,20 @@ const cases = JSON.parse(readFileSync(`${corpusDir}cases.json`, "utf8")) as Corp
 
 class CorpusAlpha {}
 class CorpusBeta {}
+const ExpectedFailure = class CollisionError extends Error {};
+const OtherFailure = class CollisionError extends Error {};
+class ChildFailure extends ExpectedFailure {}
 
 // One runner and one real assertion per corpus id. These are ordinary Vitest
 // assertions; nothing here consults the Rust comparator.
 const runners: Record<string, () => void> = {
+  "throw-class-same-identity": () => expect(() => { throw new ExpectedFailure("fixture failure"); }).toThrow(ExpectedFailure),
+  "throw-class-same-name-other-identity": () => expect(() => { throw new OtherFailure("fixture failure"); }).toThrow(ExpectedFailure),
+  "throw-class-subclass": () => expect(() => { throw new ChildFailure("fixture failure"); }).toThrow(ExpectedFailure),
+  "throw-class-negated-other-identity": () => expect(() => { throw new OtherFailure("fixture failure"); }).not.toThrow(ExpectedFailure),
+  "throw-class-error-alias-other-identity": () => expect(() => { throw new OtherFailure("fixture failure"); }).toThrowError(ExpectedFailure),
+  "throw-class-requires-throw": () => expect(() => {}).toThrow(ExpectedFailure),
+
   "object-containing-allows-extra-outer-fields": () => {
     const fetchMock = vi.fn();
     fetchMock("http://localhost:20128/v1/models", { headers: {}, signal: "fixture" });
