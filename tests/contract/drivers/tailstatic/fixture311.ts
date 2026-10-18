@@ -1,12 +1,10 @@
-// Translated fixture from packages/gateway/src/tools/surface-tools.test.ts; expected literals are in tail_static.rs.
-import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { createSurfacesListTool, createSurfacesStartTool, createSurfacesStopTool } from "../../../../packages/gateway/src/tools/surface-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/stream-tool-call-slots.test.ts; expected literals are in tail_static.rs.
+import { parseOpenAIStream } from "../../../../packages/gateway/src/tools/agent-loop.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/surface-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/stream-tool-call-slots.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,29 +38,35 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_17_3": {
 
 
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
+function reader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
+      controller.close();
+    },
+  }).getReader();
 }
+const DONE = 'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\ndata: [DONE]\n\n';
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, (await createSurfacesListTool(f.service).execute({}, context)), ({
-      ok: true, data: { surfaces: [f.snapshot], registeredTypes: ["browser", "terminal", "filesystem"] },
-    }));
+    // Plenty of OpenAI-compatible backends stream tool calls without `index`.
+    // Defaulting them all to slot 0 concatenated the names into one garbage
+    // identifier and made the arguments unparseable.
+    const parsed = await parseOpenAIStream(reader([
+      'data: {"choices":[{"delta":{"tool_calls":[{"id":"c1","type":"function","function":{"name":"search","arguments":"{\\"q\\":1}"}}]}}]}\n\n',
+      'data: {"choices":[{"delta":{"tool_calls":[{"id":"c2","type":"function","function":{"name":"web_fetch","arguments":"{\\"url\\":\\"x\\"}"}}]}}]}\n\n',
+      DONE,
+    ]));
+
+    __jait_capture(0, (parsed.toolCalls.map((tc) => tc.function.name)));
+    __jait_capture(1, (parsed.toolCalls.map((tc) => tc.function.arguments)));
   
 })();
 
@@ -73,28 +77,34 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_22_3": {
+case "tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_31_3": {
 
 
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
+function reader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
+      controller.close();
+    },
+  }).getReader();
 }
+const DONE = 'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\ndata: [DONE]\n\n';
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    f.registry.listSnapshots.mockReturnValue([]);
-    __jait_capture(0, ((await createSurfacesListTool(f.service).execute({}, context)).message));
+    const parsed = await parseOpenAIStream(reader([
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"c1","type":"function","function":{"name":"file_","arguments":""}}]}}]}\n\n',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"name":"read","arguments":"{\\"pa"}}]}}]}\n\n',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"th\\":\\"a.ts\\"}"}}]}}]}\n\n',
+      DONE,
+    ]));
+
+    __jait_capture(0, (parsed.toolCalls));
+    __jait_capture(1, (parsed.toolCalls[0]!.function.name));
+    __jait_capture(2, (parsed.toolCalls[0]!.function.arguments));
   
 })();
 
@@ -105,28 +115,32 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_44_3": {
 
 
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
+function reader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
+      controller.close();
+    },
+  }).getReader();
 }
+const DONE = 'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\ndata: [DONE]\n\n';
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createSurfacesStartTool(f.service).execute({ type: "browser" }, context)).ok));
-    __jait_capture(1, (f.registry.startSurface.mock.calls), ([context.sessionId,context.projectRoot]));
+    const parsed = await parseOpenAIStream(reader([
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"c1","type":"function","function":{"name":"agent","arguments":"{\\"r\\":\\"dev\\"}"}}]}}]}\n\n',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":1,"id":"c2","type":"function","function":{"name":"agent","arguments":"{\\"r\\":\\"qa\\"}"}}]}}]}\n\n',
+      DONE,
+    ]));
+
+    __jait_capture(0, (parsed.toolCalls.map((tc) => tc.id)));
+    __jait_capture(1, (parsed.toolCalls.map((tc) => tc.function.arguments)));
   
 })();
 
@@ -137,105 +151,36 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_34_3": {
+case "tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_55_3": {
 
 
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
+function reader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
+      controller.close();
+    },
+  }).getReader();
 }
+const DONE = 'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\ndata: [DONE]\n\n';
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    f.registry.startSurface.mockRejectedValue(new Error("Chromium unavailable"));
-    __jait_capture(0, (await createSurfacesStartTool(f.service).execute({ type: "browser" }, context)));
+    const parsed = await parseOpenAIStream(reader([
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"c1","type":"function","function":{"name":"read","arguments":"{}"}}]}}]}\n\n',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"c2","type":"function","function":{"name":"execute","arguments":"{}"}}]}}]}\n\n',
+      DONE,
+    ]));
+
+    __jait_capture(0, (parsed.toolCalls.map((tc) => tc.function.name)));
   
 })();
 
 } finally {
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each0": {
-
-
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
-}
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const stopped = true;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.registry.stopSurface.mockResolvedValue(stopped);
-    __jait_capture(0, ((await createSurfacesStopTool(f.service).execute({ surfaceId: "browser-1", reason: "test complete" }, context)).ok));
-    __jait_capture(1, (f.registry.stopSurface.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each1": {
-
-
-const context = { sessionId: "surface-tests", actionId: "surface-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const snapshot = { id: "browser-1", type: "browser", state: "running", sessionId: context.sessionId };
-  const registry = {
-    registeredTypes: ["browser", "terminal", "filesystem"],
-    listSnapshots: vi.fn().mockReturnValue([snapshot]),
-    startSurface: vi.fn().mockResolvedValue({ snapshot: () => snapshot }),
-    stopSurface: vi.fn().mockResolvedValue(true),
-  };
-  return { snapshot, registry, service: registry as unknown as SurfaceRegistry };
-}
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const stopped = false;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.registry.stopSurface.mockResolvedValue(stopped);
-    __jait_capture(0, ((await createSurfacesStopTool(f.service).execute({ surfaceId: "browser-1", reason: "test complete" }, context)).ok));
-    __jait_capture(1, (f.registry.stopSurface.mock.calls));
-  
-})();
-
-} finally {
-
-}
 }
 }
 

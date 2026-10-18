@@ -1,15 +1,12 @@
-// Translated fixture from packages/gateway/src/sprint11.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/sprint10.test.ts; expected literals are in tail_static.rs.
 
-import { ConsentManager } from "../../../../packages/gateway/src/security/consent-manager.js";
-import { registerVoiceRoutes } from "../../../../packages/gateway/src/routes/voice.js";
-import { VoiceService } from "../../../../packages/gateway/src/voice/service.js";
-import { createVoiceSpeakTool, createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
 import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint11.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/sprint10.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,114 +40,138 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint11_test_ts_10_3": {
+case "tailstatic_packages_gateway_src_sprint10_test_ts_7_3": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const app = Fastify();
-    const consent = new ConsentManager({ defaultTimeoutMs: 500 });
-    const voice = new VoiceService();
-    registerVoiceRoutes(app, voice, consent);
+    const screenShare = new ScreenShareService();
+    const tools = createToolRegistry(new SurfaceRegistry(), { screenShare });
 
-    const res = await app.inject({
-      method: "POST",
-      url: "/api/voice/transcribe",
-      payload: { sessionId: "s1", transcript: "Hey Jait run tests" },
-    });
+    __jait_capture(0, (tools.listNames()));
+    __jait_capture(1, (tools.listNames()));
+    __jait_capture(2, (tools.listNames()));
+    __jait_capture(3, (tools.listNames()));
 
-    __jait_capture(0, (res.statusCode));
-    const body = res.json() as { text: string; wakeWordDetected: boolean; sentToAgent: boolean };
-    __jait_capture(1, (body.text));
-    __jait_capture(2, (body.wakeWordDetected));
-    __jait_capture(3, (body.sentToAgent));
-
-    const state = await app.inject({ method: "GET", url: "/api/voice/state/s1" });
-    __jait_capture(4, ((state.json() as { state: { listening: boolean } }).state.listening));
-    await app.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint11_test_ts_33_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const app = Fastify();
-    const consent = new ConsentManager({ defaultTimeoutMs: 1_000 });
-    const voice = new VoiceService();
-    registerVoiceRoutes(app, voice, consent);
-
-    const pendingPromise = consent.requestConsent({
+    await tools.execute("os_tool", {
+      action: "register-device",
+      device: { id: "host-1", name: "Primary Desktop", platform: "desktop", capabilities: ["capture", "input"] },
+    }, {
       actionId: "a1",
-      toolName: "terminal.run",
-      summary: "run",
-      preview: { cmd: "npm test" },
-      risk: "high",
-      policy: {
-        consentLevel: "always",
-        description: "Run a shell command.",
-        knownTool: true,
-        source: "profile",
-      },
-      sessionId: "s-voice",
-      timeoutMs: 10_000,
-    });
-
-    const res = await app.inject({
-      method: "POST",
-      url: "/api/voice/transcribe",
-      payload: { sessionId: "s-voice", transcript: "Yes, run it" },
-    });
-
-    __jait_capture(0, (res.statusCode));
-    const decision = await pendingPromise;
-    __jait_capture(1, (decision.approved));
-    __jait_capture(2, (decision.decidedVia));
-    await app.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint11_test_ts_68_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const voice = new VoiceService();
-    const tool = createVoiceSpeakTool(voice);
-    const result = await tool.execute({ text: "Build succeeded" }, {
-      actionId: "a2",
-      sessionId: "s2",
+      sessionId: "s1",
       projectRoot: "/project/Jait",
       requestedBy: "test",
     });
-    __jait_capture(0, (result.ok));
 
-    const registry = createToolRegistry(new SurfaceRegistry(), { voiceService: voice });
-    __jait_capture(1, (registry.listNames()));
+    await tools.execute("os_tool", {
+      action: "register-device",
+      device: { id: "viewer-1", name: "Phone", platform: "react-native", capabilities: ["view", "control"] },
+    }, {
+      actionId: "a2",
+      sessionId: "s1",
+      projectRoot: "/project/Jait",
+      requestedBy: "test",
+    });
+
+    await tools.execute("screen.share", {
+      action: "start",
+      hostDeviceId: "host-1",
+      viewerDeviceIds: ["viewer-1"],
+    }, {
+      actionId: "a3",
+      sessionId: "s1",
+      projectRoot: "/project/Jait",
+      requestedBy: "test",
+    });
+
+    const state = await tools.execute("os_tool", { action: "state" }, {
+      actionId: "a4",
+      sessionId: "s1",
+      projectRoot: "/project/Jait",
+      requestedBy: "test",
+    });
+
+    __jait_capture(4, (state.ok));
+    const payload = state.data as {
+      devices: Array<{ id: string }>;
+      activeSession: {
+        hostDeviceId: string;
+        viewers: Array<{ deviceId: string }>;
+        controllerDeviceId: string | null;
+        capabilities: { remoteInput: boolean };
+      } | null;
+    };
+    __jait_capture(5, (payload.devices));
+    __jait_capture(6, (payload.activeSession?.hostDeviceId));
+    __jait_capture(7, (payload.activeSession?.viewers[0]?.deviceId));
+    __jait_capture(8, (payload.activeSession?.controllerDeviceId));
+    __jait_capture(9, (payload.activeSession?.capabilities.remoteInput));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint10_test_ts_71_3": {
+
+const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const screenShare = new ScreenShareService();
+    screenShare.registerDevice({ id: "host", name: "Desktop", platform: "desktop", authorized: true, capabilities: ["capture"] });
+    screenShare.registerDevice({ id: "viewer", name: "Tablet", platform: "react-native", authorized: true, capabilities: ["view", "control"] });
+
+    screenShare.startShare({ hostDeviceId: "host", viewerDeviceIds: ["viewer"] });
+    screenShare.updateViewerTransport({ deviceId: "viewer", latencyMs: 82, preferP2P: true });
+
+    let session = screenShare.getState().activeSession;
+    __jait_capture(0, (session?.transport.routeMode));
+    __jait_capture(1, (session?.transport.avgLatencyMs));
+
+    screenShare.updateViewerTransport({ deviceId: "viewer", latencyMs: 180, preferP2P: true });
+    session = screenShare.getState().activeSession;
+    __jait_capture(2, (session?.transport.routeMode));
+    __jait_capture(3, (session?.transport.relayActive));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint10_test_ts_89_3": {
+
+const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const screenShare = new ScreenShareService();
+    screenShare.registerDevice({ id: "host", name: "Desktop", platform: "desktop", authorized: true, capabilities: ["capture"] });
+    screenShare.registerDevice({ id: "phone", name: "Phone", platform: "react-native", authorized: true, capabilities: ["view", "control"] });
+    screenShare.registerDevice({ id: "viewer-web", name: "Browser", platform: "web", authorized: true, capabilities: ["view"] });
+
+    const started = screenShare.startShare({ hostDeviceId: "host", viewerDeviceIds: ["phone", "viewer-web"] });
+    const sessionId = started.id;
+
+    const transferred = screenShare.transferControl("phone");
+    __jait_capture(0, (transferred.id), (sessionId));
+    __jait_capture(1, (transferred.controllerDeviceId));
+    __jait_capture(2, (transferred.status));
   
 })();
 

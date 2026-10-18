@@ -1,14 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/diagram-tools.test.ts; expected literals are in tail_static.rs.
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
-import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
-import { ASK_MODE_TOOLS, SWARM_ORCHESTRATION_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
-import { createDiagramTool } from "../../../../packages/gateway/src/tools/diagram-tools.js";
+// Translated fixture from packages/gateway/src/tools/decision.test.ts; expected literals are in tail_static.rs.
+
+
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/diagram-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/decision.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,17 +40,30 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_10_3": {
-
-
+case "tailstatic_packages_gateway_src_tools_decision_test_ts_8_3": {
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/system-one.ts",import.meta.url)), () => ({ evaluateDecision: vi.fn() }));
+const { evaluateDecision } = await import("../../../../packages/gateway/src/services/system-one.js");
+const { createDecisionEvaluateTool } = await import("../../../../packages/gateway/src/tools/decision.js");
+const context = { sessionId: "decision-tests", actionId: "decision-action", projectRoot: "/project", requestedBy: "test", apiKeys: { SYSTEM_ONE_MODEL: "fixture-model" }, signal: new AbortController().signal };
+const __jait_hook_472 = () => { vi.mocked(evaluateDecision).mockReset(); };
 /*__jait_scope_open__*/{
-const tool = createDiagramTool();
-
+await __jait_hook_472();
 try {
 await (async()=>{
 
-    const result = await tool.execute({ diagram: " flowchart LR\nA-->B ", title: "Communication" }, {} as any);
-    __jait_capture(0, (result));
+    const output = { answers: { route: "browser", confidence: 2, ready: 0.9 } };
+    vi.mocked(evaluateDecision).mockResolvedValue(output as never);
+    const result = await createDecisionEvaluateTool().execute({ state: "Local fixture ready", questions: [
+      { id: "route", type: "choice", instructions: "Choose a route", options: [{ id: "browser", description: "Browser" }, { id: "terminal", description: "Terminal" }] },
+      { id: "confidence", type: "score", instructions: "Score confidence", levels: ["Low", "High"] },
+      { id: "ready", type: "noul", instructions: "Is the fixture ready?" },
+    ] }, context);
+    __jait_capture(0, (result), ({ ok: true, data: output }));
+    __jait_capture(1, (evaluateDecision.mock.calls), ([context.apiKeys,"Local fixture ready",{
+      route: { type: "choice", instructions: "Choose a route", criteria: { browser: "Browser", terminal: "Terminal" } },
+      confidence: { type: "score", instructions: "Score confidence", criteria: ["Low", "High"] },
+      ready: { type: "noul", instructions: "Is the fixture ready?" },
+    },context.signal]));
   
 })();
 
@@ -63,120 +74,20 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each0": {
-
-
+case "tailstatic_packages_gateway_src_tools_decision_test_ts_23_3": {
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/system-one.ts",import.meta.url)), () => ({ evaluateDecision: vi.fn() }));
+const { evaluateDecision } = await import("../../../../packages/gateway/src/services/system-one.js");
+const { createDecisionEvaluateTool } = await import("../../../../packages/gateway/src/tools/decision.js");
+const context = { sessionId: "decision-tests", actionId: "decision-action", projectRoot: "/project", requestedBy: "test", apiKeys: { SYSTEM_ONE_MODEL: "fixture-model" }, signal: new AbortController().signal };
+const __jait_hook_472 = () => { vi.mocked(evaluateDecision).mockReset(); };
 /*__jait_scope_open__*/{
-const tool = createDiagramTool();
-/*__jait_scope_open__*/{
-const diagram = undefined;
-
+await __jait_hook_472();
 try {
 await (async()=>{
 
-    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each1": {
-
-
-/*__jait_scope_open__*/{
-const tool = createDiagramTool();
-/*__jait_scope_open__*/{
-const diagram = 123;
-
-try {
-await (async()=>{
-
-    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each2": {
-
-
-/*__jait_scope_open__*/{
-const tool = createDiagramTool();
-/*__jait_scope_open__*/{
-const diagram = " ";
-
-try {
-await (async()=>{
-
-    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each3": {
-
-
-/*__jait_scope_open__*/{
-const tool = createDiagramTool();
-/*__jait_scope_open__*/{
-const diagram = "a".repeat(20001);
-
-try {
-await (async()=>{
-
-    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_17_3": {
-
-
-/*__jait_scope_open__*/{
-const tool = createDiagramTool();
-
-try {
-await (async()=>{
-
-    const registry = new ToolRegistry();
-    registry.register(tool);
-    __jait_capture(0, (registry.get("diagram.render")?.defaultConsentLevel));
-    __jait_capture(1, (ASK_MODE_TOOLS.has("diagram.render")));
-    __jait_capture(2, (SWARM_ORCHESTRATION_TOOLS.has("diagram.render")));
-    __jait_capture(3, (registry.listForMcp().map(tool => tool.name)));
-    __jait_capture(4, (registry.search("render Mermaid chat")[0].name));
-    const catalog = await createJaitCatalogTool(registry).execute({ pageId: "chat" }, {} as any);
-    __jait_capture(5, ((catalog.data as any).matches.map((match: any) => match.name)));
-    const result = await registry.execute("diagram.render", { diagram: "graph TD\nA-->B" }, {} as any);
-    const text = (mcpContentForToolResult(result)[0] as { text: string }).text;
-    __jait_capture(6, (JSON.parse(text.slice(text.indexOf("{")))));
-    __jait_capture(7, ((await registry.execute("diagram.render", {}, {} as any)).ok));
+    const question = { id: "ready", type: "noul" as const, instructions: "Ready?" };
+    __jait_capture(0, ((await createDecisionEvaluateTool().execute({ state: "Fixture", questions: [question, question] }, context)).ok));
+    __jait_capture(1, (evaluateDecision.mock.calls));
   
 })();
 
@@ -187,16 +98,21 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_32_3": {
-
-
+case "tailstatic_packages_gateway_src_tools_decision_test_ts_28_3": {
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/services/system-one.ts",import.meta.url)), () => ({ evaluateDecision: vi.fn() }));
+const { evaluateDecision } = await import("../../../../packages/gateway/src/services/system-one.js");
+const { createDecisionEvaluateTool } = await import("../../../../packages/gateway/src/tools/decision.js");
+const context = { sessionId: "decision-tests", actionId: "decision-action", projectRoot: "/project", requestedBy: "test", apiKeys: { SYSTEM_ONE_MODEL: "fixture-model" }, signal: new AbortController().signal };
+const __jait_hook_472 = () => { vi.mocked(evaluateDecision).mockReset(); };
 /*__jait_scope_open__*/{
-const tool = createDiagramTool();
-
+await __jait_hook_472();
 try {
 await (async()=>{
 
-    __jait_capture(0, ((await tool.execute({ diagram: "graph TD\nA-->B", title: "a".repeat(201) }, {} as any)).ok));
+    vi.mocked(evaluateDecision).mockRejectedValue(new Error("backend-private-details"));
+    const result = await createDecisionEvaluateTool().execute({ state: "Fixture", questions: [{ id: "ready", type: "noul", instructions: "Ready?" }] }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 

@@ -1,16 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/core/get-fs.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/tools/core/edit.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
 import { FileSystemSurface } from "../../../../packages/gateway/src/surfaces/filesystem.js";
-import { RemoteFileSystemSurface } from "../../../../packages/gateway/src/surfaces/remote-filesystem.js";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { getFs, resolveProjectRoot } from "../../../../packages/gateway/src/tools/core/get-fs.js";
-import { vi } from '../tailmock.ts';
+import { createEditTool } from "../../../../packages/gateway/src/tools/core/edit.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/core/get-fs.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/core/edit.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,373 +43,95 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3": {
+case "tailstatic_packages_gateway_src_tools_core_edit_test_ts_16_1": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
+const roots: string[] = [];
+async function fixture() {
+  const root = await mkdtemp(join(__jait_fixture_dir, "jait-edit-")); roots.push(root);
+  const registry = new SurfaceRegistry(), surface = new FileSystemSurface("fs-edit");
+  await surface.start({ sessionId: "edit", projectRoot: root }); registry.registerInstance(surface.id, surface);
+  return { root, tool: createEditTool(registry), context: { sessionId: "edit", actionId: "edit", projectRoot: root, requestedBy: "agent" as const } };
 }
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
+const __jait_hook_385 = async () => { await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); };
 
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    await withRemoteSurface(registry);
+  const { root, tool, context } = await fixture();
+  await writeFile(join(root, "result.txt"), "fixture");
+  const result = await tool.execute({ path: "result.txt", search: "fixture", replace: "fixture", explanation: "Append newline" }, context);
+  __jait_capture(0, (result.ok)); __jait_capture(1, (result.message));
+  __jait_capture(2, (await readFile(join(root, "result.txt"), "utf8")));
 
-    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\README.md");
-    __jait_instance(0, fs, RemoteFileSystemSurface);
-    // Reading must be proxied to the remote node (no local ENOENT).
-    await __jait_captureResolved(1, (fs.read("E:\\Zinsrechner\\README.md")));
-  
 })();
 
 } finally {
+await __jait_hook_385();
+}
 
-}
-}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3": {
+case "tailstatic_packages_gateway_src_tools_core_edit_test_ts_23_1": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
+const roots: string[] = [];
+async function fixture() {
+  const root = await mkdtemp(join(__jait_fixture_dir, "jait-edit-")); roots.push(root);
+  const registry = new SurfaceRegistry(), surface = new FileSystemSurface("fs-edit");
+  await surface.start({ sessionId: "edit", projectRoot: root }); registry.registerInstance(surface.id, surface);
+  return { root, tool: createEditTool(registry), context: { sessionId: "edit", actionId: "edit", projectRoot: root, requestedBy: "agent" as const } };
 }
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
+const __jait_hook_385 = async () => { await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); };
 
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    await withRemoteSurface(registry);
+  const { root, tool, context } = await fixture();
+  for (const content of ["évidence", "évidence\n", "évidence\r\n"]) {
+    const result = await tool.execute({ path: "result.txt", content, explanation: "Write exact bytes" }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (await readFile(join(root, "result.txt"), "utf8")), (content));
+    __jait_capture(2, (result.data), ({ size: Buffer.byteLength(content), trailingNewline: content.endsWith("\n") }));
+  }
 
-    const fs = await getFs(registry, createContext(), "E:\\Zinsrechner\\src\\index.ts");
-    __jait_instance(0, fs, RemoteFileSystemSurface);
-    // The returned surface's root is the remote Windows path, not a mangled POSIX path.
-    const root = (fs.snapshot().metadata as Record<string, unknown>).projectRoot;
-    __jait_capture(1, (root));
-    __jait_capture(2, (String(root)));
-  
 })();
 
 } finally {
+await __jait_hook_385();
+}
 
-}
-}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3": {
+case "tailstatic_packages_gateway_src_tools_core_edit_test_ts_33_1": {
 
 
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
+const roots: string[] = [];
+async function fixture() {
+  const root = await mkdtemp(join(__jait_fixture_dir, "jait-edit-")); roots.push(root);
+  const registry = new SurfaceRegistry(), surface = new FileSystemSurface("fs-edit");
+  await surface.start({ sessionId: "edit", projectRoot: root }); registry.registerInstance(surface.id, surface);
+  return { root, tool: createEditTool(registry), context: { sessionId: "edit", actionId: "edit", projectRoot: root, requestedBy: "agent" as const } };
 }
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
+const __jait_hook_385 = async () => { await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); };
 
 try {
 await (async()=>{
 
-    const registry = new SurfaceRegistry();
-    // No remote surface registered — the path is Windows but gateway is non-Windows.
-    await __jait_rejected(0, getFs(registry, createContext(), "E:\\Zinsrechner\\README.md"));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3": {
-
-
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new SurfaceRegistry();
-    const local = new FileSystemSurface(`fs-${SESSION_ID}`);
-    await local.start({ sessionId: SESSION_ID, projectRoot: process.cwd() });
-    registry.registerInstance(local.id, local);
-
-    const fs = await getFs(registry, {
-      ...createContext(process.cwd()),
-      projectRoot: process.cwd(),
-    });
-    __jait_instance(0, fs, FileSystemSurface);
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3": {
-
-
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new SurfaceRegistry();
-    void withRemoteSurface(registry, "E:\\Zinsrechner");
-
-    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
-    __jait_capture(0, (root));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3": {
-
-
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = new SurfaceRegistry();
-    const root = resolveProjectRoot(registry, SESSION_ID, "E:\\Zinsrechner");
-    __jait_capture(0, (root));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1": {
-
-
-const SESSION_ID = "session-win";
-function createContext(projectRoot = "E:\\Zinsrechner"): ToolContext {
-  return {
-    sessionId: SESSION_ID,
-    actionId: "action-1",
-    projectRoot,
-    requestedBy: "agent",
-  };
-}
-function createMockWs(): WsControlPlane {
-  return {
-    proxyFsOp: vi.fn(async (_nodeId: string, op: string) => {
-      if (op === "stat") return { size: 0, isDirectory: true, modified: "" };
-      if (op === "read") return { content: "remote-file-content" };
-      if (op === "list") return ["src/"];
-      return {};
-    }),
-  } as unknown as WsControlPlane;
-}
-async function withRemoteSurface(
-  registry: SurfaceRegistry,
-  projectRoot = "E:\\Zinsrechner",
-  nodeId = "node-windows",
-): Promise<RemoteFileSystemSurface> {
-  const surface = new RemoteFileSystemSurface(`filesystem-remote`, createMockWs());
-  await surface.start({ sessionId: SESSION_ID, projectRoot, nodeId });
-  registry.registerInstance(surface.id, surface);
-  return surface;
-}
-
-try {
-await (async()=>{
-
-  const registry = new SurfaceRegistry();
-  const root = "C:\\Users\\jakob\\Tankstelle";
-  await withRemoteSurface(registry, root);
-  const local = new FileSystemSurface(`fs-${SESSION_ID}`);
-  await local.start({ sessionId: SESSION_ID, projectRoot: `/home/jakob/${root}` });
-  registry.registerInstance(local.id, local);
-  __jait_capture(0, (resolveProjectRoot(registry, SESSION_ID, root)), (root));
+  const { root, tool, context } = await fixture();
+  await writeFile(join(root, "result.txt"), "original");
+  for (const args of [{ content: "whole file", replace: "fragment" }, { content: "whole file", search: "original", replace: "fragment" }]) {
+    const result = await tool.execute({ path: "result.txt", explanation: "Ambiguous edit", ...args }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (await readFile(join(root, "result.txt"), "utf8")));
+  }
 
 })();
 
 } finally {
-
+await __jait_hook_385();
 }
 
 

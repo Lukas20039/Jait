@@ -1,12 +1,16 @@
-// Translated fixture from packages/gateway/src/tools/homeassistant-tools.test.ts; expected literals are in tail_static.rs.
-import { createHomeAssistantStatesTool } from "../../../../packages/gateway/src/tools/homeassistant-tools.js";
+// Translated fixture from packages/gateway/src/tools/file-tools.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { FileSystemSurfaceFactory } from "../../../../packages/gateway/src/surfaces/filesystem.js";
+import { createImageViewTool, createFileReadTool, createFileWriteTool } from "../../../../packages/gateway/src/tools/file-tools.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/homeassistant-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/file-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,123 +44,297 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_42_3": {
 
 
-function context(apiKeys: Record<string, string>): ToolContext {
-  return {
-    userId: "u1",
-    sessionId: "s1",
-    apiKeys,
-    signal: new AbortController().signal,
-  } as ToolContext;
-}
-const __jait_hook_381 = () => {
-  vi.unstubAllGlobals();
-  delete process.env["HA_URL"];
-  delete process.env["HA_TOKEN"];
-  delete process.env["HASS_URL"];
-  delete process.env["HASS_TOKEN"];
-};
 /*__jait_scope_open__*/{
-
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
 try {
 await (async()=>{
 
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      entity_id: "person.alice",
-      state: "home",
-      attributes: { friendly_name: "Alice" },
-    }), { status: 200 }));
-    vi.stubGlobal("fetch", fetchMock);
-
-    const result = await createHomeAssistantStatesTool().execute(
-      { entity_id: "person.alice" },
-      context({ HA_URL: "http://homeassistant.local:8123/", HA_TOKEN: "secret-token" }),
-    );
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (fetchMock.mock.calls));
+    const content = "Grüße 🌍\r\n\tvalue = 7  \r\n\r\n";
+    const write = await createFileWriteTool(registry).execute({ path: "result.txt", content }, toolContext);
+    __jait_capture(0, (write.ok));
+    __jait_capture(1, (readFileSync(join(project, "result.txt"))), (Buffer.from(content)));
+    __jait_capture(2, (write.data));
+    __jait_capture(3, (write.message));
+    const read = await createFileReadTool(registry).execute({ path: "result.txt" }, toolContext);
+    __jait_capture(4, (read.data), ({ content, size: 30 }));
   
 })();
 
 } finally {
-await __jait_hook_381();
+await __jait_hook_1335();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_45_3": {
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_53_3": {
 
 
-function context(apiKeys: Record<string, string>): ToolContext {
-  return {
-    userId: "u1",
-    sessionId: "s1",
-    apiKeys,
-    signal: new AbortController().signal,
-  } as ToolContext;
-}
-const __jait_hook_381 = () => {
-  vi.unstubAllGlobals();
-  delete process.env["HA_URL"];
-  delete process.env["HA_TOKEN"];
-  delete process.env["HASS_URL"];
-  delete process.env["HASS_TOKEN"];
-};
 /*__jait_scope_open__*/{
-
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
 try {
 await (async()=>{
 
-    process.env["HASS_URL"] = "http://legacy-ha:8123";
-    process.env["HASS_TOKEN"] = "legacy-token";
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("[]", { status: 200 })));
+    const pngBytes = Buffer.from([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, // PNG signature
+      0x00, 0x01, 0x02, 0x03,
+    ]);
+    const imgPath = "shot.png";
+    writeFileSync(join(project, imgPath), pngBytes);
 
-    const result = await createHomeAssistantStatesTool().execute({}, context({}));
+    const tool = createImageViewTool(registry);
+    const result = await tool.execute({ path: imgPath }, toolContext);
 
-    __jait_capture(0, (result));
+    __jait_capture(0, (result.ok));
+    const data = result.data as { base64: string; mimeType: string; size: number; inline: boolean };
+    __jait_capture(1, (data.mimeType));
+    __jait_capture(2, (data.size), (pngBytes.length));
+    __jait_capture(3, (data.inline));
+    __jait_capture(4, (data.base64), (pngBytes.toString("base64")));
+    // The bytes used to ship twice (`base64` plus a `dataUri` wrapper), which
+    // doubled the payload and pushed mid-sized screenshots past the transport.
+    __jait_capture(5, (result.data));
   
 })();
 
 } finally {
-await __jait_hook_381();
+await __jait_hook_1335();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_55_3": {
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_75_3": {
 
 
-function context(apiKeys: Record<string, string>): ToolContext {
-  return {
-    userId: "u1",
-    sessionId: "s1",
-    apiKeys,
-    signal: new AbortController().signal,
-  } as ToolContext;
-}
-const __jait_hook_381 = () => {
-  vi.unstubAllGlobals();
-  delete process.env["HA_URL"];
-  delete process.env["HA_TOKEN"];
-  delete process.env["HASS_URL"];
-  delete process.env["HASS_TOKEN"];
-};
 /*__jait_scope_open__*/{
-
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
 try {
 await (async()=>{
 
-    const result = await createHomeAssistantStatesTool().execute({}, context({}));
-    __jait_capture(0, (result));
+    // 9 KB inlines to ~12 KB of base64, past the budget; the chat then loads
+    // the file from its path instead of the truncated tool result.
+    const bigPng = Buffer.alloc(9_000, 0x7f);
+    writeFileSync(join(project, "big.png"), bigPng);
+
+    const tool = createImageViewTool(registry);
+    const result = await tool.execute({ path: "big.png" }, toolContext);
+
+    __jait_capture(0, (result.ok));
+    const data = result.data as { base64?: string; inline: boolean; size: number; path: string };
+    __jait_capture(1, (data.inline));
+    __jait_capture(2, (data.size), (bigPng.length));
+    __jait_capture(3, (data.path));
+    __jait_captureType(4, (data.base64));
+    __jait_capture(5, (result.message));
   
 })();
 
 } finally {
-await __jait_hook_381();
+await __jait_hook_1335();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_93_3": {
+
+
+/*__jait_scope_open__*/{
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
+try {
+await (async()=>{
+
+    const tool = createImageViewTool(registry);
+    const cases: Array<{ file: string; mime: string }> = [
+      { file: "a.jpg", mime: "image/jpeg" },
+      { file: "b.jpeg", mime: "image/jpeg" },
+      { file: "c.webp", mime: "image/webp" },
+      { file: "d.gif", mime: "image/gif" },
+    ];
+    for (const { file, mime } of cases) {
+      writeFileSync(join(project, file), Buffer.from([0x01, 0x02, 0x03]));
+      const result = await tool.execute({ path: file }, toolContext);
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, ((result.data as { mimeType: string }).mimeType), (mime));
+    }
+  
+})();
+
+} finally {
+await __jait_hook_1335();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_109_3": {
+
+
+/*__jait_scope_open__*/{
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
+try {
+await (async()=>{
+
+    const tool = createImageViewTool(registry);
+    const result = await tool.execute({ path: "notes.txt" }, toolContext);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+  
+})();
+
+} finally {
+await __jait_hook_1335();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_file_tools_test_ts_116_3": {
+
+
+/*__jait_scope_open__*/{
+let project: string;
+let registry: SurfaceRegistry;
+const toolContext: ToolContext = {
+    sessionId: "img-session",
+    actionId: "a1",
+    projectRoot: "",
+    requestedBy: "test",
+  };
+const __jait_hook_952 = async () => {
+    project = mkdtempSync(join(__jait_fixture_dir, "jait-imageview-"));
+    registry = new SurfaceRegistry();
+    registry.register(new FileSystemSurfaceFactory());
+    toolContext.projectRoot = project;
+    await registry.startSurface("filesystem", `fs-${toolContext.sessionId}`, {
+      sessionId: toolContext.sessionId,
+      projectRoot: project,
+    });
+  };
+const __jait_hook_1335 = () => {
+    rmSync(project, { recursive: true, force: true });
+  };
+await __jait_hook_952();
+try {
+await (async()=>{
+
+    const tool = createImageViewTool(registry);
+    const result = await tool.execute({ path: "missing.png" }, toolContext);
+    __jait_capture(0, (result.ok));
+  
+})();
+
+} finally {
+await __jait_hook_1335();
 }
 }
 

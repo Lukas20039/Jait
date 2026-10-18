@@ -1,22 +1,16 @@
-// Translated fixture from packages/gateway/src/sprint7.test.ts; expected literals are in tail_static.rs.
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
-import { HookBus, registerBuiltInHooks } from "../../../../packages/gateway/src/scheduler/hooks.js";
-
-import { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { registerHookRoutes } from "../../../../packages/gateway/src/routes/hooks.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
-import { mkdirSync, writeFileSync } from "node:fs";
+// Translated fixture from packages/gateway/src/sprint6.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { vi } from '../tailmock.ts';
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SqliteMemoryBackend } from "../../../../packages/gateway/src/memory/sqlite-backend.js";
+import { MemoryEngine } from "../../../../packages/gateway/src/memory/service.js";
+import { createMemorySaveTool, createMemorySearchTool, createMemoryForgetTool } from "../../../../packages/gateway/src/tools/memory-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint7.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/sprint6.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -50,9 +44,9 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint7_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_sprint6_test_ts_14_3": {
 
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+
 /*__jait_scope_open__*/{
 
 try {
@@ -61,566 +55,200 @@ await (async()=>{
     const { db, sqlite } = await openDatabase(":memory:");
     migrateDatabase(sqlite);
 
-    const executeTool = vi.fn(async () => ({ ok: true, data: { ran: true } }));
-    const schedulerA = new SchedulerService({ db, executeTool });
+    const memory = new MemoryEngine({ backend: new SqliteMemoryBackend(db) });
 
-    const created = schedulerA.create({
-      name: "daily-health",
-      cron: "* * * * *",
-      toolName: "gateway.status",
-      input: { source: "test" },
+    await memory.save({
+      scope: "project",
+      content: "Use pnpm install for this monorepo.",
+      source: { type: "chat", id: "msg-1", surface: "web" },
+    });
+
+    await memory.save({
+      scope: "contact",
+      content: "Payment API retries failed webhooks 3 times.",
+      source: { type: "doc", id: "doc-1", surface: "filesystem" },
+    });
+
+    const projectOnly = await memory.search("install dependencies", 5, "project");
+    const contactOnly = await memory.search("webhook retries", 5, "contact");
+
+    __jait_capture(0, (projectOnly));
+    __jait_capture(1, (projectOnly[0]?.content));
+    __jait_capture(2, (contactOnly));
+    __jait_capture(3, (contactOnly[0]?.source.type));
+
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint6_test_ts_43_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const memory = new MemoryEngine({ backend: new SqliteMemoryBackend(db) });
+    const expired = await memory.save({
+      scope: "project",
+      content: "Old note to expire",
+      source: { type: "chat", id: "msg-old", surface: "web" },
+      expiresAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    const alive = await memory.save({
+      scope: "project",
+      content: "Important permanent note",
+      source: { type: "chat", id: "msg-new", surface: "web" },
+    });
+
+    const deleted = await memory.forgetExpired();
+    __jait_capture(0, (deleted));
+
+    const results = await memory.search("note", 10, "project");
+    __jait_capture(1, (results.map((r) => r.id)), (expired.id));
+
+    const forgotten = await memory.forget(alive.id);
+    __jait_capture(2, (forgotten));
+
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint6_test_ts_72_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-memory-"));
+    const memoryDir = join(root, "memory");
+    const memory = new MemoryEngine({ backend: new SqliteMemoryBackend(db), memoryDir });
+
+    await memory.save({
+      scope: "contact",
+      content: "Alice prefers PR updates in Slack.",
+      source: { type: "contact", id: "alice", surface: "slack" },
+    });
+
+    const day = new Date().toISOString().slice(0, 10);
+    const daily = readFileSync(join(memoryDir, `${day}.md`), "utf-8");
+    const curated = readFileSync(join(root, "MEMORY.md"), "utf-8");
+
+    __jait_capture(0, (daily));
+    __jait_capture(1, (curated));
+
+    rmSync(root, { recursive: true, force: true });
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint6_test_ts_98_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const memory = new MemoryEngine({ backend: new SqliteMemoryBackend(db) });
+    const saved = await memory.flushPreCompaction("session-42", [
+      "[user] Remember that the release checklist lives in docs/release.md.",
+      "[assistant] ok",
+      "[user] Can you run tests?",
+    ]);
+
+    __jait_capture(0, (saved));
+
+    const results = await memory.search("release checklist", 5, "project");
+    __jait_capture(1, (results));
+    __jait_capture(2, (results[0]?.content));
+    __jait_capture(3, (results[0]?.source.type));
+    __jait_capture(4, (results[0]?.source.id));
+
+    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint6_test_ts_120_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+
+    const memory = new MemoryEngine({ backend: new SqliteMemoryBackend(db) });
+    const saveTool = createMemorySaveTool(memory);
+    const searchTool = createMemorySearchTool(memory);
+    const forgetTool = createMemoryForgetTool(memory);
+
+    const context = {
       sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    __jait_capture(0, (schedulerA.list()));
-    __jait_capture(1, (created.toolName));
-
-    const updated = schedulerA.update(created.id, { enabled: false, name: "disabled-health" });
-    __jait_capture(2, (updated?.enabled));
-    __jait_capture(3, (updated?.name));
-
-    const schedulerB = new SchedulerService({ db, executeTool });
-    __jait_capture(4, (schedulerB.list()));
-    __jait_capture(5, (schedulerB.list()[0]?.name));
-
-    const removed = schedulerB.remove(created.id);
-    __jait_capture(6, (removed));
-    __jait_capture(7, (schedulerB.list()));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_52_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { ran: true } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    const systemJob = scheduler.create({
-      name: "system-health",
-      cron: "0 * * * *",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "system",
-      projectRoot: "/project/Jait",
-    });
-    const userJob = scheduler.create({
-      userId: "user-a",
-      name: "user-a-health",
-      cron: "15 * * * *",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-    const otherUserJob = scheduler.create({
-      userId: "user-b",
-      name: "user-b-health",
-      cron: "30 * * * *",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "s2",
-      projectRoot: "/project/Jait",
-    });
-
-    __jait_capture(0, (scheduler.list("user-a").map((job) => job.id).sort()), ([
-      systemJob.id,
-      userJob.id,
-    ].sort()));
-    __jait_capture(1, (scheduler.get(systemJob.id, "user-a")?.id), (systemJob.id));
-    __jait_captureType(2, (scheduler.get(otherUserJob.id, "user-a")));
-    __jait_captureType(3, (scheduler.update(otherUserJob.id, { enabled: false }, "user-a")));
-    __jait_capture(4, (scheduler.remove(otherUserJob.id, "user-a")));
-    __jait_capture(5, (scheduler.get(otherUserJob.id)?.enabled));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_99_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { ran: true } }));
-    const onExecuted = vi.fn();
-    const scheduler = new SchedulerService({ db, executeTool, onExecuted });
-
-    const job = scheduler.create({
-      name: "minutely",
-      cron: "* * * * *",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    await scheduler.tick(new Date("2026-03-02T10:15:00.000Z"));
-
-    __jait_capture(0, (executeTool.mock.calls));
-    __jait_capture(1, (onExecuted.mock.calls));
-
-    const reloaded = scheduler.get(job.id);
-    __jait_captureType(2, (reloaded?.lastRunAt));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_127_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { thread: { id: "thread-1" } } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    const job = scheduler.create({
-      name: "legacy-agent-task",
-      cron: "* * * * *",
-      toolName: "agent.spawn",
-      input: {
-        prompt: "Run the nightly fix",
-        description: "nightly fix",
-        __jaitJobMeta: {
-          jobType: "agent_task",
-          provider: "codex",
-          model: "gpt-5-codex",
-        },
-      },
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    await scheduler.trigger(job.id);
-
-    __jait_capture(0, (executeTool.mock.calls));
-    const execution = executeTool.mock.calls[0]?.[0] as { input?: Record<string, unknown> };
-    __jait_capture(1, (execution.input));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_174_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { thread: { id: "thread-1" } } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    const job = scheduler.create({
-      name: "saved-agent-task",
-      cron: "* * * * *",
-      toolName: "thread.control",
-      input: {
-        action: "create",
-        title: "old fixed title",
-        kind: "delivery",
-        prompt: "Run the scheduled fix",
-        start: true,
-        detach: true,
-        __jaitJobMeta: {
-          jobType: "agent_task",
-          provider: "codex",
-        },
-      },
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    await scheduler.trigger(job.id);
-
-    __jait_capture(0, (executeTool.mock.calls));
-    const execution = executeTool.mock.calls[0]?.[0] as { input?: Record<string, unknown> };
-    __jait_capture(1, (execution.input));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_219_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { thread: { id: "thread-1" } } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    const job = scheduler.create({
-      name: "legacy-code-quality-rotation",
-      cron: "* * * * *",
-      toolName: "thread.control",
-      input: {
-        action: "create",
-        title: "Jait code quality rotation",
-        kind: "delivery",
-        prompt: "Run the scheduled code quality task",
-        start: true,
-        detach: true,
-        __jaitJobMeta: {
-          jobType: "agent_thread_job",
-          provider: "codex",
-        },
-      },
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    await scheduler.trigger(job.id);
-
-    __jait_capture(0, (executeTool.mock.calls));
-    const execution = executeTool.mock.calls[0]?.[0] as { input?: Record<string, unknown> };
-    __jait_capture(1, (execution.input));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_264_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { ran: true } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    scheduler.create({
-      name: "hourly-with-zero-padding",
-      cron: "05 09 * * *",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    const runAt = new Date("2026-03-02T09:05:00.000Z");
-    await scheduler.tick(runAt);
-    await scheduler.tick(runAt);
-
-    __jait_capture(0, (executeTool.mock.calls));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_289_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const executeTool = vi.fn(async () => ({ ok: true, data: { ran: true } }));
-    const scheduler = new SchedulerService({ db, executeTool });
-
-    scheduler.create({
-      name: "weekday-morning-report",
-      cron: "0 9 * * 1-5",
-      toolName: "gateway.status",
-      input: {},
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-    });
-
-    await scheduler.tick(new Date("2026-03-02T09:00:00.000Z"));
-    await scheduler.tick(new Date("2026-03-08T09:00:00.000Z"));
-
-    __jait_capture(0, (executeTool.mock.calls));
-
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_313_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const hooks = new HookBus();
-    const surfaceHandler = vi.fn();
-
-    hooks.on("surface.*", surfaceHandler);
-    hooks.emit("surface.connected", { surfaceId: "t1" });
-    hooks.emit("surface.exit", { surfaceId: "t1" });
-
-    __jait_capture(0, (surfaceHandler.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_324_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const hooks = new HookBus();
-    const projectRoot = join(__jait_fixture_dir, `jait-sprint7-${Date.now()}`);
-    mkdirSync(join(projectRoot, ".jait"), { recursive: true });
-    writeFileSync(join(projectRoot, ".jait", "bootstrap.md"), "# Bootstrap\nload me");
-
-    const bootstrapSpy = vi.fn();
-    hooks.on("session.bootstrap.loaded", bootstrapSpy);
-    registerBuiltInHooks(hooks, { defaultProjectRoot: projectRoot });
-
-    hooks.emit("session.start", { sessionId: "s-bootstrap", projectRoot });
-
-    __jait_capture(0, (bootstrapSpy.mock.calls));
-    const payload = bootstrapSpy.mock.calls[0]?.[0]?.payload as {
-      fileCount: number;
-      files: Array<{ path: string; content: string }>;
-    };
-    __jait_capture(1, (payload.fileCount));
-    __jait_capture(2, (payload.files[0]?.path));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_345_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-
-    const hooks = new HookBus();
-    const wakeSpy = vi.fn(async () => ({ woke: true }));
-    const agentSpy = vi.fn(async () => ({ accepted: true }));
-
-    const app = Fastify();
-    registerHookRoutes(app, {
-      hooks,
-      hookSecret: "secret-token",
-      onWake: wakeSpy,
-      onAgentHook: agentSpy,
-    });
-
-    const denied = await app.inject({ method: "POST", url: "/hooks/wake" });
-    __jait_capture(0, (denied.statusCode));
-
-    const wake = await app.inject({
-      method: "POST",
-      url: "/hooks/wake",
-      headers: { "x-hook-token": "secret-token" },
-    });
-    __jait_capture(1, (wake.statusCode));
-    __jait_capture(2, (wakeSpy.mock.calls));
-
-    const agent = await app.inject({
-      method: "POST",
-      url: "/hooks/agent",
-      headers: { "x-hook-token": "secret-token" },
-      payload: { kind: "external-trigger" },
-    });
-    __jait_capture(3, (agent.statusCode));
-    __jait_capture(4, (agentSpy.mock.calls));
-
-    await app.close();
-    sqlite.close();
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint7_test_ts_385_3": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const sessionService = new SessionService(db);
-    sessionService.create({ name: "Active Session" });
-
-    const ws = new WsControlPlane({
-      port: 8000,
-      wsPort: 0,
-      host: "127.0.0.1",
-      logLevel: "silent",
-      corsOrigin: "*",
-      nodeEnv: "development",
-      jwtSecret: "secret",
-      llmProvider: "ollama",
-      ollamaUrl: "http://localhost:11434",
-      ollamaModel: "model",
-      openaiApiKey: "",
-      openaiModel: "gpt-4o",
-      openaiBaseUrl: "https://api.openai.com/v1",
-      hookSecret: "secret",
-      heartbeatCron: "* * * * *",
-    });
-    const surfaceRegistry = new SurfaceRegistry();
-    const hooks = new HookBus();
-    registerBuiltInHooks(hooks);
-
-    const scheduler = new SchedulerService({
-      db,
-      executeTool: async () => ({ ok: true, data: { noop: true } }),
-    });
-
-    const tools = createToolRegistry(surfaceRegistry, {
-      scheduler,
-      sessionService,
-      ws,
-      startedAt: Date.now() - 2_000,
-      hooks,
-    });
-
-    __jait_capture(0, (tools.listNames()));
-    __jait_capture(1, (tools.listNames()));
-    __jait_capture(2, (tools.listNames()));
-    __jait_capture(3, (tools.listNames()));
-    __jait_capture(4, (tools.listNames()));
-
-    const status = await tools.execute("gateway.status", {}, {
       actionId: "a1",
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
+      projectRoot: "/tmp",
       requestedBy: "test",
-    });
-
-    __jait_capture(5, (status.ok));
-    const statusData = status.data as {
-      healthy: boolean;
-      scheduler?: { totalJobs: number; enabledJobs: number };
-      hooks?: { registeredEventTypes: string[]; listeners: number };
-      activeServices: string[];
     };
-    __jait_capture(6, (statusData.healthy));
-    __jait_capture(7, (statusData.activeServices));
-    __jait_capture(8, (statusData.scheduler?.totalJobs));
-    __jait_capture(9, (statusData.hooks?.registeredEventTypes));
+
+    const saveResult = await saveTool.execute({
+      scope: "project",
+      content: "Release branch is cut every Thursday.",
+      sourceType: "chat",
+      sourceId: "m1",
+      sourceSurface: "web",
+    }, context);
+
+    __jait_capture(0, (saveResult.ok));
+    const id = (saveResult.data as { id: string }).id;
+
+    const searchResult = await searchTool.execute({ query: "release branch" }, context);
+    __jait_capture(1, (searchResult.ok));
+    __jait_capture(2, ((searchResult.data as { memories: unknown[] }).memories.length));
+
+    const forgetResult = await forgetTool.execute({ id }, context);
+    __jait_capture(3, (forgetResult.ok));
 
     sqlite.close();
   

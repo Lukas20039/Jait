@@ -1,16 +1,16 @@
-// Translated fixture from packages/gateway/src/sprint13.test.ts; expected literals are in tail_static.rs.
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
-import { createTerminalRunTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { createBrowserSandboxStartTool } from "../../../../packages/gateway/src/tools/browser-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/sprint12.test.ts; expected literals are in tail_static.rs.
+import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+import { createServer } from "../../../../packages/gateway/src/server.js";
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
+import { ConsentManager } from "../../../../packages/gateway/src/security/consent-manager.js";
+import { DeviceRegistry } from "../../../../packages/gateway/src/services/device-registry.js";
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint13.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/sprint12.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,840 +44,115 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint13_test_ts_27_3": {
+case "tailstatic_packages_gateway_src_sprint12_test_ts_19_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
+const testConfig = {
+  ...loadConfig(),
+  port: 0,
+  wsPort: 0,
+  logLevel: "silent" as const,
+  nodeEnv: "test" as const,
 };
 /*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
+
 try {
 await (async()=>{
 
-    const manager = new SandboxManager(async () => ({
-      output: "inside-container",
-      exitCode: 0,
-      timedOut: false,
-    }));
+    const consentManager = new ConsentManager();
+    const deviceRegistry = new DeviceRegistry();
+    const app = await createServer(testConfig, { consentManager, deviceRegistry });
 
-    const tool = createTerminalRunTool(new SurfaceRegistry(), manager);
-    const result = await tool.execute(
-      { command: "pwd", sandbox: true, timeout: 3000 },
-      baseContext,
-    );
+    const headers = { authorization: "Bearer " + await signAuthToken({ id: "mobile-owner", username: "owner" }, testConfig.jwtSecret) };
+    const discovery = await app.inject({ headers, method: "GET", url: "/api/mobile/discovery" });
+    __jait_capture(0, (discovery.statusCode));
+    const discoveryBody = discovery.json() as { name: string; wsUrl: string };
+    __jait_capture(1, (discoveryBody.name));
+    __jait_capture(2, (discoveryBody.wsUrl));
 
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
+    const register = await app.inject({ headers,
+      method: "POST",
+      url: "/api/mobile/devices/register",
+      payload: {
+        id: "device-mobile-1",
+        name: "Pixel Test",
+        platform: "mobile",
+        capabilities: ["voice", "screen-view", "consent"],
+      },
+    });
+    __jait_capture(3, (register.statusCode));
+
+    const devices = await app.inject({ headers, method: "GET", url: "/api/mobile/devices" });
+    __jait_capture(4, (devices.statusCode));
+    const devicesBody = devices.json() as { devices: Array<{ id: string; lastSeen: string }> };
+    __jait_capture(5, (devicesBody.devices));
+    const lastSeenBefore = devicesBody.devices[0]!.lastSeen;
+
+    await new Promise((resolve) => setTimeout(resolve, 5));
+
+    const heartbeat = await app.inject({ headers,
+      method: "POST",
+      url: "/api/mobile/devices/device-mobile-1/heartbeat",
+    });
+    __jait_capture(6, (heartbeat.statusCode));
+    const heartbeatBody = heartbeat.json() as { device: { lastSeen: string } };
+    __jait_capture(7, (heartbeatBody.device.lastSeen > lastSeenBefore));
+
+    const health = await app.inject({ headers, method: "GET", url: "/health" });
+    const healthBody = health.json() as { devices: number };
+    __jait_capture(8, (healthBody.devices));
+
+    await app.close();
   
 })();
 
 } finally {
-await __jait_hook_737();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint13_test_ts_48_3": {
+case "tailstatic_packages_gateway_src_sprint12_test_ts_66_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
+const testConfig = {
+  ...loadConfig(),
+  port: 0,
+  wsPort: 0,
+  logLevel: "silent" as const,
+  nodeEnv: "test" as const,
 };
 /*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
+
 try {
 await (async()=>{
 
-    let captured: string[] = [];
-    const manager = new SandboxManager(async (cmd, _timeoutMs) => {
-      captured = cmd;
-      return {
-        output: "killed",
-        exitCode: null,
-        timedOut: true,
-      };
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const sessionService = new SessionService(db);
+    sessionService.create({ name: "Mobile Control Session", userId: "mobile-owner" });
+
+    const app = await createServer(testConfig, {
+      consentManager: new ConsentManager(),
+      deviceRegistry: new DeviceRegistry(),
+      sessionService,
     });
 
-    const result = await manager.runCommand({
-      command: "sleep 99",
-      projectRoot: testProject,
-      timeoutMs: 1000,
-      mountMode: "read-only",
-      networkEnabled: false,
-      memoryLimitMb: 128,
-      cpuLimit: "0.5",
-    });
+    const headers = { authorization: "Bearer " + await signAuthToken({ id: "mobile-owner", username: "owner" }, testConfig.jwtSecret) };
+    const response = await app.inject({ headers, method: "GET", url: "/api/mobile/os-tool/sessions" });
+    __jait_capture(0, (response.statusCode));
+    const body = response.json() as { sessions: Array<{ id: string; name: string }> };
+    __jait_capture(1, (body.sessions.length));
+    __jait_capture(2, (body.sessions[0]!.name));
 
-    __jait_capture(0, (result.timedOut));
-    __jait_capture(1, (captured.join(" ")));
-    __jait_capture(2, (captured.join(" ")));
-    __jait_capture(3, (captured.join(" ")));
-    __jait_capture(4, (captured.join(" ")));
+    await app.close();
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_737();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_76_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const manager = new SandboxManager(async () => ({
-      output: "container-id",
-      exitCode: 0,
-      timedOut: false,
-    }));
-
-    const tool = createBrowserSandboxStartTool(manager);
-    const result = await tool.execute({ novncPort: 6600, vncPort: 6000 }, baseContext);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (globalThis.fetch.mock.calls));
-    __jait_capture(2, (result.data));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_98_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      return {
-        output: "container-id",
-        exitCode: 0,
-        timedOut: false,
-      };
-    });
-
-    const result = await manager.startBrowserSandbox({
-      projectRoot: testProject,
-      mountMode: "none",
-      networkEnabled: true,
-      hostGateway: true,
-      novncPort: 6601,
-      vncPort: 6001,
-      cdpPort: 9223,
-      waitForCdp: false,
-    });
-
-    __jait_capture(0, (result));
-    const imageInspectCmd = commands.find((c) => c.join(" ").includes("image inspect"));
-    __jait_capture(1, (imageInspectCmd?.join(" ")));
-    const runCmd = commands.find((c) => c.join(" ").includes("--add-host"));
-    __jait_capture(2, (runCmd?.join(" ")));
-    __jait_capture(3, (runCmd?.join(" ")));
-    __jait_capture(4, (runCmd?.join(" ")));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_134_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    let runAttempts = 0;
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      const joined = cmd.join(" ");
-      if (joined.includes(" ps ") && joined.includes("{{.Ports}}")) {
-        return {
-          output: "jait-browser-sb-old\t0.0.0.0:6080->6080/tcp, 0.0.0.0:5900->5900/tcp",
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      if (joined.includes(" ps ") && joined.includes("{{.Names}}")) {
-        return { output: "", exitCode: 0, timedOut: false };
-      }
-      if (joined.includes("image inspect")) {
-        return { output: "[]", exitCode: 0, timedOut: false };
-      }
-      if (cmd.includes("run")) {
-        runAttempts += 1;
-        if (runAttempts === 1) {
-          return {
-            output: "docker: Error response from daemon: Bind for 0.0.0.0:6080 failed: port is already allocated",
-            exitCode: 125,
-            timedOut: false,
-          };
-        }
-      }
-      return { output: "container-id", exitCode: 0, timedOut: false };
-    });
-
-    const result = await manager.startBrowserSandbox({
-      projectRoot: testProject,
-      novncPort: 6080,
-      vncPort: 5900,
-    });
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (commands.some((cmd) => cmd.includes("ps") && cmd.includes("--format"))));
-    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-old"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_181_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const manager = new SandboxManager(async (cmd) => {
-      if (cmd.includes("info")) {
-        return { output: "", exitCode: null, timedOut: true };
-      }
-      return { output: "unexpected", exitCode: 0, timedOut: false };
-    });
-
-    await __jait_rejected(0, manager.startBrowserSandbox({
-      projectRoot: testProject,
-      novncPort: 6082,
-      vncPort: 5902,
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_196_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return { output: "jait-browser-sb-active", exitCode: 0, timedOut: false };
-      }
-      return { output: "ok", exitCode: 0, timedOut: false };
-    });
-
-    await __jait_captureResolved(0, (manager.startBrowserSandbox({
-      projectRoot: testProject,
-      novncPort: 6083,
-      vncPort: 5903,
-    })));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_217_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return {
-          output: "jait-browser-sb-active-1\njait-browser-sb-active-2",
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      return { output: "ok", exitCode: 0, timedOut: false };
-    });
-
-    await __jait_rejected(0, manager.startBrowserSandbox({
-      projectRoot: testProject,
-      novncPort: 6083,
-      vncPort: 5903,
-    }));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_239_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const now = Date.now();
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return {
-          output: [
-            `jait-browser-sb-old\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
-            `jait-browser-sb-active\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
-            `jait-browser-sb-fresh\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now}`,
-          ].join("\n"),
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      return { output: "removed", exitCode: 0, timedOut: false };
-    });
-
-    const stopped = await manager.cleanupBrowserSandboxes({
-      maxAgeMs: 60 * 60 * 1000,
-      excludeNames: ["jait-browser-sb-active"],
-    });
-
-    __jait_capture(0, (stopped));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-old"))));
-    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-active"))));
-    __jait_capture(3, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-fresh"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_269_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return {
-          output: "jait-browser-sb-legacy\t2026-04-29 20:00:10 +0000 UTC\t",
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      return { output: "removed", exitCode: 0, timedOut: false };
-    });
-
-    const stopped = await manager.cleanupBrowserSandboxes({ maxAgeMs: 60 * 60 * 1000 });
-
-    __jait_capture(0, (stopped));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-legacy"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_289_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      return {
-        output: "container-id",
-        exitCode: 0,
-        timedOut: false,
-      };
-    });
-
-    const result = await manager.startLinuxDesktopSandbox({
-      projectRoot: testProject,
-      mountMode: "none",
-      networkEnabled: true,
-      hostGateway: true,
-      novncPort: 6602,
-      vncPort: 6002,
-      cdpPort: 9224,
-      waitForCdp: false,
-      screenRes: "1280x720x24",
-    });
-
-    __jait_capture(0, (result));
-    const imageInspectCmd = commands.find((c) => c.join(" ").includes("image inspect"));
-    __jait_capture(1, (imageInspectCmd?.join(" ")));
-    const runCmd = commands.find((c) => c.join(" ").includes("--add-host"));
-    __jait_capture(2, (runCmd?.join(" ")));
-    __jait_capture(3, (runCmd?.join(" ")));
-    __jait_capture(4, (runCmd?.join(" ")));
-    __jait_capture(5, (runCmd?.join(" ")));
-    __jait_capture(6, (runCmd?.join(" ")));
-    __jait_capture(7, (runCmd?.join(" ")));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_329_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    let runAttempts = 0;
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      const joined = cmd.join(" ");
-      if (joined.includes(" ps ") && joined.includes("{{.Ports}}")) {
-        return {
-          output: "jait-linux-desktop-sb-old\t0.0.0.0:6080->6080/tcp, 0.0.0.0:5900->5900/tcp",
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      if (joined.includes(" ps ") && joined.includes("{{.Names}}")) {
-        return { output: "", exitCode: 0, timedOut: false };
-      }
-      if (joined.includes("image inspect")) {
-        return { output: "[]", exitCode: 0, timedOut: false };
-      }
-      if (cmd.includes("run")) {
-        runAttempts += 1;
-        if (runAttempts === 1) {
-          return {
-            output: "docker: Error response from daemon: Bind for 0.0.0.0:6080 failed: port is already allocated",
-            exitCode: 125,
-            timedOut: false,
-          };
-        }
-      }
-      return { output: "container-id", exitCode: 0, timedOut: false };
-    });
-
-    const result = await manager.startLinuxDesktopSandbox({
-      projectRoot: testProject,
-      novncPort: 6080,
-      vncPort: 5900,
-    });
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-old"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_375_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const manager = new SandboxManager(async (cmd) => {
-      if (cmd.includes("info")) {
-        return { output: "", exitCode: null, timedOut: true };
-      }
-      return { output: "unexpected", exitCode: 0, timedOut: false };
-    });
-
-    await __jait_rejected(0, manager.startLinuxDesktopSandbox({
-      projectRoot: testProject,
-      novncPort: 6084,
-      vncPort: 5904,
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_390_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return { output: "jait-linux-desktop-sb-active", exitCode: 0, timedOut: false };
-      }
-      return { output: "ok", exitCode: 0, timedOut: false };
-    });
-
-    await __jait_rejected(0, manager.startLinuxDesktopSandbox({
-      projectRoot: testProject,
-      novncPort: 6085,
-      vncPort: 5905,
-    }));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_408_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const now = Date.now();
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      if (cmd.includes("ps")) {
-        return {
-          output: [
-            `jait-linux-desktop-sb-old\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
-            `jait-linux-desktop-sb-active\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
-            `jait-linux-desktop-sb-fresh\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now}`,
-          ].join("\n"),
-          exitCode: 0,
-          timedOut: false,
-        };
-      }
-      return { output: "removed", exitCode: 0, timedOut: false };
-    });
-
-    const stopped = await manager.cleanupLinuxDesktopSandboxes({
-      maxAgeMs: 60 * 60 * 1000,
-      excludeNames: ["jait-linux-desktop-sb-active"],
-    });
-
-    __jait_capture(0, (stopped));
-    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-old"))));
-    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-active"))));
-    __jait_capture(3, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-fresh"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint13_test_ts_438_3": {
-
-
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-/*__jait_scope_open__*/{
-const __jait_hook_630 = () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
-  };
-const __jait_hook_737 = () => {
-    vi.restoreAllMocks();
-  };
-await __jait_hook_630();
-try {
-await (async()=>{
-
-    const commands: string[][] = [];
-    const manager = new SandboxManager(async (cmd) => {
-      commands.push(cmd);
-      return { output: "removed", exitCode: 0, timedOut: false };
-    });
-
-    await manager.stopLinuxDesktopSandbox("jait-linux-desktop-sb-abc");
-
-    __jait_capture(0, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-abc"))));
-  
-})();
-
-} finally {
-await __jait_hook_737();
 }
 }
 

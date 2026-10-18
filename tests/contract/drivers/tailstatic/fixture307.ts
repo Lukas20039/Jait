@@ -1,12 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/session-search-tools.test.ts; expected literals are in tail_static.rs.
-import type { SessionSearchOptions, SessionSearchResult, SessionSearchService } from "../../../../packages/gateway/src/services/session-search.js";
+// Translated fixture from packages/gateway/src/tools/security-workbench-tools.test.ts; expected literals are in tail_static.rs.
+import { createSecurityWorkbenchTools } from "../../../../packages/gateway/src/tools/security-workbench-tools.js";
+import { getSecurityWorkbench } from "../../../../packages/gateway/src/security/workbench.js";
+import { getAssessmentService } from "../../../../packages/gateway/src/security/assessment.js";
+import type { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createSessionSearchTool } from "../../../../packages/gateway/src/tools/session-search-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/session-search-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/security-workbench-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,60 +43,85 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_session_search_tools_test_ts_15_3": {
+case "tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_9_1": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "test",
-  userId: "user-1",
-};
-/*__jait_scope_open__*/{
+const context: ToolContext = {userId:"monitor-owner",requestedBy:"agent",sessionId:"fixture",actionId:"fixture",projectRoot:process.cwd()};
+const __jait_hook_517 = ()=>vi.restoreAllMocks();
 
 try {
 await (async()=>{
 
-    const result: SessionSearchResult = {
-      source: "message",
-      id: "msg-1",
-      sessionId: "session-1",
-      role: "user",
-      content: "Prior context",
-      snippet: "[Prior] context",
-      createdAt: "2026-05-25T00:00:00.000Z",
-      score: 1,
-    };
-    let received: SessionSearchOptions | undefined;
-    const service = {
-      search: (options: SessionSearchOptions) => {
-        received = options;
-        return [result];
-      },
-    } as unknown as SessionSearchService;
-    const tool = createSessionSearchTool(service);
+ const scope=getAssessmentService().createScope({targets:["127.0.0.1","127.0.0.2"],exclusions:[],ports:[80,443],methods:["http","tls"],authorized:true,expiresAt:new Date(Date.now()+60_000).toISOString()},"monitor-owner");
+ const saved={scopeId:scope.id,profile:"http",target:"127.0.0.1",port:80,minutes:15};
+ let job={id:"monitor-job",userId:"monitor-owner",enabled:true,toolName:"security.monitor.tick",input:saved};
+ const fake={create:vi.fn(()=>job),update:vi.fn((_id,patch)=>{job={...job,...patch};return job}),get:vi.fn((_id,owner)=>owner===job.userId?job:null)};
+ const tools=createSecurityWorkbenchTools(fake as unknown as SchedulerService);
+ const schedule=tools.find(t=>t.name==="security.monitor.schedule")!;
+ __jait_capture(0, (schedule.defaultConsentLevel));
+ __jait_capture(1, ((await schedule.execute({...saved,minutes:1},context)).ok));
+ __jait_capture(2, ((await schedule.execute(saved,context)).ok));
+ const service=getSecurityWorkbench();
+ const start=vi.spyOn(service,"start").mockReturnValue({id:"monitor-run"} as ReturnType<typeof service.start>);
+ vi.spyOn(service,"history").mockReturnValue({runs:[],findings:[]});
+ vi.spyOn(service,"wait").mockResolvedValue({id:"monitor-run",status:"completed",coverageGaps:[]} as Awaited<ReturnType<typeof service.wait>>);
+ const tick=tools.find(t=>t.name==="security.monitor.tick")!;
+ __jait_capture(3, ((await tick.execute({...saved,monitorJobId:job.id,target:"127.0.0.2",profile:"tls",port:443},context)).ok));
+ __jait_capture(4, (start.mock.calls[0][0]), (saved));
+ __jait_capture(5, ((await tick.execute({...saved,monitorJobId:job.id},{...context,userId:"other"})).ok));
+ vi.spyOn(Date,"now").mockReturnValue(Date.parse(scope.expiresAt)+1);
+ __jait_capture(6, ((await tick.execute({...saved,monitorJobId:job.id},context)).message));
+ __jait_capture(7, (fake.update.mock.calls), ([job.id,{enabled:false},"monitor-owner"]));
+ __jait_capture(8, (start.mock.calls));
 
-    const response = await tool.execute({
-      query: "prior context",
-      limit: 25,
-      sessionId: "session-1",
-      includeMessages: true,
-      includeThreadActivities: false,
-    }, context);
-
-    __jait_capture(0, (response.ok));
-    __jait_capture(1, (response.message));
-    __jait_capture(2, (response.message));
-    __jait_capture(3, (response.data), ({ results: [result] }));
-    __jait_capture(4, (received));
-  
 })();
 
 } finally {
+await __jait_hook_517();
+}
 
+
+break;
 }
+case "tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_33_1": {
+
+
+const context: ToolContext = {userId:"monitor-owner",requestedBy:"agent",sessionId:"fixture",actionId:"fixture",projectRoot:process.cwd()};
+const __jait_hook_517 = ()=>vi.restoreAllMocks();
+
+try {
+await (async()=>{
+
+ const expanded = getSecurityWorkbench();
+ const native = getAssessmentService();
+ const fakeRun = { id: "saved-expanded", operatorId: context.userId, status: "completed", evidence: [], findings: [] };
+ const getExpanded = vi.spyOn(expanded, "get").mockImplementation((id, owner) => {
+   if (id === fakeRun.id && owner === context.userId) return fakeRun as ReturnType<typeof expanded.get>;
+   throw new Error("Security check not found");
+ });
+ const getNative = vi.spyOn(native, "getRun").mockImplementation((id, owner) => {
+   if (id === "saved-native" && owner === context.userId) return { id, status: "partial", observations: [] } as ReturnType<typeof native.getRun>;
+   throw new Error("Assessment not found");
+ });
+ const startExpanded = vi.spyOn(expanded, "start");
+ const startNative = vi.spyOn(native, "start");
+ const show = createSecurityWorkbenchTools().find(tool => tool.name === "security.results.show")!;
+ __jait_capture(0, (show.parameters.required));
+ __jait_capture(1, (await show.execute({ runId: fakeRun.id }, context)), ({ ok: true, data: fakeRun }));
+ __jait_capture(2, (await show.execute({ runId: "saved-native" }, context)));
+ __jait_capture(3, ((await show.execute({ runId: fakeRun.id }, { ...context, userId: "other" })).ok));
+ __jait_capture(4, ((await show.execute({ runId: "saved-native" }, { ...context, userId: "other" })).ok));
+ __jait_capture(5, (getExpanded.mock.calls), ([fakeRun.id,context.userId]));
+ __jait_capture(6, (getNative.mock.calls), (["saved-native",context.userId]));
+ __jait_capture(7, (startExpanded.mock.calls));
+ __jait_capture(8, (startNative.mock.calls));
+
+})();
+
+} finally {
+await __jait_hook_517();
 }
+
 
 break;
 }

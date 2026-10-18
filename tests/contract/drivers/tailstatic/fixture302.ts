@@ -1,15 +1,18 @@
-// Translated fixture from packages/gateway/src/tools/screen-share-tools.test.ts; expected literals are in tail_static.rs.
-import type { ScreenShareService } from "@jait/screen-share";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+// Translated fixture from packages/gateway/src/tools/sandbox-tools.test.ts; expected literals are in tail_static.rs.
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import type { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
 import {
-  createScreenShareTool, createScreenCaptureTool, createScreenRecordTool, createOsTool,
-} from "../../../../packages/gateway/src/tools/screen-share-tools.js";
-import { vi } from '../tailmock.ts';
+  createLinuxDesktopSandboxStartTool,
+  createLinuxDesktopSandboxStopTool,
+  createWindowsSandboxStartTool,
+  createWindowsSandboxStopTool,
+} from "../../../../packages/gateway/src/tools/sandbox-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/screen-share-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/sandbox-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,262 +46,92 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, (await createScreenShareTool(f.screenShare, f.control).execute({ action: "list-devices" }, context)));
-  
-})();
+    const calls: Array<Record<string, unknown>> = [];
+    const tool = createWindowsSandboxStartTool(fakeManager({
+      startWindowsSandbox: async (options) => {
+        calls.push(options as unknown as Record<string, unknown>);
+        return {
+          containerName: "jait-windows-sb-test",
+          browserId: "jait-windows-sb-test",
+          rdpPort: 3390,
+          webViewerPort: 8007,
+          rdpUrl: "rdp://127.0.0.1:3390",
+          webViewerUrl: "http://127.0.0.1:8007/",
+          status: "running",
+          version: "10",
+          storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+          sshPort: 2223,
+          sshUsername: "Docker",
+          sshPassword: "admin",
+        };
+      },
+    }));
 
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_29_3": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare, f.control).execute({ action: "connect", targetDeviceId: "host" }, context)).ok));
-    __jait_capture(1, (f.service.startShare.mock.calls));
-    __jait_capture(2, (f.ws.sendScreenShareStartRequest.mock.calls));
-    __jait_capture(3, (f.ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_36_3": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare).execute({ action: "connect" }, context)).ok));
-    __jait_capture(1, (f.service.startShare.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_41_3": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createScreenShareTool(f.screenShare).execute({ action: "disconnect" }, context)).ok));
-    __jait_capture(1, (f.service.stopShare.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each0": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-const _name = "screen.capture";
-const factory = createScreenCaptureTool;
-const method = "captureScreen";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await factory(f.screenShare).execute({}, context)).ok));
-    __jait_capture(1, (f.service[method].mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each1": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-const _name = "screen.record";
-const factory = createScreenRecordTool;
-const method = "startRecording";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await factory(f.screenShare).execute({}, context)).ok));
-    __jait_capture(1, (f.service[method].mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each0": {
-
-
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
-}
-/*__jait_scope_open__*/{
-const name = "os.tool";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const tool = createOsTool(fixture().screenShare, name);
-    __jait_capture(0, (tool.parameters.properties));
+    __jait_capture(0, (tool.name));
     __jait_capture(1, (tool.parameters.properties));
     __jait_capture(2, (tool.parameters.properties));
+    __jait_capture(3, (tool.parameters.properties));
+    __jait_capture(4, (tool.parameters.properties));
+
+    const result = await tool.execute(
+      {
+        ramSize: "8G",
+        cpuCores: 8,
+        diskSize: "128G",
+        windowsVersion: "10",
+        rdpPort: 3390,
+        webViewerPort: 8007,
+        waitForWebViewer: true,
+      },
+      baseContext,
+    );
+
+    __jait_capture(5, (calls));
+    __jait_capture(6, (result.ok));
+    __jait_capture(7, (result.data));
   
 })();
 
@@ -306,41 +139,58 @@ await (async()=>{
 
 }
 }
-}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each0": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
-/*__jait_scope_open__*/{
-const name = "os.tool";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    const tool = createOsTool(f.screenShare, name);
-    __jait_capture(0, ((await tool.execute({ action: "register-device", device: { id: "host", name: "Owned desktop", platform: "desktop", authorized: false } }, context)).ok));
-    __jait_capture(1, (f.service.registerDevice.mock.calls));
-    __jait_capture(2, ((await tool.execute({ action: "transfer-control", controllerDeviceId: "viewer" }, context)).ok));
-    __jait_capture(3, (f.service.transferControl.mock.calls));
+    const tool = createWindowsSandboxStartTool(fakeManager());
+    const result = await tool.execute({}, baseContext);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.message));
   
 })();
 
@@ -348,38 +198,70 @@ await (async()=>{
 
 }
 }
-}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each0": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
-/*__jait_scope_open__*/{
-const name = "os.tool";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createOsTool(f.screenShare, name).execute({ action: "transport-update" }, context)).ok));
-    __jait_capture(1, (f.service.updateViewerTransport.mock.calls));
+    const calls: Array<{ name: string; options: unknown }> = [];
+    const tool = createWindowsSandboxStopTool(fakeManager({
+      stopWindowsSandbox: async (name, options) => {
+        calls.push({ name, options });
+      },
+    }));
+
+    __jait_capture(0, (tool.name));
+    __jait_capture(1, (tool.parameters.required));
+
+    const result = await tool.execute(
+      { containerName: "jait-windows-sb-test", removeStorage: true },
+      baseContext,
+    );
+
+    __jait_capture(2, (calls));
+    __jait_capture(3, (result.ok));
+    __jait_capture(4, (result.data));
   
 })();
 
@@ -387,126 +269,245 @@ await (async()=>{
 
 }
 }
-}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each1": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
-/*__jait_scope_open__*/{
-const name = "os_tool";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createOsTool(fixture().screenShare, name);
-    __jait_capture(0, (tool.parameters.properties));
+    const calls: Array<Record<string, unknown>> = [];
+    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
+      startLinuxDesktopSandbox: async (options) => {
+        calls.push(options as unknown as Record<string, unknown>);
+        return {
+          containerName: "jait-linux-desktop-sb-test",
+          novncUrl: "http://127.0.0.1:6081/vnc_lite.html",
+          vncPort: 5901,
+          novncPort: 6081,
+          cdpUrl: "http://127.0.0.1:9224",
+        };
+      },
+    }));
+
+    __jait_capture(0, (tool.name));
     __jait_capture(1, (tool.parameters.properties));
     __jait_capture(2, (tool.parameters.properties));
+    __jait_capture(3, (tool.parameters.properties));
+
+    const result = await tool.execute(
+      {
+        screenRes: "1280x720x24",
+        mountMode: "read-write",
+        networkEnabled: false,
+        novncPort: 6081,
+        vncPort: 5901,
+        cdpPort: 9224,
+        waitForCdp: false,
+        hostGateway: true,
+      },
+      baseContext,
+    );
+
+    __jait_capture(4, (calls), ([
+      {
+        projectRoot: testProject,
+        screenRes: "1280x720x24",
+        mountMode: "read-write",
+        networkEnabled: false,
+        novncPort: 6081,
+        vncPort: 5901,
+        cdpPort: 9224,
+        waitForCdp: false,
+        hostGateway: true,
+      },
+    ]));
+    __jait_capture(5, (result.ok));
+    __jait_capture(6, (result.data));
   
 })();
 
 } finally {
 
-}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each1": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
-/*__jait_scope_open__*/{
-const name = "os_tool";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    const tool = createOsTool(f.screenShare, name);
-    __jait_capture(0, ((await tool.execute({ action: "register-device", device: { id: "host", name: "Owned desktop", platform: "desktop", authorized: false } }, context)).ok));
-    __jait_capture(1, (f.service.registerDevice.mock.calls));
-    __jait_capture(2, ((await tool.execute({ action: "transfer-control", controllerDeviceId: "viewer" }, context)).ok));
-    __jait_capture(3, (f.service.transferControl.mock.calls));
+    const calls: Array<Record<string, unknown>> = [];
+    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
+      startLinuxDesktopSandbox: async (options) => {
+        calls.push(options as unknown as Record<string, unknown>);
+        return {
+          containerName: "jait-linux-desktop-sb-test",
+          novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+          vncPort: 5900,
+          novncPort: 6080,
+        };
+      },
+    }));
+
+    await tool.execute({}, baseContext);
+
+    __jait_capture(0, (calls[0]));
   
 })();
 
 } finally {
 
-}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each1": {
+case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3": {
 
 
-const context = { sessionId: "screen-tests", actionId: "screen-action", projectRoot: "/project", requestedBy: "test" };
-function fixture() {
-  const state = { devices: [{ id: "viewer", name: "Web viewer", platform: "web", capabilities: [] }, { id: "host", name: "Owned desktop", platform: "desktop", capabilities: [] }], activeSession: null };
-  const service = {
-    getState: vi.fn().mockReturnValue(state), startShare: vi.fn().mockReturnValue({ id: "share-1" }),
-    stopShare: vi.fn().mockReturnValue(state), captureScreen: vi.fn().mockReturnValue({ id: "capture-1" }),
-    startRecording: vi.fn().mockReturnValue({ id: "recording-1" }), registerDevice: vi.fn().mockReturnValue({ id: "host" }),
-    transferControl: vi.fn().mockReturnValue(state), updateViewerTransport: vi.fn().mockReturnValue(state),
-  };
-  const ws = {
-    getConnectedDeviceIds: () => ["host", "viewer"], sendScreenShareStartRequest: vi.fn(),
-    broadcastScreenShareState: vi.fn(), sendUICommand: vi.fn(),
-  };
-  return { state, service, ws, screenShare: service as unknown as ScreenShareService, control: ws as unknown as WsControlPlane };
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
+};
+function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
+  return {
+    startWindowsSandbox: async () => ({
+      containerName: "jait-windows-sb-test",
+      browserId: "jait-windows-sb-test",
+      rdpPort: 3389,
+      webViewerPort: 8006,
+      rdpUrl: "rdp://127.0.0.1:3389",
+      webViewerUrl: "http://127.0.0.1:8006/",
+      status: "starting",
+      version: "11",
+      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
+      sshPort: 2222,
+      sshUsername: "Docker",
+      sshPassword: "admin",
+    }),
+    stopWindowsSandbox: async () => {},
+    startLinuxDesktopSandbox: async () => ({
+      containerName: "jait-linux-desktop-sb-test",
+      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+      vncPort: 5900,
+      novncPort: 6080,
+      cdpUrl: "http://127.0.0.1:9223",
+    }),
+    stopLinuxDesktopSandbox: async () => {},
+    ...overrides,
+  } as unknown as SandboxManager;
 }
-/*__jait_scope_open__*/{
-const name = "os_tool";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, ((await createOsTool(f.screenShare, name).execute({ action: "transport-update" }, context)).ok));
-    __jait_capture(1, (f.service.updateViewerTransport.mock.calls));
+    const calls: string[] = [];
+    const tool = createLinuxDesktopSandboxStopTool(fakeManager({
+      stopLinuxDesktopSandbox: async (name) => {
+        calls.push(name);
+      },
+    }));
+
+    __jait_capture(0, (tool.name));
+    __jait_capture(1, (tool.parameters.required));
+
+    const result = await tool.execute(
+      { containerName: "jait-linux-desktop-sb-test" },
+      baseContext,
+    );
+
+    __jait_capture(2, (calls));
+    __jait_capture(3, (result.ok));
+    __jait_capture(4, (result.data));
   
 })();
 
 } finally {
 
-}
 }
 }
 

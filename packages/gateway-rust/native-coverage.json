@@ -710,6 +710,56 @@
         "gateway_rust_surfaces"
       ],
       "review": "Filesystem and remote-filesystem surface type selection, boolean true/false panel metadata, rejection of null/number/string state, and no snapshot call for unrelated surface types. Uses real native registry/snapshots and production TypeScript predicate."
+    },
+    {
+      "reference": "packages/gateway/src/services/chat-traces.ts",
+      "reference_sha256": "432eb25e08f25cac3268099182fbcd8e24d40b2c14bcc5be2ece6774ac6eb6f5",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/chat_traces.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_history.rs",
+        "tests/contract/drivers/nativehistory.ts"
+      ],
+      "targets": [
+        "gateway_rust_history"
+      ],
+      "review": "Read-only SQLite traces: session and independent thread owner filtering (including empty/unowned IDs), missing-resource responses, chronological recent message/activity limits/defaults/floors/caps, optional context/thinking/tool fields, omitted malformed JSON versus explicit parsed null, and visible query failures. Owner-filter mutation fails the same isolation assertion and restoration passes. Focused persisted JSON fields cover finite numbers and well-formed Unicode; legacy overflow literals and lone-surrogate JSON parsing remain unverified. Run on the bounded database worker."
+    },
+    {
+      "reference": "packages/gateway/src/services/session-search.ts",
+      "reference_sha256": "4174099709917f068e27811192e95d5779faea5ee1d3b22218644665bedfef0e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/session_search.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_history.rs",
+        "tests/contract/drivers/nativehistory.ts"
+      ],
+      "targets": [
+        "gateway_rust_history"
+      ],
+      "review": "Native SQLite FTS search over both production indexes: quoted/deduplicated term budget, owner/session/thread filters, searchable activity kinds, source inclusion flags, exact reciprocal-rank fusion and stable ties, content/snippet whitespace and UTF-16 truncation (including lone surrogate wire serialization), limits, FTS insert/update/delete triggers and query failures. Contracts compare exact rank scores using precise JSON float parsing and every output text code unit. Timestamp fusion covers ISO database timestamps; locale-sensitive legacy timestamp ordering remains unverified. Run on the bounded database worker."
+    },
+    {
+      "reference": "packages/gateway/src/services/project-repositories.ts",
+      "reference_sha256": "1d0cf68b80ce23fe44739237404723e145a2cdc0457dee523c218244ba4c4cca",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/project_repositories.rs",
+        "packages/gateway-rust/src/services/projects.rs",
+        "packages/gateway-rust/src/services/repositories.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_assignment.rs",
+        "tests/contract/drivers/nativeassignment.ts"
+      ],
+      "targets": [
+        "gateway_rust_assignment"
+      ],
+      "review": "Real SQLite and filesystem metadata checks; owner and explicit repository checks, idempotent assignment, stale device reconciliation, symlink/file/directory metadata, Git probe/default fallbacks, exact event order and durable effects after storage failure. Git probing and broadcast transport are injected boundaries; those implementations receive no credit. Linux path semantics; supported-platform parity remains open."
     }
   ]
 }

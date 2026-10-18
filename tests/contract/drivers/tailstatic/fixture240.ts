@@ -1,12 +1,11 @@
-// Translated fixture from packages/gateway/src/surfaces/remote-terminal.test.ts; expected literals are in tail_static.rs.
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { RemoteTerminalSurface } from "../../../../packages/gateway/src/surfaces/remote-terminal.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/surfaces/registry.test.ts; expected literals are in tail_static.rs.
+import type { Surface, SurfaceFactory, SurfaceState } from "../../../../packages/gateway/src/surfaces/contracts.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/remote-terminal.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/registry.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,45 +39,57 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_40_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fakeWs = new FakeWs();
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      fakeWs as unknown as WsControlPlane,
-      "node-1",
-      { cols: 100, rows: 40 },
-    );
+    const registry = new SurfaceRegistry();
+    registry.register(mockFactory);
 
-    await surface.start({ sessionId: "session-1", projectRoot: "/remote/project" });
+    const surface = await registry.startSurface("terminal", "surface-1", {
+      sessionId: "session-1",
+      projectRoot: "/tmp",
+    });
 
-    __jait_capture(0, (fakeWs.proxyCalls[0]));
-    __jait_capture(1, (surface.snapshot()));
+    __jait_capture(0, (surface.id));
+    __jait_capture(1, (surface.state));
+    __jait_capture(2, (registry.getSurface("surface-1")), (surface));
   
 })();
 
@@ -89,46 +100,51 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_63_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_54_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
-
-    surface.ingestOutput("older command output\r\n");
-    const outputOffset = surface.getOutputOffset();
-    surface.ingestOutput("current command output\r\n");
-    const outputEndOffset = surface.getOutputOffset();
-    surface.ingestOutput("later command output\r\n");
-
-    __jait_capture(0, (surface.getRecentOutputSince(outputOffset, outputEndOffset)));
+    const registry = new SurfaceRegistry();
+    await __jait_rejected(0, registry.startSurface("missing", "surface-1", {
+        sessionId: "s1",
+        projectRoot: "/tmp",
+      }));
   
 })();
 
@@ -139,46 +155,57 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_79_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_64_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
+    const registry = new SurfaceRegistry();
+    registry.register(mockFactory);
 
-    surface.ingestOutput("older command output\r\n");
-    surface.ingestOutput("jakob@movable-base:~/jait$ ");
-    const outputOffset = surface.getOutputOffset();
-    surface.ingestOutput("command\r\n");
-    const outputEndOffset = surface.getOutputOffset();
+    await registry.startSurface("terminal", "s1", {
+      sessionId: "session-1",
+      projectRoot: "/tmp",
+    });
 
-    __jait_capture(0, (surface.getRecentOutputSince(outputOffset, outputEndOffset)));
+    const stopped = await registry.stopSurface("s1");
+    __jait_capture(0, (stopped));
+    __jait_captureType(1, (registry.getSurface("s1")));
   
 })();
 
@@ -189,53 +216,55 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_97_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_78_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
+    const registry = new SurfaceRegistry();
+    registry.register(mockFactory);
 
-    surface.ingestOutput("older command output\r\n");
-    const outputOffset = surface.getOutputOffset();
-    surface.ingestOutput("command output line one\r\nline two\r\n");
-    // Shells with OSC 633 integration deliver the "command finished" marker
-    // together with the next prompt redraw in the same PTY read:
-    surface.ingestOutput(
-      "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07jakob@movable-base:~/jait$ \x1b]633;C\x07",
-    );
-    const outputEndOffset = surface.getOutputOffset();
+    await registry.startSurface("terminal", "s1", { sessionId: "a", projectRoot: "/tmp" });
+    await registry.startSurface("terminal", "s2", { sessionId: "b", projectRoot: "/tmp" });
 
-    __jait_capture(0, (surface.getCommandDoneEndOffset()), (outputEndOffset));
-    const slice = surface.getRecentOutputSince(outputOffset, outputEndOffset);
-    __jait_capture(1, (slice));
-    __jait_capture(2, (slice));
+    const snaps = registry.listSnapshots();
+    __jait_capture(0, (snaps));
+    __jait_capture(1, (snaps.map((s) => s.id).sort()));
   
 })();
 
@@ -246,55 +275,55 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_120_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_90_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
-    await surface.start({ sessionId: "session-1", projectRoot: "/remote/project" });
+    const registry = new SurfaceRegistry();
+    registry.register(mockFactory);
 
-    const settled = vi.fn();
-    const prompt = surface.waitForPrompt(5000).then(settled);
+    await registry.startSurface("terminal", "s1", { sessionId: "a", projectRoot: "/tmp" });
+    await registry.startSurface("terminal", "s2", { sessionId: "b", projectRoot: "/tmp" });
+    await registry.startSurface("terminal", "s3", { sessionId: "a", projectRoot: "/tmp" });
 
-    // Well past the flat 25 ms this used to resolve after. A slow remote shell
-    // (PowerShell loading its profile) is still starting up here, so writing a
-    // command now would drop the keystrokes and the run would come back empty.
-    await new Promise((r) => setTimeout(r, 80));
-    __jait_capture(0, (surface.shellIntegrationReady));
-    __jait_capture(1, (settled.mock.calls));
-
-    surface.ingestOutput("\x1b]633;B\x07PS C:\\remote\\project> ");
-    await prompt;
-
-    __jait_capture(2, (surface.shellIntegrationReady));
-    __jait_capture(3, (settled.mock.calls));
+    __jait_capture(0, (registry.getBySession("a")));
+    __jait_capture(1, (registry.getBySession("b")));
   
 })();
 
@@ -305,199 +334,54 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_145_3": {
+case "tailstatic_packages_gateway_src_surfaces_registry_test_ts_102_3": {
 
 
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
+class MockSurface implements Surface {
+  state: SurfaceState = "idle";
+  sessionId: string | null = null;
 
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
+  constructor(
+    public readonly id: string,
+    public readonly type: string,
+  ) {}
+
+  async start(input: { sessionId: string; projectRoot: string }): Promise<void> {
+    this.sessionId = input.sessionId;
+    this.state = "running";
   }
 
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
+  async stop(): Promise<void> {
+    this.state = "stopped";
+  }
+
+  snapshot() {
+    return {
+      id: this.id,
+      type: this.type,
+      state: this.state,
+      sessionId: this.sessionId ?? "",
+      metadata: {},
+    };
   }
 }
+const mockFactory: SurfaceFactory = {
+  type: "terminal",
+  create: (id) => new MockSurface(id, "terminal"),
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
+    const registry = new SurfaceRegistry();
+    registry.register(mockFactory);
 
-    __jait_capture(0, (surface.bracketedPasteEnabled));
-    surface.ingestOutput("\x1b]633;B\x07PS C:\\remote\\project> ");
-    __jait_capture(1, (surface.bracketedPasteEnabled));
+    await registry.startSurface("terminal", "s1", { sessionId: "a", projectRoot: "/tmp" });
+    await registry.startSurface("terminal", "s2", { sessionId: "a", projectRoot: "/tmp" });
 
-    // PSReadLine enables bracketed paste at the prompt (CSI ?2004h):
-    surface.ingestOutput("\x1b[?2004h\x1b]633;B\x07PS C:\\remote\\project> ");
-    __jait_capture(2, (surface.bracketedPasteEnabled));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_161_3": {
-
-
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
-
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
-  }
-
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
-  }
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-      { reuseOnly: true },
-    );
-
-    __jait_capture(0, (surface.shellIntegrationReady));
-    const raced = await Promise.race([
-      surface.waitForPrompt(5000).then(() => "ready"),
-      new Promise((r) => setTimeout(() => r("stalled"), 50)),
-    ]);
-    __jait_capture(1, (raced));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_177_3": {
-
-
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
-
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
-  }
-
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
-  }
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      new FakeWs() as unknown as WsControlPlane,
-      "node-1",
-    );
-    await surface.start({ sessionId: "session-1", projectRoot: "/remote/project" });
-
-    surface.ingestOutput("$ ");
-    await __jait_captureResolved(0, (surface.waitForPrompt(30)));
-    __jait_capture(1, (surface.shellIntegrationReady));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_190_3": {
-
-
-class FakeWs {
-  proxyCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown>; timeoutMs?: number }> = [];
-  fireAndForgetCalls: Array<{ nodeId: string; op: string; params: Record<string, unknown> }> = [];
-
-  async proxyTerminalOp<T>(
-    nodeId: string,
-    op: string,
-    params: Record<string, unknown>,
-    timeoutMs?: number,
-  ): Promise<T> {
-    this.proxyCalls.push({ nodeId, op, params, timeoutMs });
-    if (op === "start") return { pid: 1234, shell: "/bin/bash" } as T;
-    return { ok: true } as T;
-  }
-
-  sendTerminalOp(nodeId: string, op: string, params: Record<string, unknown>): void {
-    this.fireAndForgetCalls.push({ nodeId, op, params });
-  }
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fakeWs = new FakeWs();
-    const surface = new RemoteTerminalSurface(
-      "term-remote",
-      fakeWs as unknown as WsControlPlane,
-      "node-1",
-    );
-    const onOutput = vi.fn();
-    surface.onOutput = onOutput;
-
-    await surface.start({ sessionId: "session-1", projectRoot: "/remote/project" });
-    surface.write("pwd\r");
-    surface.resize(80, 24);
-    surface.ingestOutput("/remote/project\r\n");
-    await surface.stop();
-
-    __jait_capture(0, (fakeWs.fireAndForgetCalls));
-    __jait_capture(1, (surface.getRecentOutput()));
-    __jait_capture(2, (onOutput.mock.calls));
-    __jait_capture(3, (fakeWs.proxyCalls.at(-1)));
+    await registry.stopAll();
+    __jait_capture(0, (registry.listSurfaces()));
   
 })();
 

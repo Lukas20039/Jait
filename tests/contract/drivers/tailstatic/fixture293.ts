@@ -1,20 +1,27 @@
-// Translated fixture from packages/gateway/src/tools/project-tools.test.ts; expected literals are in tail_static.rs.
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+// Translated fixture from packages/gateway/src/tools/project-message-tool.test.ts; expected literals are in tail_static.rs.
+import { EventEmitter } from "node:events";
 import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import type {
+  CliProviderAdapter,
+  ProviderEvent,
+  ProviderInfo,
+  ProviderSession,
+  StartSessionOptions,
+} from "../../../../packages/gateway/src/providers/contracts.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
 import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
-import { RepositoryService } from "../../../../packages/gateway/src/services/repositories.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
 import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+import { createProjectMessageTool } from "../../../../packages/gateway/src/tools/project-message-tool.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createProjectCreateTool, createProjectMoveTool, createProjectTransferTool } from "../../../../packages/gateway/src/tools/project-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-message-tool.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -48,784 +55,625 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3": {
 
 
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
     };
   }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
+    ...overrides,
   };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
+}
+/*__jait_scope_open__*/{
+
 try {
 await (async()=>{
 
-    const broadcastToUser = vi.fn();
-    const ws = { broadcastToUser } as unknown as WsControlPlane;
-    const tool = createProjectCreateTool({ projectService, repoService, ws });
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      const provider = new MockThreadProvider("codex");
+      providerRegistry.register(provider);
+      const broadcastToUser = vi.fn();
+      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
 
-    const result = await tool.execute(
-      { title: "Agent Project", assignRepository: false },
-      context(),
-    );
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+        ws,
+      });
 
-    __jait_capture(0, (result.ok));
-    const project = (result.data as { project: { id: string } }).project;
-    __jait_capture(1, (broadcastToUser.mock.calls), ([project.id]));
+      const result = await tool.execute(
+        {
+          projectRoot: "/tmp/other-project",
+          message: "The nightly build failed — please investigate.",
+          providerId: "codex",
+        },
+        makeContext(user.id),
+      );
+
+      __jait_capture(0, (result.ok));
+      const data = result.data as {
+        project: { id: string; rootPath: string | null };
+        session: { id: string; projectId: string | null };
+      };
+      __jait_capture(1, (data.project.rootPath));
+      __jait_capture(2, (data.session.projectId), (data.project.id));
+      __jait_capture(3, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
+      __jait_capture(4, (broadcastToUser.mock.calls), ([user.id,data.project.id]));
+      __jait_capture(5, (broadcastToUser.mock.calls), ([user.id,data.project.id,data.session.id]));
+
+      // The message actually reached the provider as a turn.
+      __jait_capture(6, (provider.sendTurnCalls));
+      __jait_capture(7, (provider.sendTurnCalls[0]?.message));
+
+      // A real thread was created in the target project's working directory.
+      const threads = threadService.listBySession(data.session.id);
+      __jait_capture(8, (threads));
+      __jait_capture(9, (threads[0]?.workingDirectory));
+      __jait_capture(10, (threads[0]?.status));
+
+      // Re-using the same project root resolves the same project (no duplicate).
+      const projects = projectService.list(undefined, user.id);
+      __jait_capture(11, (projects.filter((p) => p.rootPath === "/tmp/other-project")));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_1564();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3": {
 
 
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
     };
   }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
+    ...overrides,
   };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
+}
 /*__jait_scope_open__*/{
-const existing = false;
-await __jait_hook_1312();
+
 try {
 await (async()=>{
 
-    const sessionService = new SessionService(db);
-    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
-    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
-    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
-    const broadcastToUser = vi.fn();
-    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
-    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
-    const project = (result.data as { project: { id: string } }).project;
-    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
-    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
-    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
-    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-2", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      providerRegistry.register(new MockThreadProvider("codex"));
+
+      const existingProject = projectService.create({
+        userId: user.id,
+        title: "Existing Project",
+        rootPath: "/tmp/existing-project",
+        nodeId: "gateway",
+      });
+
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+      });
+
+      const result = await tool.execute(
+        {
+          projectId: existingProject.id,
+          message: "Please check the flaky test.",
+          providerId: "codex",
+        },
+        makeContext(user.id),
+      );
+
+      __jait_capture(0, (result.ok));
+      const data = result.data as { project: { id: string } };
+      __jait_capture(1, (data.project.id), (existingProject.id));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_1564();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3": {
 
 
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
     };
   }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
+    ...overrides,
   };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
+}
 /*__jait_scope_open__*/{
-const existing = true;
-await __jait_hook_1312();
+
 try {
 await (async()=>{
 
-    const sessionService = new SessionService(db);
-    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
-    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
-    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
-    const broadcastToUser = vi.fn();
-    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
-    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
-    const project = (result.data as { project: { id: string } }).project;
-    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
-    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
-    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
-    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-live", "password");
+      const projectService = new ProjectService(db);
+      const sessionService = new SessionService(db);
+      const threadService = new ThreadService(db);
+      const providerRegistry = new ProviderRegistry();
+      // thread.control falls back to the user's last-selected provider ("jait").
+      const provider = new MockThreadProvider("jait");
+      providerRegistry.register(provider);
+      const broadcastToUser = vi.fn();
+      const ws = { broadcastAll: vi.fn(), broadcastToUser } as unknown as WsControlPlane;
+
+      // The chat the caller is currently in — NOT part of any project yet.
+      const currentChat = sessionService.create({ userId: user.id, name: "My Chat" });
+
+      const existingProject = projectService.create({
+        userId: user.id,
+        title: "Target Project",
+        rootPath: "/tmp/target-project",
+        nodeId: "gateway",
+      });
+
+      const tool = createProjectMessageTool({
+        projectService,
+        sessionService,
+        threadService,
+        providerRegistry,
+        userService,
+        ws,
+      });
+
+      const result = await tool.execute(
+        { projectId: existingProject.id, message: "Look into the failing deploy." },
+        makeContext(user.id, { sessionId: currentChat.id }),
+      );
+
+      __jait_capture(0, (result.ok));
+      const data = result.data as {
+        project: { id: string };
+        session: { id: string; projectId: string | null };
+        assigned: boolean;
+      };
+
+      // The SAME chat is used — no new chat was created.
+      __jait_capture(1, (data.session.id), (currentChat.id));
+      const projectChats = sessionService.listByProject(data.project.id);
+      __jait_capture(2, (projectChats));
+      __jait_capture(3, (projectChats[0]?.id), (currentChat.id));
+
+      // ...and it was actually assigned to the project.
+      __jait_capture(4, (data.assigned));
+      __jait_capture(5, (data.session.projectId), (data.project.id));
+      const refetched = sessionService.getById(currentChat.id, user.id);
+      __jait_capture(6, (refetched?.projectId), (data.project.id));
+      __jait_capture(7, (refetched?.projectPath));
+
+      // The turn runs inside the reused chat, in the project's directory.
+      const threads = threadService.listBySession(currentChat.id);
+      __jait_capture(8, (threads));
+      __jait_capture(9, (threads[0]?.workingDirectory));
+      __jait_capture(10, (threads[0]?.status));
+      __jait_capture(11, (provider.sendTurnCalls));
+
+      // Clients are told the chat moved into the project.
+      __jait_capture(12, (broadcastToUser.mock.calls.map(([, event]) => event.type)));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_1564();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3": {
 
 
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
     };
   }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
+    ...overrides,
   };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
+}
+/*__jait_scope_open__*/{
+
 try {
 await (async()=>{
 
-    const sessionService = new SessionService(db);
-    const chat = sessionService.create({ userId: "user-2", projectPath: "/old" });
-    const tool = createProjectCreateTool({ projectService, repoService, sessionService });
-    await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
-    __jait_captureType(0, (sessionService.getById(chat.id)?.projectId));
-    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-3", "password");
+      const tool = createProjectMessageTool({
+        projectService: new ProjectService(db),
+        sessionService: new SessionService(db),
+        threadService: new ThreadService(db),
+        providerRegistry: new ProviderRegistry(),
+        userService,
+      });
+
+      const result = await tool.execute({ projectRoot: "/tmp/whatever" }, makeContext(user.id));
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.message));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_1564();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3": {
+case "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3": {
 
 
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
+class MockThreadProvider implements CliProviderAdapter {
+  readonly info: ProviderInfo;
+  private emitter = new EventEmitter();
+  lastStartOptions: StartSessionOptions | null = null;
+  sendTurnCalls: Array<{ sessionId: string; message: string }> = [];
+
+  constructor(readonly id: "jait" | "codex" | "claude-code" = "codex") {
+    this.info = {
+      id,
+      name: `Mock ${id}`,
+      description: "Test provider",
+      available: true,
+      modes: ["full-access", "supervised"],
     };
   }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.lastStartOptions = options;
+    const sessionId = "mock-session-1";
+    this.emitter.emit("event", { type: "session.started", sessionId } satisfies ProviderEvent);
+    return {
+      id: sessionId,
+      providerId: this.id,
+      threadId: options.threadId,
+      status: "running",
+      runtimeMode: options.mode,
+      startedAt: new Date().toISOString(),
+    };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sendTurnCalls.push({ sessionId, message });
+  }
+
+  async interruptTurn(): Promise<void> {
+    return;
+  }
+
+  async respondToApproval(): Promise<void> {
+    return;
+  }
+
+  async stopSession(): Promise<void> {
+    return;
+  }
+
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+function makeContext(userId: string, overrides: Partial<ToolContext> = {}): ToolContext {
+  return {
+    sessionId: "originating-session",
+    actionId: "action-1",
+    projectRoot: "/tmp/originating-project",
+    requestedBy: "test",
+    userId,
+    ...overrides,
   };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
+}
+/*__jait_scope_open__*/{
+
 try {
 await (async()=>{
 
-    const tool = createProjectMoveTool({ projectService, repoService });
-    const result = await tool.execute({}, context());
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    try {
+      const userService = new UserService(db);
+      const user = userService.createUser("cross-project-user-4", "password");
+      const tool = createProjectMessageTool({
+        projectService: new ProjectService(db),
+        sessionService: new SessionService(db),
+        threadService: new ThreadService(db),
+        providerRegistry: new ProviderRegistry(),
+        userService,
+      });
+
+      const result = await tool.execute({ message: "hello" }, makeContext(user.id));
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.message));
+    } finally {
+      sqlite.close();
+    }
   
 })();
 
 } finally {
-await __jait_hook_1564();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
-    const tool = createProjectMoveTool({ projectService, repoService });
-
-    const result = await tool.execute(
-      { projectId: project.id, nodeId: "gateway", rootPath: join(source, "does-not-exist") },
-      context(),
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    const unchanged = projectService.getById(project.id, "user-1");
-    __jait_capture(2, (unchanged?.rootPath), (source));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const destination = makeDir();
-    const project = projectService.create({ userId: "user-1", title: "My Project", rootPath: source, nodeId: "gateway" });
-    const tool = createProjectMoveTool({ projectService, repoService });
-
-    const result = await tool.execute(
-      { projectId: project.id, nodeId: "gateway", rootPath: destination },
-      context(),
-    );
-
-    __jait_capture(0, (result.ok));
-    const moved = projectService.getById(project.id, "user-1");
-    __jait_capture(1, (moved?.rootPath), (destination));
-    __jait_capture(2, (moved?.nodeId));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
-    const tool = createProjectMoveTool({ projectService, repoService });
-
-    const result = await tool.execute(
-      { projectId: project.id, nodeId: "gateway", rootPath: source },
-      context(),
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
-    const tool = createProjectMoveTool({ projectService, repoService });
-
-    const result = await tool.execute(
-      { projectId: project.id, nodeId: "remote-node-1", rootPath: "/remote/path" },
-      context(),
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    const unchanged = projectService.getById(project.id, "user-1");
-    __jait_capture(2, (unchanged?.nodeId));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const tool = createProjectMoveTool({ projectService, repoService });
-    const result = await tool.execute(
-      { projectId: "missing-project", nodeId: "gateway", rootPath: "/anywhere" },
-      context(),
-    );
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const project = projectService.create({ userId: "user-1", title: "Move Me", rootPath: source, nodeId: "gateway" });
-    const transfer = vi.fn(async () => ({ output: "copied" }));
-    const proxyFsOp = vi.fn(async () => true);
-    const broadcastToUser = vi.fn();
-    const ws = {
-      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
-      proxyFsOp,
-      broadcastToUser,
-    } as unknown as WsControlPlane;
-    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
-
-    const result = await tool.execute({
-      projectId: project.id,
-      nodeId: "node-2",
-      rootPath: "/work/move-me",
-      sshHost: "studio.local",
-      sshUser: "jakob",
-    }, context());
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (transfer.mock.calls), ([{
-      sourcePath: source,
-      destinationPath: "/work/move-me",
-      sshHost: "studio.local",
-      sshUser: "jakob",
-      sshPort: undefined,
-    }]));
-    __jait_capture(2, (proxyFsOp.mock.calls));
-    __jait_capture(3, (projectService.getById(project.id, "user-1")));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3": {
-
-
-/*__jait_scope_open__*/{
-let db: Awaited<ReturnType<typeof openDatabase>>["db"];
-let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
-let projectService: ProjectService;
-let repoService: RepositoryService;
-const tempRoots: string[] = [];
-function makeDir() {
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
-    tempRoots.push(root);
-    return root;
-  }
-function context(overrides: Partial<ToolContext> = {}): ToolContext {
-    return {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/unused",
-      requestedBy: "user",
-      userId: "user-1",
-      ...overrides,
-    };
-  }
-const __jait_hook_1312 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    projectService = new ProjectService(db);
-    repoService = new RepositoryService(db);
-  };
-const __jait_hook_1564 = () => {
-    sqlite.close();
-    for (const root of tempRoots.splice(0)) {
-      rmSync(root, { recursive: true, force: true });
-    }
-  };
-await __jait_hook_1312();
-try {
-await (async()=>{
-
-    const source = makeDir();
-    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
-    const transfer = vi.fn(async () => { throw new Error("authentication failed"); });
-    const ws = {
-      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
-    } as unknown as WsControlPlane;
-    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
-
-    const result = await tool.execute({
-      projectId: project.id,
-      nodeId: "node-2",
-      rootPath: "/work/move-me",
-      sshHost: "studio.local",
-      sshUser: "jakob",
-    }, context());
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (projectService.getById(project.id, "user-1")), ({ nodeId: "gateway", rootPath: source }));
-  
-})();
-
-} finally {
-await __jait_hook_1564();
 }
 }
 

@@ -1,10 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/agent-communication.test.ts; expected literals are in tail_static.rs.
-import { describePerformative, isSuccessfulPerformative, parsePerformative } from "../../../../packages/gateway/src/tools/agent-communication.js";
+// Translated fixture from packages/gateway/src/tools/agent-acp-runner.test.ts; expected literals are in tail_static.rs.
+import { EventEmitter } from "node:events";
+import { runAcpSpecialistTurn } from "../../../../packages/gateway/src/tools/agent-acp-runner.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
+import type { CliProviderAdapter, ProviderEvent, ProviderSession, StartSessionOptions } from "../../../../packages/gateway/src/providers/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-communication.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-acp-runner.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,15 +41,107 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_67_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (parsePerformative("Here are the results.")));
+    const provider = new FakeAcpProvider();
+    const registry = new ProviderRegistry();
+    registry.register(provider);
+
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-1",
+      projectRoot: "/repo",
+      prompt: "do the thing",
+    });
+
+    __jait_capture(0, (result.ok));
+    // The [INFORM] performative tag is parsed out of the visible message.
+    __jait_capture(1, (result.message));
+
+    // The result carries a structured sub-agent message payload — the same
+    // shape a jait-backend specialist produces — so the parent turn can persist
+    // and reload it like a normal chat turn.
+    const data = result.data as Record<string, unknown>;
+    __jait_capture(2, (data.subAgentId));
+    __jait_capture(3, (data.provider));
+    __jait_capture(4, (data.performative));
+    __jait_capture(5, (data.content));
+    // Two consecutive text tokens are merged into a single text segment.
+    __jait_capture(6, (data.segments));
+    __jait_capture(7, (data.toolCalls));
+    __jait_capture(8, (typeof data.durationMs));
+
+    __jait_capture(9, (provider.startedSessions));
+    __jait_capture(10, (provider.startedSessions[0]?.threadId));
+    __jait_capture(11, (provider.sentTurns[0]?.message));
+    // Always tears the scoped session down — it's a one-shot delegation, not a persistent chat.
+    __jait_capture(12, (provider.stoppedSessionIds));
   
 })();
 
@@ -57,19 +152,96 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_12_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_107_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (parsePerformative("[REFUSE] This is out of scope.")));
-    __jait_capture(1, (parsePerformative("[FAILURE] Could not reproduce the crash.")));
-    __jait_capture(2, (parsePerformative("[PROPOSE] Option A or Option B.")));
-    __jait_capture(3, (parsePerformative("[QUERY] Which environment should I target?")));
-    __jait_capture(4, (parsePerformative("[AGREE] Starting now.")));
+    const provider = new FakeAcpProvider();
+    provider.behavior = "with-tools";
+    const registry = new ProviderRegistry();
+    registry.register(provider);
+
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-tools",
+      projectRoot: "/repo",
+      prompt: "use a tool",
+    });
+
+    __jait_capture(0, (result.ok));
+    const data = result.data as Record<string, unknown>;
+    __jait_capture(1, (data.segments));
+    __jait_capture(2, (data.toolCalls));
+    const call = (data.toolCalls as Array<Record<string, unknown>>)[0]!;
+    __jait_capture(3, (call.callId));
+    __jait_capture(4, (call.tool));
+    __jait_capture(5, (call.ok));
+    __jait_capture(6, (call.message));
+    __jait_capture(7, (typeof call.completedAt));
   
 })();
 
@@ -80,15 +252,89 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_35_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_140_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (parsePerformative("  [inform]   Done.")));
+    const provider = new FakeAcpProvider();
+    provider.behavior = "error";
+    const registry = new ProviderRegistry();
+    registry.register(provider);
+
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-2",
+      projectRoot: "/repo",
+      prompt: "do the thing",
+    });
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (provider.stoppedSessionIds));
   
 })();
 
@@ -99,15 +345,94 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_42_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_162_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (parsePerformative("Summary: [INFORM] done")));
+    const provider = new FakeAcpProvider();
+    provider.behavior = "error-after-work";
+    const registry = new ProviderRegistry();
+    registry.register(provider);
+
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-partial",
+      projectRoot: "/repo",
+      prompt: "do the thing",
+    });
+
+    __jait_capture(0, (result.ok));
+    const data = result.data as Record<string, unknown>;
+    __jait_capture(1, (data.subAgentId));
+    // Text + tool call up to the failure, then the error itself — not just a
+    // bare error message with the work discarded.
+    __jait_capture(2, (data.segments));
+    __jait_capture(3, (data.toolCalls));
+    __jait_capture(4, (data.content));
   
 })();
 
@@ -118,16 +443,90 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_51_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_193_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isSuccessfulPerformative("inform")));
-    __jait_capture(1, (isSuccessfulPerformative("agree")));
+    const provider = new FakeAcpProvider();
+    provider.behavior = "hang";
+    const registry = new ProviderRegistry();
+    registry.register(provider);
+
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-3",
+      projectRoot: "/repo",
+      prompt: "do the thing",
+      timeoutMs: 20,
+    });
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (provider.stoppedSessionIds));
   
 })();
 
@@ -138,41 +537,85 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_216_3": {
 
 
+class FakeAcpProvider implements CliProviderAdapter {
+  readonly id = "claude-code";
+  readonly info = { id: "claude-code", name: "Claude Code", description: "", available: true, modes: ["full-access", "supervised"] as const, auth: { login: false, logout: false, deviceCode: false } };
+  readonly emitter = new EventEmitter();
+  startedSessions: StartSessionOptions[] = [];
+  stoppedSessionIds: string[] = [];
+  sentTurns: Array<{ sessionId: string; message: string }> = [];
+  behavior: "success" | "error" | "error-after-work" | "hang" | "with-tools" = "success";
+
+  async checkAvailability(): Promise<boolean> {
+    return true;
+  }
+
+  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
+    this.startedSessions.push(options);
+    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
+  }
+
+  async sendTurn(sessionId: string, message: string): Promise<void> {
+    this.sentTurns.push({ sessionId, message });
+    if (this.behavior === "hang") {
+      await new Promise(() => { /* never resolves */ });
+      return;
+    }
+    if (this.behavior === "error") {
+      this.emitter.emit("event", { type: "session.error", sessionId, error: "boom" } satisfies ProviderEvent);
+      throw new Error("boom");
+    }
+    if (this.behavior === "error-after-work") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "looking into it" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1" } satisfies ProviderEvent);
+      throw new Error("transport died");
+    }
+    if (this.behavior === "with-tools") {
+      this.emitter.emit("event", { type: "token", sessionId, content: "start" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.start", sessionId, tool: "bash", args: {}, callId: "call-1" } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "tool.result", sessionId, tool: "bash", ok: true, message: "ok!", callId: "call-1", data: { output: "ok!" } } satisfies ProviderEvent);
+      this.emitter.emit("event", { type: "token", sessionId, content: "finished" } satisfies ProviderEvent);
+      return;
+    }
+    this.emitter.emit("event", { type: "token", sessionId, content: "[INFORM] " } satisfies ProviderEvent);
+    this.emitter.emit("event", { type: "token", sessionId, content: "done" } satisfies ProviderEvent);
+  }
+
+  async interruptTurn(): Promise<void> {}
+  async respondToApproval(): Promise<void> {}
+  async stopSession(sessionId: string): Promise<void> {
+    this.stoppedSessionIds.push(sessionId);
+  }
+  onEvent(handler: (event: ProviderEvent) => void): () => void {
+    this.emitter.on("event", handler);
+    return () => this.emitter.off("event", handler);
+  }
+}
+const config = { host: "127.0.0.1", port: 8000 };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isSuccessfulPerformative("refuse")));
-    __jait_capture(1, (isSuccessfulPerformative("failure")));
-    __jait_capture(2, (isSuccessfulPerformative("query")));
-  
-})();
+    const registry = new ProviderRegistry();
 
-} finally {
+    const result = await runAcpSpecialistTurn({
+      providerRegistry: registry,
+      config,
+      providerId: "claude-code",
+      userId: "user-1",
+      sessionId: "session-1",
+      subAgentId: "sub-4",
+      projectRoot: "/repo",
+      prompt: "do the thing",
+    });
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_64_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (describePerformative("inform")));
-    __jait_capture(1, (describePerformative("propose")));
-    __jait_capture(2, (describePerformative("refuse")));
-    __jait_capture(3, (describePerformative("failure")));
-    __jait_capture(4, (describePerformative("query")));
-    __jait_capture(5, (describePerformative("agree")));
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 

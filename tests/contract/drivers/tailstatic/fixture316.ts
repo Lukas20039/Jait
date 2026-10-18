@@ -1,5 +1,7 @@
-// Translated fixture from packages/gateway/src/tools/terminal-sandbox-background.test.ts; expected literals are in tail_static.rs.
-import type { SandboxManager, SandboxRunResult } from "../../../../packages/gateway/src/security/sandbox-manager.js";
+// Translated fixture from packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts; expected literals are in tail_static.rs.
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { resolve, join } from "node:path";
+import { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
 import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createJaitTerminalTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
@@ -9,7 +11,7 @@ import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/terminal-sandbox-background.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,297 +45,209 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_15_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_30_3": {
 
 
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
+/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
 /*__jait_scope_open__*/{
-
+const manager = new SandboxManager();
+const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
+let projectRoot: string;
+let containerName: string;
+let context: ToolContext;
+const __jait_hook_802 = async () => {
+    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
+    await mkdir(artifacts, { recursive: true });
+    projectRoot = await mkdtemp(join(artifacts, "docker-"));
+    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
+    containerName = session.containerName;
+    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
+  };
+const __jait_hook_1310 = async () => {
+    backgroundCommandMonitor.clearForTests();
+    if (containerName) await manager.stopContainer(containerName);
+    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
+  };
+await __jait_hook_802();
 try {
 await (async()=>{
 
-    vi.useFakeTimers();
-    let finish!: (value: unknown) => void;
-    const completion = new Promise(resolve => { finish = resolve; });
-    const manager = {
-      execInContainer: vi.fn(() => new Promise(() => {})),
-      startBackgroundCommand: vi.fn(() => ({
-        containerName: context.sandboxContainerName, output: "server listening",
-        completion, stop: vi.fn(), onOutput: vi.fn(() => () => {}),
-      })),
-    };
-    const notify = vi.fn();
-    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
-    try {
-      const tool = createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager);
-      let result: Awaited<ReturnType<typeof tool.execute>> | undefined;
-      const pending = tool.execute({ command: "bun run dev", sandbox: true, isBackground: true }, context)
-        .then(value => { result = value; });
-      await vi.advanceTimersByTimeAsync(5000);
-      __jait_captureType(0, (result));
-      __jait_capture(1, (result!.data));
-      __jait_capture(2, (notify.mock.calls));
-      finish({ ok: false, output: "server stopped", exitCode: 7, timedOut: false, containerName: context.sandboxContainerName });
-      await pending;
-      await vi.advanceTimersByTimeAsync(0);
-      __jait_capture(3, (notify.mock.calls));
-      __jait_capture(4, (notify.mock.calls[0]![0]), ({ sessionId: context.sessionId, exitCode: 7, output: "server stopped" }));
-    } finally {
-      unregister();
-    }
-  
-})();
-
-} finally {
-await __jait_hook_589();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_60_3": {
-
-
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
-/*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
-try {
-await (async()=>{
-
-    const { tool } = fixture({ ok: false, output: "port in use", exitCode: 1, timedOut: false, containerName: "jait-agent-sb-test" });
-    const notify = vi.fn();
-    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
-    try {
-      const result = await tool.execute({ command: "server", sandbox: true, isBackground: true }, context);
-      __jait_capture(0, (result.ok));
-      __jait_capture(1, (result.data));
-      __jait_capture(2, (notify.mock.calls));
-    } finally { unregister(); }
-  
-})();
-
-} finally {
-await __jait_hook_589();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_72_3": {
-
-
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
-/*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
-try {
-await (async()=>{
-
-    const { tool, manager } = fixture();
-    const result = await tool.execute({ command: "build", sandbox: true }, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (manager.execInContainer.mock.calls));
-    __jait_capture(2, (manager.startBackgroundCommand.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_589();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_80_3": {
-
-
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
-/*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
-try {
-await (async()=>{
-
-    const { tool, manager } = fixture({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "one-shot" });
-    await tool.execute({ command: "cat /repo/file", sandbox: true, sandboxMountMode: "read-only", isBackground: true }, { ...context, sandboxContainerName: undefined });
-    __jait_capture(0, (manager.startBackgroundCommand.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_589();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_89_3": {
-
-
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
-/*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
-try {
-await (async()=>{
-
-    const { tool, manager } = fixture();
-    const abort = new AbortController(); abort.abort();
-    const result = await tool.execute({ command: "server", sandbox: true, isBackground: true }, { ...context, signal: abort.signal });
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (manager.startBackgroundCommand.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_589();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_97_3": {
-
-
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
-/*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
-try {
-await (async()=>{
-
-    vi.useFakeTimers();
-    const { tool, stop } = fixture();
     const abort = new AbortController();
-    const pending = tool.execute({ command: "server", sandbox: true, isBackground: true }, { ...context, signal: abort.signal });
+    const start = Date.now();
+    const notify = vi.fn();
+    backgroundCommandMonitor.setCompletionHandler(notify);
+    const result = await tool.execute({
+      sandbox: true, isBackground: true, timeout: 30000,
+      command: `bun -e 'Bun.serve({hostname:"127.0.0.1",port:3411,fetch(){return new Response("ok")}}); console.log("Listening")'`,
+    }, { ...context, signal: abort.signal });
+    __jait_capture(0, (Date.now() - start));
+    __jait_capture(1, (result.ok));
+    __jait_capture(2, (result.data));
+    __jait_capture(3, ((result.data as { output: string }).output));
+    const probe = await manager.execInContainer({
+      containerName, timeoutMs: 5000,
+      command: `bun -e 'console.log(await (await fetch("http://127.0.0.1:3411")).text())'`,
+    });
+    __jait_capture(4, (probe.output));
     abort.abort();
-    const result = await pending;
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (stop.mock.calls));
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    const after = await manager.execInContainer({
+      containerName, timeoutMs: 5000,
+      command: `bun -e 'try { await fetch("http://127.0.0.1:3411"); process.exit(1) } catch { console.log("stopped") }'`,
+    });
+    __jait_capture(5, (after.ok));
+    __jait_capture(6, (after.output));
+    __jait_capture(7, (notify.mock.calls));
+    __jait_capture(8, (backgroundCommandMonitor.activeCount));
   
 })();
 
 } finally {
-await __jait_hook_589();
+await __jait_hook_1310();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_109_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_60_3": {
 
 
-const context: ToolContext = {
-  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
-  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
-};
-const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
+/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
 /*__jait_scope_open__*/{
-function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
-    let finish!: (value: SandboxRunResult) => void;
-    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
-    const stop = vi.fn(async () => {});
-    const manager = {
-      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
-      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
-    };
-    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
-  }
-
+const manager = new SandboxManager();
+const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
+let projectRoot: string;
+let containerName: string;
+let context: ToolContext;
+const __jait_hook_802 = async () => {
+    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
+    await mkdir(artifacts, { recursive: true });
+    projectRoot = await mkdtemp(join(artifacts, "docker-"));
+    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
+    containerName = session.containerName;
+    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
+  };
+const __jait_hook_1310 = async () => {
+    backgroundCommandMonitor.clearForTests();
+    if (containerName) await manager.stopContainer(containerName);
+    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
+  };
+await __jait_hook_802();
 try {
 await (async()=>{
 
-    vi.useFakeTimers();
-    const { tool, stop, finish } = fixture();
     const notify = vi.fn();
-    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
-    try {
-      const pending = tool.execute({ command: "server", sandbox: true, isBackground: true }, context);
-      await vi.advanceTimersByTimeAsync(5000);
-      await pending;
-      backgroundCommandMonitor.stopForSession(context.sessionId);
-      __jait_capture(0, (stop.mock.calls));
-      finish({ ok: false, exitCode: 143, output: "stopped", timedOut: false, containerName: "jait-agent-sb-test" });
-      await vi.advanceTimersByTimeAsync(0);
-      __jait_capture(1, (notify.mock.calls));
-      __jait_capture(2, (backgroundCommandMonitor.activeCount));
-    } finally { unregister(); }
+    backgroundCommandMonitor.setCompletionHandler(notify);
+    const result = await tool.execute({
+      sandbox: true, isBackground: true, timeout: 1500,
+      command: `bun -e 'console.log("x".repeat(50000)); setInterval(()=>{},1000)'`,
+    }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, ((result.data as { output: string }).output.length));
+    await vi.waitFor(() => __jait_capture(2, (notify.mock.calls)), { timeout: 6000 });
+    __jait_capture(3, (notify.mock.calls[0]![0]));
+    __jait_capture(4, (notify.mock.calls[0]![0].output.length));
   
 })();
 
 } finally {
-await __jait_hook_589();
+await __jait_hook_1310();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_74_3": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+/*__jait_scope_open__*/{
+const manager = new SandboxManager();
+const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
+let projectRoot: string;
+let containerName: string;
+let context: ToolContext;
+const __jait_hook_802 = async () => {
+    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
+    await mkdir(artifacts, { recursive: true });
+    projectRoot = await mkdtemp(join(artifacts, "docker-"));
+    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
+    containerName = session.containerName;
+    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
+  };
+const __jait_hook_1310 = async () => {
+    backgroundCommandMonitor.clearForTests();
+    if (containerName) await manager.stopContainer(containerName);
+    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
+  };
+await __jait_hook_802();
+try {
+await (async()=>{
+
+    const result = await tool.execute({
+      sandbox: true, isBackground: true,
+      command: "printf '%s\\n' '$(echo literal)' '`echo also-literal`'\nprintf 'container=%s\\n' \"$PWD\"\nexit 9",
+    }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    const output = (result.data as { output: string }).output;
+    __jait_capture(2, (output));
+    __jait_capture(3, (output));
+    __jait_capture(4, (output));
+    __jait_capture(5, (output));
+  
+})();
+
+} finally {
+await __jait_hook_1310();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3": {
+
+
+/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+/*__jait_scope_open__*/{
+const manager = new SandboxManager();
+const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
+let projectRoot: string;
+let containerName: string;
+let context: ToolContext;
+const __jait_hook_802 = async () => {
+    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
+    await mkdir(artifacts, { recursive: true });
+    projectRoot = await mkdtemp(join(artifacts, "docker-"));
+    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
+    containerName = session.containerName;
+    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
+  };
+const __jait_hook_1310 = async () => {
+    backgroundCommandMonitor.clearForTests();
+    if (containerName) await manager.stopContainer(containerName);
+    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
+  };
+await __jait_hook_802();
+try {
+await (async()=>{
+
+    const abort = new AbortController();
+    const result = await tool.execute({
+      sandbox: true, isBackground: true, timeout: 15000,
+      command: "id -u; echo owned > owned.txt; sleep 10",
+    }, { ...context, sandboxContainerName: undefined, signal: abort.signal });
+    __jait_capture(0, (result.data));
+    const { stat } = await import("node:fs/promises");
+    __jait_capture(1, ((await stat(join(projectRoot, "owned.txt"))).uid), (process.getuid!()));
+    abort.abort();
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    __jait_capture(2, (backgroundCommandMonitor.activeCount));
+  
+})();
+
+} finally {
+await __jait_hook_1310();
 }
 }
 

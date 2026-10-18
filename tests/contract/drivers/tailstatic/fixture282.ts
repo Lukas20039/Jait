@@ -1,10 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/list-preview.test.ts; expected literals are in tail_static.rs.
-import { ellipsizeText, formatEllipsedList, memoryLine, summarizeWithPreview } from "../../../../packages/gateway/src/tools/list-preview.js";
+// Translated fixture from packages/gateway/src/tools/link-tools.test.ts; expected literals are in tail_static.rs.
+import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
+import { jaitLinkTool } from "../../../../packages/gateway/src/tools/link-tools.js";
+import { ASK_MODE_TOOLS, SWARM_ORCHESTRATION_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/list-preview.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/link-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,15 +43,19 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_12_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (ellipsizeText("  hello\n  world  ")));
+    __jait_capture(0, (await jaitLinkTool.execute({ href: "/agents", label: "  View the updated team  " }, context)));
+    __jait_capture(1, (jaitLinkTool.defaultConsentLevel));
+    __jait_capture(2, (ASK_MODE_TOOLS.has("jait.link")));
+    __jait_capture(3, (SWARM_ORCHESTRATION_TOOLS.has("jait.link")));
   
 })();
 
@@ -57,18 +66,333 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each0": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/jobs";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/network";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/settings";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/chat?sessionId=abc%26def";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each4": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/threads?threadId=thread-1";
+
+try {
+await (async()=>{
+
+    const result = await jaitLinkTool.execute({ href, label: "View changes" }, context);
+    __jait_capture(0, (result.data), ({ href }));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each0": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/emails";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/email";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/settings";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/todo";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each4": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/messenger";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each5": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/chat";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each6": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const path = "/";
+
+try {
+await (async()=>{
+
+    const search = 'from:alice+work@example.test subject:"München & budget" #1';
+    const result = await jaitLinkTool.execute({ href: path + "?q=old", label: "Search", search }, context);
+    __jait_capture(0, (result.ok));
+    const url = new URL((result.data as { href: string }).href, "https://jait.invalid");
+    __jait_capture(1, (url.searchParams.getAll("q")), ([search]));
+    __jait_capture(2, (url.hash));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_32_3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const long = "x".repeat(200);
-    const result = ellipsizeText(long, 20);
-    __jait_capture(0, (result.length));
-    __jait_capture(1, (result.endsWith("…")));
+    const result = await jaitLinkTool.execute({ href: "/settings?tab=tools&toolsQ=file&q=old", label: "Tools", search: "" }, context);
+    __jait_capture(0, (result.data));
   
 })();
 
@@ -79,15 +403,17 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_36_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (formatEllipsedList(["a", "b"])));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/jobs", label: "Jobs", search: "test" }, context)).ok));
+    __jait_capture(1, ((await jaitLinkTool.execute({ href: "/emails", label: "Mail", search: "a".repeat(4096) }, context)).ok));
   
 })();
 
@@ -98,16 +424,20 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_22_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_40_3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const result = formatEllipsedList(["1", "2", "3"], 2);
-    __jait_capture(0, (result));
+    const registry = new ToolRegistry();
+    registry.register(jaitLinkTool);
+    const result = await createJaitCatalogTool(registry).execute({ pageId: "settings" }, context);
+    __jait_capture(0, (result.data));
+    __jait_capture(1, (registry.listForMcp().find(tool => tool.name === "jait.link")?.parameters));
   
 })();
 
@@ -118,15 +448,18 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each0": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "https://evil.test";
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (summarizeWithPreview("Loaded 0 todos:", [])));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -134,18 +467,22 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_33_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each1": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "//evil.test/agents";
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (summarizeWithPreview("Loaded 2 todos:", ["one", "two"])));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -153,18 +490,22 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_40_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each2": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "javascript:alert(1)";
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (memoryLine("memory-1", "hello world", "reminder")));
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
   
 })();
 
@@ -172,18 +513,212 @@ await (async()=>{
 
 }
 }
+}
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_list_preview_test_ts_45_3": {
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each3": {
 
 
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/api/auth";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each4": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/agents#unsupported";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each5": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/\\evil.test";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each6": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const href = "/agents\n";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href, label: "View changes" }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each0": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each1": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "  ";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each2": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "x".repeat(161);
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const label = "label\ncontrol";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await jaitLinkTool.execute({ href: "/agents", label }, context)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_link_tools_test_ts_53_3": {
+
+
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (memoryLine("memory-1", "hello", "memory", "archived")));
+    const registry = new ToolRegistry();
+    registry.register(jaitLinkTool);
+    __jait_capture(0, (registry.listForMcp().map(tool => tool.name)));
+    __jait_capture(1, (registry.search("render link")[0].name));
+    const catalog = await createJaitCatalogTool(registry).execute({ pageId: "chat" }, context);
+    __jait_capture(2, ((catalog.data as { matches: { name: string }[] }).matches.map(tool => tool.name)));
+    const result = await jaitLinkTool.execute({ href: "/agents", label: "View team" }, context);
+    const text = (mcpContentForToolResult(result)[0] as { text: string }).text;
+    __jait_capture(3, (JSON.parse(text.slice(text.indexOf("{")))));
   
 })();
 

@@ -22,3 +22,7 @@ pub mod device_registry;
 pub mod llm_headers;
 pub mod persisted_tool_calls;
 pub mod static_asset_cache;
+
+pub mod chat_traces;
+pub mod project_repositories;
+pub mod session_search;

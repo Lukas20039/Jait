@@ -1,10 +1,20 @@
-// Translated fixture from packages/gateway/src/surfaces/terminal-isolation.test.ts; expected literals are in tail_static.rs.
-import { resolveTerminalSpawnSpec } from "../../../../packages/gateway/src/surfaces/terminal.js";
+// Translated fixture from packages/gateway/src/surfaces/shell-integration-assets.test.ts; expected literals are in tail_static.rs.
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  BASH_INTEGRATION_SCRIPT,
+  PWSH_INTEGRATION_SCRIPT,
+  SHELL_INTEGRATION_ASSETS,
+  ZSH_INTEGRATION_SCRIPT,
+} from "../../../../packages/gateway/src/surfaces/shell-integration-assets.js";
+import { hasEmbeddedIntegrationScripts, shellIntegrationScript } from "../../../../packages/gateway/src/surfaces/terminal.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/terminal-isolation.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/shell-integration-assets.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,22 +48,27 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_26_3": {
 
 
+const here = dirname(fileURLToPath(__jait_original_url));
+const scriptDir = [join(here, "shell-integration"), join(here, "..", "..", "src", "surfaces", "shell-integration")]
+  .find((dir) => existsSync(join(dir, "bash.sh")));
+const files: Array<[string, string]> = [
+  ["bash.sh", BASH_INTEGRATION_SCRIPT],
+  ["zsh.sh", ZSH_INTEGRATION_SCRIPT],
+  ["pwsh.ps1", PWSH_INTEGRATION_SCRIPT],
+];
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const result = resolveTerminalSpawnSpec("/bin/bash", ["--rcfile", "/tmp/jait.sh"], "term/a:b", {
-      platform: "linux",
-      systemdRunAvailable: true,
-      env: { JAIT_UNIT: "jait-gateway" },
-    });
-
-    __jait_capture(0, (result.command));
-    __jait_capture(1, (result.args));
+    __jait_capture(0, (hasEmbeddedIntegrationScripts()));
+    for (const [name, content] of files) {
+      __jait_capture(1, (SHELL_INTEGRATION_ASSETS[name]), (content));
+      __jait_capture(2, (content.length));
+    }
   
 })();
 
@@ -64,25 +79,29 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_30_3": {
+case "tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_34_3": {
 
 
+const here = dirname(fileURLToPath(__jait_original_url));
+const scriptDir = [join(here, "shell-integration"), join(here, "..", "..", "src", "surfaces", "shell-integration")]
+  .find((dir) => existsSync(join(dir, "bash.sh")));
+const files: Array<[string, string]> = [
+  ["bash.sh", BASH_INTEGRATION_SCRIPT],
+  ["zsh.sh", ZSH_INTEGRATION_SCRIPT],
+  ["pwsh.ps1", PWSH_INTEGRATION_SCRIPT],
+];
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (resolveTerminalSpawnSpec("/bin/zsh", ["-l"], "term-1", {
-      platform: "linux",
-      systemdRunAvailable: true,
-      env: {},
-    })));
-
-    __jait_capture(1, (resolveTerminalSpawnSpec("/bin/zsh", ["-l"], "term-1", {
-      platform: "linux",
-      systemdRunAvailable: true,
-      env: { JAIT_UNIT: "jait-gateway", JAIT_TERMINAL_ISOLATION: "0" },
-    })));
+    // The generator (`scripts/embed-shell-integration.mjs`) writes this module
+    // from the on-disk scripts. If a script changed without regenerating, the
+    // packaged gateway would silently fall back to stale integration code.
+    if (!scriptDir) return; // Installed copy without sources, e.g. node_modules.
+    for (const [name, content] of files) {
+      __jait_capture(0, (readFileSync(join(scriptDir, name), "utf8")), (content));
+    }
   
 })();
 
@@ -93,37 +112,72 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_44_3": {
+case "tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_44_3": {
 
 
+const here = dirname(fileURLToPath(__jait_original_url));
+const scriptDir = [join(here, "shell-integration"), join(here, "..", "..", "src", "surfaces", "shell-integration")]
+  .find((dir) => existsSync(join(dir, "bash.sh")));
+const files: Array<[string, string]> = [
+  ["bash.sh", BASH_INTEGRATION_SCRIPT],
+  ["zsh.sh", ZSH_INTEGRATION_SCRIPT],
+  ["pwsh.ps1", PWSH_INTEGRATION_SCRIPT],
+];
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const result = resolveTerminalSpawnSpec("/bin/bash", [], "term-2", {
-      platform: "linux",
-      systemdRunAvailable: true,
-      env: {
-        JAIT_TERMINAL_ISOLATION: "1",
-        JAIT_TERMINAL_MEMORY_HIGH: "2G",
-        JAIT_TERMINAL_MEMORY_MAX: "3G",
-        JAIT_TERMINAL_SWAP_MAX: "0",
-      },
-    });
-    __jait_capture(0, (result.args));
-    __jait_capture(1, (result.args));
-    __jait_capture(2, (result.args));
+    const cache = mkdtempSync(join(__jait_fixture_dir, "jait-shell-integration-test-"));
+    const previousDir = process.env["JAIT_SHELL_INTEGRATION_DIR"];
+    const previousCache = process.env["JAIT_SHELL_INTEGRATION_CACHE"];
+    process.env["JAIT_SHELL_INTEGRATION_DIR"] = join(cache, "definitely-not-here");
+    process.env["JAIT_SHELL_INTEGRATION_CACHE"] = join(cache, "materialized");
+    try {
+      const resolved = shellIntegrationScript("/bin/bash");
+      __jait_captureType(0, (resolved));
+      __jait_capture(1, (resolved!.type));
+      __jait_capture(2, (resolved!.embedded));
+      __jait_capture(3, (existsSync(resolved!.path)));
+      __jait_capture(4, (readFileSync(resolved!.path, "utf8")), (SHELL_INTEGRATION_ASSETS["bash.sh"]));
+    } finally {
+      if (previousDir === undefined) delete process.env["JAIT_SHELL_INTEGRATION_DIR"];
+      else process.env["JAIT_SHELL_INTEGRATION_DIR"] = previousDir;
+      if (previousCache === undefined) delete process.env["JAIT_SHELL_INTEGRATION_CACHE"];
+      else process.env["JAIT_SHELL_INTEGRATION_CACHE"] = previousCache;
+      rmSync(cache, { recursive: true, force: true });
+    }
+  
+})();
 
-    const invalid = resolveTerminalSpawnSpec("/bin/bash", [], "term-3", {
-      platform: "linux",
-      systemdRunAvailable: true,
-      env: {
-        JAIT_TERMINAL_ISOLATION: "1",
-        JAIT_TERMINAL_MEMORY_MAX: "2G;rm",
-      },
-    });
-    __jait_capture(3, (invalid.args));
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_66_3": {
+
+
+const here = dirname(fileURLToPath(__jait_original_url));
+const scriptDir = [join(here, "shell-integration"), join(here, "..", "..", "src", "surfaces", "shell-integration")]
+  .find((dir) => existsSync(join(dir, "bash.sh")));
+const files: Array<[string, string]> = [
+  ["bash.sh", BASH_INTEGRATION_SCRIPT],
+  ["zsh.sh", ZSH_INTEGRATION_SCRIPT],
+  ["pwsh.ps1", PWSH_INTEGRATION_SCRIPT],
+];
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    for (const [name, content] of files) {
+      if (name === "pwsh.ps1") continue;
+      __jait_capture(0, (content));
+    }
+    __jait_capture(1, (PWSH_INTEGRATION_SCRIPT));
   
 })();
 

@@ -1,13 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/mobile-tools.test.ts; expected literals are in tail_static.rs.
-import type { MobilePushService } from "../../../../packages/gateway/src/services/mobile-push.js";
+// Translated fixture from packages/gateway/src/tools/messenger-tools.test.ts; expected literals are in tail_static.rs.
+import { createMessengerTools } from "../../../../packages/gateway/src/tools/messenger-tools.js";
+import { MessengerBridge } from "../../../../packages/gateway/src/services/messenger-bridge.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createMobileAlarmScheduleTool } from "../../../../packages/gateway/src/tools/mobile-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/mobile-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/messenger-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,22 +41,23 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_12_3": {
+case "tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_8_3": {
 
 
-const context: ToolContext = {
-  sessionId: "daily", actionId: "alarm-action", projectRoot: "/workspace",
-  requestedBy: "user", userId: "user-a",
-};
+const context = { userId: "alice", signal: undefined } as unknown as ToolContext;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const scheduleAlarm = vi.fn();
-    const tool = createMobileAlarmScheduleTool({ scheduleAlarm } as unknown as MobilePushService);
-    __jait_capture(0, (await tool.execute({ at: "yesterday" }, context)));
-    __jait_capture(1, (scheduleAlarm.mock.calls));
+    const tool = createMessengerTools(new MessengerBridge()).find(tool => tool.name === "messenger.connect")!;
+    const result = await tool.execute({ homeserver: "https://matrix.test", username: "@alice:matrix.test" }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    for (const homeserver of ["http://192.168.1.1", "https://user:secret@matrix.test", "https://matrix.test?token=secret", "javascript:alert(1)"]) {
+      __jait_capture(2, ((await tool.execute({ homeserver }, context)).ok));
+    }
+    __jait_capture(3, ((await tool.execute({ homeserver: "https://matrix.test", password: "secret" }, context)).ok));
   
 })();
 
@@ -67,24 +68,27 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_18_3": {
 
 
-const context: ToolContext = {
-  sessionId: "daily", actionId: "alarm-action", projectRoot: "/workspace",
-  requestedBy: "user", userId: "user-a",
-};
+const context = { userId: "alice", signal: undefined } as unknown as ToolContext;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const scheduleAlarm = vi.fn(async () => 1);
-    const tool = createMobileAlarmScheduleTool({ scheduleAlarm } as unknown as MobilePushService);
-    const future = new Date(Date.now() + 3_600_000).toISOString();
-    const result = await tool.execute({ at: future, title: "Morning briefing" }, context);
-    __jait_capture(0, (result));
-    __jait_capture(1, (scheduleAlarm.mock.calls));
+    const bridge = new MessengerBridge();
+    const request = vi.spyOn(bridge, "request").mockResolvedValue({ ok: true, message: "done" });
+    const tools = createMessengerTools(bridge);
+    const search = tools.find(tool => tool.name === "messenger.search")!;
+    __jait_capture(0, ((await search.execute({ query: "x", limit: 51 }, context)).ok));
+    __jait_capture(1, ((await search.execute({ query: "" }, context)).ok));
+    __jait_capture(2, (request.mock.calls));
+    await search.execute({ query: "firewall", limit: 5 }, context);
+    __jait_capture(3, (request.mock.calls));
+    for (const name of ["messenger.send", "messenger.open"]) __jait_capture(4, (tools.find(tool => tool.name === name)?.defaultConsentLevel));
+    const send = tools.find(tool => tool.name === "messenger.send")!;
+    __jait_capture(5, ((await send.execute({ roomId: "alice", text: "hello" }, context)).ok));
   
 })();
 

@@ -19415,11 +19415,91 @@ fn tailstatic_packages_gateway_src_services_user_questions_test_ts_80_3() {
     );
 }
 
+// packages/gateway/src/services/users-password.test.ts:27:3: accepts existing scrypt hashes and rejects incorrect credentials
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_27_3() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_27_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":"owner"},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each0() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each0"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each1() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each1"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each2() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each2"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each3() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each3"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each4() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each4"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:33:3: rejects malformed or truncated digests: %s
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each5() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each5"#,
+        r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/users-password.test.ts:42:3: accepts the full uppercase hex representation of an existing digest
+#[test]
+fn tailstatic_packages_gateway_src_services_users_password_test_ts_42_3() {
+    tail_assertions::check(
+        224,
+        r#"tailstatic_packages_gateway_src_services_users_password_test_ts_42_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":"owner"}]"#,
+    );
+}
+
 // packages/gateway/src/skills/index.test.ts:5:3: extracts name and description from simple frontmatter
 #[test]
 fn tailstatic_packages_gateway_src_skills_index_test_ts_5_3() {
     tail_assertions::check(
-        224,
+        225,
         r#"tailstatic_packages_gateway_src_skills_index_test_ts_5_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Word / DOCX"},{"matcher":"toBe","negate":false,"expected":"Handle DOCX files."}]"#,
     );
@@ -19429,7 +19509,7 @@ fn tailstatic_packages_gateway_src_skills_index_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_index_test_ts_11_3() {
     tail_assertions::check(
-        224,
+        225,
         r#"tailstatic_packages_gateway_src_skills_index_test_ts_11_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"coding-agent"},{"matcher":"toEqual","negate":false,"expected":["claude","codex"]},{"matcher":"toMatchObject","negate":false,"expected":{"id":"node-claude","kind":"node","package":"@anthropic-ai/claude-code","bins":["claude"],"label":"Install Claude Code CLI"}}]"#,
     );
@@ -19439,7 +19519,7 @@ fn tailstatic_packages_gateway_src_skills_index_test_ts_11_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_index_test_ts_42_3() {
     tail_assertions::check(
-        224,
+        225,
         r#"tailstatic_packages_gateway_src_skills_index_test_ts_42_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Plain"},{"matcher":"toBe","negate":false,"expected":"A skill"}]"#,
     );
@@ -19449,7 +19529,7 @@ fn tailstatic_packages_gateway_src_skills_index_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_9_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_9_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"feuerwehr-instagram-posts"},{"matcher":"toBe","negate":false,"expected":"weather-warnings"}]"#,
     );
@@ -19459,7 +19539,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_9_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_14_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_14_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"etc-passwd"},{"matcher":"toBe","negate":false,"expected":"absolute-path"},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -19469,7 +19549,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_22_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_22_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"name: \"Deploy: staging\""},{"matcher":"toContain","negate":false,"expected":"description: \"Use when shipping to staging: run the \\\"safe\\\" path.\""},{"matcher":"toContain","negate":false,"expected":"1. Do the thing."}]"#,
     );
@@ -19479,7 +19559,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_22_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_34_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_34_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"description: \"first second\""}]"#,
     );
@@ -19489,7 +19569,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_34_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_56_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_56_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"id":"bysenft-auslastung","created":true}},{"matcher":"toContain","negate":false,"expected":"occupancy widget"},{"matcher":"toMatchObject","negate":false,"expected":{"name":"Bysenft Auslastung","enabled":true,"source":"user"}}]"#,
     );
@@ -19499,7 +19579,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_56_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_73_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_73_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":14,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"a"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"a"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":"y"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"x"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"s"},{"id":12,"kind":"char","value":"t"},{"id":13,"kind":"char","value":"s"}]},"flags":""}},{"matcher":"toContain","negate":false,"expected":"original"}]"#,
     );
@@ -19509,7 +19589,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_73_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_90_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_90_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"replacement"}]"#,
     );
@@ -19519,7 +19599,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_90_3() {
 #[test]
 fn tailstatic_packages_gateway_src_skills_install_test_ts_101_3() {
     tail_assertions::check(
-        225,
+        226,
         r#"tailstatic_packages_gateway_src_skills_install_test_ts_101_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":15,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"u"},{"id":1,"kind":"char","value":"s"},{"id":2,"kind":"char","value":"a"},{"id":3,"kind":"char","value":"b"},{"id":4,"kind":"char","value":"l"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"s"},{"id":8,"kind":"char","value":"k"},{"id":9,"kind":"char","value":"i"},{"id":10,"kind":"char","value":"l"},{"id":11,"kind":"char","value":"l"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"i"},{"id":14,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -19529,7 +19609,7 @@ fn tailstatic_packages_gateway_src_skills_install_test_ts_101_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint10_test_ts_7_3() {
     tail_assertions::check(
-        226,
+        227,
         r#"tailstatic_packages_gateway_src_sprint10_test_ts_7_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"screen.share"},{"matcher":"toContain","negate":false,"expected":"screen.capture"},{"matcher":"toContain","negate":false,"expected":"screen.record"},{"matcher":"toContain","negate":false,"expected":"os_tool"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"host-1"},{"matcher":"toBe","negate":false,"expected":"viewer-1"},{"matcher":"toBe","negate":false,"expected":"viewer-1"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19539,7 +19619,7 @@ fn tailstatic_packages_gateway_src_sprint10_test_ts_7_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint10_test_ts_71_3() {
     tail_assertions::check(
-        226,
+        227,
         r#"tailstatic_packages_gateway_src_sprint10_test_ts_71_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"p2p"},{"matcher":"toBeLessThan","negate":false,"expected":100},{"matcher":"toBe","negate":false,"expected":"turn"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19549,7 +19629,7 @@ fn tailstatic_packages_gateway_src_sprint10_test_ts_71_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint10_test_ts_89_3() {
     tail_assertions::check(
-        226,
+        227,
         r#"tailstatic_packages_gateway_src_sprint10_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"phone"},{"matcher":"toBe","negate":false,"expected":"sharing"}]"#,
     );
@@ -19559,7 +19639,7 @@ fn tailstatic_packages_gateway_src_sprint10_test_ts_89_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint11_test_ts_10_3() {
     tail_assertions::check(
-        227,
+        228,
         r#"tailstatic_packages_gateway_src_sprint11_test_ts_10_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"Hey Jait run tests"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19569,7 +19649,7 @@ fn tailstatic_packages_gateway_src_sprint11_test_ts_10_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint11_test_ts_33_3() {
     tail_assertions::check(
-        227,
+        228,
         r#"tailstatic_packages_gateway_src_sprint11_test_ts_33_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"voice"}]"#,
     );
@@ -19579,7 +19659,7 @@ fn tailstatic_packages_gateway_src_sprint11_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint11_test_ts_68_3() {
     tail_assertions::check(
-        227,
+        228,
         r#"tailstatic_packages_gateway_src_sprint11_test_ts_68_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"voice.speak"}]"#,
     );
@@ -19589,7 +19669,7 @@ fn tailstatic_packages_gateway_src_sprint11_test_ts_68_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint12_test_ts_19_3() {
     tail_assertions::check(
-        228,
+        229,
         r#"tailstatic_packages_gateway_src_sprint12_test_ts_19_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"jait-gateway"},{"matcher":"toContain","negate":false,"expected":"/ws"},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -19599,7 +19679,7 @@ fn tailstatic_packages_gateway_src_sprint12_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint12_test_ts_66_3() {
     tail_assertions::check(
-        228,
+        229,
         r#"tailstatic_packages_gateway_src_sprint12_test_ts_66_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"Mobile Control Session"}]"#,
     );
@@ -19609,7 +19689,7 @@ fn tailstatic_packages_gateway_src_sprint12_test_ts_66_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_27_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_27_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"sandbox":true,"output":"inside-container","hostUnaffected":true}}]"#,
     );
@@ -19619,7 +19699,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_48_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_48_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"--network none"},{"matcher":"toContain","negate":false,"expected":"--memory 128m"},{"matcher":"toContain","negate":false,"expected":"--cpus 0.5"},{"matcher":"toContain","negate":false,"expected":":/project:ro"}]"#,
     );
@@ -19629,7 +19709,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_48_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_76_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_76_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://127.0.0.1:6600/vnc_lite.html",{"__jait_matcher":"any","type":"Object"}]},{"matcher":"toMatchObject","negate":false,"expected":{"novncUrl":"http://127.0.0.1:6600/vnc_lite.html","novncPort":6600,"vncPort":6000}}]"#,
     );
@@ -19639,7 +19719,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_76_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_98_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_98_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"novncUrl":"http://127.0.0.1:6601/vnc_lite.html","novncPort":6601,"vncPort":6001,"cdpUrl":"http://127.0.0.1:9223"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":62,"kind":"seq","nodes":[{"id":14,"kind":"alt","nodes":[{"id":6,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"c"},{"id":3,"kind":"char","value":"k"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"r"}]},{"id":13,"kind":"seq","nodes":[{"id":7,"kind":"char","value":"p"},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"d"},{"id":10,"kind":"char","value":"m"},{"id":11,"kind":"char","value":"a"},{"id":12,"kind":"char","value":"n"}]}]},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"i"},{"id":17,"kind":"char","value":"m"},{"id":18,"kind":"char","value":"a"},{"id":19,"kind":"char","value":"g"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"i"},{"id":23,"kind":"char","value":"n"},{"id":24,"kind":"char","value":"s"},{"id":25,"kind":"char","value":"p"},{"id":26,"kind":"char","value":"e"},{"id":27,"kind":"char","value":"c"},{"id":28,"kind":"char","value":"t"},{"id":29,"kind":"char","value":" "},{"id":30,"kind":"char","value":"j"},{"id":31,"kind":"char","value":"a"},{"id":32,"kind":"char","value":"i"},{"id":33,"kind":"char","value":"t"},{"id":34,"kind":"char","value":"/"},{"id":35,"kind":"char","value":"s"},{"id":36,"kind":"char","value":"a"},{"id":37,"kind":"char","value":"n"},{"id":38,"kind":"char","value":"d"},{"id":39,"kind":"char","value":"b"},{"id":40,"kind":"char","value":"o"},{"id":41,"kind":"char","value":"x"},{"id":42,"kind":"char","value":"-"},{"id":43,"kind":"char","value":"b"},{"id":44,"kind":"char","value":"r"},{"id":45,"kind":"char","value":"o"},{"id":46,"kind":"char","value":"w"},{"id":47,"kind":"char","value":"s"},{"id":48,"kind":"char","value":"e"},{"id":49,"kind":"char","value":"r"},{"id":50,"kind":"char","value":":"},{"id":51,"kind":"char","value":"r"},{"id":52,"kind":"char","value":"e"},{"id":53,"kind":"char","value":"c"},{"id":54,"kind":"char","value":"o"},{"id":55,"kind":"char","value":"v"},{"id":56,"kind":"char","value":"e"},{"id":57,"kind":"char","value":"r"},{"id":58,"kind":"char","value":"y"},{"id":59,"kind":"char","value":"-"},{"id":60,"kind":"char","value":"v"},{"id":61,"kind":"char","value":"3"}]},"flags":""}},{"matcher":"toContain","negate":false,"expected":"--add-host host.docker.internal:"},{"matcher":"toContain","negate":false,"expected":"-p 9223:9223"},{"matcher":"toContain","negate":true,"expected":"--network none"}]"#,
     );
@@ -19649,7 +19729,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_98_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_134_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_134_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"novncPort":6080,"vncPort":5900,"novncUrl":"http://127.0.0.1:6080/vnc_lite.html"}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19659,7 +19739,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_134_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_181_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_181_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"container runtime health check failed (timed out)"}]"#,
     );
@@ -19669,7 +19749,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_181_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_196_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_196_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"novncPort":6083,"vncPort":5903}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19679,7 +19759,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_196_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_217_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_217_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser sandbox limit reached (2 active, max 2)"},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -19689,7 +19769,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_217_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_239_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_239_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["jait-browser-sb-old"]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -19699,7 +19779,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_239_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_269_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_269_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["jait-browser-sb-legacy"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19709,7 +19789,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_269_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_289_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_289_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"novncUrl":"http://127.0.0.1:6602/vnc_lite.html","novncPort":6602,"vncPort":6002,"cdpUrl":"http://127.0.0.1:9224"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":63,"kind":"seq","nodes":[{"id":14,"kind":"alt","nodes":[{"id":6,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"c"},{"id":3,"kind":"char","value":"k"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"r"}]},{"id":13,"kind":"seq","nodes":[{"id":7,"kind":"char","value":"p"},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"d"},{"id":10,"kind":"char","value":"m"},{"id":11,"kind":"char","value":"a"},{"id":12,"kind":"char","value":"n"}]}]},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"i"},{"id":17,"kind":"char","value":"m"},{"id":18,"kind":"char","value":"a"},{"id":19,"kind":"char","value":"g"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"i"},{"id":23,"kind":"char","value":"n"},{"id":24,"kind":"char","value":"s"},{"id":25,"kind":"char","value":"p"},{"id":26,"kind":"char","value":"e"},{"id":27,"kind":"char","value":"c"},{"id":28,"kind":"char","value":"t"},{"id":29,"kind":"char","value":" "},{"id":30,"kind":"char","value":"j"},{"id":31,"kind":"char","value":"a"},{"id":32,"kind":"char","value":"i"},{"id":33,"kind":"char","value":"t"},{"id":34,"kind":"char","value":"/"},{"id":35,"kind":"char","value":"s"},{"id":36,"kind":"char","value":"a"},{"id":37,"kind":"char","value":"n"},{"id":38,"kind":"char","value":"d"},{"id":39,"kind":"char","value":"b"},{"id":40,"kind":"char","value":"o"},{"id":41,"kind":"char","value":"x"},{"id":42,"kind":"char","value":"-"},{"id":43,"kind":"char","value":"l"},{"id":44,"kind":"char","value":"i"},{"id":45,"kind":"char","value":"n"},{"id":46,"kind":"char","value":"u"},{"id":47,"kind":"char","value":"x"},{"id":48,"kind":"char","value":"-"},{"id":49,"kind":"char","value":"d"},{"id":50,"kind":"char","value":"e"},{"id":51,"kind":"char","value":"s"},{"id":52,"kind":"char","value":"k"},{"id":53,"kind":"char","value":"t"},{"id":54,"kind":"char","value":"o"},{"id":55,"kind":"char","value":"p"},{"id":56,"kind":"char","value":":"},{"id":57,"kind":"char","value":"l"},{"id":58,"kind":"char","value":"a"},{"id":59,"kind":"char","value":"t"},{"id":60,"kind":"char","value":"e"},{"id":61,"kind":"char","value":"s"},{"id":62,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toContain","negate":false,"expected":"--add-host host.docker.internal:"},{"matcher":"toContain","negate":false,"expected":"-p 9224:9223"},{"matcher":"toContain","negate":false,"expected":"--shm-size 1gb"},{"matcher":"toContain","negate":false,"expected":"SCREEN_RES=1280x720x24"},{"matcher":"toContain","negate":false,"expected":"jait.kind=linux-desktop-sandbox"},{"matcher":"toContain","negate":true,"expected":"--network none"}]"#,
     );
@@ -19719,7 +19799,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_289_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_329_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_329_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"novncPort":6080,"vncPort":5900,"novncUrl":"http://127.0.0.1:6080/vnc_lite.html"}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19729,7 +19809,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_329_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_375_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_375_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Linux desktop sandbox disabled: container runtime health check failed (timed out)"}]"#,
     );
@@ -19739,7 +19819,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_375_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_390_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_390_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Linux desktop sandbox limit reached (1 active, max 1)"},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -19749,7 +19829,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_390_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_408_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_408_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["jait-linux-desktop-sb-old"]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -19759,7 +19839,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_408_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint13_test_ts_438_3() {
     tail_assertions::check(
-        229,
+        230,
         r#"tailstatic_packages_gateway_src_sprint13_test_ts_438_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19769,7 +19849,7 @@ fn tailstatic_packages_gateway_src_sprint13_test_ts_438_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_48_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_48_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":18,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":2,"kind":"repeat","node":{"id":1,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":8,"max":8},{"id":3,"kind":"char","value":"-"},{"id":5,"kind":"repeat","node":{"id":4,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":4,"max":4},{"id":6,"kind":"char","value":"-"},{"id":7,"kind":"char","value":"7"},{"id":9,"kind":"repeat","node":{"id":8,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":3,"max":3},{"id":10,"kind":"char","value":"-"},{"id":11,"kind":"class","items":[{"low":"8","high":"8"},{"low":"9","high":"9"},{"low":"a","high":"a"},{"low":"b","high":"b"}],"negate":false},{"id":13,"kind":"repeat","node":{"id":12,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":3,"max":3},{"id":14,"kind":"char","value":"-"},{"id":16,"kind":"repeat","node":{"id":15,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":12,"max":12},{"id":17,"kind":"end"}]},"flags":""}}]"#,
     );
@@ -19779,7 +19859,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_48_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_55_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_55_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":100}]"#,
     );
@@ -19789,7 +19869,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_55_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_60_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_60_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -19799,7 +19879,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_60_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_73_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_73_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"sessions"},{"matcher":"toContain","negate":false,"expected":"audit_log"},{"matcher":"toContain","negate":false,"expected":"trust_levels"},{"matcher":"toContain","negate":false,"expected":"consent_log"}]"#,
     );
@@ -19809,7 +19889,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_73_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_88_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_88_3"#,
         r#"[{"matcher":"toComplete","negate":false}]"#,
     );
@@ -19819,7 +19899,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_88_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_111_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_111_3"#,
         r#"[{"matcher":"toBeTruthy","negate":false},{"matcher":"toBe","negate":false,"expected":"Test Session"},{"matcher":"toBe","negate":false,"expected":"active"},{"matcher":"toBeTruthy","negate":false},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -19829,7 +19909,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_111_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_120_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_120_3"#,
         r#"[{"matcher":"toBe","negate":true,"dynamic":true}]"#,
     );
@@ -19839,7 +19919,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_120_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_126_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_126_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Second"}]"#,
     );
@@ -19849,7 +19929,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_126_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_137_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_137_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -19859,7 +19939,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_137_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_144_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_144_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Find me"},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -19869,7 +19949,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_144_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_150_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_150_3"#,
         r#"[{"matcher":"toBe","negate":true,"dynamic":true}]"#,
     );
@@ -19879,7 +19959,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_150_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_163_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"deleted"}]"#,
     );
@@ -19889,7 +19969,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_170_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_170_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"New"}]"#,
     );
@@ -19899,7 +19979,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_170_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_191_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_191_3"#,
         r#"[{"matcher":"toBeTruthy","negate":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":4,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":2,"kind":"repeat","node":{"id":1,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":8,"max":8},{"id":3,"kind":"char","value":"-"}]},"flags":""}}]"#,
     );
@@ -19909,7 +19989,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_191_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_204_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_204_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -19919,7 +19999,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_204_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_215_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_215_3"#,
         r#"[{"matcher":"toThrow","negate":false}]"#,
     );
@@ -19929,7 +20009,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_215_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_223_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_223_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"sess-A"},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -19939,7 +20019,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_223_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_253_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_253_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":{"path":"/tmp/test.txt","content":"hello"}},{"matcher":"toEqual","negate":false,"expected":{"bytesWritten":5}}]"#,
     );
@@ -19949,7 +20029,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_253_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_302_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_302_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":201},{"matcher":"toBeTruthy","negate":false},{"matcher":"toBe","negate":false,"expected":"My Project"},{"matcher":"toBe","negate":false,"expected":"active"}]"#,
     );
@@ -19959,7 +20039,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_302_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_316_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_316_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -19969,7 +20049,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_316_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_340_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_340_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -19979,7 +20059,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_340_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_365_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_365_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Session 3"},{"matcher":"toBe","negate":false,"expected":"Session 2"}]"#,
     );
@@ -19989,7 +20069,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_365_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_398_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_398_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"Find me"}]"#,
     );
@@ -19999,7 +20079,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_398_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_416_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_416_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":404}]"#,
     );
@@ -20009,7 +20089,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_416_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_425_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_425_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"New name"}]"#,
     );
@@ -20019,7 +20099,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_425_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_444_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_444_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"deleted"}]"#,
     );
@@ -20029,7 +20109,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_444_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_470_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_470_3"#,
         r#"[{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20039,7 +20119,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_470_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_483_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_483_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20049,7 +20129,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_483_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_503_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_503_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"Active"}]"#,
     );
@@ -20059,7 +20139,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_503_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_522_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_522_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"Check status"}]"#,
     );
@@ -20069,7 +20149,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_522_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_540_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_540_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":400}]"#,
     );
@@ -20079,7 +20159,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_540_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint2_test_ts_551_3() {
     tail_assertions::check(
-        230,
+        231,
         r#"tailstatic_packages_gateway_src_sprint2_test_ts_551_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"browser.navigate"}]"#,
     );
@@ -20089,7 +20169,7 @@ fn tailstatic_packages_gateway_src_sprint2_test_ts_551_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_28_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_28_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"src"},{"matcher":"toContain","negate":false,"expected":"index.ts"}]"#,
     );
@@ -20099,7 +20179,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_28_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_35_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_35_3"#,
         r#"[{"matcher":"toThrow","negate":false,"dynamic":true}]"#,
     );
@@ -20109,7 +20189,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_35_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_40_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_40_3"#,
         r#"[{"matcher":"toThrow","negate":false,"dynamic":true}]"#,
     );
@@ -20119,7 +20199,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_40_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_45_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_45_3"#,
         r#"[{"matcher":"toThrow","negate":false,"dynamic":true}]"#,
     );
@@ -20129,7 +20209,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_45_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_55_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_55_3"#,
         r#"[{"matcher":"toThrow","negate":false,"dynamic":true}]"#,
     );
@@ -20139,7 +20219,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_55_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_63_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_63_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20149,7 +20229,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_63_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_69_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_69_3"#,
         r#"[{"matcher":"toThrow","negate":false,"dynamic":true}]"#,
     );
@@ -20159,7 +20239,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_69_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_91_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_91_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"newfile.ts"}]"#,
     );
@@ -20169,7 +20249,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_91_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_120_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_120_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"expected":"test-session"}]"#,
     );
@@ -20179,7 +20259,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_120_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_125_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_125_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"export const x = 42;\n"}]"#,
     );
@@ -20189,7 +20269,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_125_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_130_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_130_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"const y = 1;\n"}]"#,
     );
@@ -20199,7 +20279,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_130_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_136_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_136_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"99"},{"matcher":"toContain","negate":true,"expected":"42"}]"#,
     );
@@ -20209,7 +20289,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_136_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_144_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_144_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20219,7 +20299,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_144_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_149_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_149_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"hello.ts"},{"matcher":"toContain","negate":false,"expected":"other.ts"}]"#,
     );
@@ -20229,7 +20309,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_149_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_156_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_156_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20239,7 +20319,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_156_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_161_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_161_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20249,7 +20329,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_161_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_167_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_167_3"#,
         r#"[{"matcher":"toThrow","negate":false}]"#,
     );
@@ -20259,7 +20339,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_167_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_171_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_171_3"#,
         r#"[{"matcher":"toThrow","negate":false}]"#,
     );
@@ -20269,7 +20349,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_171_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_175_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_175_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -20279,7 +20359,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_175_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_199_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_199_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"expected":"s1"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -20289,7 +20369,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_199_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_213_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_213_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -20299,7 +20379,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_213_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_227_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_227_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -20309,7 +20389,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_227_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_245_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_245_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"test.tool"}]"#,
     );
@@ -20319,7 +20399,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_245_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_258_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_258_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"hello"}]"#,
     );
@@ -20329,7 +20409,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_258_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_286_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_286_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Unknown tool"}]"#,
     );
@@ -20339,7 +20419,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_286_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_304_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_304_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"terminal.run"},{"matcher":"toContain","negate":false,"expected":"terminal.stream"},{"matcher":"toContain","negate":false,"expected":"file.read"},{"matcher":"toContain","negate":false,"expected":"file.write"},{"matcher":"toContain","negate":false,"expected":"file.patch"},{"matcher":"toContain","negate":false,"expected":"file.list"},{"matcher":"toContain","negate":false,"expected":"file.stat"},{"matcher":"toContain","negate":false,"expected":"os.query"},{"matcher":"toContain","negate":false,"expected":"os.install"},{"matcher":"toContain","negate":false,"expected":"surfaces.list"},{"matcher":"toContain","negate":false,"expected":"surfaces.start"},{"matcher":"toContain","negate":false,"expected":"surfaces.stop"},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":12}]"#,
     );
@@ -20349,7 +20429,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_304_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_330_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_330_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toBeGreaterThan","negate":false,"expected":0}]"#,
     );
@@ -20359,7 +20439,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_330_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_347_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_347_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -20369,7 +20449,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_347_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_397_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_397_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -20379,7 +20459,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_397_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_404_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_404_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":12},{"matcher":"toContain","negate":false,"expected":"file.read"},{"matcher":"toContain","negate":false,"expected":"terminal.run"},{"matcher":"toContain","negate":false,"expected":"surfaces.list"}]"#,
     );
@@ -20389,7 +20469,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_404_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_414_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_414_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toContain","negate":false,"expected":"terminal"},{"matcher":"toContain","negate":false,"expected":"filesystem"}]"#,
     );
@@ -20399,7 +20479,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_414_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_423_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_423_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"terminal"}]"#,
     );
@@ -20409,7 +20489,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_423_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_435_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_435_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Unknown tool"}]"#,
     );
@@ -20419,7 +20499,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_435_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_447_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_447_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeDefined","negate":false}]"#,
     );
@@ -20429,7 +20509,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_447_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint3_test_ts_459_3() {
     tail_assertions::check(
-        231,
+        232,
         r#"tailstatic_packages_gateway_src_sprint3_test_ts_459_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["node-1","terminal.run",{"command":"docker ps --format '{{.Image}}'"},{"sessionId":"s1","projectRoot":"/repo","timeoutMs":120000}]},{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"remote output","data":{"node":"node-1"}}}]"#,
     );
@@ -20439,7 +20519,7 @@ fn tailstatic_packages_gateway_src_sprint3_test_ts_459_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_23_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_23_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"click"},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -20449,7 +20529,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_23_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_57_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_57_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Not needed"}]"#,
     );
@@ -20459,7 +20539,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_57_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_78_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_78_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"timeout"}]"#,
     );
@@ -20469,7 +20549,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_78_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_96_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_96_3"#,
         r#"[{"matcher":"toBeDefined","negate":false},{"matcher":"toBe","negate":false,"expected":"file.write"},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -20479,7 +20559,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_96_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_118_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_118_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20489,7 +20569,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_118_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_149_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_149_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20499,7 +20579,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_149_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_155_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_155_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20509,7 +20589,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_155_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_164_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_164_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20519,7 +20599,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_164_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_227_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_227_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20529,7 +20609,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_227_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_231_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_231_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20539,7 +20619,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_231_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_235_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_235_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20549,7 +20629,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_235_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_239_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_239_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20559,7 +20639,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_239_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_243_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_243_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20569,7 +20649,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_243_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_248_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_248_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20579,7 +20659,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_248_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_252_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_252_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20589,7 +20669,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_252_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_256_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_256_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20599,7 +20679,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_256_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_262_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_262_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20609,7 +20689,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_262_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_266_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_266_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"denied pattern"}]"#,
     );
@@ -20619,7 +20699,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_266_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_272_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_272_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20629,7 +20709,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_272_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_278_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_278_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20639,7 +20719,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_278_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_282_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_282_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20649,7 +20729,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_282_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_286_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_286_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20659,7 +20739,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_286_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_292_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_292_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20669,7 +20749,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_292_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_297_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_297_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20679,7 +20759,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_297_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_301_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_301_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20689,7 +20769,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_301_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_306_5() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_306_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20699,7 +20779,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_306_5() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_317_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_317_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"minimal"},{"matcher":"toContain","negate":false,"expected":"coding"},{"matcher":"toContain","negate":false,"expected":"full"}]"#,
     );
@@ -20709,7 +20789,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_317_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_324_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_324_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"none"},{"matcher":"toBe","negate":false,"expected":"dangerous"}]"#,
     );
@@ -20719,7 +20799,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_324_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_330_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_330_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"once"},{"matcher":"toBe","negate":false,"expected":"once"}]"#,
     );
@@ -20729,7 +20809,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_330_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_336_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_336_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"once"}]"#,
     );
@@ -20739,7 +20819,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_336_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_341_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_341_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"once"},{"matcher":"toBe","negate":false,"expected":"none"}]"#,
     );
@@ -20749,7 +20829,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_341_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_349_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_349_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20759,7 +20839,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_349_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_371_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_371_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20769,7 +20849,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_371_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_376_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_376_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -20779,7 +20859,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_376_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_385_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_385_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -20789,7 +20869,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_385_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_391_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_391_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -20799,7 +20879,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_391_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_397_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_397_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -20809,7 +20889,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_397_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_406_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_406_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20819,7 +20899,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_406_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_412_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_412_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20829,7 +20909,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_412_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_419_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_419_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20839,7 +20919,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_419_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_426_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_426_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":5},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20849,7 +20929,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_426_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_461_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_461_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"file contents"},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20859,7 +20939,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_461_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_487_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_487_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"done"}]"#,
     );
@@ -20869,7 +20949,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_487_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_521_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_521_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"rejected"}]"#,
     );
@@ -20879,7 +20959,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_521_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_550_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_550_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"terminal.run"},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20889,7 +20969,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_550_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_579_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_579_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"high"},{"matcher":"toBe","negate":false,"expected":"coding"},{"matcher":"toBe","negate":false,"expected":"dangerous"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"unknown-tool"}]"#,
     );
@@ -20899,7 +20979,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_579_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_620_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_620_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"blocked"}]"#,
     );
@@ -20909,7 +20989,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_620_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_645_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_645_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -20919,7 +20999,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_645_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_673_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_673_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -20929,7 +21009,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_673_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_731_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_731_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -20939,7 +21019,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_731_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_738_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_738_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":null},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -20949,7 +21029,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_738_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_753_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_753_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"terminal.run"}]"#,
     );
@@ -20959,7 +21039,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_753_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_775_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_775_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":{"ok":true,"decision":"approved"}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -20969,7 +21049,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_775_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_799_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_799_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":{"ok":true,"decision":"rejected"}},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -20979,7 +21059,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_799_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_824_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_824_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":404}]"#,
     );
@@ -20989,7 +21069,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_824_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_832_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_832_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":{"count":1}}]"#,
     );
@@ -20999,7 +21079,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_832_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_850_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_850_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -21009,7 +21089,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_850_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_900_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_900_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21019,7 +21099,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_900_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_933_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_933_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -21029,7 +21109,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_933_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_940_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_940_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -21039,7 +21119,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_940_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint4_test_ts_953_3() {
     tail_assertions::check(
-        232,
+        233,
         r#"tailstatic_packages_gateway_src_sprint4_test_ts_953_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -21049,7 +21129,7 @@ fn tailstatic_packages_gateway_src_sprint4_test_ts_953_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_187_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_187_3"#,
         r##"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"navigate:https://example.com"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"URL: https://example.com"},{"matcher":"toContain","negate":false,"expected":"Interactive elements:"},{"matcher":"toContain","negate":false,"expected":"Active element:"},{"matcher":"toBe","negate":false,"expected":"#email"},{"matcher":"toBe","negate":false,"expected":"Sign in"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"id"}]"##,
     );
@@ -21059,7 +21139,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_187_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_213_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_213_3"#,
         r##"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"#submit"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"dialog"},{"matcher":"toBe","negate":false,"expected":"#email"},{"matcher":"toBe","negate":false,"expected":"Sign in"}]"##,
     );
@@ -21069,7 +21149,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_213_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_232_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_232_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":27,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"."},{"id":1,"kind":"char","value":"j"},{"id":2,"kind":"char","value":"a"},{"id":3,"kind":"char","value":"i"},{"id":4,"kind":"char","value":"t"},{"id":5,"kind":"char","value":"/"},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"h"},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"s"},{"id":11,"kind":"char","value":"/"},{"id":12,"kind":"char","value":"b"},{"id":13,"kind":"char","value":"r"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"w"},{"id":16,"kind":"char","value":"s"},{"id":17,"kind":"char","value":"e"},{"id":18,"kind":"char","value":"r"},{"id":19,"kind":"char","value":"-"},{"id":21,"kind":"repeat","node":{"id":20,"kind":"class","items":[{"low":"/","high":"/"}],"negate":true},"min":1,"max":null},{"id":22,"kind":"char","value":"."},{"id":23,"kind":"char","value":"p"},{"id":24,"kind":"char","value":"n"},{"id":25,"kind":"char","value":"g"},{"id":26,"kind":"end"}]},"flags":""}},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -21079,7 +21159,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_232_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_252_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_252_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"test screenshot"},{"matcher":"toBe","negate":false,"expected":"test screenshot"},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":["click:#submit","type:#email:a@b.com","scroll:0,200","select:#country:US","wait:#ready:50",{"__jait_observed":0}]},"hybrid":true}]"#,
     );
@@ -21089,7 +21169,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_252_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_283_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_283_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":81,"kind":"alt","nodes":[{"id":24,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"C"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"i"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":" "},{"id":6,"kind":"char","value":"m"},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":"y"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"b"},{"id":11,"kind":"char","value":"e"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"i"},{"id":14,"kind":"char","value":"n"},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":"r"},{"id":18,"kind":"char","value":"c"},{"id":19,"kind":"char","value":"e"},{"id":20,"kind":"char","value":"p"},{"id":21,"kind":"char","value":"t"},{"id":22,"kind":"char","value":"e"},{"id":23,"kind":"char","value":"d"}]},{"id":66,"kind":"seq","nodes":[{"id":25,"kind":"char","value":"A"},{"id":26,"kind":"char","value":"n"},{"id":27,"kind":"char","value":"o"},{"id":28,"kind":"char","value":"t"},{"id":29,"kind":"char","value":"h"},{"id":30,"kind":"char","value":"e"},{"id":31,"kind":"char","value":"r"},{"id":32,"kind":"char","value":" "},{"id":33,"kind":"char","value":"e"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"e"},{"id":36,"kind":"char","value":"m"},{"id":37,"kind":"char","value":"e"},{"id":38,"kind":"char","value":"n"},{"id":39,"kind":"char","value":"t"},{"id":40,"kind":"char","value":" "},{"id":41,"kind":"char","value":"i"},{"id":42,"kind":"char","value":"s"},{"id":43,"kind":"char","value":" "},{"id":44,"kind":"char","value":"r"},{"id":45,"kind":"char","value":"e"},{"id":46,"kind":"char","value":"c"},{"id":47,"kind":"char","value":"e"},{"id":48,"kind":"char","value":"i"},{"id":49,"kind":"char","value":"v"},{"id":50,"kind":"char","value":"i"},{"id":51,"kind":"char","value":"n"},{"id":52,"kind":"char","value":"g"},{"id":53,"kind":"char","value":" "},{"id":54,"kind":"char","value":"p"},{"id":55,"kind":"char","value":"o"},{"id":56,"kind":"char","value":"i"},{"id":57,"kind":"char","value":"n"},{"id":58,"kind":"char","value":"t"},{"id":59,"kind":"char","value":"e"},{"id":60,"kind":"char","value":"r"},{"id":61,"kind":"char","value":" "},{"id":62,"kind":"char","value":"h"},{"id":63,"kind":"char","value":"i"},{"id":64,"kind":"char","value":"t"},{"id":65,"kind":"char","value":"s"}]},{"id":80,"kind":"seq","nodes":[{"id":67,"kind":"char","value":"i"},{"id":68,"kind":"char","value":"n"},{"id":69,"kind":"char","value":"s"},{"id":70,"kind":"char","value":"i"},{"id":71,"kind":"char","value":"d"},{"id":72,"kind":"char","value":"e"},{"id":73,"kind":"char","value":" "},{"id":74,"kind":"char","value":"d"},{"id":75,"kind":"char","value":"i"},{"id":76,"kind":"char","value":"a"},{"id":77,"kind":"char","value":"l"},{"id":78,"kind":"char","value":"o"},{"id":79,"kind":"char","value":"g"}]}]},"flags":"i"}}]"#,
     );
@@ -21099,7 +21179,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_283_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_294_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_294_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"secret-safe"},{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true,"textPreview":"","interactiveElements":[],"activeElement":null,"dialogs":[],"obstruction":null}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"secret-safe"},{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true,"target":null,"dialogs":[]}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"secret-safe"},{"matcher":"toContain","negate":true,"expected":"screenshot:artifacts/page-secret.png"}]"#,
     );
@@ -21109,7 +21189,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_294_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_353_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_353_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":20,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"B"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"v"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"h"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"s"},{"id":19,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":20,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"B"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"v"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"h"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"s"},{"id":19,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":20,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"B"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"v"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"h"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"s"},{"id":19,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":true}]"#,
     );
@@ -21119,7 +21199,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_353_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_361_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_361_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":20,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"B"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"v"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"h"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"s"},{"id":19,"kind":"char","value":"t"}]},"flags":""}}]"#,
     );
@@ -21129,7 +21209,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_361_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_375_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_375_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"openai"},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"brave"}]"#,
     );
@@ -21139,7 +21219,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_375_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_414_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_414_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"openai"},{"matcher":"toContain","negate":false,"expected":"Missing XAI_API_KEY"}]"#,
     );
@@ -21149,7 +21229,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_414_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint5_test_ts_443_3() {
     tail_assertions::check(
-        233,
+        234,
         r#"tailstatic_packages_gateway_src_sprint5_test_ts_443_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"openai"},{"matcher":"toContain","negate":false,"expected":"Missing OPENAI_API_KEY"}]"#,
     );
@@ -21159,7 +21239,7 @@ fn tailstatic_packages_gateway_src_sprint5_test_ts_443_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint6_test_ts_14_3() {
     tail_assertions::check(
-        234,
+        235,
         r#"tailstatic_packages_gateway_src_sprint6_test_ts_14_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"pnpm"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"doc"}]"#,
     );
@@ -21169,7 +21249,7 @@ fn tailstatic_packages_gateway_src_sprint6_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint6_test_ts_43_3() {
     tail_assertions::check(
-        234,
+        235,
         r#"tailstatic_packages_gateway_src_sprint6_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21179,7 +21259,7 @@ fn tailstatic_packages_gateway_src_sprint6_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint6_test_ts_72_3() {
     tail_assertions::check(
-        234,
+        235,
         r#"tailstatic_packages_gateway_src_sprint6_test_ts_72_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Alice prefers PR updates"},{"matcher":"toContain","negate":false,"expected":"source=contact:alice@slack"}]"#,
     );
@@ -21189,7 +21269,7 @@ fn tailstatic_packages_gateway_src_sprint6_test_ts_72_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint6_test_ts_98_3() {
     tail_assertions::check(
-        234,
+        235,
         r#"tailstatic_packages_gateway_src_sprint6_test_ts_98_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"the release checklist lives in docs/release.md."},{"matcher":"toBe","negate":false,"expected":"pre_compaction"},{"matcher":"toBe","negate":false,"expected":"session-42"}]"#,
     );
@@ -21199,7 +21279,7 @@ fn tailstatic_packages_gateway_src_sprint6_test_ts_98_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint6_test_ts_120_3() {
     tail_assertions::check(
-        234,
+        235,
         r#"tailstatic_packages_gateway_src_sprint6_test_ts_120_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21209,7 +21289,7 @@ fn tailstatic_packages_gateway_src_sprint6_test_ts_120_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_18_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_18_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"gateway.status"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"disabled-health"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"disabled-health"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -21219,7 +21299,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_18_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_52_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_52_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21229,7 +21309,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_52_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_99_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_99_3"#,
         r#"[{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -21239,7 +21319,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_99_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_127_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_127_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"toolName":"thread.control","sessionId":"s1","projectRoot":"/project/Jait","input":{"__jait_matcher":"objectContaining","value":{"action":"create","kind":"delivery","workingDirectory":"/project/Jait","providerId":"codex","model":"gpt-5-codex","start":true,"detach":true,"prompt":"Run the nightly fix"}}}}]},{"matcher":"toHaveProperty","negate":true,"expected":"title"}]"#,
     );
@@ -21249,7 +21329,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_127_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_174_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_174_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"toolName":"thread.control","input":{"__jait_matcher":"objectContaining","value":{"action":"create","kind":"delivery","prompt":"Run the scheduled fix","start":true,"detach":true}}}}]},{"matcher":"toHaveProperty","negate":true,"expected":"title"}]"#,
     );
@@ -21259,7 +21339,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_174_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_219_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_219_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"toolName":"thread.control","input":{"__jait_matcher":"objectContaining","value":{"action":"create","kind":"delivery","prompt":"Run the scheduled code quality task","start":true,"detach":true}}}}]},{"matcher":"toHaveProperty","negate":true,"expected":"title"}]"#,
     );
@@ -21269,7 +21349,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_219_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_264_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_264_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -21279,7 +21359,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_264_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_289_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_289_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -21289,7 +21369,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_289_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_313_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_313_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2}]"#,
     );
@@ -21299,7 +21379,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_313_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_324_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_324_3"#,
         r#"[{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":".jait/bootstrap.md"}]"#,
     );
@@ -21309,7 +21389,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_324_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_345_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_345_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":401},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -21319,7 +21399,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_345_3() {
 #[test]
 fn tailstatic_packages_gateway_src_sprint7_test_ts_385_3() {
     tail_assertions::check(
-        235,
+        236,
         r#"tailstatic_packages_gateway_src_sprint7_test_ts_385_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"cron.add"},{"matcher":"toContain","negate":false,"expected":"cron.list"},{"matcher":"toContain","negate":false,"expected":"cron.remove"},{"matcher":"toContain","negate":false,"expected":"cron.update"},{"matcher":"toContain","negate":false,"expected":"gateway.status"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"hooks"},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toContain","negate":false,"expected":"session.start"}]"#,
     );
@@ -21329,7 +21409,7 @@ fn tailstatic_packages_gateway_src_sprint7_test_ts_385_3() {
 #[test]
 fn tailstatic_packages_gateway_src_state_directory_test_ts_9_3() {
     tail_assertions::check(
-        236,
+        237,
         r#"tailstatic_packages_gateway_src_state_directory_test_ts_9_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21339,7 +21419,7 @@ fn tailstatic_packages_gateway_src_state_directory_test_ts_9_3() {
 #[test]
 fn tailstatic_packages_gateway_src_state_directory_test_ts_13_3() {
     tail_assertions::check(
-        236,
+        237,
         r#"tailstatic_packages_gateway_src_state_directory_test_ts_13_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"absolute"}]"#,
     );
@@ -21349,7 +21429,7 @@ fn tailstatic_packages_gateway_src_state_directory_test_ts_13_3() {
 #[test]
 fn tailstatic_packages_gateway_src_state_directory_test_ts_17_3() {
     tail_assertions::check(
-        236,
+        237,
         r#"tailstatic_packages_gateway_src_state_directory_test_ts_17_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21359,7 +21439,7 @@ fn tailstatic_packages_gateway_src_state_directory_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_54_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_54_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"auto"}]"#,
     );
@@ -21369,7 +21449,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_54_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_62_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_62_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"node-bridge"}]"#,
     );
@@ -21379,7 +21459,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_62_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_70_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_70_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"in-process"}]"#,
     );
@@ -21389,7 +21469,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_70_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_80_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_80_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"jait-browser-sb-test"},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -21399,7 +21479,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_80_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_132_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_132_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"error"}]"#,
     );
@@ -21409,7 +21489,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_132_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_150_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_150_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["a","b","c"]},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21419,7 +21499,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_150_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_163_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":4},{"matcher":"toMatchObject","negate":false,"expected":{"type":"console","level":"warn"}},{"matcher":"toContain","negate":false,"expected":"paused"},{"matcher":"toContain","negate":false,"expected":"flood detected"}]"#,
     );
@@ -21429,7 +21509,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_182_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_182_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21439,7 +21519,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_182_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_200_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_200_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Console capture resumed after flood pause."},{"matcher":"toBe","negate":false,"expected":"after-pause"},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21449,7 +21529,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_200_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_217_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_217_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":4}]"#,
     );
@@ -21459,7 +21539,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_217_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_235_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_235_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -21469,7 +21549,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_235_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_248_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_248_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -21479,7 +21559,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_248_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_261_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_261_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -21489,7 +21569,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_261_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_273_3() {
     tail_assertions::check(
-        237,
+        238,
         r#"tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_273_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -21499,7 +21579,7 @@ fn tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_273_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_6_3() {
     tail_assertions::check(
-        238,
+        239,
         r#"tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_6_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21509,7 +21589,7 @@ fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_6_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each0() {
     tail_assertions::check(
-        238,
+        239,
         r#"tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21519,7 +21599,7 @@ fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each0()
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each1() {
     tail_assertions::check(
-        238,
+        239,
         r#"tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21529,7 +21609,7 @@ fn tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each1()
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_40_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_40_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"surface-1"},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21539,7 +21619,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_40_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_54_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_54_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Surface factory 'missing' is not registered"}]"#,
     );
@@ -21549,7 +21629,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_54_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_64_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -21559,7 +21639,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_64_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_78_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_78_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":["s1","s2"]}]"#,
     );
@@ -21569,7 +21649,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_78_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_90_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_90_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -21579,7 +21659,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_90_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_102_3() {
     tail_assertions::check(
-        239,
+        240,
         r#"tailstatic_packages_gateway_src_surfaces_registry_test_ts_102_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -21589,7 +21669,7 @@ fn tailstatic_packages_gateway_src_surfaces_registry_test_ts_102_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_26_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_26_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"nodeId":"node-1","op":"start","params":{"terminalId":"term-remote","sessionId":"session-1","projectRoot":"/remote/project","cols":100,"rows":40}}},{"matcher":"toMatchObject","negate":false,"expected":{"id":"term-remote","type":"terminal","state":"running","sessionId":"session-1","metadata":{"cwd":"/remote/project","nodeId":"node-1","remote":true,"pid":1234,"shell":"/bin/bash"}}}]"#,
     );
@@ -21599,7 +21679,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_26_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_63_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_63_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"current command output\r\n"}]"#,
     );
@@ -21609,7 +21689,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_63_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_79_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_79_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"jakob@movable-base:~/jait$ command\r\n"}]"#,
     );
@@ -21619,7 +21699,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_79_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_97_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_97_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"command output line one\r\nline two\r\n"},{"matcher":"toContain","negate":true,"expected":"jakob@movable-base"}]"#,
     );
@@ -21629,7 +21709,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_120_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_120_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -21639,7 +21719,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_120_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_145_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_145_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21649,7 +21729,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_145_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_161_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_161_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"ready"}]"#,
     );
@@ -21659,7 +21739,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_161_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_177_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_177_3"#,
         r#"[{"matcher":"toBeUndefined","negate":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21669,7 +21749,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_177_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_190_3() {
     tail_assertions::check(
-        240,
+        241,
         r#"tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_190_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"nodeId":"node-1","op":"input","params":{"terminalId":"term-remote","data":"pwd\r"}},{"nodeId":"node-1","op":"resize","params":{"terminalId":"term-remote","cols":80,"rows":24}}]},{"matcher":"toBe","negate":false,"expected":"/remote/project\r\n"},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["/remote/project\r\n"]},{"matcher":"toMatchObject","negate":false,"expected":{"nodeId":"node-1","op":"stop","params":{"terminalId":"term-remote"}}}]"#,
     );
@@ -21679,7 +21759,7 @@ fn tailstatic_packages_gateway_src_surfaces_remote_terminal_test_ts_190_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_26_3() {
     tail_assertions::check(
-        241,
+        242,
         r#"tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_26_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBeGreaterThan","negate":false,"expected":0}]"#,
     );
@@ -21689,7 +21769,7 @@ fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_26_
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_34_3() {
     tail_assertions::check(
-        241,
+        242,
         r#"tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_34_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21699,7 +21779,7 @@ fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_34_
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_44_3() {
     tail_assertions::check(
-        241,
+        242,
         r#"tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_44_3"#,
         r#"[{"matcher":"toBeNull","negate":true},{"matcher":"toBe","negate":false,"expected":"bash"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21709,7 +21789,7 @@ fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_44_
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_66_3() {
     tail_assertions::check(
-        241,
+        242,
         r#"tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_66_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"633;"},{"matcher":"toContain","negate":false,"expected":"633;"}]"#,
     );
@@ -21719,7 +21799,7 @@ fn tailstatic_packages_gateway_src_surfaces_shell_integration_assets_test_ts_66_
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_5_3() {
     tail_assertions::check(
-        242,
+        243,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_5_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"/usr/bin/systemd-run"},{"matcher":"toEqual","negate":false,"expected":["--user","--scope","--quiet","--collect","--unit=jait-terminal-term-a-b.scope","--property=OOMPolicy=kill","--property=MemoryHigh=1536M","--property=MemoryMax=2G","--property=MemorySwapMax=1G","--","/bin/bash","--rcfile","/tmp/jait.sh"]}]"#,
     );
@@ -21729,7 +21809,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_30_3() {
     tail_assertions::check(
-        242,
+        243,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_30_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"command":"/bin/zsh","args":["-l"]}},{"matcher":"toEqual","negate":false,"expected":{"command":"/bin/zsh","args":["-l"]}}]"#,
     );
@@ -21739,7 +21819,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_30_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_44_3() {
     tail_assertions::check(
-        242,
+        243,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_44_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"--property=MemoryHigh=2G"},{"matcher":"toContain","negate":false,"expected":"--property=MemoryMax=3G"},{"matcher":"toContain","negate":false,"expected":"--property=MemorySwapMax=0"},{"matcher":"toContain","negate":false,"expected":"--property=MemoryMax=2G"}]"#,
     );
@@ -21749,7 +21829,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_44_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_10_3() {
     tail_assertions::check(
-        243,
+        244,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_10_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"$ echo hi\r\nhi\r\n"},{"matcher":"toContain","negate":true,"expected":"user@host"}]"#,
     );
@@ -21759,7 +21839,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_10_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_19_3() {
     tail_assertions::check(
-        243,
+        244,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_19_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"user@host:~/repo$ ls\r\n"}]"#,
     );
@@ -21769,7 +21849,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_27_3() {
     tail_assertions::check(
-        243,
+        244,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_27_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"hi\r\n"},{"matcher":"toContain","negate":false,"expected":"633;D"}]"#,
     );
@@ -21779,7 +21859,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_36_3() {
     tail_assertions::check(
-        243,
+        244,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_36_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"line 149\r\n"}]"#,
     );
@@ -21789,7 +21869,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_36_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_47_3() {
     tail_assertions::check(
-        243,
+        244,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_47_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":true,"expected":"line 49\r\n"}]"#,
     );
@@ -21799,7 +21879,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_47_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_19_3() {
     tail_assertions::check(
-        244,
+        245,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_19_3"#,
         r#"[{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"stopping"},{"matcher":"toBe","negate":false,"expected":"stopped"}]"#,
     );
@@ -21809,7 +21889,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_32_3() {
     tail_assertions::check(
-        244,
+        245,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_32_3"#,
         r#"[{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toBe","negate":false,"expected":"stopped"}]"#,
     );
@@ -21819,7 +21899,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_40_3() {
     tail_assertions::check(
-        244,
+        245,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_40_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"stopped"}]"#,
     );
@@ -21829,7 +21909,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_40_3() {
 #[test]
 fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3() {
     tail_assertions::check(
-        244,
+        245,
         r#"tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"stopped"}]"#,
     );
@@ -21839,7 +21919,7 @@ fn tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_completion_marker_test_ts_33_1() {
     tail_assertions::check(
-        245,
+        246,
         r#"tailstatic_packages_gateway_src_terminal_completion_marker_test_ts_33_1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":0,"output":{"__jait_matcher":"stringContaining","value":"completed output"}}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -21849,7 +21929,7 @@ fn tailstatic_packages_gateway_src_terminal_completion_marker_test_ts_33_1() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_114_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_114_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"Sandbox command completed"},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -21859,7 +21939,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_114_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_126_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_126_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"cd /project && bun test"}]"#,
     );
@@ -21869,7 +21949,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_126_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_140_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_140_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"cat '/project/packages/gateway/src/tools/terminal-tools.ts'"}]"#,
     );
@@ -21879,7 +21959,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_140_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_148_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_148_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21889,7 +21969,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_148_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_156_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_156_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":15,"kind":"alt","nodes":[{"id":7,"kind":"seq","nodes":[{"id":1,"kind":"char","value":"d"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"k"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"r"}]},{"id":14,"kind":"seq","nodes":[{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"o"},{"id":10,"kind":"char","value":"d"},{"id":11,"kind":"char","value":"m"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"n"}]}]},{"id":16,"kind":"end"}]},"flags":""}},{"matcher":"toEqual","negate":false,"expected":["exec","-w","/project","jait-agent-sb-test","bash","-lc","pwd"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21899,7 +21979,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_156_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_174_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_174_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"cd /project && bun test"}]"#,
     );
@@ -21909,7 +21989,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_174_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_188_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_188_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"exit code 1"},{"matcher":"toContain","negate":false,"expected":"error"}]"#,
     );
@@ -21919,7 +21999,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_188_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_199_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_199_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"timed out"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -21929,7 +22009,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_199_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_214_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_214_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"sessionId":"s-test","userId":"u-test","payload":{"terminalId":"term-bind","execution":{"command":"printf hi","actionId":"a-test","outputOffset":7,"outputEndOffset":null,"completedAt":null,"isBackground":true,"watched":true}}}},{"matcher":"toHaveProperty","negate":true,"expected":"execution.output"}]"#,
     );
@@ -21939,7 +22019,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_214_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_272_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_272_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"command":"printf hi","outputOffset":4,"outputEndOffset":9,"watched":false}},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -21949,7 +22029,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_272_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_317_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_317_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"outputOffset":4}},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":51,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":1,"kind":"char","value":"p"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"i"},{"id":4,"kind":"char","value":"n"},{"id":5,"kind":"char","value":"t"},{"id":6,"kind":"char","value":"f"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"'"},{"id":9,"kind":"char","value":"\\"},{"id":10,"kind":"char","value":"n"},{"id":11,"kind":"char","value":"_"},{"id":12,"kind":"char","value":"_"},{"id":13,"kind":"char","value":"J"},{"id":14,"kind":"char","value":"A"},{"id":15,"kind":"char","value":"I"},{"id":16,"kind":"char","value":"T"},{"id":17,"kind":"char","value":"_"},{"id":18,"kind":"char","value":"B"},{"id":19,"kind":"char","value":"A"},{"id":20,"kind":"char","value":"C"},{"id":21,"kind":"char","value":"K"},{"id":22,"kind":"char","value":"G"},{"id":23,"kind":"char","value":"R"},{"id":24,"kind":"char","value":"O"},{"id":25,"kind":"char","value":"U"},{"id":26,"kind":"char","value":"N"},{"id":27,"kind":"char","value":"D"},{"id":28,"kind":"char","value":"_"},{"id":29,"kind":"char","value":"D"},{"id":30,"kind":"char","value":"O"},{"id":31,"kind":"char","value":"N"},{"id":32,"kind":"char","value":"E"},{"id":33,"kind":"char","value":"_"},{"id":35,"kind":"repeat","node":{"id":34,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"},{"low":"-","high":"-"}],"negate":false},"min":1,"max":null},{"id":36,"kind":"char","value":"_"},{"id":37,"kind":"char","value":"_"},{"id":38,"kind":"char","value":":"},{"id":39,"kind":"char","value":"%"},{"id":40,"kind":"char","value":"s"},{"id":41,"kind":"char","value":"\\"},{"id":42,"kind":"char","value":"n"},{"id":43,"kind":"char","value":"'"},{"id":44,"kind":"char","value":" "},{"id":45,"kind":"char","value":"\""},{"id":46,"kind":"char","value":"$"},{"id":47,"kind":"char","value":"?"},{"id":48,"kind":"char","value":"\""},{"id":49,"kind":"char","value":"\r"},{"id":50,"kind":"end"}]},"flags":""}},{"matcher":"toMatchObject","negate":false,"expected":{"command":"printf hi","actionId":"a-test","outputOffset":4,"isBackground":true,"watched":true}},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -21959,7 +22039,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_317_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_356_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_356_3"#,
         r#"[{"matcher":"toBeTruthy","negate":false},{"matcher":"toBeNull","negate":false},{"matcher":"toMatchObject","negate":false,"expected":{"command":"printf hi","actionId":"a-test","outputOffset":4,"outputEndOffset":5,"output":"hi","isBackground":true,"watched":false}}]"#,
     );
@@ -21969,7 +22049,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_356_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_406_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_406_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeTruthy","negate":false},{"matcher":"toContain","negate":false,"expected":"printf fg1"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeTruthy","negate":false},{"matcher":"toBe","negate":true,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -21979,7 +22059,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_406_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_438_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_438_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"timedOut":true,"watched":true}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":true,"dynamic":true}]"#,
     );
@@ -21989,7 +22069,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_438_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_462_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_462_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"still running a watched background command"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -21999,7 +22079,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_462_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_498_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_498_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"term-existing"},{"matcher":"toMatchObject","negate":false,"expected":{"nodeId":"node-1","op":"start","params":{"terminalId":"term-existing","reuseOnly":true}}}]"#,
     );
@@ -22009,7 +22089,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_498_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_527_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_527_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Requested terminal term-missing is unavailable"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"nodeId":"node-1","op":"start","params":{"terminalId":"term-missing","reuseOnly":true}}},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -22019,7 +22099,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_527_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_555_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_555_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Requested terminal term-missing is not running"},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -22029,7 +22109,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_555_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_569_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_569_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"exit code 127"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Command 'rg' not found"}]"#,
     );
@@ -22039,7 +22119,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_569_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_582_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_582_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"exit code 0"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"/tmp/alice/jait"},{"matcher":"toContain","negate":true,"expected":"~/jait %"}]"#,
     );
@@ -22049,7 +22129,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_582_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_596_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_596_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"hi"},{"matcher":"toContain","negate":false,"expected":"late formatter output"},{"matcher":"toContain","negate":true,"expected":"alice@dev-host"}]"#,
     );
@@ -22059,7 +22139,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_596_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_611_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_611_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"timed out"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":true,"expected":"\u0003\r"},{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"watched":true}}]"#,
     );
@@ -22069,7 +22149,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_611_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_624_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_624_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -22079,7 +22159,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_624_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_665_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_665_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"connected"},{"matcher":"toContain","negate":false,"expected":"remote-password\r"},{"matcher":"toEqual","negate":false,"expected":[{"title":"Terminal input required","prompt":"[sudo] password for alice:","requestedBy":"terminal.run"}]}]"#,
     );
@@ -22089,7 +22169,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_665_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_683_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_683_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"connected"},{"matcher":"toContain","negate":false,"expected":"remote-password\r"},{"matcher":"toEqual","negate":false,"expected":[{"title":"SSH password","prompt":"alice@host's password:","requestedBy":"terminal.run"}]}]"#,
     );
@@ -22099,7 +22179,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_683_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_701_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_701_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toContain","negate":true,"expected":"unused-secret\r"}]"#,
     );
@@ -22109,7 +22189,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_701_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_721_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_721_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22119,7 +22199,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_721_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_tools_test_ts_725_3() {
     tail_assertions::check(
-        246,
+        247,
         r#"tailstatic_packages_gateway_src_terminal_tools_test_ts_725_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -22129,7 +22209,7 @@ fn tailstatic_packages_gateway_src_terminal_tools_test_ts_725_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_38_3() {
     tail_assertions::check(
-        247,
+        248,
         r#"tailstatic_packages_gateway_src_terminal_waiting_test_ts_38_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatchObject","negate":false,"expected":{"output":{"__jait_matcher":"stringContaining","value":"localhost:5173"},"isBackground":true,"watched":true}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -22139,7 +22219,7 @@ fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_38_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_51_3() {
     tail_assertions::check(
-        247,
+        248,
         r#"tailstatic_packages_gateway_src_terminal_waiting_test_ts_51_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":1,"output":{"__jait_matcher":"stringContaining","value":"startup failed"}}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22149,7 +22229,7 @@ fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_51_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_65_3() {
     tail_assertions::check(
-        247,
+        248,
         r#"tailstatic_packages_gateway_src_terminal_waiting_test_ts_65_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"watched":true,"timedOut":true}},{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"watched":true}},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":0,"output":{"__jait_matcher":"stringContaining","value":"building first stage"}}},{"matcher":"toContain","negate":false,"expected":"build complete"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22159,7 +22239,7 @@ fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_65_3() {
 #[test]
 fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_89_1() {
     tail_assertions::check(
-        247,
+        248,
         r#"tailstatic_packages_gateway_src_terminal_waiting_test_ts_89_1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"watched":true}},{"matcher":"toHaveBeenCalledTimes","negate":false,"optional":true,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":0,"output":{"__jait_matcher":"stringContaining","value":"stage-two"}}},{"matcher":"toContain","negate":false,"expected":"stage-one"}]"#,
     );
@@ -22169,7 +22249,7 @@ fn tailstatic_packages_gateway_src_terminal_waiting_test_ts_89_1() {
 #[test]
 fn tailstatic_packages_gateway_src_thread_review_sync_test_ts_12_3() {
     tail_assertions::check(
-        248,
+        249,
         r#"tailstatic_packages_gateway_src_thread_review_sync_test_ts_12_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"merged"},{"matcher":"toBe","negate":false,"expected":"main"},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false},{"matcher":"toBe","negate":false,"expected":"feature/test-branch"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -22179,7 +22259,7 @@ fn tailstatic_packages_gateway_src_thread_review_sync_test_ts_12_3() {
 #[test]
 fn tailstatic_packages_gateway_src_threads_test_ts_123_3() {
     tail_assertions::check(
-        249,
+        250,
         r#"tailstatic_packages_gateway_src_threads_test_ts_123_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -22189,7 +22269,7 @@ fn tailstatic_packages_gateway_src_threads_test_ts_123_3() {
 #[test]
 fn tailstatic_packages_gateway_src_threads_test_ts_191_3() {
     tail_assertions::check(
-        249,
+        250,
         r#"tailstatic_packages_gateway_src_threads_test_ts_191_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":150}]"#,
     );
@@ -22199,7 +22279,7 @@ fn tailstatic_packages_gateway_src_threads_test_ts_191_3() {
 #[test]
 fn tailstatic_packages_gateway_src_threads_test_ts_221_3() {
     tail_assertions::check(
-        249,
+        250,
         r#"tailstatic_packages_gateway_src_threads_test_ts_221_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["message","tool.start","tool.result","message"]},{"matcher":"toBe","negate":false,"expected":"First answer."},{"matcher":"toBe","negate":false,"expected":"Second answer."}]"#,
     );
@@ -22209,7 +22289,7 @@ fn tailstatic_packages_gateway_src_threads_test_ts_221_3() {
 #[test]
 fn tailstatic_packages_gateway_src_threads_test_ts_281_3() {
     tail_assertions::check(
-        249,
+        250,
         r#"tailstatic_packages_gateway_src_threads_test_ts_281_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -22219,7 +22299,7 @@ fn tailstatic_packages_gateway_src_threads_test_ts_281_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_67_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_67_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"done"},{"matcher":"toBe","negate":false,"expected":"sub-1"},{"matcher":"toBe","negate":false,"expected":"claude-code"},{"matcher":"toBe","negate":false,"expected":"inform"},{"matcher":"toBe","negate":false,"expected":"[INFORM] done"},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"done"}]},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBe","negate":false,"expected":"number"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"session-1:sub:sub-1"},{"matcher":"toBe","negate":false,"expected":"do the thing"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -22229,7 +22309,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_67_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_107_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_107_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"start"},{"type":"toolGroup","callIds":["call-1"]},{"type":"text","content":"finished"}]},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"call-1"},{"matcher":"toBe","negate":false,"expected":"bash"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"ok!"},{"matcher":"toBe","negate":false,"expected":"number"}]"#,
     );
@@ -22239,7 +22319,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_107_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_140_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_140_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"boom"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -22249,7 +22329,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_140_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_162_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_162_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"sub-partial"},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"looking into it"},{"type":"toolGroup","callIds":["call-1"]},{"type":"error","content":{"__jait_matcher":"stringContaining","value":"transport died"}}]},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"looking into it"}]"#,
     );
@@ -22259,7 +22339,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_162_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_193_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_193_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"timed out"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -22269,7 +22349,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_193_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_216_3() {
     tail_assertions::check(
-        250,
+        251,
         r#"tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_216_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"not available"}]"#,
     );
@@ -22279,7 +22359,7 @@ fn tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_216_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_5_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_5_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"performative":"inform","content":"Here are the results."}}]"#,
     );
@@ -22289,7 +22369,7 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_12_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_12_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"performative":"refuse","content":"This is out of scope."}},{"matcher":"toEqual","negate":false,"expected":{"performative":"failure","content":"Could not reproduce the crash."}},{"matcher":"toEqual","negate":false,"expected":{"performative":"propose","content":"Option A or Option B."}},{"matcher":"toEqual","negate":false,"expected":{"performative":"query","content":"Which environment should I target?"}},{"matcher":"toEqual","negate":false,"expected":{"performative":"agree","content":"Starting now."}}]"#,
     );
@@ -22299,7 +22379,7 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_12_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_35_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_35_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"performative":"inform","content":"Done."}}]"#,
     );
@@ -22309,7 +22389,7 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_35_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_42_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_42_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"performative":"inform","content":"Summary: [INFORM] done"}}]"#,
     );
@@ -22319,7 +22399,7 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_51_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_51_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22329,7 +22409,7 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_51_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_56_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_56_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -22339,59 +22419,129 @@ fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_56_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_communication_test_ts_64_3() {
     tail_assertions::check(
-        251,
+        252,
         r#"tailstatic_packages_gateway_src_tools_agent_communication_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Reported results"},{"matcher":"toBe","negate":false,"expected":"Proposed options for a decision"},{"matcher":"toBe","negate":false,"expected":"Declined the task"},{"matcher":"toBe","negate":false,"expected":"Attempted but failed"},{"matcher":"toBe","negate":false,"expected":"Needs clarification"},{"matcher":"toBe","negate":false,"expected":"Accepted the task"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop-compaction.test.ts:19:3: carries prior summaries through repeated real pruning
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:28:3: preserves attachment text in the structured fallback without exposing image bytes
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_19_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_28_3() {
     tail_assertions::check(
-        252,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_19_3"#,
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_28_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"Remove the orange dot and center the Agents button"},{"matcher":"toContain","negate":false,"expected":"preserve the label"},{"matcher":"toContain","negate":false,"expected":"[image attached]"},{"matcher":"toContain","negate":true,"expected":"PRIVATE_IMAGE_BYTES"},{"matcher":"toContain","negate":true,"expected":"[object Object]"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:37:3: sends readable attachment text to the model summarizer
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"Remove the orange dot and center the Agents button"},{"matcher":"toContain","negate":false,"expected":"[image attached]"},{"matcher":"toContain","negate":true,"expected":"PRIVATE_IMAGE_BYTES"},{"matcher":"toContain","negate":true,"expected":"[object Object]"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:47:3: uses the same attachment-safe fallback when the model summary fails
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_47_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_47_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"Degraded checkpoint"},{"matcher":"toContain","negate":false,"expected":"Remove the orange dot and center the Agents button"},{"matcher":"toContain","negate":false,"expected":"[image attached]"},{"matcher":"toContain","negate":true,"expected":"PRIVATE_IMAGE_BYTES"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:56:3: prunes attachment history and restores its task after a bare continuation
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_56_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_56_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"continue"},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:73:3: carries prior summaries through repeated real pruning
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_73_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_73_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"scope-expires-at-18:00"},{"matcher":"toHaveLength","negate":false,"expected":2}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop-compaction.test.ts:37:3: summarizes outcomes without replaying private thinking and preserves tool-result tails
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:91:3: summarizes outcomes without replaying private thinking and preserves tool-result tails
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_91_3() {
     tail_assertions::check(
-        252,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3"#,
-        r#"[{"matcher":"toContain","negate":true,"expected":"unnecessary-internal-narrative"},{"matcher":"toContain","negate":false,"expected":"FINAL: 7 passed"},{"matcher":"toBe","negate":false,"expected":2048},{"matcher":"toContain","negate":true,"expected":"Use this EXACT format"}]"#,
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_91_3"#,
+        r#"[{"matcher":"toContain","negate":true,"expected":"unnecessary-internal-narrative"},{"matcher":"toContain","negate":false,"expected":"FINAL: 7 passed"},{"matcher":"toBe","negate":false,"expected":8192},{"matcher":"toContain","negate":true,"expected":"Use this EXACT format"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop-compaction.test.ts:50:3: does not modify history when summarization is cancelled
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:105:3: does not modify history when summarization is cancelled
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_50_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_105_3() {
     tail_assertions::check(
-        252,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_50_3"#,
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_105_3"#,
         r#"[{"matcher":"toThrow","negate":false},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop-compaction.test.ts:88:3: leaves the active turn intact when generation fails
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:143:3: leaves the active turn intact when generation fails
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_88_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_143_3() {
     tail_assertions::check(
-        252,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_88_3"#,
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_143_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"cancelled"},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop-compaction.test.ts:94:3: preserves the old checkpoint on model failure or truncated output
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:149:3: preserves the old checkpoint when the model is unavailable
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_94_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_149_3() {
     tail_assertions::check(
-        252,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_94_3"#,
-        r#"[{"matcher":"toContain","negate":false,"expected":"scope-expires-at-18:00"},{"matcher":"toContain","negate":false,"expected":"Degraded checkpoint"},{"matcher":"toContain","negate":true,"expected":"incomplete"}]"#,
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_149_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"scope-expires-at-18:00"},{"matcher":"toContain","negate":false,"expected":"Degraded checkpoint"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:156:3: salvages a checkpoint that hit the output cap instead of discarding it
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_156_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_156_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"[conversation-summary]"},{"matcher":"toContain","negate":false,"expected":"Objective: verify rollback"},{"matcher":"toContain","negate":false,"expected":"stopped at the output token budget"},{"matcher":"toContain","negate":true,"expected":"Degraded checkpoint"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:172:3: falls back when the cap was hit before any content was emitted
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_172_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_172_3"#,
+        r#"[{"matcher":"toContain","negate":false,"expected":"scope-expires-at-18:00"},{"matcher":"toContain","negate":false,"expected":"Degraded checkpoint"}]"#,
+    );
+}
+
+// packages/gateway/src/tools/agent-loop-compaction.test.ts:179:3: retries at the conservative budget when the provider rejects the raised cap
+#[test]
+fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_179_3() {
+    tail_assertions::check(
+        253,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_179_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[8192,2048]},{"matcher":"toContain","negate":false,"expected":"Objective: verify rollback."},{"matcher":"toContain","negate":true,"expected":"Degraded checkpoint"}]"#,
     );
 }
 
@@ -22399,7 +22549,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_94_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_25_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_25_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"http://localhost:20128/v1"},{"matcher":"toContain","negate":false,"expected":"Start the OmniRoute router"},{"matcher":"toContain","negate":false,"expected":"Test connection"}]"#,
     );
@@ -22409,7 +22559,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_25_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_38_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_38_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Start Ollama"},{"matcher":"toContain","negate":false,"expected":"OLLAMA_URL"}]"#,
     );
@@ -22419,7 +22569,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_38_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_48_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_48_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":26,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"C"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"u"},{"id":3,"kind":"char","value":"l"},{"id":4,"kind":"char","value":"d"},{"id":5,"kind":"char","value":" "},{"id":6,"kind":"char","value":"n"},{"id":7,"kind":"char","value":"o"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"r"},{"id":11,"kind":"char","value":"e"},{"id":12,"kind":"char","value":"s"},{"id":13,"kind":"char","value":"o"},{"id":14,"kind":"char","value":"l"},{"id":15,"kind":"char","value":"v"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"h"},{"id":23,"kind":"char","value":"o"},{"id":24,"kind":"char","value":"s"},{"id":25,"kind":"char","value":"t"}]},"flags":""}}]"#,
     );
@@ -22429,7 +22579,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_48_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_56_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_56_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":27,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"N"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":" "},{"id":3,"kind":"char","value":"r"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"s"},{"id":6,"kind":"char","value":"p"},{"id":7,"kind":"char","value":"o"},{"id":8,"kind":"char","value":"n"},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"f"},{"id":13,"kind":"char","value":"r"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"m"},{"id":16,"kind":"char","value":" "},{"id":18,"kind":"repeat","node":{"id":17,"kind":"any"},"min":0,"max":null},{"id":19,"kind":"char","value":" "},{"id":20,"kind":"char","value":"i"},{"id":21,"kind":"char","value":"n"},{"id":22,"kind":"char","value":" "},{"id":23,"kind":"char","value":"t"},{"id":24,"kind":"char","value":"i"},{"id":25,"kind":"char","value":"m"},{"id":26,"kind":"char","value":"e"}]},"flags":""}}]"#,
     );
@@ -22439,7 +22589,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_56_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_63_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_63_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":27,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"N"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":" "},{"id":3,"kind":"char","value":"r"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"s"},{"id":6,"kind":"char","value":"p"},{"id":7,"kind":"char","value":"o"},{"id":8,"kind":"char","value":"n"},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"f"},{"id":13,"kind":"char","value":"r"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"m"},{"id":16,"kind":"char","value":" "},{"id":18,"kind":"repeat","node":{"id":17,"kind":"any"},"min":0,"max":null},{"id":19,"kind":"char","value":" "},{"id":20,"kind":"char","value":"i"},{"id":21,"kind":"char","value":"n"},{"id":22,"kind":"char","value":" "},{"id":23,"kind":"char","value":"t"},{"id":24,"kind":"char","value":"i"},{"id":25,"kind":"char","value":"m"},{"id":26,"kind":"char","value":"e"}]},"flags":""}}]"#,
     );
@@ -22449,7 +22599,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_63_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_71_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_71_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Check your network connection"},{"matcher":"toContain","negate":true,"expected":"Start"}]"#,
     );
@@ -22459,7 +22609,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_71_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_80_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_80_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22469,7 +22619,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_80_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_94_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_94_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22479,7 +22629,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_94_
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_110_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_110_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -22489,7 +22639,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_110
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_118_3() {
     tail_assertions::check(
-        253,
+        254,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_118_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -22499,7 +22649,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_118
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_62_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_62_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"role":"tool","content":"Found","tool_call_id":"c1"}]}]"#,
     );
@@ -22509,7 +22659,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_62_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_68_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_68_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -22519,7 +22669,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_68_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_77_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_77_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["",""]}]"#,
     );
@@ -22529,7 +22679,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_77_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_85_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_85_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"role":"user","content":"Review","name":"reviewer"},{"role":"assistant","content":"Done"}]}]"#,
     );
@@ -22539,7 +22689,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_85_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_97_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_97_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"function":{"name":"get_weather","arguments":{"city":"Vienna"}}}]},{"matcher":"toBeUndefined","negate":false},{"matcher":"toMatchObject","negate":false,"expected":{"role":"tool","content":"{\"temp_c\":24}","tool_name":"get_weather"}},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -22549,7 +22699,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_116_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_116_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{}}]"#,
     );
@@ -22559,7 +22709,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_116_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_123_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_123_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"role":"user","content":"What color is this?","images":["aGVsbG8="]}]}]"#,
     );
@@ -22569,7 +22719,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_123_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_139_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_139_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"role":"user","content":"","images":["aGVsbG8="]}]}]"#,
     );
@@ -22579,7 +22729,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_139_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_154_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_154_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Request failed (400): model does not support images"}]"#,
     );
@@ -22589,7 +22739,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_154_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_159_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_159_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Request failed (400): invalid image"}]"#,
     );
@@ -22599,7 +22749,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_159_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_166_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_166_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"let me think"},{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toEqual","negate":false,"expected":[{"id":"t1","type":"function","function":{"name":"get_weather","arguments":"{\"city\":\"Vienna\"}"}}]},{"matcher":"toBe","negate":false,"expected":"tool_calls"},{"matcher":"toEqual","negate":false,"expected":{"prompt_tokens":100,"completion_tokens":20,"total_tokens":120}}]"#,
     );
@@ -22609,7 +22759,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_166_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_186_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_186_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"partial"},{"matcher":"toBe","negate":false,"expected":"length"}]"#,
     );
@@ -22619,7 +22769,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_186_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_196_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_196_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Hi"},{"matcher":"toBe","negate":false,"expected":"pondering"},{"matcher":"toEqual","negate":false,"expected":["pondering"]},{"matcher":"toEqual","negate":false,"expected":["Hi"]}]"#,
     );
@@ -22629,7 +22779,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_196_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_209_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_209_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Use <thinking>this</thinking> tags"},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -22639,7 +22789,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_209_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_219_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_219_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"model runner disconnected"}]"#,
     );
@@ -22649,7 +22799,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_219_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_227_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_227_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":12,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"b"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"f"},{"id":3,"kind":"char","value":"o"},{"id":4,"kind":"char","value":"r"},{"id":5,"kind":"char","value":"e"},{"id":7,"kind":"repeat","node":{"id":6,"kind":"any"},"min":0,"max":null},{"id":8,"kind":"char","value":"d"},{"id":9,"kind":"char","value":"o"},{"id":10,"kind":"char","value":"n"},{"id":11,"kind":"char","value":"e"}]},"flags":"i"}}]"#,
     );
@@ -22659,7 +22809,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_227_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_235_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_235_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"socket reset"}]"#,
     );
@@ -22669,7 +22819,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_235_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_244_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_244_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"partial"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22679,7 +22829,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_244_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_272_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_272_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"ssh.session.start"},{"matcher":"toBe","negate":false,"expected":"ssh.session.run"},{"matcher":"toBe","negate":false,"expected":"ssh.session.close"},{"matcher":"toBe","negate":false,"expected":"browser.sandbox.start"},{"matcher":"toBe","negate":false,"expected":"windows.sandbox.start"},{"matcher":"toBe","negate":false,"expected":"windows.sandbox.stop"},{"matcher":"toBe","negate":false,"expected":"linux.desktop.sandbox.start"},{"matcher":"toBe","negate":false,"expected":"linux.desktop.sandbox.stop"},{"matcher":"toBe","negate":false,"expected":"project.create"},{"matcher":"toBe","negate":false,"expected":"project.assign_repository"}]"#,
     );
@@ -22689,7 +22839,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_272_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_285_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_285_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"agent_github_token"},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":["agent.github.token","security.assessments.list","os.sandbox.list","mobile.alarm.schedule"]}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22699,7 +22849,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_285_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_320_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_320_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["security_findings_list"]},{"matcher":"toBe","negate":false,"expected":"security.findings.list"}]"#,
     );
@@ -22709,7 +22859,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_320_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_329_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_329_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"preview_open"},{"matcher":"toBe","negate":false,"expected":"preview.open"},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -22719,7 +22869,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_329_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_364_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_364_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"never_advertised_tool"},{"matcher":"toBe","negate":false,"expected":"totally_unknown_tool"}]"#,
     );
@@ -22729,7 +22879,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_364_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_374_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_374_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"read"},{"matcher":"toContain","negate":false,"expected":"edit"},{"matcher":"toContain","negate":false,"expected":"todo"},{"matcher":"toContain","negate":false,"expected":"user.ask"},{"matcher":"toContain","negate":false,"expected":"tools.list"},{"matcher":"toContain","negate":false,"expected":"tools.search"},{"matcher":"toContain","negate":true,"expected":"file.read"}]"#,
     );
@@ -22739,7 +22889,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_374_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_407_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_407_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["todo","user.ask","tools.search","preview.open"]},{"matcher":"toContain","negate":false,"expected":"preview.open"},{"matcher":"toContain","negate":true,"expected":"preview.open"}]"#,
     );
@@ -22749,7 +22899,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_407_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_443_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_443_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["a","b"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22759,7 +22909,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_443_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_454_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_454_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["a"]},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -22769,7 +22919,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_454_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_465_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_465_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["a","b","c"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -22779,7 +22929,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_465_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_477_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_477_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["a","b","c"]},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":["d"]}]"#,
     );
@@ -22789,7 +22939,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_477_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_493_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_493_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"command output","data":{"exitCode":0}}}]"#,
     );
@@ -22799,7 +22949,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_493_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_501_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_501_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"2 results","data":{"items":["a","b"]}}}]"#,
     );
@@ -22809,7 +22959,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_501_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_511_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_511_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"jait-agent"},{"matcher":"toHaveProperty","negate":true,"expected":"prompt_cache_key"}]"#,
     );
@@ -22819,7 +22969,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_511_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_523_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_523_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"tail"},{"matcher":"toBe","negate":false,"expected":"stop"},{"matcher":"toEqual","negate":false,"expected":{"prompt_tokens":2,"completion_tokens":1,"total_tokens":3}}]"#,
     );
@@ -22829,7 +22979,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_523_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_538_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_538_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"prompt_tokens":120,"completion_tokens":8,"total_tokens":128,"cached_tokens":96}}]"#,
     );
@@ -22839,7 +22989,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_538_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_552_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_552_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"id":"call-1","type":"function","function":{"name":"file.read","arguments":"{\"path\":\"a.ts\"}"}}]}]"#,
     );
@@ -22849,7 +22999,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_552_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_570_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_570_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":"step one reasoning"},{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":"step one reasoning"}]"#,
     );
@@ -22859,7 +23009,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_570_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_583_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_583_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"answer"},{"matcher":"toBe","negate":false,"expected":"reasoning"},{"matcher":"toBe","negate":false,"expected":"answer"},{"matcher":"toBe","negate":false,"expected":"reasoning"}]"#,
     );
@@ -22869,7 +23019,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_583_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_596_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_596_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Use `<thinking>` tags like <thinking>this</thinking>` in HTML."},{"matcher":"toBe","negate":false,"expected":""},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -22879,7 +23029,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_596_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_608_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_608_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBe","negate":false,"expected":"quick check"}]"#,
     );
@@ -22889,7 +23039,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_608_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_618_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_618_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":"step one reasoning"},{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":"step one reasoning"}]"#,
     );
@@ -22899,7 +23049,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_618_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_631_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_631_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Use `<reasoning>` tags like <reasoning>this</reasoning>` in HTML."},{"matcher":"toBe","negate":false,"expected":""},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -22909,7 +23059,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_631_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_643_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_643_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"upstream overloaded"}]"#,
     );
@@ -22919,7 +23069,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_643_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_649_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_649_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"connection closed"}]"#,
     );
@@ -22929,7 +23079,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_649_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_663_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_663_3"#,
         r#"[{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22939,7 +23089,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_663_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_669_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_669_3"#,
         r#"[{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22949,7 +23099,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_669_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_673_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_673_3"#,
         r#"[{"matcher":"toBeNull","negate":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":40},{"matcher":"toBe","negate":false,"expected":19}]"#,
     );
@@ -22959,7 +23109,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_673_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_682_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_682_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -22969,7 +23119,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_682_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_691_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_691_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"38 further identical repetitions removed"},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -22979,7 +23129,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_691_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_699_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_699_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"dynamic":true},{"matcher":"toBeNull","negate":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":40}]"#,
     );
@@ -22989,7 +23139,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_699_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_716_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_716_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"dynamic":true},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -22999,7 +23149,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_716_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_733_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_733_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"near-identical repetitions removed"},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -23009,7 +23159,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_733_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_748_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_748_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"content"},{"matcher":"toBe","negate":false,"expected":"repetition"},{"matcher":"toContain","negate":true,"expected":"NEVER-REACHED"},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -23019,7 +23169,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_748_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_766_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_766_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"thinking"},{"matcher":"toBe","negate":false,"expected":"repetition"},{"matcher":"toContain","negate":true,"expected":"NEVER-REACHED"}]"#,
     );
@@ -23029,7 +23179,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_766_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_781_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_781_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"content"},{"matcher":"toBe","negate":false,"expected":"repetition"},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -23039,7 +23189,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_781_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_807_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_807_3"#,
         r#"[{"matcher":"toBeUndefined","negate":false},{"matcher":"toBe","negate":false,"expected":"stop"}]"#,
     );
@@ -23049,7 +23199,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_807_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_830_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_830_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Provider selector fixed."},{"matcher":"toContain","negate":true,"expected":"Stopped:"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"assistant"},{"matcher":"toBe","negate":false,"expected":"Provider selector fixed."}]"#,
     );
@@ -23059,7 +23209,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_830_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_891_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_891_3"#,
         r#"[{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":"Provider selector fixed."},{"matcher":"toContain","negate":true,"dynamic":true}]"#,
     );
@@ -23069,7 +23219,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_891_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_954_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_954_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Provider selector fixed."},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23079,7 +23229,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_954_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1005_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1005_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"AB"}]"#,
     );
@@ -23089,7 +23239,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1005_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1049_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1049_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBeUndefined","negate":false},{"matcher":"toBeUndefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":0.8},{"matcher":"toBe","negate":false,"expected":"number"}]"#,
     );
@@ -23099,7 +23249,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1049_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1101_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1101_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["system","assistant","tool","user"]},{"matcher":"toMatchObject","negate":false,"expected":{"role":"tool","tool_call_id":"call-1","name":"execute"}}]"#,
     );
@@ -23109,7 +23259,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1101_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1118_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1118_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -23119,7 +23269,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1118_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1136_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1136_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"role":"system","content":"system"},{"role":"user","content":"next"}]}]"#,
     );
@@ -23129,7 +23279,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1136_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1153_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1153_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"[conversation-summary]"},{"matcher":"toContain","negate":false,"expected":"Goal:"},{"matcher":"toContain","negate":false,"expected":"Constraints:"},{"matcher":"toContain","negate":false,"expected":"Decisions:"},{"matcher":"toContain","negate":false,"expected":"Files:"},{"matcher":"toContain","negate":false,"expected":"Progress:"},{"matcher":"toContain","negate":false,"expected":"Next steps:"},{"matcher":"toContain","negate":false,"expected":"Keep implementation minimal"},{"matcher":"toContain","negate":false,"expected":"deterministic structured summaries"},{"matcher":"toContain","negate":false,"expected":"packages/gateway/src/tools/agent-loop.ts"},{"matcher":"toContain","negate":false,"expected":"Tool file.read"},{"matcher":"toContain","negate":false,"expected":"Run the focused agent-loop tests next"},{"matcher":"toMatchObject","negate":false,"expected":{"role":"user","content":"Please continue with the current implementation."}}]"#,
     );
@@ -23139,7 +23289,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1153_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1201_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1201_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"[conversation-summary]"},{"matcher":"toMatchObject","negate":false,"expected":{"role":"user","content":"continue?"}},{"matcher":"toBeDefined","negate":false}]"#,
     );
@@ -23149,7 +23299,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1201_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1238_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1238_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23159,7 +23309,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1238_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1264_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1264_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"role":"user","content":"now run the focused tests and report the results please"}}]"#,
     );
@@ -23169,7 +23319,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1264_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1292_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1292_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"503 service unavailable"}},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toHaveLength","negate":false,"expected":2}]"#,
     );
@@ -23179,7 +23329,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1292_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1307_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1307_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -23189,7 +23339,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1307_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1325_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1325_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"ENOENT: no such file or directory"},{"matcher":"toMatchObject","negate":false,"expected":{"role":"tool","tool_call_id":"throwing-case"}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":false}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23199,7 +23349,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1325_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1345_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1345_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"recovered"}},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -23209,7 +23359,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1345_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1363_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1363_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":""}},{"matcher":"toThrow","negate":true}]"#,
     );
@@ -23219,7 +23369,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1363_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1376_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1376_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toBeLessThan","negate":false,"expected":400}]"#,
     );
@@ -23229,7 +23379,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1376_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1400_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1400_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23239,7 +23389,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1400_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1415_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1415_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23249,7 +23399,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1415_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1427_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1427_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23259,7 +23409,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1427_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1432_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1432_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23269,7 +23419,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1432_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1439_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1439_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toEqual","negate":false,"expected":["call-a","call-b"]},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"provider exploded"}]"#,
     );
@@ -23279,7 +23429,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1439_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1509_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1509_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":"Deployment finished and verified."},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant","content":"Deployment finished and verified."}},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23289,7 +23439,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1509_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1580_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1580_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":4},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"session-empty-exhausted"},{"matcher":"toBe","negate":false,"expected":"assistant"},{"matcher":"toContain","negate":false,"expected":"the last tool step did finish"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"file.read"},{"matcher":"toContain","negate":false,"expected":"Tool completed"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant"}},{"matcher":"toContain","negate":false,"expected":"last tool step did finish"}]"#,
     );
@@ -23299,7 +23449,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1580_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1659_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1659_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Initial answer. Steered follow-up."},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"Initial answer."},{"type":"steering","content":"Adjust the answer now"},{"type":"text","content":" Steered follow-up."}]},{"matcher":"toContainEqual","negate":false,"expected":{"type":"steering","message":"Adjust the answer now"}}]"#,
     );
@@ -23309,7 +23459,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1659_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant","content":"Hello world"}}]"#,
     );
@@ -23319,7 +23469,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"type":"mode_notice","mode":"swarm"}},{"matcher":"toBe","negate":false,"expected":"No specialists needed for this."},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -23329,7 +23479,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"type":"mode_notice","mode":"swarm"}},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Swarm complete."},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"tool":"agent.spawn","ok":true}}]"#,
     );
@@ -23339,7 +23489,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"tool":"edit","ok":false}},{"matcher":"toContain","negate":false,"expected":"not available to the Swarm coordinator"},{"matcher":"toContain","negate":false,"expected":"agent tool"}]"#,
     );
@@ -23349,7 +23499,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBeTruthy","negate":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -23359,7 +23509,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Investigation done."},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23369,7 +23519,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Part one and part two."},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23379,7 +23529,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBeLessThan","negate":false,"expected":40},{"matcher":"toBe","negate":false,"expected":"Recovered from the ping-pong loop."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23389,7 +23539,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3"#,
         r#"[{"matcher":"toBeLessThanOrEqual","negate":false,"expected":3},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toContain","negate":false,"expected":"ripgrep is unavailable"}]"#,
     );
@@ -23399,7 +23549,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3"#,
         r#"[{"matcher":"toBeLessThanOrEqual","negate":false,"expected":10}]"#,
     );
@@ -23409,7 +23559,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"All done."}]"#,
     );
@@ -23419,7 +23569,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Read all files."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -23429,7 +23579,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThan","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"Recovered after the redundant reads were blocked."}]"#,
     );
@@ -23439,7 +23589,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":"Verified both handlers are patched."}]"#,
     );
@@ -23449,7 +23599,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"Read the whole file."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -23459,7 +23609,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered with a different approach."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toEqual","negate":false,"expected":["read","read","read","search"]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23469,7 +23619,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":7},{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered after the unavailable call was rejected."},{"matcher":"toContain","negate":true,"expected":"Stopped:"},{"matcher":"toContain","negate":true,"expected":"DSML"}]"#,
     );
@@ -23479,7 +23629,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3"#,
         r#"[{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":5},{"matcher":"toBeLessThan","negate":false,"expected":12},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":2},{"matcher":"toBeLessThan","negate":false,"expected":12},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":4,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"p"},{"id":3,"kind":"char","value":"e"}]},"flags":""}},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":13,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"r"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"s"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"n"},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"e"},{"id":12,"kind":"alt","nodes":[{"id":9,"kind":"seq","nodes":[{"id":8,"kind":"class","items":[{"category":"W"}],"negate":false}]},{"id":11,"kind":"seq","nodes":[{"id":10,"kind":"end"}]}]}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23489,7 +23639,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toContain","negate":false,"expected":"Fixed the streaming issue"},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":4}]"#,
     );
@@ -23499,7 +23649,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23509,7 +23659,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3"#,
         r#"[{"matcher":"toBeLessThan","negate":false,"expected":40},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered from the changing batch loop."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23519,7 +23669,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Finished too late."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":12,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"P"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"u"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":"f"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"r"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":81},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23529,7 +23679,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Recovered from the long investigation."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23539,7 +23689,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBe","negate":false,"expected":6},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23549,7 +23699,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeGreaterThan","negate":false,"expected":1},{"matcher":"toContain","negate":true,"expected":"compacted for context"},{"matcher":"toContain","negate":true,"expected":"[active-turn-summary]"},{"matcher":"toContain","negate":true,"expected":"[conversation-summary]"},{"matcher":"toHaveLength","negate":false,"expected":8},{"matcher":"toContain","negate":false,"dynamic":true}]"#,
     );
@@ -23559,7 +23709,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":26,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"P"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"u"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":"f"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"r"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"2"},{"id":14,"kind":"char","value":" "},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":"o"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"l"},{"id":19,"kind":"char","value":" "},{"id":20,"kind":"char","value":"r"},{"id":21,"kind":"char","value":"o"},{"id":22,"kind":"char","value":"u"},{"id":23,"kind":"char","value":"n"},{"id":24,"kind":"char","value":"d"},{"id":25,"kind":"char","value":"s"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -23569,7 +23719,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":4000},{"matcher":"toBe","negate":false,"expected":4001},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23579,7 +23729,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -23589,7 +23739,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":4000},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -23599,7 +23749,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":"Recovered after the repeated reasoning was rejected."},{"matcher":"toContain","negate":true,"expected":"Stopped:"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -23609,7 +23759,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"assistant"},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant"}},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"}]"#,
     );
@@ -23619,7 +23769,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Here is the answer."},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":true,"dynamic":true},{"matcher":"toContain","negate":false,"expected":"produced reasoning but no answer"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -23629,7 +23779,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Here is what I found."}]"#,
     );
@@ -23639,7 +23789,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Here is what I found."},{"matcher":"toBeLessThan","negate":false,"expected":30}]"#,
     );
@@ -23649,7 +23799,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -23659,7 +23809,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5"#,
         r#"[{"matcher":"toBeTruthy","negate":false},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -23669,7 +23819,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"ok","data":{"stdout":"test"}}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"ok","data":{"stdout":"test"},"retryCount":1}},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -23679,7 +23829,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3() {
     tail_assertions::check(
-        254,
+        255,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Tool call missing-call not found"}}]"#,
     );
@@ -23689,7 +23839,7 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_14_3() {
     tail_assertions::check(
-        255,
+        256,
         r#"tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_14_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No active swarm round"}]"#,
     );
@@ -23699,7 +23849,7 @@ fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_21_3() {
     tail_assertions::check(
-        255,
+        256,
         r#"tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_21_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"No messages yet from your 1 sibling specialist"}]"#,
     );
@@ -23709,7 +23859,7 @@ fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_21_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_36_3() {
     tail_assertions::check(
-        255,
+        256,
         r#"tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_36_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"[Research Specialist] found the bug in auth.ts"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"[Research Specialist] found the bug in auth.ts"},{"matcher":"toBe","negate":false,"expected":"[Research Specialist] found the bug in auth.ts\n[Fix Specialist] patched, running tests"}]"#,
     );
@@ -23719,7 +23869,7 @@ fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_36_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_67_3() {
     tail_assertions::check(
-        255,
+        256,
         r#"tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_67_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"[a specialist] hi"}]"#,
     );
@@ -23729,7 +23879,7 @@ fn tailstatic_packages_gateway_src_tools_agent_message_tool_test_ts_67_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each0() {
     tail_assertions::check(
-        256,
+        257,
         r#"tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"Inspection complete","data":{"performative":"inform","toolCalls":[{"tool":"fixture.inspect","ok":true,"message":"Owned project inspected"}]}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{},{"__jait_matcher":"objectContaining","value":{"executionNodeId":{"__jait_observed":0},"sandboxContainerName":{"__jait_observed":1},"projectRoot":{"__jait_observed":2},"userId":{"__jait_observed":3},"signal":{"__jait_matcher":"any","type":"AbortSignal"}}}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"type":"tool_start","tool":"fixture.inspect"}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"type":"tool_result","tool":"fixture.inspect","ok":true}}]}]"#,
     );
@@ -23739,7 +23889,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each0
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each0() {
     tail_assertions::check(
-        256,
+        257,
         r#"tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"missing.inspect"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23749,7 +23899,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each0
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each1() {
     tail_assertions::check(
-        256,
+        257,
         r#"tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"Inspection complete","data":{"performative":"inform","toolCalls":[{"tool":"fixture.inspect","ok":true,"message":"Owned project inspected"}]}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{},{"__jait_matcher":"objectContaining","value":{"executionNodeId":{"__jait_observed":0},"sandboxContainerName":{"__jait_observed":1},"projectRoot":{"__jait_observed":2},"userId":{"__jait_observed":3},"signal":{"__jait_matcher":"any","type":"AbortSignal"}}}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"type":"tool_start","tool":"fixture.inspect"}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"type":"tool_result","tool":"fixture.inspect","ok":true}}]}]"#,
     );
@@ -23759,7 +23909,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_25_3_each1
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each1() {
     tail_assertions::check(
-        256,
+        257,
         r#"tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"missing.inspect"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23769,7 +23919,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tool_execution_test_ts_53_3_each1
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_43_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"specialist result"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23779,7 +23929,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_68_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_68_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"claude-code"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23789,7 +23939,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_68_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_85_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_85_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Cancelled"},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -23799,7 +23949,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_85_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_119_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_119_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"maxRounds"}]"#,
     );
@@ -23809,7 +23959,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_119_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_131_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_131_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"implemented and verified"},{"matcher":"toMatchObject","negate":false,"expected":{"performative":"inform"}},{"matcher":"toBeGreaterThan","negate":false,"expected":2}]"#,
     );
@@ -23819,7 +23969,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_131_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_198_3() {
     tail_assertions::check(
-        257,
+        258,
         r#"tailstatic_packages_gateway_src_tools_agent_tools_test_ts_198_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"segments":[{"type":"text","content":"Looking at the config first."},{"type":"toolGroup","callIds":["call-1"]},{"type":"text","content":"the config sets the port"}]}}]"#,
     );
@@ -23829,7 +23979,7 @@ fn tailstatic_packages_gateway_src_tools_agent_tools_test_ts_198_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_5_3() {
     tail_assertions::check(
-        258,
+        259,
         r#"tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_5_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"saved to .jait/architecture.mmd"}]"#,
     );
@@ -23839,7 +23989,7 @@ fn tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_35_3() {
     tail_assertions::check(
-        258,
+        259,
         r#"tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_35_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["/project/app"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"architecture.update","data":{"diagram":"flowchart LR\nA[ok]-->B[ok]","requestId":{"__jait_matcher":"any","type":"String"},"projectRoot":"/project/app","filePath":"/project/app/.jait/architecture.mmd"}},"session-1"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"projectRoot":"/project/app","diagram":"flowchart LR\nA[ok]-->B[ok]","userId":"user-1"}]},{"matcher":"toContain","negate":false,"expected":"saved to .jait/architecture.mmd"}]"#,
     );
@@ -23849,7 +23999,7 @@ fn tailstatic_packages_gateway_src_tools_architecture_tools_test_ts_35_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_32_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_32_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toThrow","negate":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":10,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"s"},{"id":5,"kind":"char","value":"h"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"r"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"d"}]},"flags":""}},{"matcher":"toThrow","negate":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -23859,7 +24009,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_53_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_53_3"#,
         r#"[{"matcher":"toBe","negate":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"sessionId":"chat-a","controller":"agent","previewUrl":"/noVNC/vnc_lite.html?path=api/live-view/6080/websockify"}},{"matcher":"toMatchObject","negate":false,"expected":{"sharedWithAgent":true,"processId":null,"origin":"agent"}}]"#,
     );
@@ -23869,7 +24019,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_53_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_61_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_61_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":10,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"s"},{"id":5,"kind":"char","value":"h"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"r"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"d"}]},"flags":""}},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2}]"#,
     );
@@ -23879,7 +24029,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_61_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_72_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_72_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":12,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"a"},{"id":1,"kind":"char","value":"n"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"t"},{"id":4,"kind":"char","value":"h"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"r"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"c"},{"id":9,"kind":"char","value":"h"},{"id":10,"kind":"char","value":"a"},{"id":11,"kind":"char","value":"t"}]},"flags":""}}]"#,
     );
@@ -23889,7 +24039,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_72_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_77_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_77_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"sessionId":"chat-a","controller":"agent"}},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -23899,7 +24049,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_77_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_89_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -23909,7 +24059,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_89_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_98_3() {
     tail_assertions::check(
-        259,
+        260,
         r#"tailstatic_packages_gateway_src_tools_browser_chat_test_ts_98_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"origin":"agent","sharedWithAgent":false,"processId":null}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":10,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"s"},{"id":5,"kind":"char","value":"h"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"r"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -23919,7 +24069,7 @@ fn tailstatic_packages_gateway_src_tools_browser_chat_test_ts_98_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_5_3() {
     tail_assertions::check(
-        260,
+        261,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_5_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":22,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"c"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"n"},{"id":3,"kind":"char","value":"t"},{"id":4,"kind":"char","value":"r"},{"id":5,"kind":"char","value":"o"},{"id":6,"kind":"char","value":"l"},{"id":7,"kind":"char","value":"l"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"d"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"b"},{"id":12,"kind":"char","value":"y"},{"id":13,"kind":"char","value":" "},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"h"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"u"},{"id":19,"kind":"char","value":"s"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":"r"}]},"flags":"i"}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["browser-live-1"]},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23929,7 +24079,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_5_3
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_28_3() {
     tail_assertions::check(
-        260,
+        261,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_28_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"suppressed"},{"matcher":"toMatchObject","negate":false,"expected":{"browserId":"browser-live-2","controller":"agent","secretSafe":true,"captureSuppressed":true,"suppressionReason":"Browser capture is suppressed while the session is marked secret-safe.","browserSession":{"id":"bs_live_2","browserId":"browser-live-2"},"target":null}}]"#,
     );
@@ -23939,7 +24089,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_28_
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_85_3() {
     tail_assertions::check(
-        260,
+        261,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_85_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":23,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"v"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"s"},{"id":3,"kind":"char","value":"i"},{"id":4,"kind":"char","value":"b"},{"id":5,"kind":"char","value":"l"},{"id":6,"kind":"char","value":"e"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"p"},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"v"},{"id":12,"kind":"char","value":"i"},{"id":13,"kind":"char","value":"e"},{"id":14,"kind":"char","value":"w"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"b"},{"id":17,"kind":"char","value":"r"},{"id":18,"kind":"char","value":"o"},{"id":19,"kind":"char","value":"w"},{"id":20,"kind":"char","value":"s"},{"id":21,"kind":"char","value":"e"},{"id":22,"kind":"char","value":"r"}]},"flags":"i"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -23950,7 +24100,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_collaboration_test_ts_85_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"url":{"__jait_observed":0},"title":"Tool integration fixture","textPreview":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}},"hybrid":true}]"#,
     );
@@ -23961,7 +24111,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"snapshot":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}}},{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"id":"save"}}}]"#,
     );
@@ -23972,7 +24122,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":true,"name":"Save"}}}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":false}}}}]"#,
     );
@@ -23983,7 +24133,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"Asset saved"}}}}]"#,
     );
@@ -23994,7 +24144,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"workstation-01"}}}}]"#,
     );
@@ -24005,7 +24155,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"owned"}}}}]"#,
     );
@@ -24016,7 +24166,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":true}}}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":false}}}}]"#,
     );
@@ -24027,7 +24177,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"t"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"m"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"u"},{"id":6,"kind":"char","value":"t"}]},"flags":"i"}}]"#,
     );
@@ -24038,7 +24188,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24049,7 +24199,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24060,7 +24210,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each0() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]},{"matcher":"toBeGreaterThan","negate":false,"expected":1000}]"#,
     );
@@ -24071,7 +24221,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"url":{"__jait_observed":0},"title":"Tool integration fixture","textPreview":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}},"hybrid":true}]"#,
     );
@@ -24082,7 +24232,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"snapshot":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}}},{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"id":"save"}}}]"#,
     );
@@ -24093,7 +24243,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":true,"name":"Save"}}}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":false}}}}]"#,
     );
@@ -24104,7 +24254,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"Asset saved"}}}}]"#,
     );
@@ -24115,7 +24265,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"workstation-01"}}}}]"#,
     );
@@ -24126,7 +24276,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"owned"}}}}]"#,
     );
@@ -24137,7 +24287,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":true}}}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":false}}}}]"#,
     );
@@ -24148,7 +24298,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"t"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"m"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"u"},{"id":6,"kind":"char","value":"t"}]},"flags":"i"}}]"#,
     );
@@ -24159,7 +24309,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24170,7 +24320,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24181,7 +24331,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each1() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]},{"matcher":"toBeGreaterThan","negate":false,"expected":1000}]"#,
     );
@@ -24192,7 +24342,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"url":{"__jait_observed":0},"title":"Tool integration fixture","textPreview":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}},"hybrid":true}]"#,
     );
@@ -24203,7 +24353,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_81_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"snapshot":{"__jait_matcher":"stringContaining","value":"Authorized asset inventory"}}}},{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"id":"save"}}}]"#,
     );
@@ -24214,7 +24364,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_86_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":true,"name":"Save"}}}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"target":{"found":false}}}}]"#,
     );
@@ -24225,7 +24375,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_91_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"Asset saved"}}}}]"#,
     );
@@ -24236,7 +24386,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_99_5_
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"workstation-01"}}}}]"#,
     );
@@ -24247,7 +24397,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_104_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"textPreview":{"__jait_matcher":"stringContaining","value":"owned"}}}}]"#,
     );
@@ -24258,7 +24408,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_110_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":true}}}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"data":{"target":{"offscreen":false}}}}]"#,
     );
@@ -24269,7 +24419,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_115_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"t"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"m"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"u"},{"id":6,"kind":"char","value":"t"}]},"flags":"i"}}]"#,
     );
@@ -24280,7 +24430,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_120_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24291,7 +24441,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_126_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]}]"#,
     );
@@ -24302,7 +24452,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_132_5
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each2() {
     tail_assertions::check(
-        261,
+        262,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[137,80,78,71,13,10,26,10]},{"matcher":"toBeGreaterThan","negate":false,"expected":1000}]"#,
     );
@@ -24312,7 +24462,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_140_5
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24322,7 +24472,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each0"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24332,7 +24482,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each0"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24342,7 +24492,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each0"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24352,7 +24502,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each0"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24362,7 +24512,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each0() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24372,7 +24522,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24382,7 +24532,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each1"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24392,7 +24542,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each1"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24402,7 +24552,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each1"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24412,7 +24562,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each1"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24422,7 +24572,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each1() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24432,7 +24582,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24442,7 +24592,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each2"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24452,7 +24602,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each2"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24462,7 +24612,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each2"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24472,7 +24622,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each2"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24482,7 +24632,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each2() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24492,7 +24642,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24502,7 +24652,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24512,7 +24662,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24522,7 +24672,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24532,7 +24682,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24542,7 +24692,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24552,7 +24702,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24562,7 +24712,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each4"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24572,7 +24722,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each4"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24582,7 +24732,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each4"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24592,7 +24742,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each4"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24602,7 +24752,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each4() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each4"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24612,7 +24762,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24622,7 +24772,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each5"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24632,7 +24782,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each5"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24642,7 +24792,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each5"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24652,7 +24802,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each5"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24662,7 +24812,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each5() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each5"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24672,7 +24822,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each6"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24682,7 +24832,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each6"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24692,7 +24842,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each6"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24702,7 +24852,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each6"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24712,7 +24862,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each6"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24722,7 +24872,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each6() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each6"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24732,7 +24882,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each7"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24742,7 +24892,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each7"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24752,7 +24902,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each7"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24762,7 +24912,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each7"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24772,7 +24922,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each7"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24782,7 +24932,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each7() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each7"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24792,7 +24942,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each7() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each8"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":[{"__jait_matcher":"stringContaining","value":".jait/shots/browser-"},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"conditional":true,"dynamic":true},{"matcher":"toEqual","negate":false,"conditional":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"dynamic":true}]"#,
     );
@@ -24802,7 +24952,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_81_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each8"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24812,7 +24962,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_103_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each8"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"controlled by user"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24822,7 +24972,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_112_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each8"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"not running"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -24832,7 +24982,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_120_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each8"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Browser disconnected"}]"#,
     );
@@ -24842,7 +24992,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_127_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each8() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each8"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"captureSuppressed":true}},{"matcher":"toBe","negate":false,"conditional":true,"expected":false},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"textPreview":"","interactiveElements":[],"target":null}},{"matcher":"toContain","negate":true,"conditional":true,"dynamic":true}]"#,
     );
@@ -24852,7 +25002,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_134_3_each8() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_152_3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_152_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -24862,7 +25012,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_152_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_162_3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_162_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"displayed in chat"},{"matcher":"toContain","negate":false,"expected":"Do not call image.view"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -24872,7 +25022,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_162_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_174_3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_174_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["test-node","readBinary",{"path":"/remote/capture.png"}]},{"matcher":"toBe","negate":false,"expected":"remote-image"}]"#,
     );
@@ -24882,7 +25032,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_174_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_185_3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_185_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -24892,7 +25042,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_185_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_195_3() {
     tail_assertions::check(
-        262,
+        263,
         r#"tailstatic_packages_gateway_src_tools_browser_tools_test_ts_195_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -24902,7 +25052,7 @@ fn tailstatic_packages_gateway_src_tools_browser_tools_test_ts_195_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each0() {
     tail_assertions::check(
-        263,
+        264,
         r#"tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each0"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"}]"#,
     );
@@ -24912,7 +25062,7 @@ fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each0() {
     tail_assertions::check(
-        263,
+        264,
         r#"tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each0"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Calendar account disconnected"}}]"#,
     );
@@ -24922,7 +25072,7 @@ fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each1() {
     tail_assertions::check(
-        263,
+        264,
         r#"tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each1"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"}]"#,
     );
@@ -24932,7 +25082,7 @@ fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each1() {
     tail_assertions::check(
-        263,
+        264,
         r#"tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each1"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Calendar account disconnected"}}]"#,
     );
@@ -24942,7 +25092,7 @@ fn tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_15_3() {
     tail_assertions::check(
-        264,
+        265,
         r#"tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_15_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"agent.profiles"},{"matcher":"toContain","negate":false,"expected":"my.new.tool"},{"matcher":"toContain","negate":false,"expected":"agent.profiles"},{"matcher":"toContain","negate":true,"expected":"agent.profiles"}]"#,
     );
@@ -24952,7 +25102,7 @@ fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_15_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_31_3() {
     tail_assertions::check(
-        264,
+        265,
         r#"tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_31_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"agents"},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"name":"agent.profiles","parameters":{"__jait_matcher":"any","type":"Object"}}}]}},{"matcher":"toEqual","negate":false,"expected":{"pageId":"agents","title":"Agents","href":"/agents"}},{"matcher":"toHaveLength","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -24962,7 +25112,7 @@ fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_31_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_43_3() {
     tail_assertions::check(
-        264,
+        265,
         r#"tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_43_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"jait.catalog"},{"matcher":"toContain","negate":true,"expected":"edit"},{"matcher":"toEqual","negate":false,"expected":{"pageLinks":[{"pageId":"agents","title":"Agents","href":"/agents"}]}},{"matcher":"toContain","negate":false,"expected":"custom.adapter"}]"#,
     );
@@ -24972,7 +25122,7 @@ fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_58_3() {
     tail_assertions::check(
-        264,
+        265,
         r#"tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_58_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"toolCount":21,"hasMoreTools":true}},{"matcher":"toHaveLength","negate":false,"expected":15},{"matcher":"toHaveLength","negate":false,"expected":6},{"matcher":"toContain","negate":false,"expected":"agent.profiles.huge"},{"matcher":"toBeLessThan","negate":false,"expected":30000},{"matcher":"toThrow","negate":true}]"#,
     );
@@ -24982,7 +25132,7 @@ fn tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_58_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_45_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_45_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"channelId":"telegram","conversationId":"4242"}},{"matcher":"toEqual","negate":false,"expected":{"channelId":"whatsapp","conversationId":"4915112345678@s.whatsapp.net:12"}}]"#,
     );
@@ -24992,7 +25142,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_45_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_56_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_56_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -25002,7 +25152,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_56_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_65_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_65_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"year":2026,"month":8,"day":9,"hour":5,"minute":0}}]"#,
     );
@@ -25012,7 +25162,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_65_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_71_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_71_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -25022,7 +25172,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_71_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_76_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_76_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -25032,7 +25182,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_76_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_81_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_81_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"0 5 9 8 *"}]"#,
     );
@@ -25042,7 +25192,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_81_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_87_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_87_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[{"channelId":"telegram","conversationId":"4242","text":"done","prompt":{"__jait_type":"undefined"}}]}]"#,
     );
@@ -25052,7 +25202,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_87_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_97_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_97_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"channelId":"whatsapp","conversationId":"999"}}]"#,
     );
@@ -25062,7 +25212,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_106_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_106_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":14,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":" "},{"id":3,"kind":"char","value":"t"},{"id":4,"kind":"char","value":"a"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":"g"},{"id":7,"kind":"char","value":"e"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"c"},{"id":11,"kind":"char","value":"h"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"}]},"flags":"i"}},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -25072,7 +25222,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_106_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_115_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_115_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":18,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"c"},{"id":1,"kind":"char","value":"h"},{"id":2,"kind":"char","value":"a"},{"id":3,"kind":"char","value":"n"},{"id":4,"kind":"char","value":"n"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"l"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"i"},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"s"},{"id":12,"kind":"char","value":"t"},{"id":13,"kind":"char","value":"o"},{"id":14,"kind":"char","value":"p"},{"id":15,"kind":"char","value":"p"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -25082,7 +25232,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_115_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_127_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_127_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"cron":"0 5 9 8 *","toolName":"channel.send","userId":"user-1","sessionId":"channel:telegram:4242"}},{"matcher":"toMatchObject","negate":false,"expected":{"channelId":"telegram","conversationId":"4242","text":"Anlage prüfen","__jaitJobMeta":{"jobType":"channel_reminder","timeZone":"Europe/Vienna","once":true}}}]"#,
     );
@@ -25092,7 +25242,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_127_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_150_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_150_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Summarise today's calendar"},{"matcher":"toHaveProperty","negate":true,"expected":"once"}]"#,
     );
@@ -25102,7 +25252,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_150_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_163_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":11,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"i"},{"id":1,"kind":"char","value":"n"},{"id":2,"kind":"char","value":" "},{"id":3,"kind":"char","value":"t"},{"id":4,"kind":"char","value":"h"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"p"},{"id":8,"kind":"char","value":"a"},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":"t"}]},"flags":"i"}},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -25112,7 +25262,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_176_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_176_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"timeZone":"Asia/Tokyo"}}]"#,
     );
@@ -25122,7 +25272,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_176_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_189_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_189_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":5,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"w"},{"id":1,"kind":"char","value":"h"},{"id":2,"kind":"char","value":"e"},{"id":3,"kind":"char","value":"n"},{"id":4,"kind":"char","value":"?"}]},"flags":"i"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":18,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":"h"},{"id":4,"kind":"char","value":"i"},{"id":5,"kind":"char","value":"n"},{"id":6,"kind":"char","value":"g"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":"o"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"d"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"l"},{"id":14,"kind":"char","value":"i"},{"id":15,"kind":"char","value":"v"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":"r"}]},"flags":"i"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":21,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"e"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":"h"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"any"},{"id":8,"kind":"char","value":"a"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"any"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"o"},{"id":13,"kind":"char","value":"r"},{"id":14,"kind":"char","value":" "},{"id":15,"kind":"any"},{"id":16,"kind":"char","value":"c"},{"id":17,"kind":"char","value":"r"},{"id":18,"kind":"char","value":"o"},{"id":19,"kind":"char","value":"n"},{"id":20,"kind":"any"}]},"flags":"i"}}]"#,
     );
@@ -25132,7 +25282,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_189_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_199_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_199_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":26,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"s"},{"id":1,"kind":"char","value":"c"},{"id":2,"kind":"char","value":"h"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"d"},{"id":5,"kind":"char","value":"u"},{"id":6,"kind":"char","value":"l"},{"id":7,"kind":"char","value":"e"},{"id":8,"kind":"char","value":"r"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"s"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"n"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":" "},{"id":17,"kind":"char","value":"a"},{"id":18,"kind":"char","value":"v"},{"id":19,"kind":"char","value":"a"},{"id":20,"kind":"char","value":"i"},{"id":21,"kind":"char","value":"l"},{"id":22,"kind":"char","value":"a"},{"id":23,"kind":"char","value":"b"},{"id":24,"kind":"char","value":"l"},{"id":25,"kind":"char","value":"e"}]},"flags":"i"}}]"#,
     );
@@ -25142,7 +25292,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_199_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_209_3() {
     tail_assertions::check(
-        265,
+        266,
         r#"tailstatic_packages_gateway_src_tools_channel_tools_test_ts_209_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Bring the car in for its service"}]"#,
     );
@@ -25152,7 +25302,7 @@ fn tailstatic_packages_gateway_src_tools_channel_tools_test_ts_209_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_5_3() {
     tail_assertions::check(
-        266,
+        267,
         r#"tailstatic_packages_gateway_src_tools_chat_modes_test_ts_5_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"agent tool"},{"matcher":"toContain","negate":false,"expected":"concurrently"},{"matcher":"toContain","negate":false,"expected":"allowedTools"},{"matcher":"toContain","negate":false,"expected":"safety backstop"},{"matcher":"toContain","negate":true,"expected":"maxRounds"},{"matcher":"toContain","negate":false,"expected":"Research Specialist"},{"matcher":"toContain","negate":false,"expected":"Testing Specialist"},{"matcher":"toContain","negate":false,"expected":"Validation Specialist"},{"matcher":"toContain","negate":false,"expected":"tailor the lineup"}]"#,
     );
@@ -25162,7 +25312,7 @@ fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_20_3() {
     tail_assertions::check(
-        266,
+        267,
         r#"tailstatic_packages_gateway_src_tools_chat_modes_test_ts_20_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Developer Team"},{"matcher":"toContain","negate":false,"expected":"Research Team"},{"matcher":"toContain","negate":false,"expected":"Content Team"},{"matcher":"toContain","negate":false,"expected":"Security Team"},{"matcher":"toContain","negate":false,"expected":"Ops Team"},{"matcher":"toContain","negate":false,"expected":"invent a new one"},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -25172,7 +25322,7 @@ fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_20_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_33_3() {
     tail_assertions::check(
-        266,
+        267,
         r#"tailstatic_packages_gateway_src_tools_chat_modes_test_ts_33_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"as a team"},{"matcher":"toContain","negate":false,"expected":"agent tool"},{"matcher":"toContain","negate":false,"expected":"concurrently"},{"matcher":"toContain","negate":false,"expected":"Don't wait for the user to switch to Swarm mode"}]"#,
     );
@@ -25182,7 +25332,7 @@ fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_42_3() {
     tail_assertions::check(
-        266,
+        267,
         r#"tailstatic_packages_gateway_src_tools_chat_modes_test_ts_42_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Default to 3-6 sentences or no more than 5 bullets"},{"matcher":"toContain","negate":false,"expected":"For a small, focused change, use 2-4 sentences or no more than 3 bullets"},{"matcher":"toContain","negate":false,"expected":"Do not replay the chronology of your work"},{"matcher":"toContain","negate":false,"expected":"Lead with the outcome and verification result"}]"#,
     );
@@ -25192,7 +25342,7 @@ fn tailstatic_packages_gateway_src_tools_chat_modes_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_21_3() {
     tail_assertions::check(
-        267,
+        268,
         r#"tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_21_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"projectRoot":"/project/jait","userId":"user-1","query":"authentication storage","mode":"hybrid","maxNodes":80,"maxDepth":3}]}]"#,
     );
@@ -25202,7 +25352,7 @@ fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_21_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_50_3() {
     tail_assertions::check(
-        267,
+        268,
         r#"tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_50_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"12 entities and 18 relationships"},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"projectRoot":"/project/jait","userId":"user-1"}]}]"#,
     );
@@ -25212,7 +25362,7 @@ fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_50_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_70_3() {
     tail_assertions::check(
-        267,
+        268,
         r#"tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_70_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"project is required"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25222,7 +25372,7 @@ fn tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_70_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_65_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_65_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"nodeId":"windows-a","available":true}},{"__jait_matcher":"objectContaining","value":{"nodeId":"old-windows","available":false,"reason":{"__jait_matcher":"stringContaining","value":"Desktop update required"}}},{"__jait_matcher":"objectContaining","value":{"nodeId":"linux-a","available":false}}]}}]"#,
     );
@@ -25232,7 +25382,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_65_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_85_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_85_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["windows-a","computer.session",{"__jait_matcher":"objectContaining","value":{"action":"start","sessionId":{"__jait_observed":0}}},{"__jait_matcher":"objectContaining","value":{"sessionId":"chat-a"}}],"hybrid":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenLastCalledWith","negate":false,"expected":["windows-a","computer.act",{"__jait_matcher":"objectContaining","value":{"sessionId":{"__jait_observed":0},"action":"type","text":"hello im jait"}},{"__jait_matcher":"objectContaining","value":{"sessionId":"chat-a"}}],"hybrid":true}]"#,
     );
@@ -25242,7 +25392,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_85_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_114_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_114_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"click requires finite x and y coordinates"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25252,7 +25402,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_114_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_126_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_126_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"belongs to another chat"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25262,7 +25412,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_126_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_143_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_143_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"node disconnected"}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"sessions":[]}}}]"#,
     );
@@ -25272,7 +25422,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_143_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_156_3() {
     tail_assertions::check(
-        268,
+        269,
         r#"tailstatic_packages_gateway_src_tools_computer_tools_test_ts_156_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"message":{"__jait_matcher":"stringContaining","value":"timed out"}}},{"matcher":"toHaveBeenLastCalledWith","negate":false,"expected":["windows-a","computer.session",{"__jait_matcher":"objectContaining","value":{"action":"stop"}},{"__jait_matcher":"objectContaining","value":{"sessionId":{"__jait_observed":0}}}],"hybrid":true},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -25282,7 +25432,7 @@ fn tailstatic_packages_gateway_src_tools_computer_tools_test_ts_156_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_16_1() {
     tail_assertions::check(
-        269,
+        270,
         r#"tailstatic_packages_gateway_src_tools_core_edit_test_ts_16_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"identical"},{"matcher":"toBe","negate":false,"expected":"fixture"}]"#,
     );
@@ -25292,7 +25442,7 @@ fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_16_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_23_1() {
     tail_assertions::check(
-        269,
+        270,
         r#"tailstatic_packages_gateway_src_tools_core_edit_test_ts_23_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -25302,7 +25452,7 @@ fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_23_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_33_1() {
     tail_assertions::check(
-        269,
+        270,
         r#"tailstatic_packages_gateway_src_tools_core_edit_test_ts_33_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"original"}]"#,
     );
@@ -25312,7 +25462,7 @@ fn tailstatic_packages_gateway_src_tools_core_edit_test_ts_33_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3"#,
         r#"[{"matcher":"toBeInstanceOf","negate":false,"dynamic":true,"__jait_instance":true},{"matcher":"toBe","negate":false,"expected":"remote-file-content"}]"#,
     );
@@ -25322,7 +25472,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_47_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3"#,
         r#"[{"matcher":"toBeInstanceOf","negate":false,"dynamic":true,"__jait_instance":true},{"matcher":"toBe","negate":false,"expected":"E:\\Zinsrechner"},{"matcher":"toMatch","negate":true,"expected":"/home/"}]"#,
     );
@@ -25332,7 +25482,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_57_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":42,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"f"},{"id":3,"kind":"char","value":"f"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":"e"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"p"},{"id":11,"kind":"char","value":"l"},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":"f"},{"id":15,"kind":"char","value":"o"},{"id":16,"kind":"char","value":"r"},{"id":17,"kind":"char","value":"m"},{"id":19,"kind":"repeat","node":{"id":18,"kind":"any"},"min":0,"max":null},{"id":20,"kind":"char","value":"n"},{"id":21,"kind":"char","value":"o"},{"id":22,"kind":"char","value":" "},{"id":23,"kind":"char","value":"r"},{"id":24,"kind":"char","value":"e"},{"id":25,"kind":"char","value":"m"},{"id":26,"kind":"char","value":"o"},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"e"},{"id":29,"kind":"char","value":" "},{"id":30,"kind":"char","value":"n"},{"id":31,"kind":"char","value":"o"},{"id":32,"kind":"char","value":"d"},{"id":33,"kind":"char","value":"e"},{"id":34,"kind":"char","value":" "},{"id":35,"kind":"char","value":"s"},{"id":36,"kind":"char","value":"u"},{"id":37,"kind":"char","value":"r"},{"id":38,"kind":"char","value":"f"},{"id":39,"kind":"char","value":"a"},{"id":40,"kind":"char","value":"c"},{"id":41,"kind":"char","value":"e"}]},"flags":"i"}}]"#,
     );
@@ -25342,7 +25492,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_69_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3"#,
         r#"[{"matcher":"toBeInstanceOf","negate":false,"dynamic":true,"__jait_instance":true}]"#,
     );
@@ -25352,7 +25502,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_77_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"E:\\Zinsrechner"}]"#,
     );
@@ -25362,7 +25512,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_92_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"E:\\Zinsrechner"}]"#,
     );
@@ -25372,7 +25522,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_100_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1() {
     tail_assertions::check(
-        270,
+        271,
         r#"tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -25382,7 +25532,7 @@ fn tailstatic_packages_gateway_src_tools_core_get_fs_test_ts_106_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_read_test_ts_32_3() {
     tail_assertions::check(
-        271,
+        272,
         r#"tailstatic_packages_gateway_src_tools_core_read_test_ts_32_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -25392,7 +25542,7 @@ fn tailstatic_packages_gateway_src_tools_core_read_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_read_test_ts_42_3() {
     tail_assertions::check(
-        271,
+        272,
         r#"tailstatic_packages_gateway_src_tools_core_read_test_ts_42_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":2000},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThan","negate":false,"expected":2000},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":8,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"K"},{"id":1,"kind":"char","value":"B"},{"id":2,"kind":"char","value":" "},{"id":3,"kind":"char","value":"l"},{"id":4,"kind":"char","value":"i"},{"id":5,"kind":"char","value":"m"},{"id":6,"kind":"char","value":"i"},{"id":7,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -25402,7 +25552,7 @@ fn tailstatic_packages_gateway_src_tools_core_read_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_read_test_ts_62_3() {
     tail_assertions::check(
-        271,
+        272,
         r#"tailstatic_packages_gateway_src_tools_core_read_test_ts_62_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -25412,7 +25562,7 @@ fn tailstatic_packages_gateway_src_tools_core_read_test_ts_62_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_read_test_ts_71_3() {
     tail_assertions::check(
-        271,
+        272,
         r#"tailstatic_packages_gateway_src_tools_core_read_test_ts_71_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThan","negate":false,"expected":2000}]"#,
     );
@@ -25422,7 +25572,7 @@ fn tailstatic_packages_gateway_src_tools_core_read_test_ts_71_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_64_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toEqual","negate":false,"expected":{"reason":"regexp_requires_rg"}},{"matcher":"toContain","negate":false,"expected":"literal-text search"}]"#,
     );
@@ -25432,7 +25582,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_64_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_73_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_73_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"No matches for \"fo+\""},{"matcher":"toEqual","negate":false,"expected":{"pattern":"fo+","matches":[]}}]"#,
     );
@@ -25442,7 +25592,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_73_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_95_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_95_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"(retried as literal)"},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -25452,7 +25602,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_95_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_124_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_124_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"needle-"},{"matcher":"toContain","negate":false,"expected":"(truncated,"},{"matcher":"toBeLessThan","negate":false,"expected":1000}]"#,
     );
@@ -25462,7 +25612,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_124_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each0() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"const total = \"${SUM}\" // running total"}]"#,
     );
@@ -25472,7 +25622,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each1() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"const label = `id-${row}`"}]"#,
     );
@@ -25482,7 +25632,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each2() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"const re = /\\d+\\.\\d+/"}]"#,
     );
@@ -25492,7 +25642,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_153_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_178_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_178_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":5},{"matcher":"toContain","negate":false,"expected":"stopped at the 5-result limit"}]"#,
     );
@@ -25502,7 +25652,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_178_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_197_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_197_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -25512,7 +25662,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_197_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_211_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_211_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -25522,7 +25672,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_211_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_226_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_226_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -25532,7 +25682,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_226_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_244_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_244_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -25542,7 +25692,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_244_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_257_3() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_257_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":26,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"a"},{"id":3,"kind":"char","value":"r"},{"id":4,"kind":"char","value":"c"},{"id":5,"kind":"char","value":"h"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"p"},{"id":8,"kind":"char","value":"a"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"h"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"d"},{"id":13,"kind":"char","value":"o"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":"s"},{"id":16,"kind":"char","value":" "},{"id":17,"kind":"char","value":"n"},{"id":18,"kind":"char","value":"o"},{"id":19,"kind":"char","value":"t"},{"id":20,"kind":"char","value":" "},{"id":21,"kind":"char","value":"e"},{"id":22,"kind":"char","value":"x"},{"id":23,"kind":"char","value":"i"},{"id":24,"kind":"char","value":"s"},{"id":25,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":22,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"r"},{"id":1,"kind":"char","value":"i"},{"id":2,"kind":"char","value":"p"},{"id":3,"kind":"char","value":"g"},{"id":4,"kind":"char","value":"r"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"p"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"i"},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"u"},{"id":12,"kind":"char","value":"n"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"v"},{"id":15,"kind":"char","value":"a"},{"id":16,"kind":"char","value":"i"},{"id":17,"kind":"char","value":"l"},{"id":18,"kind":"char","value":"a"},{"id":19,"kind":"char","value":"b"},{"id":20,"kind":"char","value":"l"},{"id":21,"kind":"char","value":"e"}]},"flags":""}}]"#,
     );
@@ -25552,7 +25702,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_257_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_search_test_ts_272_1() {
     tail_assertions::check(
-        272,
+        273,
         r#"tailstatic_packages_gateway_src_tools_core_search_test_ts_272_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -25562,7 +25712,7 @@ fn tailstatic_packages_gateway_src_tools_core_search_test_ts_272_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_todo_test_ts_6_3() {
     tail_assertions::check(
-        273,
+        274,
         r#"tailstatic_packages_gateway_src_tools_core_todo_test_ts_6_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -25572,7 +25722,7 @@ fn tailstatic_packages_gateway_src_tools_core_todo_test_ts_6_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_core_todo_test_ts_17_3() {
     tail_assertions::check(
-        273,
+        274,
         r#"tailstatic_packages_gateway_src_tools_core_todo_test_ts_17_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Verify browser actions"}]"#,
     );
@@ -25582,7 +25732,7 @@ fn tailstatic_packages_gateway_src_tools_core_todo_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"id":"job-1"}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"userId":"owner-1","name":"Inventory","cron":"0 8 * * *","toolName":"file.list","input":{},"sessionId":"default","projectRoot":"/project"}]}]"#,
     );
@@ -25592,7 +25742,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3"#,
         r#"[{"matcher":"toThrow","negate":false,"expected":"Invalid cron"}]"#,
     );
@@ -25602,7 +25752,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1"]},{"matcher":"toContain","negate":false,"expected":"[disabled]"},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -25612,7 +25762,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["job-1","owner-1"]}]"#,
     );
@@ -25622,7 +25772,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["job-1","owner-1"]}]"#,
     );
@@ -25632,7 +25782,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["job-1",{"name":{"__jait_type":"undefined"},"cron":{"__jait_type":"undefined"},"enabled":false,"input":{"__jait_type":"undefined"}},"owner-1"]}]"#,
     );
@@ -25642,7 +25792,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3() {
     tail_assertions::check(
-        274,
+        275,
         r#"tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"message":"Cron job not found"}}]"#,
     );
@@ -25652,7 +25802,7 @@ fn tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_decision_test_ts_8_3() {
     tail_assertions::check(
-        275,
+        276,
         r#"tailstatic_packages_gateway_src_tools_decision_test_ts_8_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -25662,7 +25812,7 @@ fn tailstatic_packages_gateway_src_tools_decision_test_ts_8_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_decision_test_ts_23_3() {
     tail_assertions::check(
-        275,
+        276,
         r#"tailstatic_packages_gateway_src_tools_decision_test_ts_23_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25672,7 +25822,7 @@ fn tailstatic_packages_gateway_src_tools_decision_test_ts_23_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_decision_test_ts_28_3() {
     tail_assertions::check(
-        275,
+        276,
         r#"tailstatic_packages_gateway_src_tools_decision_test_ts_28_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":true,"expected":"backend-private-details"}]"#,
     );
@@ -25682,7 +25832,7 @@ fn tailstatic_packages_gateway_src_tools_decision_test_ts_28_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_10_3() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_10_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"kind":"mermaid-diagram","title":"Communication","diagram":"flowchart LR\nA-->B"}}}]"#,
     );
@@ -25692,7 +25842,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_10_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each0() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25702,7 +25852,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each1() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25712,7 +25862,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each2() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25722,7 +25872,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each3() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25732,7 +25882,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_17_3() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_17_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"none"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"diagram.render"},{"matcher":"toBe","negate":false,"expected":"diagram.render"},{"matcher":"toContain","negate":false,"expected":"diagram.render"},{"matcher":"toMatchObject","negate":false,"expected":{"kind":"mermaid-diagram","diagram":"graph TD\nA-->B"}},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25742,7 +25892,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_32_3() {
     tail_assertions::check(
-        276,
+        277,
         r#"tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_32_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25752,7 +25902,7 @@ fn tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3() {
     tail_assertions::check(
-        277,
+        278,
         r#"tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"root-owned output"},{"matcher":"toEqual","negate":false,"expected":[{"title":"Administrator password","prompt":"Password to run an elevated command: install system packages","requestedBy":"elevated.run"}]},{"matcher":"toBe","negate":false,"expected":"sudo"},{"matcher":"toEqual","negate":false,"expected":["-S","-k","-p","","--","sh","-lc","apt-get update"]},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.execute","toolName":"elevated.run"}}]"#,
     );
@@ -25762,7 +25912,7 @@ fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3() {
     tail_assertions::check(
-        277,
+        278,
         r#"tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveProperty","negate":true,"expected":"properties.password"}]"#,
     );
@@ -25772,7 +25922,7 @@ fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3() {
     tail_assertions::check(
-        277,
+        278,
         r#"tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3"#,
         r#"[{"matcher":"toContain","negate":false,"optional":true,"expected":"-EncodedCommand"},{"matcher":"toContain","negate":false,"optional":true,"expected":"-Verb RunAs"},{"matcher":"toContain","negate":true,"optional":true,"expected":"-Credential"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"uac-elevated-output"},{"matcher":"toBe","negate":false,"expected":"powershell.exe"}]"#,
     );
@@ -25782,7 +25932,7 @@ fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3() {
     tail_assertions::check(
-        277,
+        278,
         r#"tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3"#,
         r#"[{"matcher":"toContain","negate":false,"optional":true,"expected":"-EncodedCommand"},{"matcher":"toContain","negate":false,"optional":true,"expected":"-Credential"},{"matcher":"toContain","negate":true,"optional":true,"expected":"-Verb RunAs"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"windows-admin-output"},{"matcher":"toEqual","negate":false,"expected":[{"title":"Administrator password","prompt":"Password for .\\Administrator to run an elevated command: inspect local services","requestedBy":"elevated.run"}]},{"matcher":"toBe","negate":false,"expected":"powershell.exe"},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.execute","toolName":"elevated.run","inputs":{"__jait_matcher":"not","value":{"__jait_matcher":"objectContaining","value":{"password":{"__jait_matcher":"anything"}}}}}}]"#,
     );
@@ -25792,7 +25942,7 @@ fn tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each0() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"body":"Review the asset inventory ."}},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -25802,7 +25952,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each0() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each0"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Mailbox disconnected"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25812,7 +25962,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each1() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"body":"Review the asset inventory ."}},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -25822,7 +25972,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each1() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each1"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Mailbox disconnected"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25832,7 +25982,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each2() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"body":"Review the asset inventory ."}},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -25842,7 +25992,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each2() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each2"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Mailbox disconnected"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25852,7 +26002,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"body":"Review the asset inventory ."}},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -25862,7 +26012,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Mailbox disconnected"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25872,7 +26022,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each4() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toMatchObject","negate":false,"conditional":true,"expected":{"body":"Review the asset inventory ."}},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -25882,7 +26032,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each4() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each4"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Mailbox disconnected"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25892,7 +26042,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_42_3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_42_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"command":"email.control","data":{"__jait_matcher":"objectContaining","value":{"action":"compose","to":"reviewer@example.test","body":"Draft for review"}}}},{"__jait_observed":0}],"hybrid":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25902,7 +26052,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_55_3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_55_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1","account-1"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1","account-1","message-1"]},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25912,7 +26062,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_55_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_66_3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_66_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Account not found"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -25922,7 +26072,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_66_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_74_3() {
     tail_assertions::check(
-        278,
+        279,
         r#"tailstatic_packages_gateway_src_tools_email_tools_test_ts_74_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1"]},{"matcher":"toContain","negate":true,"expected":"must-not-leak"}]"#,
     );
@@ -25932,7 +26082,7 @@ fn tailstatic_packages_gateway_src_tools_email_tools_test_ts_74_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_42_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_42_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"size":30}},{"matcher":"toContain","negate":false,"expected":"30 bytes"},{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -25942,7 +26092,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_53_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_53_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"image/png"},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveProperty","negate":true,"expected":"dataUri"}]"#,
     );
@@ -25952,7 +26102,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_53_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_75_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_75_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"big.png"},{"matcher":"toBeUndefined","negate":false},{"matcher":"toContain","negate":false,"expected":"too large to inline"}]"#,
     );
@@ -25962,7 +26112,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_75_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_93_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_93_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -25972,7 +26122,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_93_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_109_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_109_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Only PNG, JPG, GIF, or WEBP"}]"#,
     );
@@ -25982,7 +26132,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_109_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_116_3() {
     tail_assertions::check(
-        279,
+        280,
         r#"tailstatic_packages_gateway_src_tools_file_tools_test_ts_116_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -25992,7 +26142,7 @@ fn tailstatic_packages_gateway_src_tools_file_tools_test_ts_116_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_23_3() {
     tail_assertions::check(
-        280,
+        281,
         r#"tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_23_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"ok":true,"message":"person.alice = home"}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://homeassistant.local:8123/api/states/person.alice",{"__jait_matcher":"objectContaining","value":{"headers":{"__jait_matcher":"objectContaining","value":{"Authorization":"Bearer secret-token"}}}}]}]"#,
     );
@@ -26002,7 +26152,7 @@ fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_23_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_45_3() {
     tail_assertions::check(
-        280,
+        281,
         r#"tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_45_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"ok":true,"message":"Fetched 0 entities from Home Assistant."}}}]"#,
     );
@@ -26012,7 +26162,7 @@ fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_45_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_55_3() {
     tail_assertions::check(
-        280,
+        281,
         r#"tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_55_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Home Assistant URL not configured. Set HA_URL in Settings → API keys."}}]"#,
     );
@@ -26022,7 +26172,7 @@ fn tailstatic_packages_gateway_src_tools_homeassistant_tools_test_ts_55_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_12_3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_12_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"View the updated team","data":{"kind":"jait-link","href":"/agents","label":"View the updated team"}}},{"matcher":"toBe","negate":false,"expected":"none"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -26032,7 +26182,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_12_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each0() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26042,7 +26192,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each1() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26052,7 +26202,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each2() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26062,7 +26212,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26072,7 +26222,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each4() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each4"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26082,7 +26232,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_20_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each0() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26092,7 +26242,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each1() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26102,7 +26252,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each2() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26112,7 +26262,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26122,7 +26272,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each4() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26132,7 +26282,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each5() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26142,7 +26292,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each6() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each6"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26152,7 +26302,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_24_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_32_3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_32_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"href":"/settings?tab=tools&toolsQ=file&q="}}]"#,
     );
@@ -26162,7 +26312,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_36_3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_36_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26172,7 +26322,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_36_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_40_3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_40_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"pages":[{"queryParameters":{"q":{"__jait_matcher":"any","type":"String"},"tab":{"__jait_matcher":"any","type":"String"},"toolsQ":{"__jait_matcher":"any","type":"String"}}}]}},{"matcher":"toMatchObject","negate":false,"expected":{"properties":{"search":{"type":"string"}}}}]"#,
     );
@@ -26182,7 +26332,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_40_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each0() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26192,7 +26342,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each1() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26202,7 +26352,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each2() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26212,7 +26362,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26222,7 +26372,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each4() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26232,7 +26382,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each5() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26242,7 +26392,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each6() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each6"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26252,7 +26402,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_47_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each0() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26262,7 +26412,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each1() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26272,7 +26422,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each2() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26282,7 +26432,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26292,7 +26442,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_50_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_53_3() {
     tail_assertions::check(
-        281,
+        282,
         r#"tailstatic_packages_gateway_src_tools_link_tools_test_ts_53_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"jait.link"},{"matcher":"toBe","negate":false,"expected":"jait.link"},{"matcher":"toContain","negate":false,"expected":"jait.link"},{"matcher":"toMatchObject","negate":false,"expected":{"kind":"jait-link","href":"/agents"}}]"#,
     );
@@ -26302,7 +26452,7 @@ fn tailstatic_packages_gateway_src_tools_link_tools_test_ts_53_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_5_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_5_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"hello world"}]"#,
     );
@@ -26312,7 +26462,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_9_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_9_3"#,
         r#"[{"matcher":"toBeLessThanOrEqual","negate":false,"expected":20},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -26322,7 +26472,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_9_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_18_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_18_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"a\nb"}]"#,
     );
@@ -26332,7 +26482,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_18_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_22_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_22_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"1\n2\n… (+1 more)"}]"#,
     );
@@ -26342,7 +26492,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_22_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_29_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_29_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Loaded 0 todos:"}]"#,
     );
@@ -26352,7 +26502,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_29_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_33_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_33_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Loaded 2 todos:\none\ntwo"}]"#,
     );
@@ -26362,7 +26512,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_40_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_40_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"• [memory-1 · reminder] hello world"}]"#,
     );
@@ -26372,7 +26522,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_40_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_45_3() {
     tail_assertions::check(
-        282,
+        283,
         r#"tailstatic_packages_gateway_src_tools_list_preview_test_ts_45_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"• [memory-1 · memory] hello (archived)"}]"#,
     );
@@ -26382,7 +26532,7 @@ fn tailstatic_packages_gateway_src_tools_list_preview_test_ts_45_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"Saved reminder"},{"matcher":"toMatchObject","negate":false,"expected":{"content":"Remember this","userId":"user-1","sessionId":"session-1"}}]"#,
     );
@@ -26392,7 +26542,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"memories":[{"id":"memory-1"}],"reminders":[{"id":"reminder-1"}]}},{"matcher":"toContain","negate":false,"expected":"Found 1 memories and 1 reminders:"},{"matcher":"toContain","negate":false,"expected":"[memory-1 · agent] Memory"},{"matcher":"toContain","negate":false,"expected":"[reminder-1 · reminder] Reminder"}]"#,
     );
@@ -26402,7 +26552,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"memories":[{"id":"reminder-1","status":"archived","userId":"user-1"}]}},{"matcher":"toContain","negate":false,"expected":"Loaded 1 memory entries:"},{"matcher":"toContain","negate":false,"expected":"[reminder-1 · memory] Reminder (archived)"}]"#,
     );
@@ -26412,7 +26562,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"id":"reminder-1","content":"Updated","status":"archived","userId":"user-1"}}]"#,
     );
@@ -26422,7 +26572,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"Forgot reminder reminder-1"}}]"#,
     );
@@ -26432,7 +26582,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"user-1"}]"#,
     );
@@ -26442,7 +26592,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3() {
     tail_assertions::check(
-        283,
+        284,
         r#"tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"userId":"user-1","limit":25}}]"#,
     );
@@ -26452,7 +26602,7 @@ fn tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_8_3() {
     tail_assertions::check(
-        284,
+        285,
         r#"tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_8_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"connected":false,"href":"/messenger?homeserver=https%3A%2F%2Fmatrix.test&username=%40alice%3Amatrix.test"}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26462,7 +26612,7 @@ fn tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_8_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_18_3() {
     tail_assertions::check(
-        284,
+        285,
         r#"tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_18_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["alice",{"action":"search","query":"firewall","limit":5},{"__jait_type":"undefined"}]},{"matcher":"toBe","negate":false,"expected":"always"},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -26472,7 +26622,7 @@ fn tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_18_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_12_3() {
     tail_assertions::check(
-        285,
+        286,
         r#"tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_12_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -26482,7 +26632,7 @@ fn tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_12_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_19_3() {
     tail_assertions::check(
-        285,
+        286,
         r#"tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_19_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"devices":1}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["user-a",{"__jait_matcher":"objectContaining","value":{"id":"alarm-action","title":"Morning briefing"}}]}]"#,
     );
@@ -26492,7 +26642,7 @@ fn tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_network_tools_test_ts_13_3() {
     tail_assertions::check(
-        286,
+        287,
         r#"tailstatic_packages_gateway_src_tools_network_tools_test_ts_13_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"subnet":"192.0.2","deep":false,"includeIps":["192.0.2.1"]}]},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toContain","negate":false,"expected":"1 with SSH, 1 running Jait Gateway"},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -26502,7 +26652,7 @@ fn tailstatic_packages_gateway_src_tools_network_tools_test_ts_13_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_network_tools_test_ts_20_3() {
     tail_assertions::check(
-        286,
+        287,
         r#"tailstatic_packages_gateway_src_tools_network_tools_test_ts_20_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Execution node offline"}},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -26512,7 +26662,7 @@ fn tailstatic_packages_gateway_src_tools_network_tools_test_ts_20_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_101_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_101_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"os-linux-test"},{"matcher":"toContain","negate":false,"expected":"import -window root /tmp/jait-os-screenshot.png"},{"matcher":"toContain","negate":false,"expected":"base64 -w0 /tmp/jait-os-screenshot.png"},{"matcher":"toBe","negate":false,"expected":30000}]"#,
     );
@@ -26522,7 +26672,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_101_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_112_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_112_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool mousemove 120 340 click --repeat 2 3"}]"#,
     );
@@ -26532,7 +26682,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_112_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_119_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_119_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool mousemove 6 20"}]"#,
     );
@@ -26542,7 +26692,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_119_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_126_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_126_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool type --delay 30 \"hello \\\"world\\\"\\n\\$HOME\""}]"#,
     );
@@ -26552,7 +26702,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_126_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_133_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_133_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool key ctrl shift t"},{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool keydown super d; sleep 0.250; DISPLAY=:99 xdotool keyup super d"}]"#,
     );
@@ -26562,7 +26712,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_133_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_146_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_146_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool click --repeat 1 5"},{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool click --repeat 2 4"},{"matcher":"toBe","negate":false,"expected":"DISPLAY=:99 xdotool mousemove 10 20 click --repeat 1 5"}]"#,
     );
@@ -26572,7 +26722,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_146_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_161_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_161_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"cd '/root' && echo hi"},{"matcher":"toBe","negate":false,"expected":5000}]"#,
     );
@@ -26582,7 +26732,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_161_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_170_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_170_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["ctrl","shift","t"]},{"matcher":"toEqual","negate":false,"expected":["super","d"]},{"matcher":"toEqual","negate":false,"expected":["alt","Tab"]},{"matcher":"toEqual","negate":false,"expected":["ctrl","alt","Delete"]},{"matcher":"toEqual","negate":false,"expected":["ctrl","space"]},{"matcher":"toEqual","negate":false,"expected":["Return"]},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -26592,7 +26742,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_170_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_181_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_181_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2222}]"#,
     );
@@ -26602,7 +26752,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_181_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_190_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_190_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":42222}]"#,
     );
@@ -26612,7 +26762,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_190_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_197_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_197_3"#,
         r#"[{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -26622,7 +26772,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_197_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_204_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_204_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"^+t"},{"matcher":"toBe","negate":false,"expected":"%{TAB}"},{"matcher":"toBe","negate":false,"expected":"{LWIN}d"},{"matcher":"toBe","negate":false,"expected":"^%{DELETE}"},{"matcher":"toBe","negate":false,"expected":"{ENTER}"},{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -26632,7 +26782,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_204_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_213_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_213_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"a{+}b{^}c{%}d{~}e{(}f{)}g{{}h{}}i{[}j{]}"},{"matcher":"toBe","negate":false,"expected":"plain text"}]"#,
     );
@@ -26642,7 +26792,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_213_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_218_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_218_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -26652,7 +26802,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_218_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_225_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_225_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"-p"},{"matcher":"toContain","negate":false,"expected":"42222"},{"matcher":"toContain","negate":false,"expected":"Docker@127.0.0.1"},{"matcher":"toContain","negate":false,"expected":"PreferredAuthentications=password,keyboard-interactive"},{"matcher":"toContain","negate":false,"expected":"PubkeyAuthentication=no"},{"matcher":"toBe","negate":false,"expected":"powershell -NoProfile -EncodedCommand abc"}]"#,
     );
@@ -26662,7 +26812,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_225_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_256_3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_256_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -26672,7 +26822,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_256_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_273_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_273_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":1280},{"matcher":"toBe","negate":false,"expected":720},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26682,7 +26832,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_273_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_287_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_287_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"not running"}]"#,
     );
@@ -26692,7 +26842,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_287_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_296_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_296_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Screenshot failed"},{"matcher":"toContain","negate":false,"expected":"no X server"}]"#,
     );
@@ -26702,7 +26852,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_296_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each0() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26712,7 +26862,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each0() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each1() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26722,7 +26872,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each1() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each2() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26732,7 +26882,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each2() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26742,7 +26892,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each4() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBeDefined","negate":false},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -26752,7 +26902,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_307_5_each4() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each0() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No running OS sandbox"}]"#,
     );
@@ -26762,7 +26912,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each0() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each1() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No running OS sandbox"}]"#,
     );
@@ -26772,7 +26922,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each1() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each2() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No running OS sandbox"}]"#,
     );
@@ -26782,7 +26932,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each2() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No running OS sandbox"}]"#,
     );
@@ -26792,7 +26942,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each4() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"No running OS sandbox"}]"#,
     );
@@ -26802,7 +26952,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_326_5_each4() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each0() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"failed on sandbox"},{"matcher":"toContain","negate":false,"expected":"xdotool failed"}]"#,
     );
@@ -26812,7 +26962,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each0() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each1() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"failed on sandbox"},{"matcher":"toContain","negate":false,"expected":"xdotool failed"}]"#,
     );
@@ -26822,7 +26972,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each1() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each2() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"failed on sandbox"},{"matcher":"toContain","negate":false,"expected":"xdotool failed"}]"#,
     );
@@ -26832,7 +26982,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each2() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each3() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"failed on sandbox"},{"matcher":"toContain","negate":false,"expected":"xdotool failed"}]"#,
     );
@@ -26842,7 +26992,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each4() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"failed on sandbox"},{"matcher":"toContain","negate":false,"expected":"xdotool failed"}]"#,
     );
@@ -26852,7 +27002,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_341_5_each4() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_358_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_358_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"hello"},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -26862,7 +27012,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_358_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_376_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_376_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"exited with code 2"}]"#,
     );
@@ -26872,7 +27022,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_376_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_393_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_393_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Exec failed"},{"matcher":"toContain","negate":false,"expected":"docker exec failed"}]"#,
     );
@@ -26882,7 +27032,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_393_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_407_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_407_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -26892,7 +27042,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_407_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_422_5() {
     tail_assertions::check(
-        287,
+        288,
         r#"tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_422_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"docker ps failed"}]"#,
     );
@@ -26902,7 +27052,7 @@ fn tailstatic_packages_gateway_src_tools_os_control_tools_test_ts_422_5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_12_3() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_12_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -26912,7 +27062,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_12_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each0() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"output":"completed"}}}]"#,
     );
@@ -26922,7 +27072,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each1() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"output":"completed"}}}]"#,
     );
@@ -26932,7 +27082,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each0() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each0"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Permission denied"}}]"#,
     );
@@ -26942,7 +27092,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each1() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each1"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Permission denied"}}]"#,
     );
@@ -26952,7 +27102,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_25_3() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_25_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":true,"expected":"must-not-leak"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -26962,7 +27112,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_25_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each0() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each0"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"stringContaining","value":"ripgrep"},{"timeout":120000}]}]"#,
     );
@@ -26972,7 +27122,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each1() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each1"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"stringContaining","value":"ripgrep"},{"timeout":120000}]}]"#,
     );
@@ -26982,7 +27132,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each2() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each2"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"stringContaining","value":"ripgrep"},{"timeout":120000}]}]"#,
     );
@@ -26992,7 +27142,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each0() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27002,7 +27152,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each1() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27012,7 +27162,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each2() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27022,7 +27172,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27032,7 +27182,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_43_3() {
     tail_assertions::check(
-        288,
+        289,
         r#"tailstatic_packages_gateway_src_tools_os_tools_test_ts_43_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Package not found"}}]"#,
     );
@@ -27042,7 +27192,7 @@ fn tailstatic_packages_gateway_src_tools_os_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3() {
     tail_assertions::check(
-        289,
+        290,
         r#"tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"name":"Developer","role":"Developer","skillIds":["coding"],"paused":true}},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -27052,7 +27202,7 @@ fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3() {
     tail_assertions::check(
-        289,
+        290,
         r#"tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Developer"}]"#,
     );
@@ -27062,7 +27212,7 @@ fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3() {
     tail_assertions::check(
-        289,
+        290,
         r#"tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -27072,7 +27222,7 @@ fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3() {
     tail_assertions::check(
-        289,
+        290,
         r#"tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -27082,7 +27232,7 @@ fn tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -27092,7 +27242,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"sessionId":"session-123","target":"3000"}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"dev-preview.open","data":{"target":"3000","projectRoot":"/project/app"}},"session-123"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-123",{"__jait_matcher":"objectContaining","value":{"type":"ui.state-sync","sessionId":"session-123","payload":{"key":"dev-preview.panel","value":{"open":true,"target":"3000","projectRoot":"/project/app","displayState":"connected","displayTarget":"3000"}}}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-123",{"dev-preview.panel":{"open":true,"target":"3000","projectRoot":"/project/app","displayState":"connected","displayTarget":"3000"}}]}]"#,
     );
@@ -27102,7 +27252,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"sessionId":"mcp-session","target":"8765"}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"dev-preview.open","data":{"target":"8765","projectRoot":"/project/mcp"}},"mcp-session"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mcp-session",{"__jait_matcher":"objectContaining","value":{"type":"ui.state-sync","sessionId":"mcp-session"}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mcp-session",{"dev-preview.panel":{"open":true,"target":"8765","projectRoot":"/project/mcp","displayState":"connected","displayTarget":"8765"}}]}]"#,
     );
@@ -27112,7 +27262,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -27122,7 +27272,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Preview failed: Preview server did not become ready"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-error",{"__jait_matcher":"objectContaining","value":{"type":"ui.state-sync","sessionId":"session-error","payload":{"key":"dev-preview.panel","value":{"open":false,"target":null,"projectRoot":"/project/error","displayState":"hidden","displayTarget":null}}}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-error",{"dev-preview.panel":{"open":false,"target":null,"projectRoot":"/project/error","displayState":"hidden","displayTarget":null}}]}]"#,
     );
@@ -27132,7 +27282,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Preview failed: Preview server did not become ready"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-error",{"__jait_matcher":"objectContaining","value":{"type":"ui.state-sync","sessionId":"session-error","payload":{"key":"dev-preview.panel","value":{"open":false,"target":null,"projectRoot":"/project/error","displayState":"hidden","displayTarget":null}}}}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["session-error",{"dev-preview.panel":{"open":false,"target":null,"projectRoot":"/project/error","displayState":"hidden","displayTarget":null}}]}]"#,
     );
@@ -27142,7 +27292,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"2 errors"},{"matcher":"toContain","negate":true,"expected":"screenshot included"},{"matcher":"toMatchObject","negate":false,"expected":{"browserId":"preview-browser-session-1","status":"ready","screenshot":null,"page":{"title":"Preview App"},"snapshot":"Title: Preview App"}}]"#,
     );
@@ -27152,7 +27302,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"screenshot included"},{"matcher":"toMatchObject","negate":false,"expected":{"screenshot":"base64-image"}}]"#,
     );
@@ -27162,7 +27312,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3() {
     tail_assertions::check(
-        290,
+        291,
         r#"tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -27172,7 +27322,7 @@ fn tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_5_3() {
     tail_assertions::check(
-        291,
+        292,
         r#"tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_5_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"project.editor.open","data":{"projectRoot":"/project/app"}},"session-1"]}]"#,
     );
@@ -27182,7 +27332,7 @@ fn tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_21_3() {
     tail_assertions::check(
-        291,
+        292,
         r#"tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_21_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27192,7 +27342,7 @@ fn tailstatic_packages_gateway_src_tools_project_editor_tools_test_ts_21_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3() {
     tail_assertions::check(
-        292,
+        293,
         r#"tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"/tmp/other-project"},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":["project.created","chat.created"]},{"matcher":"toHaveBeenNthCalledWith","negate":false,"expected":[1,{"__jait_observed":0},{"__jait_matcher":"objectContaining","value":{"payload":{"project":{"__jait_matcher":"objectContaining","value":{"id":{"__jait_observed":1}}}}}}],"hybrid":true},{"matcher":"toHaveBeenNthCalledWith","negate":false,"expected":[2,{"__jait_observed":0},{"__jait_matcher":"objectContaining","value":{"payload":{"projectId":{"__jait_observed":1},"session":{"__jait_matcher":"objectContaining","value":{"id":{"__jait_observed":2}}}}}}],"hybrid":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"The nightly build failed"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"/tmp/other-project"},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -27202,7 +27352,7 @@ fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3() {
     tail_assertions::check(
-        292,
+        293,
         r#"tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27212,7 +27362,7 @@ fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3() {
     tail_assertions::check(
-        292,
+        293,
         r#"tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"/tmp/target-project"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"/tmp/target-project"},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"chat.moved"}]"#,
     );
@@ -27222,7 +27372,7 @@ fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3() {
     tail_assertions::check(
-        292,
+        293,
         r#"tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"message is required"}]"#,
     );
@@ -27232,7 +27382,7 @@ fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3() {
     tail_assertions::check(
-        292,
+        293,
         r#"tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"projectId or projectRoot is required"}]"#,
     );
@@ -27242,7 +27392,7 @@ fn tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["user-1",{"__jait_matcher":"objectContaining","value":{"type":"project.created","payload":{"project":{"__jait_matcher":"objectContaining","value":{"id":{"__jait_observed":0}}}}}}],"hybrid":true}]"#,
     );
@@ -27252,7 +27402,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"/new"},{"matcher":"toEqual","negate":false,"expected":["project.created","chat.moved"]},{"matcher":"toHaveBeenLastCalledWith","negate":false,"expected":["user-1",{"__jait_matcher":"objectContaining","value":{"payload":{"__jait_matcher":"objectContaining","value":{"fromProjectId":{"__jait_observed":0},"toProjectId":{"__jait_observed":1},"sessionId":{"__jait_observed":2}}}}}],"hybrid":true}]"#,
     );
@@ -27262,7 +27412,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"/new"},{"matcher":"toEqual","negate":false,"expected":["project.created","chat.moved"]},{"matcher":"toHaveBeenLastCalledWith","negate":false,"expected":["user-1",{"__jait_matcher":"objectContaining","value":{"payload":{"__jait_matcher":"objectContaining","value":{"fromProjectId":{"__jait_observed":0},"toProjectId":{"__jait_observed":1},"sessionId":{"__jait_observed":2}}}}}],"hybrid":true}]"#,
     );
@@ -27272,7 +27422,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBe","negate":false,"expected":"/old"}]"#,
     );
@@ -27282,7 +27432,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":18,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"d"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"I"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"i"},{"id":8,"kind":"char","value":"s"},{"id":9,"kind":"char","value":" "},{"id":10,"kind":"char","value":"r"},{"id":11,"kind":"char","value":"e"},{"id":12,"kind":"char","value":"q"},{"id":13,"kind":"char","value":"u"},{"id":14,"kind":"char","value":"i"},{"id":15,"kind":"char","value":"r"},{"id":16,"kind":"char","value":"e"},{"id":17,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -27292,7 +27442,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":22,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"e"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":" "},{"id":5,"kind":"char","value":"n"},{"id":6,"kind":"char","value":"o"},{"id":7,"kind":"char","value":"t"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"e"},{"id":10,"kind":"char","value":"x"},{"id":11,"kind":"char","value":"i"},{"id":12,"kind":"char","value":"s"},{"id":13,"kind":"char","value":"t"},{"id":14,"kind":"char","value":" "},{"id":15,"kind":"char","value":"o"},{"id":16,"kind":"char","value":"n"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"n"},{"id":19,"kind":"char","value":"o"},{"id":20,"kind":"char","value":"d"},{"id":21,"kind":"char","value":"e"}]},"flags":""}},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27302,7 +27452,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"gateway"}]"#,
     );
@@ -27312,7 +27462,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":15,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"a"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"a"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":"y"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"n"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"n"},{"id":12,"kind":"char","value":"o"},{"id":13,"kind":"char","value":"d"},{"id":14,"kind":"char","value":"e"}]},"flags":""}}]"#,
     );
@@ -27322,7 +27472,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"C"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"n"},{"id":3,"kind":"char","value":"n"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"t"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"r"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"a"},{"id":10,"kind":"char","value":"c"},{"id":11,"kind":"char","value":"h"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"n"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"d"},{"id":16,"kind":"char","value":"e"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":"gateway"}]"#,
     );
@@ -27332,7 +27482,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":9,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"f"},{"id":5,"kind":"char","value":"o"},{"id":6,"kind":"char","value":"u"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
@@ -27342,7 +27492,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["node-2","exists",{"path":"/work/move-me"},30000]},{"matcher":"toMatchObject","negate":false,"expected":{"nodeId":"node-2","rootPath":"/work/move-me"}}]"#,
     );
@@ -27352,7 +27502,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3() {
     tail_assertions::check(
-        293,
+        294,
         r#"tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":24,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"m"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":"a"},{"id":4,"kind":"char","value":"d"},{"id":5,"kind":"char","value":"a"},{"id":6,"kind":"char","value":"t"},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"w"},{"id":10,"kind":"char","value":"a"},{"id":11,"kind":"char","value":"s"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"n"},{"id":14,"kind":"char","value":"o"},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":" "},{"id":17,"kind":"char","value":"c"},{"id":18,"kind":"char","value":"h"},{"id":19,"kind":"char","value":"a"},{"id":20,"kind":"char","value":"n"},{"id":21,"kind":"char","value":"g"},{"id":22,"kind":"char","value":"e"},{"id":23,"kind":"char","value":"d"}]},"flags":""}},{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -27362,7 +27512,7 @@ fn tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_11_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_11_3"#,
         r#"[{"matcher":"toContain","negate":false,"dynamic":true}]"#,
     );
@@ -27372,7 +27522,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_11_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each0() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each0"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<projectArtifacts>"},{"matcher":"toContain","negate":false,"expected":".jait/shots/"},{"matcher":"toContain","negate":false,"expected":".jait/artifacts/"},{"matcher":"toContain","negate":false,"expected":"Create the required directories"},{"matcher":"toContain","negate":false,"expected":"copy the finished artifact"},{"matcher":"toContain","negate":true,"expected":"> /tmp/out.txt"},{"matcher":"toContain","negate":false,"expected":"The tool card is the user-facing image display"},{"matcher":"toContain","negate":false,"expected":"do not follow them with image.view"},{"matcher":"toContain","negate":false,"expected":"do not repeat it in assistant messages"},{"matcher":"toContain","negate":false,"expected":"unless the user explicitly requests them"}]"#,
     );
@@ -27382,7 +27532,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_ea
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each1() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each1"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<projectArtifacts>"},{"matcher":"toContain","negate":false,"expected":".jait/shots/"},{"matcher":"toContain","negate":false,"expected":".jait/artifacts/"},{"matcher":"toContain","negate":false,"expected":"Create the required directories"},{"matcher":"toContain","negate":false,"expected":"copy the finished artifact"},{"matcher":"toContain","negate":true,"expected":"> /tmp/out.txt"},{"matcher":"toContain","negate":false,"expected":"The tool card is the user-facing image display"},{"matcher":"toContain","negate":false,"expected":"do not follow them with image.view"},{"matcher":"toContain","negate":false,"expected":"do not repeat it in assistant messages"},{"matcher":"toContain","negate":false,"expected":"unless the user explicitly requests them"}]"#,
     );
@@ -27392,7 +27542,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_ea
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each2() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each2"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<projectArtifacts>"},{"matcher":"toContain","negate":false,"expected":".jait/shots/"},{"matcher":"toContain","negate":false,"expected":".jait/artifacts/"},{"matcher":"toContain","negate":false,"expected":"Create the required directories"},{"matcher":"toContain","negate":false,"expected":"copy the finished artifact"},{"matcher":"toContain","negate":true,"expected":"> /tmp/out.txt"},{"matcher":"toContain","negate":false,"expected":"The tool card is the user-facing image display"},{"matcher":"toContain","negate":false,"expected":"do not follow them with image.view"},{"matcher":"toContain","negate":false,"expected":"do not repeat it in assistant messages"},{"matcher":"toContain","negate":false,"expected":"unless the user explicitly requests them"}]"#,
     );
@@ -27402,7 +27552,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_ea
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_33_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_33_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<jaitExternalProvider>"},{"matcher":"toContain","negate":false,"expected":"You are operating inside Jait, a tool-centric coding project and gateway."},{"matcher":"toContain","negate":false,"expected":"Use Jait tools as the primary way to act."},{"matcher":"toContain","negate":false,"expected":"use that tool instead of provider-native or generic tools"},{"matcher":"toContain","negate":false,"expected":"always use `jait.terminal`"},{"matcher":"toContain","negate":false,"expected":"discover it first with the available tool discovery mechanism"},{"matcher":"toContain","negate":false,"expected":"Respect Jait project boundaries"},{"matcher":"toContain","negate":false,"expected":"use the todo tool even if you are operating through an external or CLI provider"},{"matcher":"toContain","negate":false,"expected":"first discover and use Jait memory or prior session search tools"},{"matcher":"toContain","negate":false,"expected":"If the user asks to open, switch, or use a project or repo"},{"matcher":"toContain","negate":false,"expected":"attach to an existing local target when available"},{"matcher":"toContain","negate":false,"expected":"The live preview is a controllable browser session."},{"matcher":"toContain","negate":false,"expected":"use `preview.inspect`, `preview.status`, and `browser.*` tools"},{"matcher":"toContain","negate":false,"expected":"Do not tell the user that browser tools cannot control the previewed browser unless a tool call fails"},{"matcher":"toContain","negate":false,"expected":"If `preview.open` fails, then fall back to opening the localhost URL directly in the browser surface."},{"matcher":"toContain","negate":false,"expected":"This guidance still applies when you are operating through an external or CLI provider inside Jait."},{"matcher":"toContain","negate":false,"expected":"You are working in the project: /tmp/project"}]"#,
     );
@@ -27412,7 +27562,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_33_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_60_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_60_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<projectInstructions>"},{"matcher":"toContain","negate":false,"expected":"casual tone"},{"matcher":"toContain","negate":false,"expected":"answer in english"},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -27422,7 +27572,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_60_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_77_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_77_3"#,
         r#"[{"matcher":"toBeLessThan","negate":false,"conditional":true,"dynamic":true},{"matcher":"toComplete","negate":false}]"#,
     );
@@ -27432,7 +27582,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_77_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_92_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_92_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"<projectInstructions>"}]"#,
     );
@@ -27442,7 +27592,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_92_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_103_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_103_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"casual tone"}]"#,
     );
@@ -27452,7 +27602,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_103_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_118_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_118_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"<jaitExternalProvider>"},{"matcher":"toContain","negate":true,"expected":"You are operating inside Jait, a tool-centric coding project."},{"matcher":"toContain","negate":false,"expected":"Use Markdown in responses. Wrap filenames and symbols in backticks."},{"matcher":"toContain","negate":false,"expected":"The todo and user.ask tools are always available"},{"matcher":"toContain","negate":false,"expected":"call tools.search once with a broad description"},{"matcher":"toContain","negate":false,"expected":"Project: /tmp/project"}]"#,
     );
@@ -27462,7 +27612,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_118_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_137_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_137_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<userQuestionInstructions>"},{"matcher":"toContain","negate":false,"expected":"user.ask tool"},{"matcher":"toContain","negate":false,"expected":"instead of ending your turn with a plain-text question"}]"#,
     );
@@ -27472,7 +27622,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_137_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_148_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_148_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<available_skills>"},{"matcher":"toContain","negate":false,"expected":"<name>Word / DOCX</name>"},{"matcher":"toContain","negate":false,"expected":"<location>C:/skills/word-docx/SKILL.md</location>"},{"matcher":"toContain","negate":false,"expected":"Use the file.read tool to load a skill's content"}]"#,
     );
@@ -27482,7 +27632,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_148_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<responseStyle>"},{"matcher":"toContain","negate":false,"expected":"Write in concise caveman style."},{"matcher":"toContain","negate":false,"expected":"If the topic is risky, subtle, or confusing, fall back to normal precise prose."}]"#,
     );
@@ -27492,7 +27642,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<globalJaitInstructions>"},{"matcher":"toContain","negate":false,"expected":"Always use chat.traces before memory.search for Jait chat IDs."}]"#,
     );
@@ -27502,7 +27652,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"<skill-evaluation>"},{"matcher":"toContain","negate":true,"expected":"Always evaluate whether the requested work should become a reusable skill."}]"#,
     );
@@ -27512,7 +27662,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"<jaitExternalProvider>"},{"matcher":"toContain","negate":true,"expected":"You are operating inside Jait, a tool-centric coding project and gateway."},{"matcher":"toContain","negate":true,"expected":"Prefer Jait tools as the primary way to act."},{"matcher":"toContain","negate":false,"expected":"Your name is Jait"},{"matcher":"toContain","negate":false,"expected":"Follow the user's requirements carefully"},{"matcher":"toContain","negate":false,"expected":"You are a highly sophisticated automated coding agent"},{"matcher":"toContain","negate":false,"expected":"keep going until the user's query is completely resolved"},{"matcher":"toContain","negate":false,"expected":"<toolCallFormat>"},{"matcher":"toContain","negate":false,"expected":"NEVER write tool names, function signatures, or JSON arguments as plain text"},{"matcher":"toContain","negate":false,"expected":"<toolUseInstructions>"},{"matcher":"toContain","negate":false,"expected":"The todo and user.ask tools are core tools and are always available"},{"matcher":"toContain","negate":false,"expected":"MUST call tools.search with one broad natural-language description"},{"matcher":"toContain","negate":false,"expected":"<searchInstructions>"},{"matcher":"toContain","negate":false,"expected":"<editingInstructions>"},{"matcher":"toContain","negate":false,"expected":"<taskTracking>"},{"matcher":"toContain","negate":false,"expected":"You are working in the project: /tmp/project"}]"#,
     );
@@ -27522,7 +27672,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"<userQuestionInstructions>"},{"matcher":"toContain","negate":false,"expected":"Use user.ask when:"}]"#,
     );
@@ -27532,7 +27682,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3() {
     tail_assertions::check(
-        294,
+        295,
         r#"tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"<jaitExternalProvider>"},{"matcher":"toContain","negate":false,"expected":"<toolCallFormat>"},{"matcher":"toContain","negate":false,"expected":"keep going until the user's query is completely resolved"},{"matcher":"toContain","negate":false,"expected":"MUST call tools.search with one broad natural-language description"}]"#,
     );
@@ -27542,7 +27692,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3()
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_5_3() {
     tail_assertions::check(
-        295,
+        296,
         r#"tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_5_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"agent tool"},{"matcher":"toContain","negate":false,"expected":"concurrently"},{"matcher":"toContain","negate":false,"expected":"independent sub-agents"},{"matcher":"toContain","negate":false,"expected":"allowedTools"},{"matcher":"toContain","negate":false,"expected":"Research Specialist"},{"matcher":"toContain","negate":false,"expected":"Testing Specialist"},{"matcher":"toContain","negate":false,"expected":"Validation Specialist"},{"matcher":"toContain","negate":false,"expected":"reuse the same lineup for every task"}]"#,
     );
@@ -27552,7 +27702,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_18_3() {
     tail_assertions::check(
-        295,
+        296,
         r#"tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_18_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Developer Team"},{"matcher":"toContain","negate":false,"expected":"Research Team"},{"matcher":"toContain","negate":false,"expected":"Content Team"},{"matcher":"toContain","negate":false,"expected":"Security Team"},{"matcher":"toContain","negate":false,"expected":"Ops Team"},{"matcher":"toContain","negate":false,"expected":"invent a new named team"}]"#,
     );
@@ -27562,7 +27712,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_18_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_29_3() {
     tail_assertions::check(
-        295,
+        296,
         r#"tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_29_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"stable user preferences"},{"matcher":"toContain","negate":false,"expected":"durable project facts"},{"matcher":"toContain","negate":false,"expected":"repeated corrections"},{"matcher":"toContain","negate":false,"expected":"Avoid saving transient chat details"},{"matcher":"toContain","negate":false,"expected":"Save only durable memories"}]"#,
     );
@@ -27572,7 +27722,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_29_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_37_3() {
     tail_assertions::check(
-        295,
+        296,
         r#"tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_37_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"For every shell command, always use `jait.terminal`"},{"matcher":"toContain","negate":false,"expected":"Never use the provider's native shell"},{"matcher":"toContain","negate":false,"expected":"connected node uses that node's terminal"},{"matcher":"toContain","negate":false,"expected":"gateway project uses the gateway terminal"},{"matcher":"toContain","negate":false,"expected":"always use `jait.terminal`"}]"#,
     );
@@ -27582,7 +27732,7 @@ fn tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_37_3() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_29_3() {
     tail_assertions::check(
-        296,
+        297,
         r#"tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_29_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"desktop Settings"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27592,7 +27742,7 @@ fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_29_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_41_3() {
     tail_assertions::check(
-        296,
+        297,
         r#"tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_41_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"jait daemon install"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27602,7 +27752,7 @@ fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_41_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_54_3() {
     tail_assertions::check(
-        296,
+        297,
         r#"tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_54_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"stringContaining","value":"systemctl --user cat"},{"__jait_matcher":"anything"}]}]"#,
     );
@@ -27612,7 +27762,7 @@ fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_54_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_70_3() {
     tail_assertions::check(
-        296,
+        297,
         r#"tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_70_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"exited early"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27622,7 +27772,7 @@ fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_70_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_87_3() {
     tail_assertions::check(
-        296,
+        297,
         r#"tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_87_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -27632,7 +27782,7 @@ fn tailstatic_packages_gateway_src_tools_redeploy_tools_test_ts_87_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_35_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_35_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Create a Jait project"},{"matcher":"toContain","negate":false,"expected":"project"},{"matcher":"toContain","negate":false,"expected":"SCP"},{"matcher":"toBeUndefined","negate":false},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -27642,7 +27792,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_35_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_48_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_48_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"prior chat messages"}]"#,
     );
@@ -27652,7 +27802,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_48_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_56_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_56_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"source":"builtin","sourceMetadata":{"kind":"builtin"}}},{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"name":"builtin.echo","source":"builtin","sourceMetadata":{"kind":"builtin"}}}}]"#,
     );
@@ -27662,7 +27812,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_56_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_76_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_76_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"source":"plugin:demo-plugin","sourceMetadata":{"kind":"plugin","pluginId":"demo-plugin","pluginDisplayName":"Demo Plugin"},"tier":"external","category":"external","risk":"high","defaultConsentLevel":"dangerous"}},{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"name":"demo.echo","source":"plugin:demo-plugin","sourceMetadata":{"kind":"plugin","pluginId":"demo-plugin","pluginDisplayName":"Demo Plugin"}}}}]"#,
     );
@@ -27672,7 +27822,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_76_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_115_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_115_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Input validation failed"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.validation_error","status":"failed","toolName":"echo"}}]"#,
     );
@@ -27682,7 +27832,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_115_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_144_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_144_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.execute","status":"executing","toolName":"ok.tool"}},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.result","status":"completed","toolName":"ok.tool"}}]"#,
     );
@@ -27692,7 +27842,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_144_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_169_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_169_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"kaboom"},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.execute","status":"executing","toolName":"boom.tool"}},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.error","status":"failed","toolName":"boom.tool"}}]"#,
     );
@@ -27702,7 +27852,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_169_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_199_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_199_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"preview.open"},{"matcher":"toContain","negate":false,"expected":"browser.click"},{"matcher":"toBe","negate":false,"expected":"network.scan"},{"matcher":"toBe","negate":false,"expected":"ssh.run"},{"matcher":"toBe","negate":false,"expected":"memory.search"}]"#,
     );
@@ -27712,7 +27862,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_199_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_214_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_214_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"preview.open"},{"matcher":"toBe","negate":false,"expected":"deploy.preferred"},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"deploy.basic"}]"#,
     );
@@ -27722,7 +27872,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_214_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_226_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_226_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["todo","user.ask","tools.list","tools.search","preview.open","plugin.deploy"]}]"#,
     );
@@ -27732,7 +27882,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_226_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_255_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_255_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"agent.github"},{"matcher":"toContain","negate":false,"expected":"agent.github"},{"matcher":"toContain","negate":true,"expected":"agent.github"}]"#,
     );
@@ -27742,7 +27892,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_255_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_271_1() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_271_1"#,
         r#"[{"matcher":"toThrow","negate":true},{"matcher":"toBe","negate":false,"expected":"file.read"}]"#,
     );
@@ -27752,7 +27902,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_271_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_280_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_280_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":10},{"matcher":"toBeLessThan","negate":false,"expected":2000}]"#,
     );
@@ -27762,7 +27912,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_280_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_295_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_295_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"network.scan"},{"matcher":"toContain","negate":false,"expected":"preview.open"}]"#,
     );
@@ -27772,7 +27922,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_295_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_305_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_305_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"preview.open"}]"#,
     );
@@ -27782,7 +27932,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_305_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_registry_test_ts_311_3() {
     tail_assertions::check(
-        297,
+        298,
         r#"tailstatic_packages_gateway_src_tools_registry_test_ts_311_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -27792,7 +27942,7 @@ fn tailstatic_packages_gateway_src_tools_registry_test_ts_311_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_67_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_67_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27802,7 +27952,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_67_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_73_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_73_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27812,7 +27962,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_73_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_78_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_78_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27822,7 +27972,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_78_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_84_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_84_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":120000},{"matcher":"toBe","negate":false,"expected":120000}]"#,
     );
@@ -27832,7 +27982,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_84_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_89_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":120000},{"matcher":"toBe","negate":false,"expected":120000}]"#,
     );
@@ -27842,7 +27992,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_89_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_105_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_105_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27852,7 +28002,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_105_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_113_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_113_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27862,7 +28012,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_113_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_119_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_119_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27872,7 +28022,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_119_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_125_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_125_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27882,7 +28032,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_125_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_135_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_135_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -27892,7 +28042,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_135_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_142_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_142_3"#,
         r#"[{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -27902,7 +28052,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_142_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_159_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_159_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"local result"}},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27912,7 +28062,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_159_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_174_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_174_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"local memory"}},{"matcher":"toHaveBeenCalledOnce","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27922,7 +28072,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_174_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_188_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_188_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":6},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27932,7 +28082,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_188_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_205_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_205_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_observed":0},"file.read",{"path":"/remote/project/src/main.ts"},{"__jait_matcher":"objectContaining","value":{"sessionId":{"__jait_observed":1},"projectRoot":{"__jait_observed":2}}}],"hybrid":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27942,7 +28092,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_205_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_221_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_221_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"local skill"}},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27952,7 +28102,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_221_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_238_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_238_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"local result"}},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27962,7 +28112,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_238_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_258_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_258_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -27972,7 +28122,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_258_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_272_3() {
     tail_assertions::check(
-        298,
+        299,
         r#"tailstatic_packages_gateway_src_tools_remote_executor_test_ts_272_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Remote execution failed: network timeout"}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"stringContaining","value":"network timeout"}]}]"#,
     );
@@ -27982,7 +28132,7 @@ fn tailstatic_packages_gateway_src_tools_remote_executor_test_ts_272_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3() {
     tail_assertions::check(
-        299,
+        300,
         r#"tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"jait.todos"},{"matcher":"toBe","negate":false,"expected":"core"},{"matcher":"toContain","negate":false,"expected":"update"},{"matcher":"toBeDefined","negate":false}]"#,
     );
@@ -27992,7 +28142,7 @@ fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3() {
     tail_assertions::check(
-        299,
+        300,
         r#"tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"Saved a Jait todo"},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"Loaded 1 todo for Jait:"},{"matcher":"toContain","negate":false,"expected":"1. [open] Polish todo tags · high · due 2026-05-10"}]"#,
     );
@@ -28002,7 +28152,7 @@ fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3() {
     tail_assertions::check(
-        299,
+        300,
         r#"tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -28012,7 +28162,7 @@ fn tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_14_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_14_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"mimeType":"audio/wav","bytes":8}}},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -28022,7 +28172,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_19_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_19_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28032,7 +28182,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_26_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_26_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"__jait_matcher":"objectContaining","value":{"chatId":"chat-1","userId":"owner-1","messageLimit":5,"includeThinking":false}}]}]"#,
     );
@@ -28042,7 +28192,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_26_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_32_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_32_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"data":{"found":false}}}]"#,
     );
@@ -28052,7 +28202,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_38_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_38_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"tables":["sessions"]}}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28062,7 +28212,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_38_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_43_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"truncated"},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"sql":"SELECT id FROM sessions","maxRows":5}]}]"#,
     );
@@ -28072,7 +28222,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_50_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_50_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Read-only SELECT required","data":{"error":"unsafe_query"}}}]"#,
     );
@@ -28082,7 +28232,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_50_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_54_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_54_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28092,7 +28242,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_54_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_61_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_61_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"runId":"run-1","planId":"plan-1","summary":{"__jait_matcher":"stringContaining","value":"✗ typecheck"}}}},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -28102,7 +28252,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_61_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_70_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_70_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"No accessible repositories found"}}]"#,
     );
@@ -28112,7 +28262,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_70_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_74_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_74_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Execution node offline"}}]"#,
     );
@@ -28122,7 +28272,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_74_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_80_3() {
     tail_assertions::check(
-        300,
+        301,
         r#"tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_80_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"sessions":2,"surfaces":1,"devices":3,"scheduler":{"totalJobs":2,"enabledJobs":1},"hooks":{"registeredEventTypes":["session.created"],"listeners":1}}}},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["active"]}]"#,
     );
@@ -28132,7 +28282,7 @@ fn tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_80_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"windows.sandbox.start"},{"matcher":"toHaveProperty","negate":false,"expected":"ramSize"},{"matcher":"toHaveProperty","negate":false,"expected":"cpuCores"},{"matcher":"toHaveProperty","negate":false,"expected":"diskSize"},{"matcher":"toHaveProperty","negate":false,"expected":"windowsVersion"},{"matcher":"toEqual","negate":false,"expected":[{"ramSize":"8G","cpuCores":8,"diskSize":"128G","version":"10","rdpPort":3390,"webViewerPort":8007,"sshPort":{"__jait_type":"undefined"},"waitForWebViewer":true,"username":{"__jait_type":"undefined"},"password":{"__jait_type":"undefined"}}]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"rdpUrl":"rdp://127.0.0.1:3390","webViewerUrl":"http://127.0.0.1:8007/","status":"running","version":"10"}}]"#,
     );
@@ -28142,7 +28292,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"starting"},{"matcher":"toContain","negate":false,"expected":"10-30 minutes"}]"#,
     );
@@ -28152,7 +28302,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"windows.sandbox.stop"},{"matcher":"toEqual","negate":false,"expected":["containerName"]},{"matcher":"toEqual","negate":false,"expected":[{"name":"jait-windows-sb-test","options":{"removeStorage":true}}]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"containerName":"jait-windows-sb-test"}}]"#,
     );
@@ -28162,7 +28312,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"linux.desktop.sandbox.start"},{"matcher":"toHaveProperty","negate":false,"expected":"screenRes"},{"matcher":"toHaveProperty","negate":false,"expected":"mountMode"},{"matcher":"toHaveProperty","negate":false,"expected":"networkEnabled"},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"novncUrl":"http://127.0.0.1:6081/vnc_lite.html","cdpUrl":"http://127.0.0.1:9224"}}]"#,
     );
@@ -28172,7 +28322,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"mountMode":"read-only"}}]"#,
     );
@@ -28182,7 +28332,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3() {
     tail_assertions::check(
-        301,
+        302,
         r#"tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"linux.desktop.sandbox.stop"},{"matcher":"toEqual","negate":false,"expected":["containerName"]},{"matcher":"toEqual","negate":false,"expected":["jait-linux-desktop-sb-test"]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"containerName":"jait-linux-desktop-sb-test"}}]"#,
     );
@@ -28192,7 +28342,7 @@ fn tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_23_3() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_23_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"localDeviceId":"viewer","devices":[{"id":"viewer","isCurrent":true},{"id":"host","isCurrent":false}]}}}]"#,
     );
@@ -28202,7 +28352,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_23_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_29_3() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_29_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"hostDeviceId":"host","viewerDeviceIds":["viewer"]}]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["share-1","host",["viewer"]]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"screen-share.open","data":{"sessionId":"share-1","targetDeviceId":"host"}}]}]"#,
     );
@@ -28212,7 +28362,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_29_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_36_3() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_36_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28222,7 +28372,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_36_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_41_3() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_41_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -28232,7 +28382,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_41_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each0() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -28242,7 +28392,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each0()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each1() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -28252,7 +28402,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_51_3_each1()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each0() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each0"#,
         r#"[{"matcher":"toHaveProperty","negate":false,"expected":"device"},{"matcher":"toHaveProperty","negate":false,"expected":"controllerDeviceId"},{"matcher":"toHaveProperty","negate":false,"expected":"transport"}]"#,
     );
@@ -28262,7 +28412,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each0()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each0() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"id":"host","name":"Owned desktop","platform":"desktop","authorized":false,"capabilities":[]}]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["viewer"]}]"#,
     );
@@ -28272,7 +28422,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each0()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each0() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28282,7 +28432,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each0()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each1() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each1"#,
         r#"[{"matcher":"toHaveProperty","negate":false,"expected":"device"},{"matcher":"toHaveProperty","negate":false,"expected":"controllerDeviceId"},{"matcher":"toHaveProperty","negate":false,"expected":"transport"}]"#,
     );
@@ -28292,7 +28442,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_58_3_each1()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each1() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"id":"host","name":"Owned desktop","platform":"desktop","authorized":false,"capabilities":[]}]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["viewer"]}]"#,
     );
@@ -28302,7 +28452,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_64_3_each1()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each1() {
     tail_assertions::check(
-        302,
+        303,
         r#"tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28312,7 +28462,7 @@ fn tailstatic_packages_gateway_src_tools_screen_share_tools_test_ts_72_3_each1()
 #[test]
 fn tailstatic_packages_gateway_src_tools_screenshot_launch_test_ts_14_3() {
     tail_assertions::check(
-        303,
+        304,
         r#"tailstatic_packages_gateway_src_tools_screenshot_launch_test_ts_14_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"displayed in chat"},{"matcher":"toContain","negate":false,"expected":"Do not call image.view"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"headless":true,"channel":"chrome"}},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -28322,7 +28472,7 @@ fn tailstatic_packages_gateway_src_tools_screenshot_launch_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3() {
     tail_assertions::check(
-        304,
+        305,
         r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -28332,7 +28482,7 @@ fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3() {
     tail_assertions::check(
-        304,
+        305,
         r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -28342,7 +28492,7 @@ fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3() {
     tail_assertions::check(
-        304,
+        305,
         r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -28352,7 +28502,7 @@ fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1() {
     tail_assertions::check(
-        305,
+        306,
         r#"tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"always"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"tool-owner"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -28362,7 +28512,7 @@ fn tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_9_1() {
     tail_assertions::check(
-        306,
+        307,
         r#"tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_9_1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"always"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"expired"},{"matcher":"toHaveBeenLastCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -28372,7 +28522,7 @@ fn tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_9_1() 
 #[test]
 fn tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_33_1() {
     tail_assertions::check(
-        306,
+        307,
         r#"tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_33_1"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["runId"]},{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"status":"partial"}}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28382,7 +28532,7 @@ fn tailstatic_packages_gateway_src_tools_security_workbench_tools_test_ts_33_1()
 #[test]
 fn tailstatic_packages_gateway_src_tools_session_search_tools_test_ts_15_3() {
     tail_assertions::check(
-        307,
+        308,
         r#"tailstatic_packages_gateway_src_tools_session_search_tools_test_ts_15_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"Found 1 prior conversation result(s)"},{"matcher":"toContain","negate":false,"expected":"• [chat \"session-1\"] [Prior] context"},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":{"query":"prior context","limit":25,"userId":"user-1","sessionId":"session-1","threadId":{"__jait_type":"undefined"},"includeMessages":true,"includeThreadActivities":false}}]"#,
     );
@@ -28392,7 +28542,7 @@ fn tailstatic_packages_gateway_src_tools_session_search_tools_test_ts_15_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_26_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_26_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -28402,7 +28552,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_26_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_33_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_33_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -28412,7 +28562,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_43_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"not found"}]"#,
     );
@@ -28422,7 +28572,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_50_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_50_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -28432,7 +28582,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_50_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_58_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_58_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -28442,7 +28592,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_58_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_70_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_70_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"missing dep"}]"#,
     );
@@ -28452,7 +28602,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_70_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_97_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_97_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":30,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"w"},{"id":1,"kind":"char","value":"r"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"t"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":" "},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"k"},{"id":8,"kind":"char","value":"i"},{"id":9,"kind":"char","value":"l"},{"id":10,"kind":"char","value":"l"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"'"},{"id":13,"kind":"char","value":"w"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":"a"},{"id":16,"kind":"char","value":"t"},{"id":17,"kind":"char","value":"h"},{"id":18,"kind":"char","value":"e"},{"id":19,"kind":"char","value":"r"},{"id":20,"kind":"char","value":"-"},{"id":21,"kind":"char","value":"w"},{"id":22,"kind":"char","value":"a"},{"id":23,"kind":"char","value":"r"},{"id":24,"kind":"char","value":"n"},{"id":25,"kind":"char","value":"i"},{"id":26,"kind":"char","value":"n"},{"id":27,"kind":"char","value":"g"},{"id":28,"kind":"char","value":"s"},{"id":29,"kind":"char","value":"'"}]},"flags":"i"}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -28462,7 +28612,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_114_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_114_3"#,
         r#"[{"matcher":"toBeDefined","negate":false}]"#,
     );
@@ -28472,7 +28622,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_114_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_128_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_128_3"#,
         r#"[{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":24,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"s"},{"id":3,"kind":"char","value":"c"},{"id":4,"kind":"char","value":"r"},{"id":5,"kind":"char","value":"i"},{"id":6,"kind":"char","value":"p"},{"id":7,"kind":"char","value":"t"},{"id":8,"kind":"char","value":"i"},{"id":9,"kind":"char","value":"o"},{"id":10,"kind":"char","value":"n"},{"id":11,"kind":"any"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"i"},{"id":14,"kind":"char","value":"s"},{"id":15,"kind":"char","value":" "},{"id":16,"kind":"char","value":"r"},{"id":17,"kind":"char","value":"e"},{"id":18,"kind":"char","value":"q"},{"id":19,"kind":"char","value":"u"},{"id":20,"kind":"char","value":"i"},{"id":21,"kind":"char","value":"r"},{"id":22,"kind":"char","value":"e"},{"id":23,"kind":"char","value":"d"}]},"flags":"i"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"b"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"d"},{"id":3,"kind":"char","value":"y"},{"id":4,"kind":"any"},{"id":5,"kind":"char","value":" "},{"id":6,"kind":"char","value":"i"},{"id":7,"kind":"char","value":"s"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"q"},{"id":12,"kind":"char","value":"u"},{"id":13,"kind":"char","value":"i"},{"id":14,"kind":"char","value":"r"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"}]},"flags":"i"}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"m"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"any"},{"id":5,"kind":"char","value":" "},{"id":6,"kind":"char","value":"i"},{"id":7,"kind":"char","value":"s"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"q"},{"id":12,"kind":"char","value":"u"},{"id":13,"kind":"char","value":"i"},{"id":14,"kind":"char","value":"r"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"}]},"flags":"i"}}]"#,
     );
@@ -28482,7 +28632,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_128_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_139_3() {
     tail_assertions::check(
-        308,
+        309,
         r#"tailstatic_packages_gateway_src_tools_skill_tools_test_ts_139_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":14,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"a"},{"id":1,"kind":"char","value":"l"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"e"},{"id":4,"kind":"char","value":"a"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":"y"},{"id":7,"kind":"char","value":" "},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"x"},{"id":10,"kind":"char","value":"i"},{"id":11,"kind":"char","value":"s"},{"id":12,"kind":"char","value":"t"},{"id":13,"kind":"char","value":"s"}]},"flags":""}}]"#,
     );
@@ -28492,7 +28642,7 @@ fn tailstatic_packages_gateway_src_tools_skill_tools_test_ts_139_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_109_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_109_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"codex-remote"},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":[{"title":"SSH password","prompt":"Password for alice@linux-box.local","requestedBy":"ssh.run"}]},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"actionType":"tool.execute","toolName":"ssh.run","inputs":{"__jait_matcher":"not","value":{"__jait_matcher":"objectContaining","value":{"password":{"__jait_matcher":"anything"}}}}}}]"#,
     );
@@ -28502,7 +28652,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_109_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_153_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_153_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -28512,7 +28662,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_153_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_242_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_242_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"apt-sudo-ok"},{"matcher":"toBe","negate":false,"conditional":true,"expected":"sh"},{"matcher":"toEqual","negate":false,"conditional":true,"expected":["-c","stty -echo || exit 1; exec ssh \"$@\""]},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":12,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"_"},{"id":1,"kind":"char","value":"_"},{"id":2,"kind":"char","value":"J"},{"id":3,"kind":"char","value":"A"},{"id":4,"kind":"char","value":"I"},{"id":5,"kind":"char","value":"T"},{"id":6,"kind":"char","value":"_"},{"id":7,"kind":"char","value":"S"},{"id":8,"kind":"char","value":"U"},{"id":9,"kind":"char","value":"D"},{"id":10,"kind":"char","value":"O"},{"id":11,"kind":"char","value":"_"}]},"flags":""}},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toEqual","negate":false,"expected":[{"title":"sudo password","prompt":"sudo password for alice@linux-box.local","requestedBy":"ssh.run"}]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"toolName":"ssh.run","inputs":{"__jait_matcher":"not","value":{"__jait_matcher":"objectContaining","value":{"password":{"__jait_matcher":"anything"}}}}}}]"#,
     );
@@ -28522,7 +28672,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_242_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_294_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_294_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -28532,7 +28682,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_294_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_328_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_328_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveProperty","negate":true,"expected":"properties.password"}]"#,
     );
@@ -28542,7 +28692,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_328_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_345_3() {
     tail_assertions::check(
-        309,
+        310,
         r#"tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_345_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":5,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":1,"kind":"char","value":"s"},{"id":2,"kind":"char","value":"s"},{"id":3,"kind":"char","value":"h"},{"id":4,"kind":"char","value":"-"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"/stateful-directory"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -28552,7 +28702,7 @@ fn tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_345_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_17_3() {
     tail_assertions::check(
-        310,
+        311,
         r#"tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_17_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["search","web_fetch"]},{"matcher":"toEqual","negate":false,"expected":["{\"q\":1}","{\"url\":\"x\"}"]}]"#,
     );
@@ -28562,7 +28712,7 @@ fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_31_3() {
     tail_assertions::check(
-        310,
+        311,
         r#"tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_31_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"file_read"},{"matcher":"toBe","negate":false,"expected":"{\"path\":\"a.ts\"}"}]"#,
     );
@@ -28572,7 +28722,7 @@ fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_31_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_44_3() {
     tail_assertions::check(
-        310,
+        311,
         r#"tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_44_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["c1","c2"]},{"matcher":"toEqual","negate":false,"expected":["{\"r\":\"dev\"}","{\"r\":\"qa\"}"]}]"#,
     );
@@ -28582,7 +28732,7 @@ fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_44_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_55_3() {
     tail_assertions::check(
-        310,
+        311,
         r#"tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_55_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["read","execute"]}]"#,
     );
@@ -28592,7 +28742,7 @@ fn tailstatic_packages_gateway_src_tools_stream_tool_call_slots_test_ts_55_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_16_3() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_16_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -28602,7 +28752,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_16_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_22_3() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_22_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"0 active surface(s)."}]"#,
     );
@@ -28612,7 +28762,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_22_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_29_3() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_29_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["browser",{"__jait_matcher":"textPattern","expr":{"id":9,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":1,"kind":"char","value":"b"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"o"},{"id":4,"kind":"char","value":"w"},{"id":5,"kind":"char","value":"s"},{"id":6,"kind":"char","value":"e"},{"id":7,"kind":"char","value":"r"},{"id":8,"kind":"char","value":"-"}]},"flags":""},{"sessionId":{"__jait_observed":0},"projectRoot":{"__jait_observed":1}}],"hybrid":true}]"#,
     );
@@ -28622,7 +28772,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_29_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_34_3() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_34_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Chromium unavailable"}}]"#,
     );
@@ -28632,7 +28782,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_34_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each0() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["browser-1","test complete"]}]"#,
     );
@@ -28642,7 +28792,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each1() {
     tail_assertions::check(
-        311,
+        312,
         r#"tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["browser-1","test complete"]}]"#,
     );
@@ -28652,7 +28802,7 @@ fn tailstatic_packages_gateway_src_tools_surface_tools_test_ts_41_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_11_3() {
     tail_assertions::check(
-        312,
+        313,
         r#"tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_11_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -28662,7 +28812,7 @@ fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_11_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_17_3() {
     tail_assertions::check(
-        312,
+        313,
         r#"tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_17_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"from":"Research Specialist","content":"found the root cause"}},{"matcher":"toMatchObject","negate":false,"expected":{"from":"Fix Specialist","content":"applying the patch now"}},{"matcher":"toBe","negate":false,"expected":3}]"#,
     );
@@ -28672,7 +28822,7 @@ fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_33_3() {
     tail_assertions::check(
-        312,
+        313,
         r#"tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_33_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -28682,7 +28832,7 @@ fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_42_3() {
     tail_assertions::check(
-        312,
+        313,
         r#"tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_42_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -28692,7 +28842,7 @@ fn tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_swarm_stream_repro_test_ts_82_3() {
     tail_assertions::check(
-        313,
+        314,
         r#"tailstatic_packages_gateway_src_tools_swarm_stream_repro_test_ts_82_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"agent.spawn"},{"matcher":"toContain","negate":false,"expected":"mode_notice"},{"matcher":"toHaveLength","negate":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"call-agent-1"},{"matcher":"toBeGreaterThan","negate":false,"expected":-1},{"matcher":"toBeLessThan","negate":false,"dynamic":true}]"#,
     );
@@ -28702,7 +28852,7 @@ fn tailstatic_packages_gateway_src_tools_swarm_stream_repro_test_ts_82_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_22_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_22_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28712,7 +28862,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_22_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_27_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_27_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1"]}]"#,
     );
@@ -28722,7 +28872,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_32_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_32_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1","room-1"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1","room-1"]}]"#,
     );
@@ -28732,7 +28882,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_32_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_38_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_38_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["owner-1","room-1",{"__jait_matcher":"objectContaining","value":{"content":"Review the test results","sender":{"__jait_observed":0},"kind":"relay","recipientIds":["reviewer-1"],"clientKey":"team-action"}}],"hybrid":true}]"#,
     );
@@ -28742,7 +28892,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_38_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_46_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_46_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28752,7 +28902,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_46_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_51_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_51_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -28762,7 +28912,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_51_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_56_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_56_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Independent verification required"}}]"#,
     );
@@ -28772,7 +28922,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_56_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_61_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_61_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true}]"#,
     );
@@ -28782,7 +28932,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_61_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_66_3() {
     tail_assertions::check(
-        314,
+        315,
         r#"tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_66_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Room not found"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28793,7 +28943,7 @@ fn tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_66_3() {
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_30_3() {
     tail_assertions::check(
-        315,
+        316,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_30_3"#,
         r#"[{"matcher":"toBeLessThan","negate":false,"expected":6000},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"exitCode":null,"watched":true}},{"matcher":"toContain","negate":false,"expected":"Listening"},{"matcher":"toBe","negate":false,"expected":"ok"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"stopped"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -28804,7 +28954,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_60_3() {
     tail_assertions::check(
-        315,
+        316,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_60_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThanOrEqual","negate":false,"expected":16000},{"matcher":"toHaveBeenCalledTimes","negate":false,"optional":true,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":124,"sessionId":"docker-test"}},{"matcher":"toBeLessThanOrEqual","negate":false,"expected":16000}]"#,
     );
@@ -28815,7 +28965,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_74_3() {
     tail_assertions::check(
-        315,
+        316,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_74_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":9,"isBackground":false}},{"matcher":"toContain","negate":false,"expected":"$(echo literal)"},{"matcher":"toContain","negate":false,"expected":"`echo also-literal`"},{"matcher":"toContain","negate":false,"expected":"container=/project"},{"matcher":"toContain","negate":true,"expected":"__JAIT_SANDBOX_PID_"}]"#,
     );
@@ -28826,7 +28976,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration
 #[ignore = "original source skip or capability gate; unresolved"]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3() {
     tail_assertions::check(
-        315,
+        316,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":true,"threadSandbox":false}},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -28836,7 +28986,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_15_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_15_3"#,
         r#"[{"matcher":"toBeDefined","negate":false},{"matcher":"toMatchObject","negate":false,"expected":{"output":"server listening","isBackground":true,"watched":true,"exitCode":null}},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -28846,7 +28996,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_15_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_60_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_60_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toMatchObject","negate":false,"expected":{"isBackground":false,"watched":false,"exitCode":1}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28856,7 +29006,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_60_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_72_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_72_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalled","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28866,7 +29016,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_72_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_80_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_80_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":[{"command":"cat /project/file","projectRoot":"/repo","mountMode":"read-only","networkEnabled":false,"memoryLimitMb":512,"cpuLimit":"1.0","timeoutMs":3600000}]}]"#,
     );
@@ -28876,7 +29026,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_80_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_89_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -28886,7 +29036,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_89_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_97_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_97_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Cancelled"},{"matcher":"toHaveBeenCalled","negate":false}]"#,
     );
@@ -28896,7 +29046,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_97_
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_109_3() {
     tail_assertions::check(
-        316,
+        317,
         r#"tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_109_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -28906,7 +29056,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_109
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_27_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_27_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"short output"}]"#,
     );
@@ -28916,7 +29066,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_31_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_31_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":50},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":1,"kind":"char","value":"S"},{"id":2,"kind":"char","value":"T"},{"id":3,"kind":"char","value":"A"},{"id":4,"kind":"char","value":"R"},{"id":5,"kind":"char","value":"T"},{"id":6,"kind":"char","value":"-"}]},"flags":""}},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":5,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"-"},{"id":1,"kind":"char","value":"E"},{"id":2,"kind":"char","value":"N"},{"id":3,"kind":"char","value":"D"},{"id":4,"kind":"end"}]},"flags":""}},{"matcher":"toContain","negate":false,"expected":"…(middle truncated)…"}]"#,
     );
@@ -28926,7 +29076,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_31_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_43_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"$ grep -n foo src/a.ts\n"}]"#,
     );
@@ -28936,7 +29086,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_48_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_48_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":""}]"#,
     );
@@ -28946,7 +29096,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_48_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_52_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_52_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -28956,7 +29106,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_52_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_60_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_60_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"a\nb\nc"}]"#,
     );
@@ -28966,7 +29116,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_60_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_64_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"chars elided"},{"matcher":"toBeLessThan","negate":false,"expected":1100}]"#,
     );
@@ -28976,7 +29126,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_64_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_74_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_74_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThan","negate":false,"expected":600}]"#,
     );
@@ -28986,7 +29136,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_74_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_81_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_81_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"tiny"}]"#,
     );
@@ -28996,7 +29146,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_81_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_87_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_87_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"\u001b[0m"},{"matcher":"toContain","negate":false,"expected":"chars elided"},{"matcher":"toBeLessThan","negate":false,"expected":2000}]"#,
     );
@@ -29006,7 +29156,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_87_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_97_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_97_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200000},{"matcher":"toContain","negate":false,"expected":"…(middle truncated)…"}]"#,
     );
@@ -29016,7 +29166,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_97_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_105_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_105_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"short \u001b[31mred\u001b[0m"}]"#,
     );
@@ -29026,7 +29176,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_105_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_111_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_111_3"#,
         r#"[{"matcher":"toBeNull","negate":false},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -29036,7 +29186,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_111_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_116_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_116_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"totalChars":10000,"lineCount":1,"longestLineChars":10000}}]"#,
     );
@@ -29046,7 +29196,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_116_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_124_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_124_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"output flood"},{"matcher":"toContain","negate":false,"expected":"longest line 120,000 chars"},{"matcher":"toContain","negate":false,"expected":"generated/minified"},{"matcher":"toContain","negate":false,"expected":"--include/--exclude"}]"#,
     );
@@ -29056,7 +29206,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_124_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_133_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_133_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"output flood"},{"matcher":"toContain","negate":false,"expected":"scope the command"}]"#,
     );
@@ -29066,7 +29216,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_133_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_142_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_142_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"cd \"/project\" && ls /project/src"}]"#,
     );
@@ -29076,7 +29226,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_142_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_149_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_149_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"ls /home/alice/project-backup /tmp/home/alice/project-backup"}]"#,
     );
@@ -29086,7 +29236,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_149_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_156_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_156_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"ROOT=/project pnpm --dir /project build && echo /home/alice/project.tmp"}]"#,
     );
@@ -29096,7 +29246,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_156_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_163_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"cd \"/project\" && type /project\\README.md"}]"#,
     );
@@ -29106,7 +29256,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_172_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_172_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"$LASTEXITCODE"},{"matcher":"toContain","negate":false,"expected":"Write-Output \"done:$jaitExitCode\""},{"matcher":"toContain","negate":true,"expected":"printf"}]"#,
     );
@@ -29116,7 +29266,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_172_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_180_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_180_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"printf '\\ndone:%s\\n' \"$?\""}]"#,
     );
@@ -29126,7 +29276,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_180_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_195_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_195_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -29136,7 +29286,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_195_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_210_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_210_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBeNull","negate":false},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
@@ -29146,7 +29296,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_210_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_229_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_229_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"PAGER=cat"},{"matcher":"toContain","negate":false,"expected":"GIT_EDITOR=true"},{"matcher":"toContain","negate":false,"expected":"GIT_MERGE_AUTOEDIT=no"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true}]"#,
     );
@@ -29156,7 +29306,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_229_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_243_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_243_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":";\necho one\necho two"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29166,7 +29316,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_243_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_253_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_253_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"$env:PAGER = 'cat'"},{"matcher":"toContain","negate":false,"expected":"$env:GIT_EDITOR = 'true'"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":true,"expected":"export "}]"#,
     );
@@ -29176,7 +29326,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_253_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_262_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_262_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -29186,7 +29336,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_262_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_268_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_268_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29196,7 +29346,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_268_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_277_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_277_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":""},{"matcher":"toBe","negate":false,"expected":"   "}]"#,
     );
@@ -29206,7 +29356,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_277_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_282_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_282_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"export "},{"matcher":"toContain","negate":false,"expected":"GH_TOKEN='ghs_installation_token'"},{"matcher":"toContain","negate":false,"expected":"GIT_AUTHOR_NAME='jait-agent'"},{"matcher":"toContain","negate":false,"expected":"PAGER=cat"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29216,7 +29366,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_282_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_295_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_295_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["GH_TOKEN='a'\\''b; rm -rf / ;echo '\\''c'"]},{"matcher":"toContain","negate":false,"expected":"GH_TOKEN='a'\\''b'"}]"#,
     );
@@ -29226,7 +29376,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_295_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_306_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_306_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"$env:GH_TOKEN = 'a''b'"},{"matcher":"toContain","negate":false,"expected":"$env:PAGER = 'cat'"},{"matcher":"toContain","negate":true,"expected":"export "}]"#,
     );
@@ -29236,7 +29386,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_306_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_316_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_316_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["GH_TOKEN='ok'"]}]"#,
     );
@@ -29246,7 +29396,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_316_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_331_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_331_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBe","negate":false,"expected":"git log"}]"#,
     );
@@ -29256,7 +29406,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_331_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_340_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_340_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"$env:PAGER = 'cat'"},{"matcher":"toContain","negate":false,"expected":"$env:LESS = '-FRX'"},{"matcher":"toContain","negate":false,"expected":"$env:GIT_MERGE_AUTOEDIT = 'no'"}]"#,
     );
@@ -29266,7 +29416,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_340_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_347_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_347_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -29276,7 +29426,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_347_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_357_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_357_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29286,7 +29436,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_357_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_362_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_362_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29296,7 +29446,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_362_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_367_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_367_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29306,7 +29456,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_367_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_371_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_371_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -29316,7 +29466,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_371_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_383_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_383_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29326,7 +29476,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_383_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_387_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_387_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -29336,7 +29486,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_387_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_394_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_394_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"\u001b[200~Get-Location\u001b[201~"},{"matcher":"toBe","negate":false,"expected":"\u001b[200~Get-Location\u001b[201~"}]"#,
     );
@@ -29346,7 +29496,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_394_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_403_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_403_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Get-Location"},{"matcher":"toBe","negate":false,"expected":"ls -la"}]"#,
     );
@@ -29356,7 +29506,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_403_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_410_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_410_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"ls -la"},{"matcher":"toBe","negate":false,"expected":"ls -la"},{"matcher":"toBe","negate":false,"expected":"dir"}]"#,
     );
@@ -29366,7 +29516,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_410_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_416_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_416_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -29376,7 +29526,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_416_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_425_3() {
     tail_assertions::check(
-        317,
+        318,
         r#"tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_425_3"#,
         r#"[{"matcher":"toContain","negate":true,"expected":"\u001b[200~"},{"matcher":"toContain","negate":true,"expected":"\n"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29386,7 +29536,7 @@ fn tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_425_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_15_3() {
     tail_assertions::check(
-        318,
+        319,
         r#"tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_15_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[{"type":"tool_output","call_id":"thread-a","content":"working on it","channel":"text"},{"type":"tool_output","call_id":"thread-a","content":"let me check","channel":"thinking"}]}]"#,
     );
@@ -29396,7 +29546,7 @@ fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_15_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_27_3() {
     tail_assertions::check(
-        318,
+        319,
         r#"tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_27_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"type":"tool_start","tool":"file.read","call_id":"c1","parent_call_id":"thread-a"}},{"matcher":"toMatchObject","negate":false,"expected":{"type":"tool_output","call_id":"c1","content":"chunk"}},{"matcher":"toMatchObject","negate":false,"expected":{"type":"tool_result","call_id":"c1","ok":true,"parent_call_id":"thread-a"}}]"#,
     );
@@ -29406,7 +29556,7 @@ fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_39_3() {
     tail_assertions::check(
-        318,
+        319,
         r#"tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_39_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"call_id":"thread-a","content":"from A"}},{"matcher":"toMatchObject","negate":false,"expected":{"call_id":"thread-b","content":"from B"}}]"#,
     );
@@ -29416,7 +29566,7 @@ fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_39_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_49_3() {
     tail_assertions::check(
-        318,
+        319,
         r#"tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_49_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
@@ -29426,7 +29576,7 @@ fn tailstatic_packages_gateway_src_tools_thread_nested_events_test_ts_49_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_133_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_133_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"personaAgentId":"researcher","skillIds":["research"]}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Agent profile not found."}]"#,
     );
@@ -29436,7 +29586,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_133_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_160_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_160_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Thread created and started"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"},{"matcher":"toBe","negate":false,"expected":"high"},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"expected":"high"}]"#,
     );
@@ -29446,7 +29596,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_160_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_204_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_204_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"create requires non-empty `prompt`."}]"#,
     );
@@ -29456,7 +29606,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_204_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_234_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_234_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1","inspect ui",{"__jait_type":"undefined"}]}]"#,
     );
@@ -29466,7 +29616,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_234_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_267_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_267_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"kind":"message","summary":"I checked the thread state.","payload":{"__jait_matcher":"objectContaining","value":{"role":"assistant","content":"I checked the thread state."}}}},{"__jait_matcher":"objectContaining","value":{"kind":"tool.start"}}]}}]"#,
     );
@@ -29476,7 +29626,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_267_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_321_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_321_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Thread created and started"},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1","run scheduled quality task",{"__jait_type":"undefined"}]},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"}]"#,
     );
@@ -29486,7 +29636,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_321_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_360_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_360_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"did not pass scheduled job preflight before thread creation"},{"matcher":"toContain","negate":false,"expected":"usage limit reached"},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29496,7 +29646,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_360_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_399_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_399_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBeNull","negate":false},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1"]},{"matcher":"toBe","negate":false,"expected":"completed"}]"#,
     );
@@ -29506,7 +29656,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_399_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_441_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_441_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toHaveBeenLastCalledWith","negate":false,"expected":["mock-session-1","run scheduled quality task",{"__jait_type":"undefined"}]},{"matcher":"toBe","negate":false,"expected":"Nightly Quality Sweep"}]"#,
     );
@@ -29516,7 +29666,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_441_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_483_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_483_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Focused Regression Coverage"}]"#,
     );
@@ -29526,7 +29676,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_483_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_524_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_524_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":9,"kind":"seq","nodes":[{"id":0,"kind":"start"},{"id":1,"kind":"char","value":"j"},{"id":2,"kind":"char","value":"a"},{"id":3,"kind":"char","value":"i"},{"id":4,"kind":"char","value":"t"},{"id":5,"kind":"char","value":"/"},{"id":7,"kind":"repeat","node":{"id":6,"kind":"class","items":[{"low":"0","high":"9"},{"low":"a","high":"f"}],"negate":false},"min":8,"max":8},{"id":8,"kind":"end"}]},"flags":""}},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalledWith","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -29536,7 +29686,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_524_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_582_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_582_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"}]"#,
     );
@@ -29546,7 +29696,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_582_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_618_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_618_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toContain","negate":false,"expected":"Jait created this scheduled delivery thread in an isolated git worktree."},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toContain","negate":true,"dynamic":true},{"matcher":"toBeGreaterThan","negate":false,"expected":500},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -29556,7 +29706,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_618_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_689_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_689_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBeNull","negate":false},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1"]},{"matcher":"toBe","negate":false,"expected":"completed"}]"#,
     );
@@ -29566,7 +29716,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_689_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_732_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_732_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBeNull","negate":false},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1"]},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBeNull","negate":false},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -29576,7 +29726,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_732_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_778_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_778_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -29586,7 +29736,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_778_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_824_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_824_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["mock-session-1","Continue with the fix",{"__jait_type":"undefined"}]},{"matcher":"toMatchObject","negate":false,"expected":{"status":"running","completedAt":null}}]"#,
     );
@@ -29596,7 +29746,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_824_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_872_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_872_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"stringContaining","value":"<thread-history>"}},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"stringContaining","value":"User: Investigate the bug"}},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"stringContaining","value":"Assistant: The issue is stale completion state."}},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"stringContaining","value":"Apply the fix"}}]"#,
     );
@@ -29606,7 +29756,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_872_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_929_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_929_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"}]"#,
     );
@@ -29616,7 +29766,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_929_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_963_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_963_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"jait"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -29626,7 +29776,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_963_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1010_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1010_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -29636,7 +29786,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1010_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1054_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1054_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"gpt-5-codex"}]"#,
     );
@@ -29646,7 +29796,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1054_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1093_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1093_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"gpt-5-codex"}]"#,
     );
@@ -29656,7 +29806,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1093_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1129_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1129_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"jait"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"}]"#,
     );
@@ -29666,7 +29816,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1129_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1163_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1163_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"jait"},{"matcher":"toBe","negate":false,"expected":"gpt-4.1"}]"#,
     );
@@ -29676,7 +29826,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1163_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1199_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1199_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"No provider could be resolved for this thread. A selected user provider must be configured and supported."}]"#,
     );
@@ -29686,7 +29836,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1199_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1229_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1229_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"gpt-5-codex"},{"matcher":"toBe","negate":false,"expected":"supervised"}]"#,
     );
@@ -29696,7 +29846,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1229_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1264_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1264_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"gpt-5-codex"},{"matcher":"toBe","negate":false,"expected":"supervised"}]"#,
     );
@@ -29706,7 +29856,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1264_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1307_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1307_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"codex"},{"matcher":"toBe","negate":false,"expected":"mock-session-1"}]"#,
     );
@@ -29716,7 +29866,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1307_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1345_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1345_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toContain","negate":false,"expected":"Thread A"},{"matcher":"toContain","negate":false,"expected":"Thread B"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29726,7 +29876,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1345_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1392_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1392_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"Created 2 thread(s) and waited for 2 to finish."},{"matcher":"toContain","negate":false,"expected":"• Thread A [delegation · completed]"},{"matcher":"toContain","negate":false,"expected":"• Thread B [delegation · completed]"},{"matcher":"toContain","negate":false,"expected":"Waiting for 2 thread(s) to finish"},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":["Specialist mock-session-1 finished with findings.","Specialist mock-session-2 finished with findings."]}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29736,7 +29886,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1392_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1472_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1472_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29746,7 +29896,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1472_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1509_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1509_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29756,7 +29906,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1509_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1548_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1548_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29766,7 +29916,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1548_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1584_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1584_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":42},{"matcher":"toBe","negate":false,"expected":"feat: implement feature"},{"matcher":"toBe","negate":false,"expected":"open"}]"#,
     );
@@ -29776,7 +29926,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1584_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each0() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -29786,7 +29936,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each1() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -29796,7 +29946,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each2() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -29806,7 +29956,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1643_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each0() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":["user-1","agent-1"]},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toContain","negate":true,"conditional":true,"expected":"fixture-app-token"},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -29816,7 +29966,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each1() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"expected":["user-1","agent-1"]},{"matcher":"toHaveBeenCalledWith","negate":false,"conditional":true,"dynamic":true},{"matcher":"toContain","negate":true,"conditional":true,"expected":"fixture-app-token"},{"matcher":"toHaveBeenCalled","negate":true,"conditional":true}]"#,
     );
@@ -29826,7 +29976,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1665_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1692_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1692_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Thread must be completed before creating a pull request."},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29836,7 +29986,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1692_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1744_3() {
     tail_assertions::check(
-        319,
+        320,
         r#"tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1744_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"thread.control"}]"#,
     );
@@ -29846,7 +29996,7 @@ fn tailstatic_packages_gateway_src_tools_thread_tools_test_ts_1744_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_31_3_runtime() {
     tail_assertions::check(
-        320,
+        321,
         r#"tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_31_3_runtime"#,
         r#"[{"matcher":"toContainEqual","negate":false,"expected":{"__jait_matcher":"objectContaining","value":{"name":{"__jait_observed":0},"description":{"__jait_matcher":"any","type":"String"},"source":"builtin"}},"hybrid":true},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"object"},{"matcher":"toHaveProperty","negate":false,"dynamic":true}]"#,
     );
@@ -29856,7 +30006,7 @@ fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_31_3_runtime() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_43_3_runtime() {
     tail_assertions::check(
-        320,
+        321,
         r#"tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_43_3_runtime"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Input validation failed"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29866,7 +30016,7 @@ fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_43_3_runtime() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_58_5_runtime_branch() {
     tail_assertions::check(
-        320,
+        321,
         r#"tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_58_5_runtime_branch"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"Input validation failed"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29876,7 +30026,7 @@ fn tailstatic_packages_gateway_src_tools_tool_contracts_test_ts_58_5_runtime_bra
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_18_3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_18_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["tools.search","agent.github.token"]}]"#,
     );
@@ -29886,7 +30036,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_18_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_37_3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_37_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"unknown_tool_with_underscores"},{"matcher":"toBe","negate":false,"expected":"custom.tool_with_underscores"}]"#,
     );
@@ -29896,7 +30046,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_37_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_42_3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_42_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["unknown_recovery_tool","read"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29906,7 +30056,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_42_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_63_3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_63_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":[false,false,false,true]},{"matcher":"toContain","negate":false,"expected":"Change the tool name or arguments"}]"#,
     );
@@ -29916,7 +30066,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_63_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_93_3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_93_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["recovery_a_b"]},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -29926,7 +30076,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_93_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each0() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29936,7 +30086,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each1() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29946,7 +30096,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each2() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29956,7 +30106,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each3() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29966,7 +30116,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each4() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29976,7 +30126,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each4() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each5() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29986,7 +30136,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each5() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each6() {
     tail_assertions::check(
-        321,
+        322,
         r#"tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each6"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"criteria"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -29996,7 +30146,7 @@ fn tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each6() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3() {
     tail_assertions::check(
-        322,
+        323,
         r#"tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"core"},{"matcher":"toHaveProperty","negate":true,"expected":"timeoutMs"},{"matcher":"toContain","negate":false,"expected":"every connected Jait client"}]"#,
     );
@@ -30006,7 +30156,7 @@ fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3() {
     tail_assertions::check(
-        322,
+        323,
         r#"tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Deployment choice"},{"matcher":"toBe","negate":false,"expected":"urgent"},{"matcher":"toEqual","negate":false,"expected":{"answers":{"deploy_target":{"selected":["staging"],"freeText":"green pool","skipped":false}}}}]"#,
     );
@@ -30016,7 +30166,7 @@ fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3() {
     tail_assertions::check(
-        322,
+        323,
         r#"tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"message":"Duplicate question id(s): choice"}}]"#,
     );
@@ -30026,7 +30176,7 @@ fn tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_9_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_9_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"url":"https://example.com/","status":200,"body":"Inventory","insecureTlsUsed":false}}}]"#,
     );
@@ -30036,7 +30186,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_9_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each0() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each0"#,
         r#"[{"matcher":"toThrow","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30046,7 +30196,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each0() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each1() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each1"#,
         r#"[{"matcher":"toThrow","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30056,7 +30206,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each1() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each2() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each2"#,
         r#"[{"matcher":"toThrow","negate":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30066,7 +30216,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each2() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_19_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_19_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"data":{"status":503}}}]"#,
     );
@@ -30076,7 +30226,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_19_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_23_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_23_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":false,"message":"Fetch failed: Network offline"}}]"#,
     );
@@ -30086,7 +30236,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_23_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_27_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_27_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30096,7 +30246,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_27_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_33_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_33_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Cancelled"}},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30106,7 +30256,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_33_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_39_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_39_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"data":{"body":"Inventory ready"}}}]"#,
     );
@@ -30116,7 +30266,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_39_3() {
 #[test]
 fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_43_3() {
     tail_assertions::check(
-        323,
+        324,
         r#"tailstatic_packages_gateway_src_tools_web_tools_test_ts_43_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30126,7 +30276,7 @@ fn tailstatic_packages_gateway_src_tools_web_tools_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_17_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_17_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"running"}]"#,
     );
@@ -30136,7 +30286,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_17_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_28_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_28_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBe","negate":false,"expected":"the answer"},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"boom"},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -30146,7 +30296,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_28_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_48_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_48_3"#,
         r#"[{"matcher":"toBeUndefined","negate":false},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -30156,7 +30306,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_48_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_59_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_59_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"cancelled"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30166,7 +30316,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_59_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_73_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_73_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -30176,7 +30326,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_73_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_87_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_87_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -30186,7 +30336,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_87_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_93_3() {
     tail_assertions::check(
-        324,
+        325,
         r#"tailstatic_packages_gateway_src_voice_assistant_background_test_ts_93_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toBeUndefined","negate":false},{"matcher":"toBe","negate":false,"expected":"cancelled"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"cancelled"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -30196,7 +30346,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_background_test_ts_93_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_14_3() {
     tail_assertions::check(
-        325,
+        326,
         r#"tailstatic_packages_gateway_src_voice_assistant_service_test_ts_14_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Default to ask_agent_about_request for almost every real question from the user."},{"matcher":"toContain","negate":false,"expected":"you MUST call ask_agent_about_request before answering."}]"#,
     );
@@ -30206,7 +30356,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_14_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_26_3() {
     tail_assertions::check(
-        325,
+        326,
         r#"tailstatic_packages_gateway_src_voice_assistant_service_test_ts_26_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"shimmer"},{"matcher":"toEqual","negate":false,"expected":{"type":"semantic_vad","eagerness":"auto","create_response":true,"interrupt_response":true}}]"#,
     );
@@ -30216,7 +30366,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_26_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_43_3() {
     tail_assertions::check(
-        325,
+        326,
         r#"tailstatic_packages_gateway_src_voice_assistant_service_test_ts_43_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"type":"semantic_vad","eagerness":"low","create_response":true,"interrupt_response":true}}]"#,
     );
@@ -30226,7 +30376,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_43_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_61_3() {
     tail_assertions::check(
-        325,
+        326,
         r#"tailstatic_packages_gateway_src_voice_assistant_service_test_ts_61_3"#,
         r#"[{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -30236,7 +30386,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_service_test_ts_61_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_21_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_21_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"get_time_and_date"},{"matcher":"toContain","negate":false,"expected":"select_project"},{"matcher":"toContain","negate":false,"expected":"stop_voice"},{"matcher":"toContain","negate":false,"expected":"list_background_tasks"},{"matcher":"toContain","negate":false,"expected":"cancel_background_task"},{"matcher":"toContain","negate":false,"expected":"file.read"},{"matcher":"toContain","negate":false,"expected":"terminal.run"},{"matcher":"toContain","negate":true,"expected":"mcp.external"}]"#,
     );
@@ -30246,7 +30396,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_21_3()
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_46_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_46_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
@@ -30256,7 +30406,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_46_3()
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_53_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_53_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"list_background_tasks"},{"matcher":"toContain","negate":false,"expected":"cancel_background_task"}]"#,
     );
@@ -30266,7 +30416,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_53_3()
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_64_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_64_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"voice-assistant"},{"matcher":"toBe","negate":false,"optional":true,"expected":"sess-1"},{"matcher":"toBe","negate":false,"optional":true,"expected":"act-1"},{"matcher":"toBe","negate":false,"optional":true,"expected":"/proj"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["file.read",{"path":"/x"},{"__jait_matcher":"objectContaining","value":{"requestedBy":"voice-assistant"}}]},{"matcher":"toContain","negate":false,"expected":"done"}]"#,
     );
@@ -30276,7 +30426,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_64_3()
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_91_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_91_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Tool blocked: consent denied"}]"#,
     );
@@ -30286,7 +30436,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_91_3()
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_100_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_100_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Unknown tool: file.read"}]"#,
     );
@@ -30296,7 +30446,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_100_3(
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_105_3() {
     tail_assertions::check(
-        326,
+        327,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_105_3"#,
         r#"[{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":"string"}]"#,
     );
@@ -30306,7 +30456,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_105_3(
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_105_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_105_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30316,7 +30466,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_105_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_109_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_109_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30326,7 +30476,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_109_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_115_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_115_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"label":"Berlin, Germany","city":"Berlin, Germany","source":"configured"}}]"#,
     );
@@ -30336,7 +30486,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_115_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_127_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_127_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"https://wttr.in/Berlin?format=3"},{"matcher":"toBe","negate":false,"expected":"Berlin: 8 C, light rain"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
@@ -30346,7 +30496,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_127_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_141_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_141_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"That is the deployed gateway node."},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -30356,7 +30506,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_141_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_231_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_231_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveLength","negate":false,"optional":true,"expected":0}]"#,
     );
@@ -30366,7 +30516,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_231_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_285_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_285_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"optional":true,"expected":1},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBe","negate":false,"expected":"That is the deployed gateway node."},{"matcher":"toBeFalsy","negate":false},{"matcher":"toBe","negate":false,"expected":"completed"},{"matcher":"toBe","negate":false,"expected":"That is the deployed gateway node."},{"matcher":"toHaveLength","negate":false,"optional":true,"expected":0}]"#,
     );
@@ -30376,7 +30526,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_285_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_340_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_340_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"That is the deployed gateway node."},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":"That is the deployed gateway node."},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30386,7 +30536,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_340_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_383_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_383_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"running"},{"matcher":"toContain","negate":false,"expected":"Cancelled background task"},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"cancelled"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"optional":true,"expected":0},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30396,7 +30546,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_383_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_437_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_437_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"No background tasks running."}]"#,
     );
@@ -30406,7 +30556,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_437_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_447_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_447_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Voice: summarize the logs"},{"matcher":"toContain","negate":false,"expected":"voice-task-xyz"},{"matcher":"toContain","negate":false,"expected":"running"}]"#,
     );
@@ -30416,7 +30566,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_447_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_467_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_467_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Background tasks not available."}]"#,
     );
@@ -30426,7 +30576,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_467_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_478_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_478_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"No background task with that id."}]"#,
     );
@@ -30436,7 +30586,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_478_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_488_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_488_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Cancelled background task"},{"matcher":"toContain","negate":false,"expected":"task-running"},{"matcher":"toBe","negate":false,"expected":"cancelled"}]"#,
     );
@@ -30446,7 +30596,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_488_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_511_3() {
     tail_assertions::check(
-        327,
+        328,
         r#"tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_511_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"is not running"},{"matcher":"toBe","negate":false,"expected":"completed"}]"#,
     );
@@ -30456,7 +30606,7 @@ fn tailstatic_packages_gateway_src_voice_assistant_tools_test_ts_511_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_11_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_11_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"https://api.openai.com/v1/audio/transcriptions"},{"matcher":"toBe","negate":false,"optional":true,"expected":"POST"},{"matcher":"toBe","negate":false,"optional":true,"expected":"Bearer openai-key"},{"matcher":"toBe","negate":false,"optional":true,"expected":"gpt-4o-mini-transcribe"},{"matcher":"toBeInstanceOf","negate":false,"optional":true,"dynamic":true,"__jait_instance":true},{"matcher":"toBe","negate":false,"expected":"hello from gpt"},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -30466,7 +30616,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_11_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_35_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_35_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"https://api.elevenlabs.io/v1/speech-to-text"},{"matcher":"toBe","negate":false,"optional":true,"expected":"POST"},{"matcher":"toBe","negate":false,"optional":true,"expected":"eleven-key"},{"matcher":"toBe","negate":false,"optional":true,"expected":"scribe_v2"},{"matcher":"toBe","negate":false,"optional":true,"expected":"de"},{"matcher":"toBeInstanceOf","negate":false,"optional":true,"dynamic":true,"__jait_instance":true},{"matcher":"toBe","negate":false,"expected":"hallo von elevenlabs"},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -30476,7 +30626,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_35_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_60_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_60_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"Jait"},{"matcher":"toBe","negate":false,"expected":"ok"},{"matcher":"toHaveBeenCalledOnce","negate":false}]"#,
     );
@@ -30486,7 +30636,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_60_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_83_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_83_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"hey Jait what is the weather"}]"#,
     );
@@ -30496,7 +30646,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_83_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_89_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_89_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"JAIT is great"},{"matcher":"toBe","negate":false,"expected":"I love Jait and Jait"}]"#,
     );
@@ -30506,7 +30656,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_89_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_94_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_94_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"jaded view"}]"#,
     );
@@ -30516,7 +30666,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_94_3() {
 #[test]
 fn tailstatic_packages_gateway_src_voice_service_test_ts_98_3() {
     tail_assertions::check(
-        328,
+        329,
         r#"tailstatic_packages_gateway_src_voice_service_test_ts_98_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"hey Jait"}]"#,
     );
@@ -30526,7 +30676,7 @@ fn tailstatic_packages_gateway_src_voice_service_test_ts_98_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_computer_permissions_test_ts_5_3() {
     tail_assertions::check(
-        329,
+        330,
         r#"tailstatic_packages_gateway_src_ws_computer_permissions_test_ts_5_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"input"},{"matcher":"toBe","negate":false,"expected":"input"},{"matcher":"toBe","negate":false,"expected":"screen"},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -30536,7 +30686,7 @@ fn tailstatic_packages_gateway_src_ws_computer_permissions_test_ts_5_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_178_3() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_178_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveBeenCalledOnce","negate":false,"optional":true},{"matcher":"toBe","negate":false,"expected":"messenger.request"},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toBe","negate":false,"expected":"connected"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -30546,7 +30696,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_178_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_204_3() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_204_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -30556,7 +30706,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_204_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_217_3() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_217_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toMatchObject","negate":false,"dynamic":true}]"#,
     );
@@ -30566,7 +30716,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_217_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_233_3() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_233_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBeTruthy","negate":false}]"#,
     );
@@ -30576,7 +30726,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_233_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_243_3() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_243_3"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -30586,7 +30736,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_243_3() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_258_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_258_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30596,7 +30746,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_258_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_279_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_279_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30606,7 +30756,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_279_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_297_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_297_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"user-3"}]"#,
     );
@@ -30616,7 +30766,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_297_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_315_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_315_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
@@ -30626,7 +30776,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_315_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_327_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_327_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -30636,7 +30786,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_327_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_346_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_346_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"UNAUTHORIZED"}]"#,
     );
@@ -30646,7 +30796,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_346_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_358_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_358_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"session-123"}]"#,
     );
@@ -30656,7 +30806,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_358_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_383_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_383_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"action.started"},{"matcher":"toBe","negate":false,"expected":"hello"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -30666,7 +30816,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_383_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_423_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_423_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30676,7 +30826,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_423_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_452_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_452_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toEqual","negate":false,"expected":{"sessionId":"background-session","streaming":false}},{"matcher":"toEqual","negate":false,"expected":{"sessionId":"background-session","streaming":false}},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -30686,7 +30836,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_452_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_489_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_489_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"req-1"}]"#,
     );
@@ -30696,7 +30846,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_489_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_505_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_505_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toEqual","negate":false,"expected":{"requestId":"req-2","reason":"No"}}]"#,
     );
@@ -30706,7 +30856,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_505_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_523_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_523_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"screen-share:offer"},{"matcher":"toBe","negate":false,"expected":"fake-sdp"},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -30716,7 +30866,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_523_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_563_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_563_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -30726,7 +30876,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_563_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_598_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_598_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"SESSION_SCOPE_MISMATCH"},{"matcher":"toHaveBeenCalled","negate":true}]"#,
     );
@@ -30736,7 +30886,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_598_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_627_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_627_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"SESSION_FORBIDDEN"},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":"owned-session"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30746,7 +30896,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_627_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_651_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_651_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"surface.connected"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"buffered prompt>"},{"matcher":"toBe","negate":false,"expected":"terminal:term-sync"},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"live output line"},{"matcher":"toBe","negate":false,"expected":"terminal:term-sync"},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":7},{"matcher":"toBeNull","negate":false}]"#,
     );
@@ -30756,7 +30906,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_651_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_694_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_694_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"current command output"},{"matcher":"toBe","negate":false,"expected":4}]"#,
     );
@@ -30766,7 +30916,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_694_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_724_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_724_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toEqual","negate":false,"expected":["device-auth"]}]"#,
     );
@@ -30776,7 +30926,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_724_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_746_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_746_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"terminal:term-seq"},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"terminal:term-seq"},{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
@@ -30786,7 +30936,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_746_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_773_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_773_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"streamId":"provider:provider-session-1","seq":1}},{"matcher":"toEqual","negate":false,"expected":{"streamId":"provider:provider-session-1","seq":2}}]"#,
     );
@@ -30796,7 +30946,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_773_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_803_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_803_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"fs.node-registered"},{"matcher":"toBe","negate":false,"expected":"tool.op-request"},{"matcher":"toEqual","negate":false,"expected":{"ok":true}},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
@@ -30806,7 +30956,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_803_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_864_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_864_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"terminal.op-request"},{"matcher":"toMatchObject","negate":false,"expected":{"op":"start","terminalId":"term-remote","sessionId":"terminal-session","projectRoot":"/tmp","cols":80,"rows":24}},{"matcher":"toEqual","negate":false,"expected":{"ok":true,"pid":42,"shell":"/bin/bash"}},{"matcher":"toEqual","negate":false,"expected":[{"terminalId":"term-remote","data":"ready\\n","nodeId":"remote-terminal-node"}]},{"matcher":"toBe","negate":false,"expected":"terminal.op-request"},{"matcher":"toMatchObject","negate":false,"expected":{"op":"input","terminalId":"term-remote","data":"pwd\\r"}},{"matcher":"toBeUndefined","negate":false}]"#,
     );
@@ -30816,7 +30966,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_864_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_940_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_940_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":54,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"p"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"m"},{"id":4,"kind":"char","value":"i"},{"id":5,"kind":"char","value":"s"},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"i"},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"n"},{"id":10,"kind":"char","value":"_"},{"id":11,"kind":"char","value":"d"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"n"},{"id":14,"kind":"char","value":"i"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":":"},{"id":18,"kind":"char","value":" "},{"id":19,"kind":"char","value":"n"},{"id":20,"kind":"char","value":"o"},{"id":21,"kind":"char","value":"d"},{"id":22,"kind":"char","value":"e"},{"id":23,"kind":"char","value":" "},{"id":24,"kind":"char","value":"d"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":"n"},{"id":27,"kind":"char","value":"y"},{"id":28,"kind":"char","value":"-"},{"id":29,"kind":"char","value":"n"},{"id":30,"kind":"char","value":"o"},{"id":31,"kind":"char","value":"d"},{"id":32,"kind":"char","value":"e"},{"id":33,"kind":"char","value":" "},{"id":34,"kind":"char","value":"n"},{"id":35,"kind":"char","value":"o"},{"id":36,"kind":"char","value":"t"},{"id":37,"kind":"char","value":" "},{"id":38,"kind":"char","value":"g"},{"id":39,"kind":"char","value":"r"},{"id":40,"kind":"char","value":"a"},{"id":41,"kind":"char","value":"n"},{"id":42,"kind":"char","value":"t"},{"id":43,"kind":"char","value":"e"},{"id":44,"kind":"char","value":"d"},{"id":45,"kind":"char","value":" "},{"id":46,"kind":"char","value":"t"},{"id":47,"kind":"char","value":"e"},{"id":48,"kind":"char","value":"r"},{"id":49,"kind":"char","value":"m"},{"id":50,"kind":"char","value":"i"},{"id":51,"kind":"char","value":"n"},{"id":52,"kind":"char","value":"a"},{"id":53,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":true,"expected":"terminal.op-request"}]"#,
     );
@@ -30826,7 +30976,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_940_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_976_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_976_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":57,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"p"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"r"},{"id":3,"kind":"char","value":"m"},{"id":4,"kind":"char","value":"i"},{"id":5,"kind":"char","value":"s"},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"i"},{"id":8,"kind":"char","value":"o"},{"id":9,"kind":"char","value":"n"},{"id":10,"kind":"char","value":"_"},{"id":11,"kind":"char","value":"d"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"n"},{"id":14,"kind":"char","value":"i"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":":"},{"id":18,"kind":"char","value":" "},{"id":19,"kind":"char","value":"n"},{"id":20,"kind":"char","value":"o"},{"id":21,"kind":"char","value":"d"},{"id":22,"kind":"char","value":"e"},{"id":23,"kind":"char","value":" "},{"id":24,"kind":"char","value":"a"},{"id":25,"kind":"char","value":"g"},{"id":26,"kind":"char","value":"e"},{"id":27,"kind":"char","value":"n"},{"id":28,"kind":"char","value":"t"},{"id":29,"kind":"char","value":"-"},{"id":30,"kind":"char","value":"d"},{"id":31,"kind":"char","value":"e"},{"id":32,"kind":"char","value":"n"},{"id":33,"kind":"char","value":"y"},{"id":34,"kind":"char","value":"-"},{"id":35,"kind":"char","value":"n"},{"id":36,"kind":"char","value":"o"},{"id":37,"kind":"char","value":"d"},{"id":38,"kind":"char","value":"e"},{"id":39,"kind":"char","value":" "},{"id":40,"kind":"char","value":"n"},{"id":41,"kind":"char","value":"o"},{"id":42,"kind":"char","value":"t"},{"id":43,"kind":"char","value":" "},{"id":44,"kind":"char","value":"g"},{"id":45,"kind":"char","value":"r"},{"id":46,"kind":"char","value":"a"},{"id":47,"kind":"char","value":"n"},{"id":48,"kind":"char","value":"t"},{"id":49,"kind":"char","value":"e"},{"id":50,"kind":"char","value":"d"},{"id":51,"kind":"char","value":" "},{"id":52,"kind":"char","value":"a"},{"id":53,"kind":"char","value":"g"},{"id":54,"kind":"char","value":"e"},{"id":55,"kind":"char","value":"n"},{"id":56,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"g"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":"e"},{"id":10,"kind":"char","value":"d"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"g"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":"n"},{"id":16,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"g"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":"e"},{"id":10,"kind":"char","value":"d"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"g"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":"n"},{"id":16,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":17,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"g"},{"id":5,"kind":"char","value":"r"},{"id":6,"kind":"char","value":"a"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"t"},{"id":9,"kind":"char","value":"e"},{"id":10,"kind":"char","value":"d"},{"id":11,"kind":"char","value":" "},{"id":12,"kind":"char","value":"a"},{"id":13,"kind":"char","value":"g"},{"id":14,"kind":"char","value":"e"},{"id":15,"kind":"char","value":"n"},{"id":16,"kind":"char","value":"t"}]},"flags":""}},{"matcher":"toBe","negate":true,"expected":"provider.op-request"}]"#,
     );
@@ -30836,7 +30986,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_976_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1028_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1028_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
@@ -30846,7 +30996,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1028_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1078_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1078_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"NODE_ONLINE"}]"#,
     );
@@ -30856,7 +31006,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1078_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1110_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1110_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":true,"expected":"error"}]"#,
     );
@@ -30866,7 +31016,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1110_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1161_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1161_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toThrow","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":38,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"d"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"e"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":" "},{"id":5,"kind":"char","value":"n"},{"id":6,"kind":"char","value":"o"},{"id":7,"kind":"char","value":"t"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"s"},{"id":10,"kind":"char","value":"u"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"p"},{"id":13,"kind":"char","value":"o"},{"id":14,"kind":"char","value":"r"},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":" "},{"id":17,"kind":"char","value":"i"},{"id":18,"kind":"char","value":"n"},{"id":19,"kind":"char","value":"t"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":"r"},{"id":22,"kind":"char","value":"a"},{"id":23,"kind":"char","value":"c"},{"id":24,"kind":"char","value":"t"},{"id":25,"kind":"char","value":"i"},{"id":26,"kind":"char","value":"v"},{"id":27,"kind":"char","value":"e"},{"id":28,"kind":"char","value":" "},{"id":29,"kind":"char","value":"t"},{"id":30,"kind":"char","value":"e"},{"id":31,"kind":"char","value":"r"},{"id":32,"kind":"char","value":"m"},{"id":33,"kind":"char","value":"i"},{"id":34,"kind":"char","value":"n"},{"id":35,"kind":"char","value":"a"},{"id":36,"kind":"char","value":"l"},{"id":37,"kind":"char","value":"s"}]},"flags":""}}]"#,
     );
@@ -30876,7 +31026,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1161_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1200_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1200_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toEqual","negate":false,"expected":["device-r1"]},{"matcher":"toEqual","negate":false,"expected":["device-r1"]}]"#,
     );
@@ -30886,7 +31036,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1200_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1225_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1225_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"surface.registry"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"surface-1"}]"#,
     );
@@ -30896,7 +31046,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1225_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1258_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1258_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"consent.pending-snapshot"},{"matcher":"toEqual","negate":false,"expected":{"requests":[{"id":"request-1","sessionId":"owned"}]}},{"matcher":"toEqual","negate":false,"expected":{"requests":[]}}]"#,
     );
@@ -30906,7 +31056,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1258_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1277_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1277_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"session.streaming-snapshot"},{"matcher":"toEqual","negate":false,"expected":{"sessionIds":[]}}]"#,
     );
@@ -30916,7 +31066,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1277_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1298_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1298_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"UNAUTHORIZED"},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"session.created"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
@@ -30926,7 +31076,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1298_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1343_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1343_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"sessionId":"chat-session-1","command":"npm test","exitCode":1,"output":"3 failing"}}]"#,
     );
@@ -30936,7 +31086,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1343_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1377_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1377_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"done"}]"#,
     );
@@ -30946,7 +31096,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1377_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1414_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1414_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
@@ -30956,7 +31106,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1414_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1443_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1443_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":0}]"#,
     );
@@ -30966,7 +31116,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1443_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1469_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1469_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toBe","negate":false,"expected":"Invalid JSON"}]"#,
     );
@@ -30976,7 +31126,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1469_5() {
 #[test]
 fn tailstatic_packages_gateway_src_ws_test_ts_1483_5() {
     tail_assertions::check(
-        330,
+        331,
         r#"tailstatic_packages_gateway_src_ws_test_ts_1483_5"#,
         r#"[{"matcher":"toBeGreaterThan","negate":false,"optional":true,"expected":0},{"matcher":"toBe","negate":false,"expected":"error"},{"matcher":"toContain","negate":false,"expected":"Unknown message type"}]"#,
     );
@@ -30986,7 +31136,7 @@ fn tailstatic_packages_gateway_src_ws_test_ts_1483_5() {
 #[test]
 fn tailstatic_packages_gateway_src_routes_messenger_regression_test_ts_7_3() {
     tail_assertions::check(
-        331,
+        332,
         r#"tailstatic_packages_gateway_src_routes_messenger_regression_test_ts_7_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toBe","negate":false,"expected":"disconnected"}]"#,
     );

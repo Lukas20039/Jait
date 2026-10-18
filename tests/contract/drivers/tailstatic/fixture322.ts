@@ -1,12 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/user-question-tools.test.ts; expected literals are in tail_static.rs.
-import { UserQuestionService } from "../../../../packages/gateway/src/services/user-questions.js";
-import { createUserAskTool } from "../../../../packages/gateway/src/tools/user-question-tools.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/tool-recovery.test.ts; expected literals are in tail_static.rs.
+import { runAgentLoop, toolDefsToSchemas, fromOpenAIName, type AgentMessage } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createTeamChatTool } from "../../../../packages/gateway/src/tools/team-chat-tools.js";
+import type { TeamChatService } from "../../../../packages/gateway/src/services/team-chat.js";
+import type { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/user-question-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/tool-recovery.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,136 +43,474 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3": {
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_18_3": {
 
 
-function context(): ToolContext {
-  return {
-    sessionId: "session-1",
-    actionId: "action-1",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-  };
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
 }
+const __jait_hook_398 = () => vi.restoreAllMocks();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = new UserQuestionService();
-    const tool = createUserAskTool(service);
-
-    __jait_capture(0, (tool.tier));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.description));
+    let round = 0;
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => [
+      response("tools_search", { query: "GitHub token" }),
+      response("agent_github_token"),
+      response(),
+    ][round++]!);
+    const execute = vi.fn(async (name: string) => name === "tools.search"
+      ? { ok: true, message: "Found token tool", data: { matches: [{ name: "agent.github.token", description: "Mint token", parameters: { type: "object", properties: {} } }] } }
+      : { ok: name === "agent.github.token", message: name });
+    await runAgentLoop({
+      llm: { openaiApiKey: "test", openaiBaseUrl: "https://llm.test", openaiModel: "test", contextWindow: 100000 },
+      history: [{ role: "system", content: "Use tools" }, { role: "user", content: "Get the GitHub token" }],
+      toolSchemas: toolDefsToSchemas([{ name: "tools.search", description: "Search tools", parameters: { type: "object", properties: {} } }]),
+      hasTools: true, sessionId: "discovery-repro", abort: new AbortController(), maxRounds: 5,
+    }, execute);
+    __jait_capture(0, (execute.mock.calls.map(call => call[0])));
   
 })();
 
 } finally {
-
+await __jait_hook_398();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_37_3": {
 
 
-function context(): ToolContext {
-  return {
-    sessionId: "session-1",
-    actionId: "action-1",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-  };
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
 }
+const __jait_hook_398 = () => vi.restoreAllMocks();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let service: UserQuestionService;
-    let observedTitle = "";
-    let observedAttention = "";
-    service = new UserQuestionService({
-      onRequest: (request) => {
-        observedTitle = request.title;
-        observedAttention = request.attention;
-        queueMicrotask(() => {
-          service.submit(request.id, {
-            answers: {
-              deploy_target: { selected: ["staging"], freeText: "green pool", skipped: false },
-            },
-          }, "user-1");
-        });
-      },
+    __jait_capture(0, (fromOpenAIName("unknown_tool_with_underscores")));
+    __jait_capture(1, (fromOpenAIName("custom.tool_with_underscores")));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_42_3": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let round = 0;
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => [
+      response("unknown_recovery_tool", { value: "bad" }),
+      response("unknown_recovery_tool", { value: "bad" }),
+      response("read", { path: "fixed.md" }),
+      response(),
+    ][round++]!);
+    const execute = vi.fn(async (name: string) => name === "read"
+      ? { ok: true, message: "Read succeeded" }
+      : { ok: false, message: "Unknown tool: " + name });
+    const history: AgentMessage[] = [{ role: "system", content: "Use tools" }, { role: "user", content: "Read the file" }];
+    await runAgentLoop({
+      llm: { openaiApiKey: "test", openaiBaseUrl: "https://llm.test", openaiModel: "test", contextWindow: 100000 },
+      history, toolSchemas: toolDefsToSchemas([{ name: "read", description: "Read", parameters: { type: "object", properties: {} } }]),
+      hasTools: true, sessionId: "invalid-retry-repro", abort: new AbortController(), maxRounds: 6,
+    }, execute);
+    __jait_capture(0, (execute.mock.calls.map(call => call[0])));
+    __jait_capture(1, (history.some(entry => entry.role === "tool" && entry.content.includes("Change the tool name or arguments"))));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_63_3": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const room = { id: "room" };
+    const service = { workForSession: vi.fn(), get: vi.fn().mockReturnValue(room), sender: vi.fn(),
+      setGoal: vi.fn().mockReturnValue(room) };
+    const registry = new ToolRegistry();
+    const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+    registry.register(tool);
+    let round = 0;
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => [
+      response("team_chat", { action: "goal", roomId: "room", content: "Show avatars" }),
+      response("team_chat", { action: "goal", roomId: "room", content: "Show avatars" }),
+      response("team_chat", { action: "goal", roomId: "room", content: "Show avatars" }),
+      response("team_chat", { action: "goal", roomId: "room", content: "Show avatars", criteria: ["Mention shows avatar"] }),
+      response(),
+    ][round++]!);
+    const execute = vi.fn(async (name: string, input: unknown) => registry.execute(name, input, {
+      userId: "owner", sessionId: "goal-recovery", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    }));
+    const history: AgentMessage[] = [{ role: "system", content: "Use tools" }, { role: "user", content: "Set the goal" }];
+    const result = await runAgentLoop({
+      llm: { openaiApiKey: "test", openaiBaseUrl: "https://llm.test", openaiModel: "test", contextWindow: 100000 },
+      history, toolRegistry: registry, toolSchemas: toolDefsToSchemas([tool]),
+      hasTools: true, sessionId: "goal-recovery", abort: new AbortController(), maxRounds: 6,
+    }, execute);
+    __jait_capture(0, (execute.mock.calls));
+    __jait_capture(1, (service.setGoal.mock.calls));
+    __jait_capture(2, (result.executedToolCalls.map(call => call.ok)));
+    __jait_capture(3, (result.executedToolCalls[1]?.message));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_93_3": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    const first = { name: "recovery.a_b", description: "first", parameters: { type: "object" as const, properties: {} },
+      execute: async () => ({ ok: true, message: "first" }) };
+    const second = { ...first, name: "recovery_a.b" };
+
+    // Registration must never fail: the registry legitimately exposes legacy
+    // alias pairs such as `os.tool` / `os_tool`, and a collision is not fatal.
+    registry.register(first);
+    registry.register(second);
+
+    // Only one schema reaches the provider, so no duplicate function is advertised.
+    const schemas = toolDefsToSchemas([first, second]);
+    const names = schemas.map(schema => schema.function.name);
+    __jait_capture(0, (names));
+
+    // The advertised alias always resolves to a registered, executable tool.
+    const resolved = fromOpenAIName(names[0]!);
+    __jait_capture(1, (["recovery.a_b", "recovery_a.b"]), (resolved));
+    __jait_capture(2, (registry.isExecutable(resolved)));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each0": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = undefined;
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
     });
-    const tool = createUserAskTool(service);
-
-    const result = await tool.execute({
-      title: "Deployment choice",
-      attention: "urgent",
-      questions: [{
-        id: "deploy_target",
-        header: "Target",
-        question: "Where should this deploy?",
-        options: [{ label: "staging", recommended: true }, { label: "production" }],
-      }],
-    }, context());
-
     __jait_capture(0, (result.ok));
-    __jait_capture(1, (observedTitle));
-    __jait_capture(2, (observedAttention));
-    __jait_capture(3, (result.data));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_398();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3": {
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each1": {
 
 
-function context(): ToolContext {
-  return {
-    sessionId: "session-1",
-    actionId: "action-1",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-  };
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
 }
+const __jait_hook_398 = () => vi.restoreAllMocks();
 /*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = undefined;
 
 try {
 await (async()=>{
 
-    const service = new UserQuestionService({
-      onRequest: () => {
-        throw new Error("request should not be created");
-      },
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
     });
-    const tool = createUserAskTool(service);
-
-    const result = await tool.execute({
-      questions: [
-        { id: "choice", header: "First", question: "First question?" },
-        { id: "choice", header: "Second", question: "Second question?" },
-      ],
-    }, context());
-
-    __jait_capture(0, (result));
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
   
 })();
 
 } finally {
+await __jait_hook_398();
+}
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each2": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = "";
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each3": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = " ";
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each4": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = null;
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each5": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = Array(21).fill("criterion");
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_tool_recovery_test_ts_115_3_each6": {
+
+
+function response(name?: string, args: unknown = {}) {
+  const delta = name
+    ? { tool_calls: [{ index: 0, id: "call-" + name, type: "function", function: { name, arguments: JSON.stringify(args) } }] }
+    : { content: "Finished." };
+  return new Response('data: ' + JSON.stringify({ choices: [{ delta, finish_reason: name ? "tool_calls" : "stop" }] }) + '\n\ndata: [DONE]\n\n', { headers: { "content-type": "text/event-stream" } });
+}
+const __jait_hook_398 = () => vi.restoreAllMocks();
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const criteria = "x".repeat(2001);
+
+try {
+await (async()=>{
+
+    const service = { workForSession: vi.fn(), get: vi.fn(), sender: vi.fn(), setGoal: vi.fn(() => { throw new Error("A goal needs explicit acceptance criteria."); }) };
+    const registry = new ToolRegistry();
+    registry.register(createTeamChatTool(service as unknown as TeamChatService, {} as SessionService));
+    const result = await registry.execute("team.chat", { action: "goal", roomId: "room", content: "Show avatars", criteria }, {
+      userId: "owner", sessionId: "test", actionId: "test", projectRoot: "/project", requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (service.workForSession.mock.calls));
+    __jait_capture(3, (service.setGoal.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_398();
+}
 }
 }
 

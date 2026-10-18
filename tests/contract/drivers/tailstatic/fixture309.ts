@@ -1,25 +1,16 @@
-// Translated fixture from packages/gateway/src/tools/ssh-tools.test.ts; expected literals are in tail_static.rs.
-import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
-import { UserSecretService } from "../../../../packages/gateway/src/services/user-secrets.js";
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
-import {
-  createSshRunTool,
-  createSshSessionCloseTool,
-  createSshSessionRunTool,
-  createSshSessionStartTool,
-  type SshPtyFactory,
-} from "../../../../packages/gateway/src/tools/ssh-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/skill-tools.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { SkillRegistry } from "../../../../packages/gateway/src/skills/index.js";
+import { createSkillsManageTool, createExtensionsManageTool } from "../../../../packages/gateway/src/tools/skill-tools.js";
+import type { PluginManager } from "../../../../packages/gateway/src/plugins/manager.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/ssh-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/skill-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -53,186 +44,31 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_109_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_26_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { service, requests, secret } = autoSubmitSecret();
-    const { factory } = fakePtyFactory();
-    const registry = new ToolRegistry();
-    registry.register(createSshRunTool(service, factory));
-    const chunks: string[] = [];
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "ssh.run",
-      {
-        host: "linux-box.local",
-        username: "alice",
-        command: "printf codex-remote",
-        authMethod: "password",
-        strictHostKeyChecking: false,
-      },
-      context({ providerId: "codex", requestedBy: "agent", onOutputChunk: (chunk) => chunks.push(chunk) }),
-      audit,
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, ((result.data as { output: string }).output));
-    __jait_capture(2, (JSON.stringify(result.data)), (secret));
-    __jait_capture(3, (chunks.join("")), (secret));
-    __jait_capture(4, (requests));
-    __jait_capture(5, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(6, (auditEntries[0]));
+    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
+    const res = await tool.execute({ action: "list" }, ctx);
+    __jait_capture(0, (res.ok));
+    __jait_capture(1, ((res.data as { skills: unknown[] }).skills));
   
 })();
 
@@ -243,182 +79,34 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_153_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_33_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const userSecrets = new UserSecretService(db, "test-secret");
-    userSecrets.save({
-      userId: "user-1",
-      type: "ssh-password",
-      key: "alice@linux-box.local:22",
-      label: "SSH password for alice@linux-box.local",
-      value: "remembered-password",
-    });
-    const secretInput = new SecretInputService({
-      onRequest: () => {
-        throw new Error("should not request a password when a saved secret exists");
-      },
-    });
-    const { factory, ptys } = fakePtyFactory();
-    const tool = createSshRunTool(secretInput, factory, userSecrets);
-
-    const result = await tool.execute({
-      host: "linux-box.local",
-      username: "alice",
-      command: "printf codex-remote",
-      authMethod: "password",
-      strictHostKeyChecking: false,
-    }, context());
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (ptys[0]?.writes.some((write) => write.includes("remembered-password"))));
-    sqlite.close();
+    const reg = registryWithOneSkill();
+    const tool = createSkillsManageTool({ skillRegistry: reg });
+    const enabled = await tool.execute({ action: "enable", id: "deep-research" }, ctx);
+    __jait_capture(0, (enabled.ok));
+    __jait_capture(1, (reg.get("deep-research")?.enabled));
+    await tool.execute({ action: "disable", id: "deep-research" }, ctx);
+    __jait_capture(2, (reg.get("deep-research")?.enabled));
   
 })();
 
@@ -429,195 +117,31 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_242_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_43_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { service, requests, secret } = autoSubmitSecret("super-secret-sudo");
-    const { factory, ptys, spawns } = fakeSudoPtyFactory();
-    const registry = new ToolRegistry();
-    registry.register(createSshRunTool(service, factory));
-    const chunks: string[] = [];
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "ssh.run",
-      {
-        host: "linux-box.local",
-        username: "alice",
-        command: "apt-get install -y cups",
-        sudo: true,
-        strictHostKeyChecking: false,
-      },
-      context({ providerId: "codex", requestedBy: "agent", onOutputChunk: (chunk) => chunks.push(chunk) }),
-      audit,
-    );
-
-    __jait_capture(0, (result.ok));
-    const output = (result.data as { output: string }).output;
-    __jait_capture(1, (output));
-    if (process.platform !== "win32") {
-      __jait_capture(2, (spawns[0]?.command));
-      __jait_capture(3, (spawns[0]?.args.slice(0, 2)));
-    }
-    __jait_capture(4, (output));
-    __jait_capture(5, (output), (secret));
-    __jait_capture(6, (chunks.join("")), (secret));
-    __jait_capture(7, (requests));
-    // The password was fed to the remote sudo prompt over the PTY...
-    __jait_capture(8, (ptys[0]?.writes.some((write) => write.includes(secret))));
-    // ...but never appears in tool inputs or audit output.
-    __jait_capture(9, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(10, (auditEntries[0]));
+    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
+    const res = await tool.execute({ action: "enable", id: "nope" }, ctx);
+    __jait_capture(0, (res.ok));
+    __jait_capture(1, (res.message));
   
 })();
 
@@ -628,182 +152,30 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_294_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_50_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const userSecrets = new UserSecretService(db, "test-secret");
-    userSecrets.save({
-      userId: "user-1",
-      type: "ssh-sudo-password",
-      key: "alice@linux-box.local:22",
-      label: "sudo password for alice@linux-box.local",
-      value: "remembered-sudo-pw",
-    });
-    const secretInput = new SecretInputService({
-      onRequest: () => {
-        throw new Error("should not request a sudo password when a saved secret exists");
-      },
-    });
-    const { factory, ptys } = fakeSudoPtyFactory();
-    const tool = createSshRunTool(secretInput, factory, userSecrets);
-
-    const result = await tool.execute({
-      host: "linux-box.local",
-      username: "alice",
-      command: "systemctl enable --now cups",
-      sudo: true,
-      strictHostKeyChecking: false,
-    }, context());
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (ptys[0]?.writes.some((write) => write.includes("remembered-sudo-pw"))));
-    sqlite.close();
+    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
+    const res = await tool.execute({ action: "search" }, ctx);
+    __jait_capture(0, (res.ok));
   
 })();
 
@@ -814,165 +186,36 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_328_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_58_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tools = createToolRegistry(new SurfaceRegistry(), {
-      secretInputService: new SecretInputService(),
-    });
-
-    const schemas = buildToolSchemas(tools);
-    const byName = new Map(schemas.map((schema) => [schema.function.name, schema]));
-
-    __jait_capture(0, (byName.has("ssh_run")));
-    __jait_capture(1, (byName.has("ssh_session_start")));
-    __jait_capture(2, (byName.has("ssh_session_run")));
-    __jait_capture(3, (byName.has("ssh_session_close")));
-    __jait_capture(4, (byName.get("ssh_run")?.function.parameters));
+    const fakeManager = {
+      listInstalled: () => [
+        { id: "openclaw:whatsapp", displayName: "whatsapp", version: "0.0.0", status: "installed" },
+      ],
+    } as unknown as PluginManager;
+    const tool = createExtensionsManageTool({ pluginManager: fakeManager });
+    const res = await tool.execute({ action: "list" }, ctx);
+    __jait_capture(0, (res.ok));
+    __jait_capture(1, ((res.data as { plugins: unknown[] }).plugins));
   
 })();
 
@@ -983,187 +226,250 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_ssh_tools_test_ts_345_3": {
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_70_3": {
 
 
-function context(overrides: Partial<Parameters<ReturnType<typeof createSshRunTool>["execute"]>[1]> = {}) {
-  return {
-    sessionId: "ssh-test-session",
-    actionId: "ssh-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "remote-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
   });
-  return { service, requests, secret };
-}
-class FakePty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-
-  constructor(private readonly args: string[]) {
-    queueMicrotask(() => this.emitData("Password: "));
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    const remoteCommand = this.args[this.args.length - 1] ?? "";
-    if (remoteCommand === "printf codex-remote") {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData("codex-remote\n");
-      this.emitExit(0);
-      return;
-    }
-    const readyMarker = data.match(/(__JAIT_SSH_READY_[A-Za-z0-9_]+)/)?.[1];
-    if (readyMarker) {
-      this.emitData(`${readyMarker}\n`);
-      return;
-    }
-    const doneMarker = data.match(/(__JAIT_SSH_DONE_[A-Za-z0-9_]+__)/)?.[1];
-    if (doneMarker) {
-      const command = data.split("\n")[0] ?? "";
-      this.emitData(`${command}\n/stateful-directory\n${doneMarker}:0\n`);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakePtyFactory() {
-  const ptys: FakePty[] = [];
-  const factory: SshPtyFactory = (_command, args) => {
-    const pty = new FakePty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys };
-}
-class FakeSudoPty {
-  readonly writes: string[] = [];
-  private dataListeners: Array<(data: string) => void> = [];
-  private exitListeners: Array<(event: { exitCode: number; signal?: number }) => void> = [];
-  private readonly marker: string | null;
-
-  constructor(args: string[]) {
-    const remoteCommand = args[args.length - 1] ?? "";
-    this.marker = remoteCommand.match(/-p '([^']+)'/)?.[1] ?? null;
-    queueMicrotask(() => { if (this.marker) this.emitData(this.marker); });
-  }
-
-  onData(cb: (data: string) => void): void {
-    this.dataListeners.push(cb);
-  }
-
-  onExit(cb: (event: { exitCode: number; signal?: number }) => void): void {
-    this.exitListeners.push(cb);
-  }
-
-  write(data: string): void {
-    this.writes.push(data);
-    // The marker is the sudo prompt; the only line we expect back is the password.
-    if (this.marker && data.trim() && this.marker !== data.trim()) {
-      this.emitData(`${data.trim()}\r\n`);
-      this.emitData(`\n${this.marker}apt-sudo-ok\n`);
-      this.emitExit(0);
-    }
-  }
-
-  kill(): void {
-    this.emitExit(143);
-  }
-
-  private emitData(data: string): void {
-    for (const listener of this.dataListeners) listener(data);
-  }
-
-  private emitExit(exitCode: number): void {
-    for (const listener of this.exitListeners) listener({ exitCode });
-  }
-}
-function fakeSudoPtyFactory() {
-  const ptys: FakeSudoPty[] = [];
-  const spawns: Array<{ command: string; args: string[] }> = [];
-  const factory: SshPtyFactory = (command, args) => {
-    spawns.push({ command, args });
-    const pty = new FakeSudoPty(args);
-    ptys.push(pty);
-    return pty;
-  };
-  return { factory, ptys, spawns };
+  return reg;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { service } = autoSubmitSecret();
-    const { factory, ptys } = fakePtyFactory();
-    const startTool = createSshSessionStartTool(service, factory);
-    const runTool = createSshSessionRunTool();
-    const closeTool = createSshSessionCloseTool();
-
-    const startPromise = startTool.execute({
-      host: "linux-box.local",
-      username: "alice",
-      authMethod: "password",
-      strictHostKeyChecking: false,
-    }, context({ providerId: "jait" }));
-    const started = await startPromise;
-
-    __jait_capture(0, (started.ok));
-    const sshSessionId = (started.data as { sshSessionId: string }).sshSessionId;
-    __jait_capture(1, (sshSessionId));
-    __jait_capture(2, (ptys[0]?.writes.some((write) => write.includes("remote-password"))));
-
-    const ran = await runTool.execute({
-      sshSessionId,
-      command: "pwd",
-    }, context({ providerId: "jait" }));
-
-    __jait_capture(3, (ran.ok));
-    __jait_capture(4, ((ran.data as { output: string }).output));
-
-    const closed = await closeTool.execute({ sshSessionId }, context({ providerId: "jait" }));
-    __jait_capture(5, (closed.ok));
+    const fakeManager = {
+      enable: async () => ({ id: "x", displayName: "X", status: "error", error: "missing dep" }),
+    } as unknown as PluginManager;
+    const tool = createExtensionsManageTool({ pluginManager: fakeManager });
+    const res = await tool.execute({ action: "enable", id: "x" }, ctx);
+    __jait_capture(0, (res.ok));
+    __jait_capture(1, (res.message));
   
 })();
 
 } finally {
 
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_97_3": {
+
+
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
+  });
+  return reg;
+}
+/*__jait_scope_open__*/{
+let home: string;
+let previousHome: string | undefined;
+const __jait_hook_3313 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
+    previousHome = process.env["HOME"];
+    process.env["HOME"] = home;
+  };
+const __jait_hook_3481 = async () => {
+    if (previousHome === undefined) delete process.env["HOME"];
+    else process.env["HOME"] = previousHome;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_3313();
+try {
+await (async()=>{
+
+    const reg = new SkillRegistry();
+    const tool = createSkillsManageTool({ skillRegistry: reg });
+
+    const res = await tool.execute({
+      action: "create",
+      id: "weather-warnings",
+      name: "Weather Warnings",
+      description: "Use when monitoring Austrian weather warnings.",
+      body: "Call the GeoSphere API and report the active warnings.",
+    }, ctx);
+
+    __jait_capture(0, (res.ok));
+    __jait_capture(1, (res.message));
+    __jait_capture(2, (reg.get("weather-warnings")?.enabled));
+  
+})();
+
+} finally {
+await __jait_hook_3481();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_114_3": {
+
+
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
+  });
+  return reg;
+}
+/*__jait_scope_open__*/{
+let home: string;
+let previousHome: string | undefined;
+const __jait_hook_3313 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
+    previousHome = process.env["HOME"];
+    process.env["HOME"] = home;
+  };
+const __jait_hook_3481 = async () => {
+    if (previousHome === undefined) delete process.env["HOME"];
+    else process.env["HOME"] = previousHome;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_3313();
+try {
+await (async()=>{
+
+    const reg = new SkillRegistry();
+    const tool = createSkillsManageTool({ skillRegistry: reg });
+
+    await tool.execute({
+      action: "create",
+      name: "Fire Department Instagram",
+      description: "Use when drafting Instagram posts for the fire department.",
+      body: "Write in German, present tense.",
+    }, ctx);
+
+    __jait_captureType(0, (reg.get("fire-department-instagram")));
+  
+})();
+
+} finally {
+await __jait_hook_3481();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_128_3": {
+
+
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
+  });
+  return reg;
+}
+/*__jait_scope_open__*/{
+let home: string;
+let previousHome: string | undefined;
+const __jait_hook_3313 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
+    previousHome = process.env["HOME"];
+    process.env["HOME"] = home;
+  };
+const __jait_hook_3481 = async () => {
+    if (previousHome === undefined) delete process.env["HOME"];
+    else process.env["HOME"] = previousHome;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_3313();
+try {
+await (async()=>{
+
+    const tool = createSkillsManageTool({ skillRegistry: new SkillRegistry() });
+
+    __jait_capture(0, ((await tool.execute({ action: "create", name: "X", body: "b" }, ctx)).message));
+    __jait_capture(1, ((await tool.execute({ action: "create", name: "X", description: "d" }, ctx)).message));
+    __jait_capture(2, ((await tool.execute({ action: "create", description: "d", body: "b" }, ctx)).message));
+  
+})();
+
+} finally {
+await __jait_hook_3481();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_139_3": {
+
+
+const ctx = {} as ToolContext;
+function registryWithOneSkill(): SkillRegistry {
+  const reg = new SkillRegistry();
+  reg.add({
+    id: "deep-research",
+    name: "Deep Research",
+    description: "Compare options and synthesize findings.",
+    filePath: "/skills/deep-research/SKILL.md",
+    source: "user",
+    enabled: false,
+  });
+  return reg;
+}
+/*__jait_scope_open__*/{
+let home: string;
+let previousHome: string | undefined;
+const __jait_hook_3313 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
+    previousHome = process.env["HOME"];
+    process.env["HOME"] = home;
+  };
+const __jait_hook_3481 = async () => {
+    if (previousHome === undefined) delete process.env["HOME"];
+    else process.env["HOME"] = previousHome;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_3313();
+try {
+await (async()=>{
+
+    const reg = new SkillRegistry();
+    const tool = createSkillsManageTool({ skillRegistry: reg });
+    const input = { action: "create" as const, id: "notes", name: "Notes", description: "d", body: "b" };
+    await tool.execute(input, ctx);
+
+    const second = await tool.execute(input, ctx);
+
+    __jait_capture(0, (second.ok));
+    __jait_capture(1, (second.message));
+  
+})();
+
+} finally {
+await __jait_hook_3481();
 }
 }
 

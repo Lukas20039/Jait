@@ -1,13 +1,10 @@
-// Translated fixture from packages/gateway/src/tools/code-graph-tools.test.ts; expected literals are in tail_static.rs.
-import type { CodeGraphService } from "../../../../packages/gateway/src/services/code-graph/code-graphs.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createCodeGraphTools } from "../../../../packages/gateway/src/tools/code-graph-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/chat-modes.test.ts; expected literals are in tail_static.rs.
+import { getSystemPromptForMode, SWARM_TEAMS, formatSwarmTeamsRoster } from "../../../../packages/gateway/src/tools/chat-modes.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/code-graph-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/chat-modes.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,45 +38,26 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_21_3": {
+case "tailstatic_packages_gateway_src_tools_chat_modes_test_ts_5_3": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "test",
-  userId: "user-1",
-};
-function toolByName(service: CodeGraphService, name: string) {
-  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
-  if (!tool) throw new Error(`Missing tool ${name}`);
-  return tool;
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const query = vi.fn().mockResolvedValue({
-      query: "authentication storage",
-      mode: "hybrid",
-      context: "AuthService -[calls]-> SessionStore",
-      nodes: [{ id: "auth", label: "AuthService" }],
-      edges: [{ id: "calls" }],
-      graphRagStatus: "prepared",
-    });
-    const tool = toolByName({ query } as unknown as CodeGraphService, "codegraph.query");
+    const prompt = getSystemPromptForMode("swarm");
 
-    const result = await tool.execute({
-      query: "authentication storage",
-      mode: "hybrid",
-      maxNodes: 80,
-      maxDepth: 3,
-    }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (query.mock.calls));
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    // Specialists must never be handed a round cap — it truncates them mid-task.
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
   
 })();
 
@@ -90,40 +68,24 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_50_3": {
+case "tailstatic_packages_gateway_src_tools_chat_modes_test_ts_20_3": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "test",
-  userId: "user-1",
-};
-function toolByName(service: CodeGraphService, name: string) {
-  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
-  if (!tool) throw new Error(`Missing tool ${name}`);
-  return tool;
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const prepareGraphRag = vi.fn().mockResolvedValue({
-      index: { graphRagStatus: "prepared" },
-      manifest: { entityCount: 12, relationshipCount: 18 },
-    });
-    const tool = toolByName(
-      { prepareGraphRag } as unknown as CodeGraphService,
-      "codegraph.prepare_graphrag",
-    );
+    const prompt = getSystemPromptForMode("swarm");
 
-    const result = await tool.execute({}, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (prepareGraphRag.mock.calls));
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt), (formatSwarmTeamsRoster()));
+    __jait_capture(7, (SWARM_TEAMS.every((team) => team.roles.length > 0)));
   
 })();
 
@@ -134,34 +96,44 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_70_3": {
+case "tailstatic_packages_gateway_src_tools_chat_modes_test_ts_33_3": {
 
 
-const context: ToolContext = {
-  sessionId: "session-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "test",
-  userId: "user-1",
-};
-function toolByName(service: CodeGraphService, name: string) {
-  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
-  if (!tool) throw new Error(`Missing tool ${name}`);
-  return tool;
-}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const index = vi.fn();
-    const tool = toolByName({ index } as unknown as CodeGraphService, "codegraph.index");
+    const prompt = getSystemPromptForMode("agent");
 
-    const result = await tool.execute({}, { ...context, projectRoot: undefined });
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+  
+})();
 
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (index.mock.calls));
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_chat_modes_test_ts_42_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = getSystemPromptForMode("agent");
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
   
 })();
 

@@ -1,10 +1,10 @@
-// Translated fixture from packages/gateway/src/surfaces/terminal-output.test.ts; expected literals are in tail_static.rs.
-import { getTerminalOutputSlice } from "../../../../packages/gateway/src/surfaces/terminal-output.js";
+// Translated fixture from packages/gateway/src/surfaces/terminal-isolation.test.ts; expected literals are in tail_static.rs.
+import { resolveTerminalSpawnSpec } from "../../../../packages/gateway/src/surfaces/terminal.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/terminal-output.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/terminal-isolation.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,22 +38,22 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_10_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_5_3": {
 
 
-const NEXT_PROMPT_WITH_DONE_MARKER =
-  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const buffer = ["older\r\n", "$ echo hi\r\nhi\r\n", NEXT_PROMPT_WITH_DONE_MARKER];
+    const result = resolveTerminalSpawnSpec("/bin/bash", ["--rcfile", "/tmp/jait.sh"], "term/a:b", {
+      platform: "linux",
+      systemdRunAvailable: true,
+      env: { JAIT_UNIT: "jait-gateway" },
+    });
 
-    const slice = getTerminalOutputSlice(buffer, 3, 1, 3, 100, true);
-
-    __jait_capture(0, (slice));
-    __jait_capture(1, (slice));
+    __jait_capture(0, (result.command));
+    __jait_capture(1, (result.args));
   
 })();
 
@@ -64,21 +64,25 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_30_3": {
 
 
-const NEXT_PROMPT_WITH_DONE_MARKER =
-  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const buffer = ["user@host:~/repo$ ", "ls\r\n"];
+    __jait_capture(0, (resolveTerminalSpawnSpec("/bin/zsh", ["-l"], "term-1", {
+      platform: "linux",
+      systemdRunAvailable: true,
+      env: {},
+    })));
 
-    const slice = getTerminalOutputSlice(buffer, 2, 0, 2, 100, true);
-
-    __jait_capture(0, (slice));
+    __jait_capture(1, (resolveTerminalSpawnSpec("/bin/zsh", ["-l"], "term-1", {
+      platform: "linux",
+      systemdRunAvailable: true,
+      env: { JAIT_UNIT: "jait-gateway", JAIT_TERMINAL_ISOLATION: "0" },
+    })));
   
 })();
 
@@ -89,76 +93,37 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_27_3": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_isolation_test_ts_44_3": {
 
 
-const NEXT_PROMPT_WITH_DONE_MARKER =
-  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const buffer = ["hi\r\n", NEXT_PROMPT_WITH_DONE_MARKER];
+    const result = resolveTerminalSpawnSpec("/bin/bash", [], "term-2", {
+      platform: "linux",
+      systemdRunAvailable: true,
+      env: {
+        JAIT_TERMINAL_ISOLATION: "1",
+        JAIT_TERMINAL_MEMORY_HIGH: "2G",
+        JAIT_TERMINAL_MEMORY_MAX: "3G",
+        JAIT_TERMINAL_SWAP_MAX: "0",
+      },
+    });
+    __jait_capture(0, (result.args));
+    __jait_capture(1, (result.args));
+    __jait_capture(2, (result.args));
 
-    const slice = getTerminalOutputSlice(buffer, 2, 0, 2, 100, false);
-
-    __jait_capture(0, (slice));
-    __jait_capture(1, (slice));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_36_3": {
-
-
-const NEXT_PROMPT_WITH_DONE_MARKER =
-  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // 150 one-line chunks: the toolcard's command-local replay must include the
-    // *first* lines, not just the last 100 chunks the live tail view keeps.
-    const buffer = Array.from({ length: 150 }, (_, i) => `line ${i}\r\n`);
-
-    const slice = getTerminalOutputSlice(buffer, 150, 0, 150, 100, false);
-
-    __jait_capture(0, (slice.startsWith("line 0\r\n")));
-    __jait_capture(1, (slice));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_47_3": {
-
-
-const NEXT_PROMPT_WITH_DONE_MARKER =
-  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const buffer = Array.from({ length: 150 }, (_, i) => `line ${i}\r\n`);
-
-    const slice = getTerminalOutputSlice(buffer, 150, 0, undefined, 100, false);
-
-    __jait_capture(0, (slice.startsWith("line 50\r\n")));
-    __jait_capture(1, (slice));
+    const invalid = resolveTerminalSpawnSpec("/bin/bash", [], "term-3", {
+      platform: "linux",
+      systemdRunAvailable: true,
+      env: {
+        JAIT_TERMINAL_ISOLATION: "1",
+        JAIT_TERMINAL_MEMORY_MAX: "2G;rm",
+      },
+    });
+    __jait_capture(3, (invalid.args));
   
 })();
 

@@ -1,11 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/screenshot-tools.test.ts; expected literals are in tail_static.rs.
-import { resolve, sep } from "node:path";
-import { resolveOutPath } from "../../../../packages/gateway/src/tools/screenshot-tools.js";
+// Translated fixture from packages/gateway/src/tools/screenshot-launch.test.ts; expected literals are in tail_static.rs.
+
+
+
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/screenshot-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/screenshot-launch.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,62 +41,47 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3": {
-
-
+case "tailstatic_packages_gateway_src_tools_screenshot_launch_test_ts_14_3": {
+const { launch, close, screenshot } = vi.hoisted(() => ({
+  launch: vi.fn(), close: vi.fn(), screenshot: vi.fn(),
+}));
+await vi.mock(Bun.resolveSync("playwright", __jait_original_dir), () => ({ chromium: { launch } }));
+const { mkdir, writeFile } = await import("node:fs/promises");
+const { dirname, resolve } = await import("node:path");
+const { createScreenshotCaptureTool } = await import("../../../../packages/gateway/src/tools/screenshot-tools.js");
+const __jait_hook_408 = () => { vi.resetAllMocks(); vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-const projectRoot = resolve("other-project");
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (resolveOutPath(undefined, projectRoot).startsWith(resolve(projectRoot, ".jait", "shots") + sep)));
+    vi.stubEnv("BROWSER_CHANNEL", "");
+    vi.stubEnv("BROWSER_FALLBACK_CHANNELS", "chrome");
+    screenshot.mockImplementation(async ({ path }: { path: string }) => {
+      await mkdir(dirname(path), { recursive: true });
+      await writeFile(path, "test screenshot");
+    });
+    close.mockResolvedValue(undefined);
+    const browser = { close, newContext: async () => ({ newPage: async () => ({
+      goto: vi.fn(), waitForTimeout: vi.fn(), screenshot,
+    }) }) };
+    launch.mockRejectedValueOnce(new Error("Executable doesn't exist at /cache/chromium/headless_shell"))
+      .mockResolvedValueOnce(browser);
+    const projectRoot = resolve(__jait_original_dir, "../../../..");
+    const result = await createScreenshotCaptureTool().execute({
+      target: "http://127.0.0.1:4173/", path: ".jait/shots/screenshot-launch-regression.png",
+    }, { sessionId: "launch-test", actionId: "test", requestedBy: "assistant", projectRoot });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (launch.mock.calls));
+    __jait_capture(4, (launch.mock.calls[1][0]));
+    __jait_capture(5, (close.mock.calls));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3": {
-
-
-/*__jait_scope_open__*/{
-const projectRoot = resolve("other-project");
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (resolveOutPath(".jait/shots/layout", projectRoot)), (resolve(projectRoot, ".jait/shots/layout.png")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3": {
-
-
-/*__jait_scope_open__*/{
-const projectRoot = resolve("other-project");
-
-try {
-await (async()=>{
-
-    const output = resolve("chosen-output.png");
-    __jait_capture(0, (resolveOutPath(output, projectRoot)), (output));
-  
-})();
-
-} finally {
-
+await __jait_hook_408();
 }
 }
 

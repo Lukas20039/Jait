@@ -1,12 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/web-tools.test.ts; expected literals are in tail_static.rs.
-import { createWebFetchTool, createWebSearchTool } from "../../../../packages/gateway/src/tools/browser-tools.js";
-import { createWebTool } from "../../../../packages/gateway/src/tools/core/web.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/user-question-tools.test.ts; expected literals are in tail_static.rs.
+import { UserQuestionService } from "../../../../packages/gateway/src/services/user-questions.js";
+import { createUserAskTool } from "../../../../packages/gateway/src/tools/user-question-tools.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/web-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/user-question-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,250 +40,136 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+function context(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+  };
+}
 /*__jait_scope_open__*/{
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    fetch.mockResolvedValue(new Response("Inventory fixture page", { headers: { "Content-Type": "text/plain" } }));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/", maxBytes: 9 }, context)));
+    const service = new UserQuestionService();
+    const tool = createUserAskTool(service);
+
+    __jait_capture(0, (tool.tier));
+    __jait_capture(1, (tool.parameters.properties));
+    __jait_capture(2, (tool.description));
   
 })();
 
 } finally {
-await __jait_hook_461();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each0": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+function context(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+  };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "http://127.0.0.1/";
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
+    let service: UserQuestionService;
+    let observedTitle = "";
+    let observedAttention = "";
+    service = new UserQuestionService({
+      onRequest: (request) => {
+        observedTitle = request.title;
+        observedAttention = request.attention;
+        queueMicrotask(() => {
+          service.submit(request.id, {
+            answers: {
+              deploy_target: { selected: ["staging"], freeText: "green pool", skipped: false },
+            },
+          }, "user-1");
+        });
+      },
+    });
+    const tool = createUserAskTool(service);
+
+    const result = await tool.execute({
+      title: "Deployment choice",
+      attention: "urgent",
+      questions: [{
+        id: "deploy_target",
+        header: "Target",
+        question: "Where should this deploy?",
+        options: [{ label: "staging", recommended: true }, { label: "production" }],
+      }],
+    }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (observedTitle));
+    __jait_capture(2, (observedAttention));
+    __jait_capture(3, (result.data));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each1": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3": {
 
 
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
+function context(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+  };
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "http://169.254.169.254/";
-await __jait_hook_336();
+
 try {
 await (async()=>{
 
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
+    const service = new UserQuestionService({
+      onRequest: () => {
+        throw new Error("request should not be created");
+      },
+    });
+    const tool = createUserAskTool(service);
+
+    const result = await tool.execute({
+      questions: [
+        { id: "choice", header: "First", question: "First question?" },
+        { id: "choice", header: "Second", question: "Second question?" },
+      ],
+    }, context());
+
+    __jait_capture(0, (result));
   
 })();
 
 } finally {
-await __jait_hook_461();
-}
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_15_3_each2": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const url = "file:///etc/passwd";
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    await __jait_rejected(0, createWebFetchTool().execute({ url }, context));
-    __jait_capture(1, (fetch.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_19_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    fetch.mockResolvedValue(new Response("Unavailable", { status: 503 }));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, context)));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_23_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    fetch.mockRejectedValue(new Error("Network offline"));
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, context)));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_27_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    __jait_capture(0, (await createWebFetchTool().execute({ url: "https://example.com/" }, { ...context, signal: AbortSignal.abort() })));
-    __jait_capture(1, (fetch.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_33_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    __jait_capture(0, (await createWebSearchTool().execute({ query: "asset inventory" }, { ...context, signal: AbortSignal.abort() })));
-    __jait_capture(1, (fetch.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_39_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    fetch.mockResolvedValue(new Response("Inventory ready"));
-    __jait_capture(0, (await createWebTool().execute({ url: "https://example.com/" }, context)));
-  
-})();
-
-} finally {
-await __jait_hook_461();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_web_tools_test_ts_43_3": {
-
-
-const context = { sessionId: "web-tests", actionId: "web-action", projectRoot: "/project", requestedBy: "test" };
-const fetch = vi.fn();
-const __jait_hook_336 = () => { fetch.mockReset(); vi.stubGlobal("fetch", fetch); vi.stubEnv("WEB_FETCH_IGNORE_TLS_ERRORS", "false"); };
-const __jait_hook_461 = () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); };
-/*__jait_scope_open__*/{
-await __jait_hook_336();
-try {
-await (async()=>{
-
-    __jait_capture(0, ((await createWebTool().execute({}, context)).ok));
-    __jait_capture(1, (fetch.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_461();
 }
 }
 

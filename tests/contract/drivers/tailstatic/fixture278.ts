@@ -1,13 +1,19 @@
-// Translated fixture from packages/gateway/src/tools/email-tools.test.ts; expected literals are in tail_static.rs.
-import type { EmailService } from "../../../../packages/gateway/src/services/email/index.js";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { createEmailTools } from "../../../../packages/gateway/src/tools/email-tools.js";
+// Translated fixture from packages/gateway/src/tools/elevated-tools.test.ts; expected literals are in tail_static.rs.
+import { EventEmitter } from "node:events";
+import { PassThrough } from "node:stream";
+import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
+import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { createElevatedRunTool, type ElevatedSpawnFactory } from "../../../../packages/gateway/src/tools/elevated-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/email-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/elevated-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,456 +47,107 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each0": {
+case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3": {
 
 
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } };
+function context(overrides: Record<string, unknown> = {}) {
+  return {
+    sessionId: "elevated-test-session",
+    actionId: "elevated-test-action",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+    providerId: "codex",
+    model: "gpt-5-codex",
+    ...overrides,
+  };
+}
+function autoSubmitSecret(secret = "sudo-password") {
+  let service: SecretInputService;
+  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
+  service = new SecretInputService({
+    onRequest: (request) => {
+      requests.push({
+        title: request.title,
+        prompt: request.prompt,
+        requestedBy: request.requestedBy,
+      });
+      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
+    },
+  });
+  return { service, requests, secret };
+}
+class FakeSpawnedProcess extends EventEmitter {
+  readonly stdout = new PassThrough();
+  readonly stderr = new PassThrough();
+  readonly stdinWrites: string[] = [];
+  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
+    super();
+  }
+  readonly stdin = {
+    write: (chunk: string) => {
+      this.stdinWrites.push(chunk);
+      this.onStdinWrite?.(chunk, this);
+    },
+  };
+
+  kill(): boolean {
+    this.emit("close", 143, "SIGTERM");
+    return true;
+  }
+}
+function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
+  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
+  const factory: ElevatedSpawnFactory = (command, args) => {
+    const proc = new FakeSpawnedProcess((chunk, current) => {
+      if (chunk.includes("sudo-password")) {
+        current.stdout.write("root-owned output\n");
+        current.emit("close", 0, null);
+      }
+    });
+    calls.push({ command, args, proc });
+    onSpawn?.(command, args, proc);
+    return proc;
+  };
+  return { factory, calls };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { [method]: vi.fn().mockResolvedValue(output) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    const result = await tool.execute(input, context);
+    const { service, requests, secret } = autoSubmitSecret();
+    const { factory, calls } = fakeSpawnFactory();
+    const registry = new ToolRegistry();
+    registry.register(createElevatedRunTool(service, factory, {
+      platform: () => "linux",
+      getuid: () => 1000,
+    }));
+    const auditEntries: unknown[] = [];
+    const audit = {
+      write: vi.fn((entry: unknown) => {
+        auditEntries.push(entry);
+        return "audit-id";
+      }),
+    } as unknown as AuditWriter;
+
+    const result = await registry.execute(
+      "elevated.run",
+      {
+        command: "apt-get update",
+        reason: "install system packages",
+      },
+      context(),
+      audit,
+    );
+
     __jait_capture(0, (result.ok));
-    __jait_capture(1, (service[method].mock.calls), ([...args]));
-    __jait_capture(2, (JSON.stringify(result)));
-    if (name === "email_read") __jait_capture(3, (result.data));
-    if (["email_send", "email_tag", "email_delete"].includes(name)) {
-      __jait_capture(4, (ws.sendUICommand.mock.calls), ([{ command: "email.control", data: { action: "refresh", accountId: "account-1" } },context.sessionId]));
-    } else {
-      __jait_capture(5, (ws.sendUICommand.mock.calls));
-    }
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each0": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockRejectedValue(new Error("Mailbox disconnected")) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    __jait_capture(0, (await tool.execute(input, context)));
-    __jait_capture(1, (ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each1": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockResolvedValue(output) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    const result = await tool.execute(input, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (service[method].mock.calls), ([...args]));
-    __jait_capture(2, (JSON.stringify(result)));
-    if (name === "email_read") __jait_capture(3, (result.data));
-    if (["email_send", "email_tag", "email_delete"].includes(name)) {
-      __jait_capture(4, (ws.sendUICommand.mock.calls), ([{ command: "email.control", data: { action: "refresh", accountId: "account-1" } },context.sessionId]));
-    } else {
-      __jait_capture(5, (ws.sendUICommand.mock.calls));
-    }
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each1": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockRejectedValue(new Error("Mailbox disconnected")) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    __jait_capture(0, (await tool.execute(input, context)));
-    __jait_capture(1, (ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each2": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockResolvedValue(output) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    const result = await tool.execute(input, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (service[method].mock.calls), ([...args]));
-    __jait_capture(2, (JSON.stringify(result)));
-    if (name === "email_read") __jait_capture(3, (result.data));
-    if (["email_send", "email_tag", "email_delete"].includes(name)) {
-      __jait_capture(4, (ws.sendUICommand.mock.calls), ([{ command: "email.control", data: { action: "refresh", accountId: "account-1" } },context.sessionId]));
-    } else {
-      __jait_capture(5, (ws.sendUICommand.mock.calls));
-    }
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each2": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockRejectedValue(new Error("Mailbox disconnected")) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    __jait_capture(0, (await tool.execute(input, context)));
-    __jait_capture(1, (ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each3": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockResolvedValue(output) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    const result = await tool.execute(input, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (service[method].mock.calls), ([...args]));
-    __jait_capture(2, (JSON.stringify(result)));
-    if (name === "email_read") __jait_capture(3, (result.data));
-    if (["email_send", "email_tag", "email_delete"].includes(name)) {
-      __jait_capture(4, (ws.sendUICommand.mock.calls), ([{ command: "email.control", data: { action: "refresh", accountId: "account-1" } },context.sessionId]));
-    } else {
-      __jait_capture(5, (ws.sendUICommand.mock.calls));
-    }
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each3": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockRejectedValue(new Error("Mailbox disconnected")) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    __jait_capture(0, (await tool.execute(input, context)));
-    __jait_capture(1, (ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_18_3_each4": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockResolvedValue(output) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    const result = await tool.execute(input, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (service[method].mock.calls), ([...args]));
-    __jait_capture(2, (JSON.stringify(result)));
-    if (name === "email_read") __jait_capture(3, (result.data));
-    if (["email_send", "email_tag", "email_delete"].includes(name)) {
-      __jait_capture(4, (ws.sendUICommand.mock.calls), ([{ command: "email.control", data: { action: "refresh", accountId: "account-1" } },context.sessionId]));
-    } else {
-      __jait_capture(5, (ws.sendUICommand.mock.calls));
-    }
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_33_3_each4": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-const { name, method, input, args, output } = { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { [method]: vi.fn().mockRejectedValue(new Error("Mailbox disconnected")) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === name)!;
-    __jait_capture(0, (await tool.execute(input, context)));
-    __jait_capture(1, (ws.sendUICommand.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_42_3": {
-
-
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { sendMessage: vi.fn() };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find((tool) => tool.name === "email_view")!;
-    __jait_capture(0, ((await tool.execute({ action: "compose", to: "reviewer@example.test", body: "Draft for review" }, context)).ok));
-    __jait_capture(1, (ws.sendUICommand.mock.calls), ([context.sessionId]));
-    __jait_capture(2, (service.sendMessage.mock.calls));
+    __jait_capture(1, ((result.data as { output: string }).output));
+    __jait_capture(2, (requests));
+    __jait_capture(3, (calls[0]?.command));
+    __jait_capture(4, (calls[0]?.args));
+    __jait_capture(5, (JSON.stringify(auditEntries)), (secret));
+    __jait_capture(6, (auditEntries[0]));
   
 })();
 
@@ -501,35 +158,84 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_55_3": {
+case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3": {
 
 
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
+function context(overrides: Record<string, unknown> = {}) {
+  return {
+    sessionId: "elevated-test-session",
+    actionId: "elevated-test-action",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+    providerId: "codex",
+    model: "gpt-5-codex",
+    ...overrides,
+  };
+}
+function autoSubmitSecret(secret = "sudo-password") {
+  let service: SecretInputService;
+  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
+  service = new SecretInputService({
+    onRequest: (request) => {
+      requests.push({
+        title: request.title,
+        prompt: request.prompt,
+        requestedBy: request.requestedBy,
+      });
+      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
+    },
+  });
+  return { service, requests, secret };
+}
+class FakeSpawnedProcess extends EventEmitter {
+  readonly stdout = new PassThrough();
+  readonly stderr = new PassThrough();
+  readonly stdinWrites: string[] = [];
+  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
+    super();
+  }
+  readonly stdin = {
+    write: (chunk: string) => {
+      this.stdinWrites.push(chunk);
+      this.onStdinWrite?.(chunk, this);
+    },
+  };
+
+  kill(): boolean {
+    this.emit("close", 143, "SIGTERM");
+    return true;
+  }
+}
+function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
+  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
+  const factory: ElevatedSpawnFactory = (command, args) => {
+    const proc = new FakeSpawnedProcess((chunk, current) => {
+      if (chunk.includes("sudo-password")) {
+        current.stdout.write("root-owned output\n");
+        current.emit("close", 0, null);
+      }
+    });
+    calls.push({ command, args, proc });
+    onSpawn?.(command, args, proc);
+    return proc;
+  };
+  return { factory, calls };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { resolveAccount: vi.fn().mockReturnValue(account), getMessage: vi.fn().mockResolvedValue(message) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find(tool => tool.name === "email_view")!;
-    const result = await tool.execute({ action: "open", messageId: "message-1", accountId: "account-1" }, context);
-    __jait_capture(0, (result), ({ ok: true, data: { accountId: "account-1", message } }));
-    __jait_capture(1, (JSON.stringify(result)));
-    __jait_capture(2, (service.resolveAccount.mock.calls));
-    __jait_capture(3, (service.getMessage.mock.calls));
-    __jait_capture(4, (ws.sendUICommand.mock.calls));
+    const tools = createToolRegistry(new SurfaceRegistry(), {
+      secretInputService: new SecretInputService(),
+    });
+
+    const schemas = buildToolSchemas(tools);
+    const byName = new Map(schemas.map((schema) => [schema.function.name, schema]));
+
+    __jait_capture(0, (byName.has("elevated_run")));
+    __jait_capture(1, (byName.get("elevated_run")?.function.parameters));
   
 })();
 
@@ -540,32 +246,105 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_66_3": {
+case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3": {
 
 
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
+function context(overrides: Record<string, unknown> = {}) {
+  return {
+    sessionId: "elevated-test-session",
+    actionId: "elevated-test-action",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+    providerId: "codex",
+    model: "gpt-5-codex",
+    ...overrides,
+  };
+}
+function autoSubmitSecret(secret = "sudo-password") {
+  let service: SecretInputService;
+  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
+  service = new SecretInputService({
+    onRequest: (request) => {
+      requests.push({
+        title: request.title,
+        prompt: request.prompt,
+        requestedBy: request.requestedBy,
+      });
+      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
+    },
+  });
+  return { service, requests, secret };
+}
+class FakeSpawnedProcess extends EventEmitter {
+  readonly stdout = new PassThrough();
+  readonly stderr = new PassThrough();
+  readonly stdinWrites: string[] = [];
+  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
+    super();
+  }
+  readonly stdin = {
+    write: (chunk: string) => {
+      this.stdinWrites.push(chunk);
+      this.onStdinWrite?.(chunk, this);
+    },
+  };
+
+  kill(): boolean {
+    this.emit("close", 143, "SIGTERM");
+    return true;
+  }
+}
+function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
+  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
+  const factory: ElevatedSpawnFactory = (command, args) => {
+    const proc = new FakeSpawnedProcess((chunk, current) => {
+      if (chunk.includes("sudo-password")) {
+        current.stdout.write("root-owned output\n");
+        current.emit("close", 0, null);
+      }
+    });
+    calls.push({ command, args, proc });
+    onSpawn?.(command, args, proc);
+    return proc;
+  };
+  return { factory, calls };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { resolveAccount: vi.fn().mockImplementation(() => { throw new Error("Account not found"); }) };
-    const ws = { sendUICommand: vi.fn() };
-    const tool = createEmailTools(service as unknown as EmailService, ws as unknown as WsControlPlane).find(tool => tool.name === "email_view")!;
-    __jait_capture(0, ((await tool.execute({ action: "open" }, context)).ok));
-    __jait_capture(1, (await tool.execute({ action: "open", messageId: "foreign", accountId: "foreign" }, context)));
-    __jait_capture(2, (ws.sendUICommand.mock.calls));
+    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
+      if (command !== "powershell.exe") return;
+      queueMicrotask(() => {
+        __jait_capture(0, (args));
+        // Decode the EncodedCommand and verify it uses -Verb RunAs (UAC path)
+        const encodedIdx = args.indexOf("-EncodedCommand");
+        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
+        __jait_capture(1, (script));
+        __jait_capture(2, (script));
+        proc.stdout.write(JSON.stringify({
+          exitCode: 0,
+          stdout: "uac-elevated-output\n",
+          stderr: "",
+        }));
+        proc.emit("close", 0, null);
+      });
+    });
+    const tool = createElevatedRunTool(undefined, factory, {
+      platform: () => "win32",
+      getuid: () => undefined,
+    });
+
+    const result = await tool.execute({
+      command: "Get-Service",
+    }, context());
+
+    __jait_capture(3, (result.ok));
+    __jait_capture(4, ((result.data as { output: string }).output));
+    // UAC mode should not require the secret input service at all
+    __jait_capture(5, (calls[0]?.command));
   
 })();
 
@@ -576,32 +355,124 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_email_tools_test_ts_74_3": {
+case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3": {
 
 
-const context = { sessionId: "email-tests", actionId: "email-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-const account = { id: "account-1", email: "owner@example.test", provider: "gmail", accessToken: "must-not-leak" };
-const message = { id: "message-1", subject: "Maintenance window", from: "admin@example.test", date: "2026-10-09T08:00:00Z", bodyText: "", bodyHtml: "<p>Review the <b>asset inventory</b>.</p>" };
-const cases = [
-  { name: "email_list", method: "listMessages", input: { accountId: "account-1", folder: "inbox", query: "maintenance", limit: 5 },
-    args: ["owner-1", "account-1", { folder: "inbox", query: "maintenance", limit: 5 }], output: { account, messages: [message] } },
-  { name: "email_read", method: "getMessage", input: { id: "message-1", accountId: "account-1" }, args: ["owner-1", "account-1", "message-1"], output: message },
-  { name: "email_send", method: "sendMessage", input: { accountId: "account-1", to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory." },
-    args: ["owner-1", "account-1", { to: "reviewer@example.test", subject: "Inventory review", body: "Review the inventory.", cc: undefined, bcc: undefined, replyToMessageId: undefined, html: undefined }], output: undefined },
-  { name: "email_tag", method: "tagMessage", input: { accountId: "account-1", id: "message-1", add: ["STARRED"], remove: ["UNREAD"] }, args: ["owner-1", "account-1", "message-1", ["STARRED"], ["UNREAD"]], output: undefined },
-  { name: "email_delete", method: "deleteMessage", input: { accountId: "account-1", id: "message-1" }, args: ["owner-1", "account-1", "message-1"], output: undefined },
-];
+function context(overrides: Record<string, unknown> = {}) {
+  return {
+    sessionId: "elevated-test-session",
+    actionId: "elevated-test-action",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+    providerId: "codex",
+    model: "gpt-5-codex",
+    ...overrides,
+  };
+}
+function autoSubmitSecret(secret = "sudo-password") {
+  let service: SecretInputService;
+  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
+  service = new SecretInputService({
+    onRequest: (request) => {
+      requests.push({
+        title: request.title,
+        prompt: request.prompt,
+        requestedBy: request.requestedBy,
+      });
+      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
+    },
+  });
+  return { service, requests, secret };
+}
+class FakeSpawnedProcess extends EventEmitter {
+  readonly stdout = new PassThrough();
+  readonly stderr = new PassThrough();
+  readonly stdinWrites: string[] = [];
+  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
+    super();
+  }
+  readonly stdin = {
+    write: (chunk: string) => {
+      this.stdinWrites.push(chunk);
+      this.onStdinWrite?.(chunk, this);
+    },
+  };
+
+  kill(): boolean {
+    this.emit("close", 143, "SIGTERM");
+    return true;
+  }
+}
+function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
+  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
+  const factory: ElevatedSpawnFactory = (command, args) => {
+    const proc = new FakeSpawnedProcess((chunk, current) => {
+      if (chunk.includes("sudo-password")) {
+        current.stdout.write("root-owned output\n");
+        current.emit("close", 0, null);
+      }
+    });
+    calls.push({ command, args, proc });
+    onSpawn?.(command, args, proc);
+    return proc;
+  };
+  return { factory, calls };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { listAccounts: vi.fn().mockReturnValue([account]) };
-    const tool = createEmailTools(service as unknown as EmailService).find(tool => tool.name === "email_accounts")!;
-    const result = await tool.execute({}, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (service.listAccounts.mock.calls));
-    __jait_capture(2, (JSON.stringify(result)));
+    const { service, requests, secret } = autoSubmitSecret();
+    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
+      if (command !== "powershell.exe") return;
+      queueMicrotask(() => {
+        __jait_capture(0, (args));
+        // Verify credential-based path (not UAC) when username is provided
+        const encodedIdx = args.indexOf("-EncodedCommand");
+        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
+        __jait_capture(1, (script));
+        __jait_capture(2, (script));
+        proc.stdout.write(JSON.stringify({
+          exitCode: 0,
+          stdout: "windows-admin-output\n",
+          stderr: "",
+        }));
+        proc.emit("close", 0, null);
+      });
+    });
+    const registry = new ToolRegistry();
+    registry.register(createElevatedRunTool(service, factory, {
+      platform: () => "win32",
+      getuid: () => undefined,
+    }));
+    const auditEntries: unknown[] = [];
+    const audit = {
+      write: vi.fn((entry: unknown) => {
+        auditEntries.push(entry);
+        return "audit-id";
+      }),
+    } as unknown as AuditWriter;
+
+    const result = await registry.execute(
+      "elevated.run",
+      {
+        command: "Get-Service",
+        username: ".\\Administrator",
+        reason: "inspect local services",
+      },
+      context(),
+      audit,
+    );
+
+    __jait_capture(3, (result.ok));
+    __jait_capture(4, ((result.data as { output: string }).output));
+    __jait_capture(5, (requests));
+    __jait_capture(6, (calls[0]?.command));
+    __jait_capture(7, (JSON.stringify(calls[0])), (secret));
+    __jait_capture(8, (JSON.stringify(auditEntries)), (secret));
+    __jait_capture(9, (auditEntries[0]));
   
 })();
 

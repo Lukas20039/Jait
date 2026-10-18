@@ -1,11 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/security-tools.test.ts; expected literals are in tail_static.rs.
-import { createSecurityTools } from "../../../../packages/gateway/src/tools/security-tools.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/screenshot-tools.test.ts; expected literals are in tail_static.rs.
+import { resolve, sep } from "node:path";
+import { resolveOutPath } from "../../../../packages/gateway/src/tools/screenshot-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/security-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/screenshot-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,45 +39,64 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1": {
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3": {
 
 
-const context: ToolContext = { userId: "tool-owner", requestedBy: "agent", sessionId: "fixture", actionId: "fixture-action", projectRoot: "/fixture" };
+/*__jait_scope_open__*/{
+const projectRoot = resolve("other-project");
 
 try {
 await (async()=>{
 
-  const tools = createSecurityTools();
-  const create = tools.find(t => t.name === "security.scope.create")!;
-  __jait_capture(0, (create.defaultConsentLevel));
-  const input = { targets: ["127.0.0.1"], exclusions: [], ports: [1], authorized: true, expiresAt: new Date(Date.now() + 60_000).toISOString() };
-  __jait_capture(1, ((await create.execute(input, { ...context, executionNodeId: "remote" })).ok));
-  const scope = await create.execute(input, context);
-  __jait_capture(2, (scope.ok));
-  const data = scope.data as { id: string; operatorId: string };
-  __jait_capture(3, (data.operatorId));
-  const scan = tools.find(t => t.name === "security.services.scan")!;
-  __jait_capture(4, ((await scan.execute({ scopeId: data.id }, { ...context, executionNodeId: "remote" })).ok));
-  __jait_capture(5, ((await scan.execute({ scopeId: data.id }, { ...context, userId: "other" })).ok));
-  const result = await scan.execute({ scopeId: data.id }, context);
-  __jait_capture(6, (result.ok));
-  const run = result.data as {id: string};
-  const get = tools.find(t => t.name === "security.assessments.get")!;
-  __jait_capture(7, ((await get.execute({ runId: run.id }, context)).ok));
-  __jait_capture(8, ((await get.execute({ runId: run.id }, { ...context, userId: "other" })).ok));
-  const list = tools.find(t => t.name === "security.assessments.list")!;
-  const summary = await list.execute({}, context);
-  const runs = (summary.data as {runs: Record<string, unknown>[]}).runs;
-  __jait_capture(9, (runs));
-  __jait_capture(10, (runs[0].performedChecks));
-  __jait_captureType(11, (runs[0].observations));
-
+    __jait_capture(0, (resolveOutPath(undefined, projectRoot).startsWith(resolve(projectRoot, ".jait", "shots") + sep)));
+  
 })();
 
 } finally {
 
 }
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3": {
+
+
+/*__jait_scope_open__*/{
+const projectRoot = resolve("other-project");
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (resolveOutPath(".jait/shots/layout", projectRoot)), (resolve(projectRoot, ".jait/shots/layout.png")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3": {
+
+
+/*__jait_scope_open__*/{
+const projectRoot = resolve("other-project");
+
+try {
+await (async()=>{
+
+    const output = resolve("chosen-output.png");
+    __jait_capture(0, (resolveOutPath(output, projectRoot)), (output));
+  
+})();
+
+} finally {
+
+}
+}
 
 break;
 }

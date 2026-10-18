@@ -1,19 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/runtime-service-tools.test.ts; expected literals are in tail_static.rs.
-import type { VoiceService } from "../../../../packages/gateway/src/voice/service.js";
-import type { ChatTracesService } from "../../../../packages/gateway/src/services/chat-traces.js";
-import type { SessionSqlService } from "../../../../packages/gateway/src/services/session-sql.js";
-import type { MaintenanceService } from "../../../../packages/gateway/src/services/maintenance.js";
-import { createVoiceSpeakTool } from "../../../../packages/gateway/src/tools/voice-tools.js";
-import { createChatTracesTool } from "../../../../packages/gateway/src/tools/chat-traces-tools.js";
-import { createSessionSqlTool } from "../../../../packages/gateway/src/tools/session-sql-tools.js";
-import { createMaintenanceRunTool } from "../../../../packages/gateway/src/tools/maintenance-tools.js";
-import { createGatewayStatusTool } from "../../../../packages/gateway/src/tools/gateway-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/repo-proposal-tools.test.ts; expected literals are in tail_static.rs.
+import { createJaitTodosTool } from "../../../../packages/gateway/src/tools/repo-proposal-tools.js";
+import type { RepoRow } from "../../../../packages/gateway/src/services/repositories.js";
+import type { RepoProposalRow } from "../../../../packages/gateway/src/services/repo-proposals.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/runtime-service-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/repo-proposal-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -47,18 +41,61 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_14_3": {
+case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3": {
 
 
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const repo: RepoRow = {
+  id: "repo-1",
+  userId: "user-1",
+  deviceId: "gateway",
+  name: "Jait",
+  defaultBranch: "main",
+  localPath: "/project/jait",
+  githubUrl: null,
+  strategy: null,
+  createdAt: "2026-05-06T00:00:00.000Z",
+  updatedAt: "2026-05-06T00:00:00.000Z",
+};
+const context: ToolContext = {
+  sessionId: "thread-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+  return {
+    id: "todo-1",
+    repoId: "repo-1",
+    userId: "user-1",
+    message: "Follow up",
+    status: "open",
+    priority: "normal",
+    dueDate: null,
+    tags: "[]",
+    completedAt: null,
+    completionHistory: "[]",
+    sourceThreadId: null,
+    sourceThreadTitle: null,
+    createdAt: "2026-05-06T00:00:00.000Z",
+    updatedAt: "2026-05-06T00:00:00.000Z",
+    ...overrides,
+  };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { speak: vi.fn().mockReturnValue({ mimeType: "audio/wav", audioBase64: "YXVkaW8=" }) };
-    __jait_capture(0, (await createVoiceSpeakTool(service as unknown as VoiceService).execute({ text: "  Checks passed  " }, context)));
-    __jait_capture(1, (service.speak.mock.calls), ([{ sessionId: context.sessionId, text: "Checks passed" }]));
+    const tool = createJaitTodosTool({
+      repoService: { list: () => [repo] } as any,
+      repoProposalService: {} as any,
+    });
+
+    __jait_capture(0, (tool.name));
+    __jait_capture(1, (tool.tier));
+    __jait_capture(2, (tool.parameters.properties.action.enum));
+    __jait_captureType(3, (tool.parameters.properties.todoId));
   
 })();
 
@@ -69,18 +106,92 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3": {
 
 
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const repo: RepoRow = {
+  id: "repo-1",
+  userId: "user-1",
+  deviceId: "gateway",
+  name: "Jait",
+  defaultBranch: "main",
+  localPath: "/project/jait",
+  githubUrl: null,
+  strategy: null,
+  createdAt: "2026-05-06T00:00:00.000Z",
+  updatedAt: "2026-05-06T00:00:00.000Z",
+};
+const context: ToolContext = {
+  sessionId: "thread-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+  return {
+    id: "todo-1",
+    repoId: "repo-1",
+    userId: "user-1",
+    message: "Follow up",
+    status: "open",
+    priority: "normal",
+    dueDate: null,
+    tags: "[]",
+    completedAt: null,
+    completionHistory: "[]",
+    sourceThreadId: null,
+    sourceThreadTitle: null,
+    createdAt: "2026-05-06T00:00:00.000Z",
+    updatedAt: "2026-05-06T00:00:00.000Z",
+    ...overrides,
+  };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = { speak: vi.fn() };
-    __jait_capture(0, ((await createVoiceSpeakTool(service as unknown as VoiceService).execute({ text: " " }, context)).ok));
-    __jait_capture(1, (service.speak.mock.calls));
+    const todos: RepoProposalRow[] = [];
+    const tool = createJaitTodosTool({
+      repoService: { list: () => [repo] } as any,
+      repoProposalService: {
+        listByRepo: () => todos,
+        create: (params: any) => {
+          const todo = createTodo({
+            id: `todo-${todos.length + 1}`,
+            message: params.message,
+            priority: params.priority,
+            dueDate: params.dueDate,
+            tags: JSON.stringify(params.tags),
+          });
+          todos.unshift(todo);
+          return todo;
+        },
+      } as any,
+      threadService: { getById: () => ({ id: "thread-1", title: "Thread One" }) } as any,
+    });
+
+    const addResult = await tool.execute({
+      action: "add",
+      message: "Polish todo tags",
+      priority: "high",
+      dueDate: "2026-05-10",
+      tags: ["UI", "todo"],
+    }, context);
+    const listResult = await tool.execute({ action: "list" }, context);
+
+    __jait_capture(0, (addResult.ok));
+    __jait_capture(1, (addResult.message));
+    __jait_capture(2, ((addResult.data as any).todo), ({
+      message: "Polish todo tags",
+      priority: "high",
+      dueDate: "2026-05-10",
+      tags: JSON.stringify(["ui", "todo"]),
+    }));
+    __jait_capture(3, ((listResult.data as any).todos));
+    __jait_capture(4, (listResult.message));
+    __jait_capture(5, (listResult.message));
   
 })();
 
@@ -91,225 +202,99 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3": {
 
 
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const repo: RepoRow = {
+  id: "repo-1",
+  userId: "user-1",
+  deviceId: "gateway",
+  name: "Jait",
+  defaultBranch: "main",
+  localPath: "/project/jait",
+  githubUrl: null,
+  strategy: null,
+  createdAt: "2026-05-06T00:00:00.000Z",
+  updatedAt: "2026-05-06T00:00:00.000Z",
+};
+const context: ToolContext = {
+  sessionId: "thread-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+  return {
+    id: "todo-1",
+    repoId: "repo-1",
+    userId: "user-1",
+    message: "Follow up",
+    status: "open",
+    priority: "normal",
+    dueDate: null,
+    tags: "[]",
+    completedAt: null,
+    completionHistory: "[]",
+    sourceThreadId: null,
+    sourceThreadTitle: null,
+    createdAt: "2026-05-06T00:00:00.000Z",
+    updatedAt: "2026-05-06T00:00:00.000Z",
+    ...overrides,
+  };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const traces = { found: true, counts: { messages: 2, threads: 1, threadActivities: 3 }, threads: [{ status: "completed", kind: "agent", title: "Browser checks" }] };
-    const service = { traces: vi.fn().mockReturnValue(traces) };
-    __jait_capture(0, (await createChatTracesTool(service as unknown as ChatTracesService).execute({ chatId: "chat-1", messageLimit: 5, includeThinking: false }, context)), ({ ok: true, data: traces }));
-    __jait_capture(1, (service.traces.mock.calls));
-  
-})();
+    const todos: RepoProposalRow[] = [createTodo({ id: "todo-1", message: "Original todo" })];
+    const tool = createJaitTodosTool({
+      repoService: { list: () => [repo] } as any,
+      repoProposalService: {
+        getById: (id: string) => todos.find((todo) => todo.id === id),
+        update: (id: string, params: any) => {
+          const index = todos.findIndex((todo) => todo.id === id);
+          if (index === -1) return undefined;
+          todos[index] = createTodo({
+            ...todos[index],
+            message: params.message ?? todos[index].message,
+            status: params.status ?? todos[index].status,
+            priority: params.priority ?? todos[index].priority,
+            dueDate: params.dueDate ?? todos[index].dueDate,
+            tags: params.tags ? JSON.stringify(params.tags) : todos[index].tags,
+          });
+          return todos[index];
+        },
+        delete: (id: string) => {
+          const index = todos.findIndex((todo) => todo.id === id);
+          if (index !== -1) todos.splice(index, 1);
+        },
+      } as any,
+    });
 
-} finally {
+    const updateResult = await tool.execute({
+      action: "update",
+      todoId: "todo-1",
+      message: "Updated todo",
+      status: "in_progress",
+      priority: "high",
+      tags: ["future", "todo"],
+    }, context);
+    const removeResult = await tool.execute({
+      action: "remove",
+      todoId: "todo-1",
+    }, context);
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_32_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { traces: vi.fn().mockReturnValue({ found: false }) };
-    __jait_capture(0, (await createChatTracesTool(service as unknown as ChatTracesService).execute({ chatId: "foreign-chat" }, context)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_38_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { schema: vi.fn().mockReturnValue({ ok: true, data: { tables: ["sessions"] } }), query: vi.fn() };
-    __jait_capture(0, (await createSessionSqlTool(service as unknown as SessionSqlService).execute({ mode: "schema" }, context)));
-    __jait_capture(1, (service.query.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_43_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { query: vi.fn().mockReturnValue({ ok: true, data: { rowCount: 5, truncated: true, rows: [] } }) };
-    const result = await createSessionSqlTool(service as unknown as SessionSqlService).execute({ sql: "SELECT id FROM sessions", max_rows: 5 }, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (service.query.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_50_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { query: vi.fn().mockReturnValue({ ok: false, message: "Read-only SELECT required", error: "unsafe_query" }) };
-    __jait_capture(0, (await createSessionSqlTool(service as unknown as SessionSqlService).execute({ sql: "DELETE FROM sessions" }, context)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_54_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { query: vi.fn() };
-    __jait_capture(0, ((await createSessionSqlTool(service as unknown as SessionSqlService).execute({}, context)).ok));
-    __jait_capture(1, (service.query.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_61_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { runForRepo: vi.fn().mockResolvedValue({
-      id: "run-1", repoName: "Workbench", allPassed: false, planId: "plan-1",
-      checks: [{ passed: false, name: "typecheck", durationMs: 20 }],
-    }) };
-    const result = await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({ repoId: "repo-1" }, context);
-    __jait_capture(0, (result));
-    __jait_capture(1, (service.runForRepo.mock.calls), (["repo-1",context.actionId]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_70_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { runAll: vi.fn().mockResolvedValue([]) };
-    __jait_capture(0, (await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({}, context)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_74_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const service = { runForRepo: vi.fn().mockRejectedValue(new Error("Execution node offline")) };
-    __jait_capture(0, (await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({ repoId: "repo-1" }, context)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_80_3": {
-
-
-const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const deps = {
-      sessionService: { list: vi.fn().mockReturnValue([{}, {}]) }, surfaceRegistry: { listSurfaces: () => [{}] },
-      ws: { clientCount: 3 }, startedAt: Date.now() - 5000,
-      scheduler: { list: () => [{ enabled: true }, { enabled: false }] },
-      hooks: { registeredEventTypes: () => ["session.created"], listenerCount: () => 1 },
-    };
-    const tool = createGatewayStatusTool(deps as unknown as Parameters<typeof createGatewayStatusTool>[0]);
-    __jait_capture(0, (await tool.execute({}, context)));
-    __jait_capture(1, (deps.sessionService.list.mock.calls));
+    __jait_capture(0, (updateResult.ok));
+    __jait_capture(1, ((updateResult.data as any).todo), ({
+      message: "Updated todo",
+      status: "in_progress",
+      priority: "high",
+      tags: JSON.stringify(["future", "todo"]),
+    }));
+    __jait_capture(2, (removeResult.ok));
+    __jait_capture(3, (todos));
   
 })();
 
