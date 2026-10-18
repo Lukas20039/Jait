@@ -1,13 +1,25 @@
-// Translated fixture from packages/gateway/src/tools/repo-proposal-tools.test.ts; expected literals are in tail_static.rs.
-import { createJaitTodosTool } from "../../../../packages/gateway/src/tools/repo-proposal-tools.js";
-import type { RepoRow } from "../../../../packages/gateway/src/services/repositories.js";
-import type { RepoProposalRow } from "../../../../packages/gateway/src/services/repo-proposals.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/remote-executor.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import type { FsNode } from "@jait/shared";
+import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+import type { ToolContext, ToolResult } from "../../../../packages/gateway/src/tools/contracts.js";
+import {
+  createRemoteToolExecutor,
+  proxyTimeoutMs,
+  resolveRemoteNodeForSession,
+} from "../../../../packages/gateway/src/tools/remote-executor.js";
+import {
+  DEFAULT_COMMAND_TIMEOUT_MS,
+  MAX_COMMAND_TIMEOUT_MS,
+} from "../../../../packages/gateway/src/lib/command-timeout.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/repo-proposal-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/remote-executor.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,61 +53,59 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_67_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
   return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
   };
 }
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
 /*__jait_scope_open__*/{
+const GRACE_MS = 30_000;
+const hourMs = 60 * 60 * 1000;
 
 try {
 await (async()=>{
 
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {} as any,
-    });
-
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.tier));
-    __jait_capture(2, (tool.parameters.properties.action.enum));
-    __jait_captureType(3, (tool.parameters.properties.todoId));
+    __jait_capture(0, (proxyTimeoutMs("terminal.run", {})), (DEFAULT_COMMAND_TIMEOUT_MS + GRACE_MS));
+    __jait_capture(1, (proxyTimeoutMs("execute", { command: "ls" })), (DEFAULT_COMMAND_TIMEOUT_MS + GRACE_MS));
+    __jait_capture(2, (proxyTimeoutMs("jait.terminal", { timeout: hourMs })), (hourMs + GRACE_MS));
   
 })();
 
@@ -106,92 +116,58 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_61_3": {
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_73_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
   return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
   };
 }
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
 /*__jait_scope_open__*/{
+const GRACE_MS = 30_000;
+const hourMs = 60 * 60 * 1000;
 
 try {
 await (async()=>{
 
-    const todos: RepoProposalRow[] = [];
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {
-        listByRepo: () => todos,
-        create: (params: any) => {
-          const todo = createTodo({
-            id: `todo-${todos.length + 1}`,
-            message: params.message,
-            priority: params.priority,
-            dueDate: params.dueDate,
-            tags: JSON.stringify(params.tags),
-          });
-          todos.unshift(todo);
-          return todo;
-        },
-      } as any,
-      threadService: { getById: () => ({ id: "thread-1", title: "Thread One" }) } as any,
-    });
-
-    const addResult = await tool.execute({
-      action: "add",
-      message: "Polish todo tags",
-      priority: "high",
-      dueDate: "2026-05-10",
-      tags: ["UI", "todo"],
-    }, context);
-    const listResult = await tool.execute({ action: "list" }, context);
-
-    __jait_capture(0, (addResult.ok));
-    __jait_capture(1, (addResult.message));
-    __jait_capture(2, ((addResult.data as any).todo), ({
-      message: "Polish todo tags",
-      priority: "high",
-      dueDate: "2026-05-10",
-      tags: JSON.stringify(["ui", "todo"]),
-    }));
-    __jait_capture(3, ((listResult.data as any).todos));
-    __jait_capture(4, (listResult.message));
-    __jait_capture(5, (listResult.message));
+    __jait_capture(0, (proxyTimeoutMs("terminal.run", { timeout: 0 })), (DEFAULT_COMMAND_TIMEOUT_MS + GRACE_MS));
+    __jait_capture(1, (proxyTimeoutMs("terminal.run", { timeout: -1 })), (DEFAULT_COMMAND_TIMEOUT_MS + GRACE_MS));
   
 })();
 
@@ -202,104 +178,1206 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_repo_proposal_tools_test_ts_104_3": {
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_78_3": {
 
 
-const repo: RepoRow = {
-  id: "repo-1",
-  userId: "user-1",
-  deviceId: "gateway",
-  name: "Jait",
-  defaultBranch: "main",
-  localPath: "/project/jait",
-  githubUrl: null,
-  strategy: null,
-  createdAt: "2026-05-06T00:00:00.000Z",
-  updatedAt: "2026-05-06T00:00:00.000Z",
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-const context: ToolContext = {
-  sessionId: "thread-1",
-  actionId: "action-1",
-  projectRoot: "/project/jait",
-  requestedBy: "user",
-  userId: "user-1",
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
 };
-function createTodo(overrides: Partial<RepoProposalRow>): RepoProposalRow {
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
   return {
-    id: "todo-1",
-    repoId: "repo-1",
-    userId: "user-1",
-    message: "Follow up",
-    status: "open",
-    priority: "normal",
-    dueDate: null,
-    tags: "[]",
-    completedAt: null,
-    completionHistory: "[]",
-    sourceThreadId: null,
-    sourceThreadTitle: null,
-    createdAt: "2026-05-06T00:00:00.000Z",
-    updatedAt: "2026-05-06T00:00:00.000Z",
-    ...overrides,
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
   };
 }
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
 /*__jait_scope_open__*/{
+const GRACE_MS = 30_000;
+const hourMs = 60 * 60 * 1000;
 
 try {
 await (async()=>{
 
-    const todos: RepoProposalRow[] = [createTodo({ id: "todo-1", message: "Original todo" })];
-    const tool = createJaitTodosTool({
-      repoService: { list: () => [repo] } as any,
-      repoProposalService: {
-        getById: (id: string) => todos.find((todo) => todo.id === id),
-        update: (id: string, params: any) => {
-          const index = todos.findIndex((todo) => todo.id === id);
-          if (index === -1) return undefined;
-          todos[index] = createTodo({
-            ...todos[index],
-            message: params.message ?? todos[index].message,
-            status: params.status ?? todos[index].status,
-            priority: params.priority ?? todos[index].priority,
-            dueDate: params.dueDate ?? todos[index].dueDate,
-            tags: params.tags ? JSON.stringify(params.tags) : todos[index].tags,
-          });
-          return todos[index];
-        },
-        delete: (id: string) => {
-          const index = todos.findIndex((todo) => todo.id === id);
-          if (index !== -1) todos.splice(index, 1);
-        },
-      } as any,
-    });
-
-    const updateResult = await tool.execute({
-      action: "update",
-      todoId: "todo-1",
-      message: "Updated todo",
-      status: "in_progress",
-      priority: "high",
-      tags: ["future", "todo"],
-    }, context);
-    const removeResult = await tool.execute({
-      action: "remove",
-      todoId: "todo-1",
-    }, context);
-
-    __jait_capture(0, (updateResult.ok));
-    __jait_capture(1, ((updateResult.data as any).todo), ({
-      message: "Updated todo",
-      status: "in_progress",
-      priority: "high",
-      tags: JSON.stringify(["future", "todo"]),
-    }));
-    __jait_capture(2, (removeResult.ok));
-    __jait_capture(3, (todos));
+    __jait_capture(0, (proxyTimeoutMs("terminal.run", { timeout: Number.MAX_SAFE_INTEGER })), (MAX_COMMAND_TIMEOUT_MS + GRACE_MS));
   
 })();
 
 } finally {
 
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_84_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+const GRACE_MS = 30_000;
+const hourMs = 60 * 60 * 1000;
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (proxyTimeoutMs("terminal.run", { isBackground: true })));
+    __jait_capture(1, (proxyTimeoutMs("execute", { isBackground: true, timeout: hourMs })));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_89_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+const GRACE_MS = 30_000;
+const hourMs = 60 * 60 * 1000;
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (proxyTimeoutMs("fs.read", { path: "/x" })));
+    __jait_capture(1, (proxyTimeoutMs("jait.terminal.list", { terminalId: "t" })));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_105_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    cleanupPath = mkdtempSync(join(__jait_fixture_dir, "jait-remote-executor-"));
+    const ws = createMockWs();
+
+    __jait_captureType(0, (resolveRemoteNodeForSession(ws, cleanupPath)));
+    __jait_capture(1, (ws.getFsNodes.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_113_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs();
+
+    __jait_capture(0, (resolveRemoteNodeForSession(ws, "/definitely/missing/jait/project")), (remoteNode.id));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_119_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs();
+
+    __jait_capture(0, (resolveRemoteNodeForSession(ws, "C:\\Users\\test\\repo")), (windowsNode.id));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_125_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    cleanupPath = mkdtempSync(join(__jait_fixture_dir, "jait-remote-executor-"));
+    const ws = createMockWs();
+
+    // Without projectNodeId, existsSync returns true → stays local
+    __jait_captureType(0, (resolveRemoteNodeForSession(ws, cleanupPath)));
+    // With explicit projectNodeId, uses the remote node even though path exists locally
+    __jait_capture(1, (resolveRemoteNodeForSession(ws, cleanupPath, remoteNode.id)), (remoteNode.id));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_135_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs({ findNodeByDeviceId: vi.fn(() => undefined) });
+
+    // Node not found → falls through to existsSync heuristic
+    __jait_capture(0, (resolveRemoteNodeForSession(ws, "/definitely/missing/jait/project", "dead-node-id")), (remoteNode.id));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_142_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_3265 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    cleanupPath = mkdtempSync(join(__jait_fixture_dir, "jait-remote-executor-"));
+    const ws = createMockWs();
+
+    __jait_captureType(0, (resolveRemoteNodeForSession(ws, cleanupPath, "gateway")));
+  
+})();
+
+} finally {
+await __jait_hook_3265();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_159_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local result" }));
+    const context = createToolContext();
+    const execOptions = { dryRun: true, consentTimeoutMs: 1000 };
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, null);
+
+    await __jait_captureResolved(0, (execute("terminal.run", { command: "pwd" }, context, execOptions)));
+    __jait_capture(1, (localExecutor.mock.calls), (["terminal.run",{ command: "pwd" },context,execOptions]));
+    __jait_capture(2, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_174_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local memory" }));
+    const context = createToolContext();
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await __jait_captureResolved(0, (execute("memory.search", { query: "release notes" }, context)));
+    __jait_capture(1, (localExecutor.mock.calls));
+    __jait_capture(2, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_188_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    // Every tool NOT in REMOTE_EXECUTABLE_TOOLS — including newly added ones
+    // like the `jait` meta-tool, `web`, `agent`, `todo` — must run on the
+    // gateway even when a remote node is bound. This is the core guarantee:
+    // a new tool never accidentally gets proxied (and fail) on a node.
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local" }));
+    const context = createToolContext();
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    for (const toolName of ["jait", "web", "agent", "todo", "voice.speak", "some.brand.new.tool"]) {
+      await execute(toolName, {}, context);
+    }
+    __jait_capture(0, (localExecutor.mock.calls));
+    __jait_capture(1, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_205_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local result" }));
+    const context = createToolContext();
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await execute("file.read", { path: "/remote/project/src/main.ts" }, context);
+    __jait_capture(0, (ws.proxyToolOp.mock.calls), ([remoteNode.id,context.sessionId,context.projectRoot]));
+    __jait_capture(1, (localExecutor.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_221_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    cleanupPath = mkdtempSync(join(__jait_fixture_dir, "jait-gateway-skill-"));
+    const skillPath = join(cleanupPath, "SKILL.md");
+    writeFileSync(skillPath, "# Debugging\n");
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local skill" }));
+    const context = { ...createToolContext(), projectRoot: "C:\\Users\\test\\repo" };
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await __jait_captureResolved(0, (execute("file.read", { path: skillPath }, context)));
+    __jait_capture(1, (localExecutor.mock.calls), (["file.read",{ path: skillPath },context,undefined]));
+    __jait_capture(2, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_238_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const onOutputChunk = vi.fn();
+    const ws = createMockWs();
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "local result" }));
+    const context = { ...createToolContext(), onOutputChunk };
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await __jait_captureResolved(0, (execute("terminal.run", { command: "pwd" }, context)));
+    __jait_capture(1, (localExecutor.mock.calls), (["terminal.run",{ command: "pwd" },{ ...context, executionNodeId: remoteNode.id },undefined]));
+    __jait_capture(2, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_258_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const ws = createMockWs({ findNodeByDeviceId: vi.fn(() => undefined) });
+    const localExecutor = vi.fn(async () => ({ ok: true, message: "fallback result" }));
+    const context = createToolContext();
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await __jait_captureResolved(0, (execute("terminal.run", { command: "pwd" }, context)), ({
+      ok: false,
+      message: `Project node ${remoteNode.id} is disconnected; terminal command was not run`,
+    }));
+    __jait_capture(1, (localExecutor.mock.calls));
+    __jait_capture(2, (ws.proxyToolOp.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_5316();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_remote_executor_test_ts_272_3": {
+
+
+const remoteNode: FsNode = {
+  id: "node-linux",
+  name: "Linux Desktop",
+  platform: "linux",
+  clientId: "client-linux",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const windowsNode: FsNode = {
+  id: "node-windows",
+  name: "Windows Desktop",
+  platform: "windows",
+  clientId: "client-windows",
+  isGateway: false,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+const gatewayNode: FsNode = {
+  id: "gateway",
+  name: "Gateway",
+  platform: "linux",
+  clientId: "gateway-client",
+  isGateway: true,
+  registeredAt: "2026-01-01T00:00:00.000Z",
+};
+function createToolContext(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: "/remote/project",
+    requestedBy: "test-user",
+  };
+}
+function createMockWs(overrides: Partial<WsControlPlane> = {}) {
+  return {
+    getFsNodes: vi.fn(() => [gatewayNode, remoteNode, windowsNode]),
+    findNodeByDeviceId: vi.fn((nodeId: string) => (nodeId === remoteNode.id ? remoteNode : undefined)),
+    proxyToolOp: vi.fn(async () => ({ ok: true, message: "remote result" })),
+    ...overrides,
+  } as unknown as WsControlPlane;
+}
+/*__jait_scope_open__*/{
+let cleanupPath: string | null = null;
+const __jait_hook_5316 = () => {
+    if (cleanupPath) {
+      rmSync(cleanupPath, { force: true, recursive: true });
+      cleanupPath = null;
+    }
+  };
+
+try {
+await (async()=>{
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const ws = createMockWs({
+      proxyToolOp: vi.fn(async () => {
+        throw new Error("network timeout");
+      }),
+    });
+    const localExecutor = vi.fn(async (): Promise<ToolResult> => ({ ok: true, message: "local result" }));
+    const execute = createRemoteToolExecutor({ ws, localExecutor }, remoteNode.id);
+
+    await __jait_captureResolved(0, (execute("file.write", { path: "/remote/project/out.txt", content: "ok" }, createToolContext())));
+    __jait_capture(1, (localExecutor.mock.calls));
+    __jait_capture(2, (errorSpy.mock.calls));
+
+    errorSpy.mockRestore();
+  
+})();
+
+} finally {
+await __jait_hook_5316();
 }
 }
 

@@ -1,13 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/messenger-tools.test.ts; expected literals are in tail_static.rs.
-import { createMessengerTools } from "../../../../packages/gateway/src/tools/messenger-tools.js";
-import { MessengerBridge } from "../../../../packages/gateway/src/services/messenger-bridge.js";
+// Translated fixture from packages/gateway/src/tools/memory-tools.test.ts; expected literals are in tail_static.rs.
+import type { MemoryEntry, MemoryService, SaveMemoryInput } from "../../../../packages/gateway/src/memory/contracts.js";
+import type { ReminderRow, ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { vi } from '../tailmock.ts';
+import { createMemoryForgetTool, createMemoryHygieneTool, createMemoryListTool, createMemoryReviewChatsTool, createMemorySaveTool, createMemorySearchTool, createMemoryUpdateTool } from "../../../../packages/gateway/src/tools/memory-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/messenger-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/memory-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,23 +41,76 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_8_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_46_3": {
 
 
-const context = { userId: "alice", signal: undefined } as unknown as ToolContext;
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createMessengerTools(new MessengerBridge()).find(tool => tool.name === "messenger.connect")!;
-    const result = await tool.execute({ homeserver: "https://matrix.test", username: "@alice:matrix.test" }, context);
+    const created = reminder();
+    const reminders = {
+      create: (params: { content: string; userId?: string; sessionId?: string | null }) => ({
+        ...created,
+        content: params.content,
+        userId: params.userId ?? null,
+        sessionId: params.sessionId ?? null,
+      }),
+    } as unknown as ReminderService;
+    const memory = {
+      save: async (input: SaveMemoryInput) => memoryEntry({ content: input.content }),
+      list: async () => [],
+    } as unknown as MemoryService;
+    const tool = createMemorySaveTool(memory, reminders);
+
+    const result = await tool.execute({
+      kind: "reminder",
+      scope: "project",
+      content: "Remember this",
+      sourceType: "agent",
+      sourceId: "action-1",
+      sourceSurface: "chat",
+    }, context);
+
     __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
-    for (const homeserver of ["http://192.168.1.1", "https://user:secret@matrix.test", "https://matrix.test?token=secret", "javascript:alert(1)"]) {
-      __jait_capture(2, ((await tool.execute({ homeserver }, context)).ok));
-    }
-    __jait_capture(3, ((await tool.execute({ homeserver: "https://matrix.test", password: "secret" }, context)).ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (result.data));
   
 })();
 
@@ -68,27 +121,396 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_messenger_tools_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_76_3": {
 
 
-const context = { userId: "alice", signal: undefined } as unknown as ToolContext;
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const bridge = new MessengerBridge();
-    const request = vi.spyOn(bridge, "request").mockResolvedValue({ ok: true, message: "done" });
-    const tools = createMessengerTools(bridge);
-    const search = tools.find(tool => tool.name === "messenger.search")!;
-    __jait_capture(0, ((await search.execute({ query: "x", limit: 51 }, context)).ok));
-    __jait_capture(1, ((await search.execute({ query: "" }, context)).ok));
-    __jait_capture(2, (request.mock.calls));
-    await search.execute({ query: "firewall", limit: 5 }, context);
-    __jait_capture(3, (request.mock.calls));
-    for (const name of ["messenger.send", "messenger.open"]) __jait_capture(4, (tools.find(tool => tool.name === name)?.defaultConsentLevel));
-    const send = tools.find(tool => tool.name === "messenger.send")!;
-    __jait_capture(5, ((await send.execute({ roomId: "alice", text: "hello" }, context)).ok));
+    const memory = {
+      list: async () => [memoryEntry()],
+      search: async () => [memoryEntry()],
+    } as unknown as MemoryService;
+    const reminders = {
+      list: () => [reminder()],
+    } as unknown as ReminderService;
+    const tool = createMemorySearchTool(memory, reminders);
+
+    const result = await tool.execute({ query: "remember", limit: 3 }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (result.message));
+    __jait_capture(4, (result.message));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_98_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const reminders = {
+      list: (options: { userId?: string; status?: string; limit?: number }) => [reminder({
+        userId: options.userId ?? null,
+        status: options.status === "archived" ? "archived" : "active",
+      })],
+    } as unknown as ReminderService;
+    const tool = createMemoryListTool(reminders);
+
+    const result = await tool.execute({ status: "archived", limit: 10 }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+    __jait_capture(2, (result.message));
+    __jait_capture(3, (result.message));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_115_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const reminders = {
+      update: (id: string, params: { content?: string; status?: string }, userId?: string) => reminder({
+        id,
+        userId: userId ?? null,
+        content: params.content ?? "Reminder",
+        status: params.status === "archived" ? "archived" : "active",
+      }),
+    } as unknown as ReminderService;
+    const tool = createMemoryUpdateTool(reminders);
+
+    const result = await tool.execute({ id: "reminder-1", content: "Updated", status: "archived" }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_132_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const memory = {
+      list: async () => [],
+      forget: async () => false,
+    } as unknown as MemoryService;
+    const reminders = {
+      delete: () => true,
+    } as unknown as ReminderService;
+    const tool = createMemoryForgetTool(memory, reminders);
+
+    const result = await tool.execute({ id: "reminder-1" }, context);
+
+    __jait_capture(0, (result));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_147_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let receivedUserId: string | undefined;
+    const reminders = {
+      runHygiene: (userId?: string) => {
+        receivedUserId = userId;
+        return { archived: 1, flagged: 2 };
+      },
+    } as unknown as ReminderService;
+    const tool = createMemoryHygieneTool(reminders);
+
+    const result = await tool.execute({ userId: "other-user" } as never, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (receivedUserId));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_memory_tools_test_ts_163_3": {
+
+
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "user",
+  userId: "user-1",
+};
+function memoryEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
+  return {
+    id: "memory-1",
+    scope: "project",
+    content: "Memory",
+    source: { type: "agent", id: "action-1", surface: "chat" },
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+function reminder(overrides: Partial<ReminderRow> = {}): ReminderRow {
+  return {
+    id: "reminder-1",
+    userId: "user-1",
+    projectId: "project-1",
+    sessionId: "session-1",
+    content: "Reminder",
+    sourceType: "agent",
+    sourceId: "action-1",
+    sourceSurface: "chat",
+    status: "active",
+    tags: "[]",
+    createdAt: "2026-05-07T00:00:00.000Z",
+    updatedAt: "2026-05-07T00:00:00.000Z",
+    ...overrides,
+  };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    let received: { userId?: string; limit?: number } = {};
+    const reminders = {
+      scanOldChatsForMemory: (userId?: string, limit?: number) => {
+        received = { userId, limit };
+        return { scanned: 3, created: 1 };
+      },
+    } as unknown as ReminderService;
+    const tool = createMemoryReviewChatsTool(reminders);
+
+    const result = await tool.execute({ userId: "other-user", limit: 25 } as { limit?: number }, context);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (received));
   
 })();
 

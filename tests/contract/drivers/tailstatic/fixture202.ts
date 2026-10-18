@@ -1,14 +1,15 @@
-// Translated fixture from packages/gateway/src/services/reminders.test.ts; expected literals are in tail_static.rs.
-
+// Translated fixture from packages/gateway/src/services/provider-usage.test.ts; expected literals are in tail_static.rs.
 import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/connection.js";
 import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
-import { messages, reminders, sessions } from "../../../../packages/gateway/src/db/schema.js";
-import { ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
+import type { NotificationService } from "../../../../packages/gateway/src/services/notifications.js";
+import { providerUsage } from "../../../../packages/gateway/src/db/schema.js";
+import { ProviderUsageService } from "../../../../packages/gateway/src/services/provider-usage.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/reminders.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-usage.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,241 +43,732 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_23_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_28_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
 let sqlite: SqliteDatabase;
 let db: JaitDB;
-const __jait_hook_407 = async () => {
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
   migrateDatabase(sqlite);
 };
-const __jait_hook_557 = () => {
+const __jait_hook_584 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+await __jait_hook_434();
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      projectId: "project-1",
-      sessionId: "session-1",
-      content: "Remember the deployment note",
-      tags: ["Deploy", "deploy", "Notes"],
-    });
-
-    __jait_capture(0, (created), ({
-      userId: "user-1",
-      projectId: "project-1",
-      sessionId: "session-1",
-      content: "Remember the deployment note",
-      status: "active",
-      tags: JSON.stringify(["deploy", "notes"]),
-    }));
-
-    __jait_capture(1, (service.list({ userId: "user-1", projectId: "project-1" })));
-    __jait_capture(2, (service.list({ userId: "user-2" })));
+    const service = new ProviderUsageService(db);
+    const window = { status: "ok" as const, percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+    service.recordOpenCodeGoUsage("go", { usage: { rolling: window, weekly: { ...window, percent: 90 }, monthly: { ...window, status: "rate-limited", percent: 100 } } });
+    __jait_capture(0, (service.listForUser(["go"])), ([window.resetsAt]));
+    service.recordOllamaUsage("ollama", { source: "settings", limits: {
+      session: { usage: 0.4, models: [], resetsAt: window.resetsAt }, weekly: { usage: 0.8, models: [], resetsAt: null },
+    } });
+    __jait_capture(1, (service.listForUser(["ollama"])), ([window.resetsAt]));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_584();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_46_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_45_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
 let sqlite: SqliteDatabase;
 let db: JaitDB;
-const __jait_hook_407 = async () => {
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
   migrateDatabase(sqlite);
 };
-const __jait_hook_557 = () => {
+const __jait_hook_584 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+await __jait_hook_434();
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      content: "Follow up later",
-    });
-
-    const archived = service.update(created.id, { status: "archived" }, "user-1");
-    __jait_capture(0, (archived?.status));
-    __jait_capture(1, (service.list({ userId: "user-1", status: "active" })));
-    __jait_capture(2, (service.delete(created.id, "user-2")));
-    __jait_capture(3, (service.delete(created.id, "user-1")));
+    const service = new ProviderUsageService(db);
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-10-07T10:00:00Z"));
+      service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.42, models: [] } } });
+      vi.setSystemTime(new Date("2026-10-07T10:01:00Z"));
+      service.recordOllamaUsage("ollama", { range: "7d", scope: "self", granularity: "day", from: "2026-09-30T00:00:00Z", until: "2026-10-07T10:01:00Z", totals: { request_count: 50 }, buckets: [] });
+      __jait_capture(0, (service.listForUser(["ollama"])));
+      service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.5, models: [] } } });
+      __jait_capture(1, (service.listForUser(["ollama"])));
+    } finally { vi.useRealTimers(); }
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_584();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_58_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
 let sqlite: SqliteDatabase;
 let db: JaitDB;
-const __jait_hook_407 = async () => {
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
   migrateDatabase(sqlite);
 };
-const __jait_hook_557 = () => {
+const __jait_hook_584 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+await __jait_hook_434();
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    const created = service.create({
-      userId: "user-1",
-      projectId: "project-1",
-      content: "Use icon-only controls for compact todo metadata",
-      sourceType: "user",
-      sourceId: "session-1",
-      sourceSurface: "web",
-      tags: ["todo", "ui"],
-    });
-
-    __jait_capture(0, (created.usageCount));
-    __jait_captureType(1, (created.lastRetrievedAt));
-    __jait_capture(2, (service.markRetrieved([created.id], "user-1")));
-
-    const retrieved = service.getById(created.id, "user-1");
-    __jait_capture(3, (retrieved?.usageCount));
-    __jait_captureType(4, (retrieved?.lastRetrievedAt));
-
-    const markdown = service.exportMarkdown({ userId: "user-1" });
-    __jait_capture(5, (markdown));
-    __jait_capture(6, (markdown));
-    __jait_capture(7, (markdown));
-    __jait_capture(8, (markdown));
+    const service = new ProviderUsageService(db);
+    service.recordOllamaUsage("ollama", { limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } } as any);
+    __jait_capture(0, (service.listForUser(["ollama"])));
   
 })();
 
 } finally {
-await __jait_hook_557();
+await __jait_hook_584();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_87_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_63_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
 let sqlite: SqliteDatabase;
 let db: JaitDB;
-const __jait_hook_407 = async () => {
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
   migrateDatabase(sqlite);
 };
-const __jait_hook_557 = () => {
+const __jait_hook_584 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_407();
+await __jait_hook_434();
 try {
 await (async()=>{
 
-    const service = new ReminderService(db);
-    db.insert(sessions).values({
-      id: "session-1",
-      userId: "user-1",
-      projectId: "project-1",
-      name: "Chat",
-      createdAt: "2026-05-23T00:00:00.000Z",
-      lastActiveAt: "2026-05-23T00:00:00.000Z",
+    const service = new ProviderUsageService(db);
+    service.recordOllamaUsage("ollama-1", { limits: { weekly: { usage: 0.8, models: [] } } });
+    const activity = {
+      range: "7d", scope: "self", granularity: "day",
+      from: "2026-09-30T00:00:00Z", until: "2026-10-07T11:29:42Z",
+      totals: { request_count: 10388 }, buckets: [],
+    };
+    service.recordOllamaUsage("ollama-1", activity, "pro", "test@example.com");
+    service.recordOllamaUsage("ollama-1", activity, "pro", "test@example.com");
+    __jait_capture(0, (service.listForUser(["ollama-1"])), ([activity.from,activity.until]));
+    service.recordOllamaUsage("ollama-1", { limits: { weekly: { usage: 0.2, models: [] } } });
+    __jait_capture(1, (service.listForUser(["ollama-1"])));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_82_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.4,
+      resetsAt: 1_700_000_000,
+    });
+
+    const snapshots = service.listForUser(["account-1"]);
+    __jait_capture(0, (snapshots));
+    __jait_capture(1, (snapshots[0]));
+    __jait_capture(2, (snapshots[0].resetsAt), (new Date(1_700_000_000 * 1000).toISOString()));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_104_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "seven_day",
+      utilization: 0.2,
+    });
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed_warning",
+      rateLimitType: "seven_day",
+      utilization: 0.95,
+    });
+
+    const snapshots = service.listForUser(["account-1"]);
+    __jait_capture(0, (snapshots));
+    __jait_capture(1, (snapshots[0].status));
+    __jait_capture(2, (snapshots[0].utilization));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_123_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+    });
+    service.recordClaudeRateLimit("account-2", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+    });
+
+    __jait_capture(0, (service.listForUser(["account-1"])));
+    __jait_capture(1, (service.listForUser(["account-1", "account-2"])));
+    __jait_capture(2, (service.listForUser([])));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_139_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const { service: notifications, warning } = makeNotifications();
+    const service = new ProviderUsageService(db);
+    service.attachNotifications(notifications);
+
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.95,
+    });
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.97,
+    });
+
+    __jait_capture(0, (warning.mock.calls));
+    __jait_capture(1, (warning.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_159_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const { service: notifications, warning } = makeNotifications();
+    const service = new ProviderUsageService(db);
+    service.attachNotifications(notifications);
+
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed_warning",
+      rateLimitType: "seven_day",
+    });
+
+    __jait_capture(0, (warning.mock.calls));
+    __jait_capture(1, (warning.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_173_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const { service: notifications, warning } = makeNotifications();
+    const service = new ProviderUsageService(db);
+    service.attachNotifications(notifications);
+
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.95,
+    });
+    __jait_capture(0, (warning.mock.calls));
+
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.3,
+    });
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.96,
+    });
+    __jait_capture(1, (warning.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_198_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const { service: notifications, warning } = makeNotifications();
+    const service = new ProviderUsageService(db);
+    service.attachNotifications(notifications);
+
+    service.recordClaudeRateLimit("account-1", "claude", {
+      status: "allowed",
+      rateLimitType: "five_hour",
+      utilization: 0.5,
+    });
+
+    __jait_capture(0, (warning.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_212_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    service.recordCodexRateLimits("codex-account", {
+      rateLimits: {
+        primary: {
+          usedPercent: 12,
+          windowDurationMins: 300,
+          resetsAt: 1_700_000_000,
+        },
+        secondary: {
+          usedPercent: 34,
+          windowDurationMins: 10_080,
+          resetsAt: 1_700_100_000,
+        },
+        planType: "plus",
+        credits: { hasCredits: true, balance: "7.50" },
+      },
+    });
+
+    const snapshots = service.listForUser(["codex-account"]);
+    __jait_capture(0, (snapshots));
+    __jait_capture(1, (snapshots));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-03-11T09:37:00.000Z"));
+    try {
+      service.recordOllamaUsage(
+        "ollama",
+        {
+          limits: {
+            session: {
+              usage: 0.25,
+              models: [{ name: "gpt-oss", request_count: 4 }],
+            },
+            weekly: { usage: 0.4, models: [] },
+            monthly: { usage: 0.6, models: [] },
+          },
+          activity: {
+            cost: "3.20",
+            period: { ending_at: "2026-10-01T00:00:00.000Z" },
+          },
+        },
+        "pro",
+      );
+
+      const snapshots = service.listForUser(["ollama"]);
+      __jait_capture(0, (snapshots));
+      // The reported activity period is *not* a reset time — echoing it made the
+      // Usage modal claim the quota reset at fetch time. Each window instead gets
+      // a reset derived from the boundaries Ollama exposes.
+      __jait_capture(1, (snapshots.map((snapshot) => snapshot.resetsAt)));
+      __jait_capture(2, (snapshots));
+    } finally {
+      vi.useRealTimers();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_304_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-03-11T10:20:00.000Z"));
+    try {
+      db.insert(providerUsage).values({
+        accountId: "ollama",
+        rateLimitType: "five_hour",
+        providerType: "ollama",
+        utilization: 0.82,
+        resetsAt: "2026-03-11T10:00:00.000Z",
+        updatedAt: "2026-03-11T09:37:00.000Z",
+        rawJson: JSON.stringify({ resetSource: "observed", windowStartAt: "2026-03-11T05:00:00.000Z" }),
+      }).run();
+
+      // Ollama reports 0.03 used: the quota demonstrably reset since the snapshot above.
+      service.recordOllamaUsage(
+        "ollama",
+        {
+          limits: {
+            session: { usage: 0.03, models: [] },
+            weekly: { usage: 0.4, models: [] },
+            monthly: { usage: 0.6, models: [] },
+          },
+          activity: { cost: "0", period: { starting_at: "2026-03-09T00:00:00.000Z" } },
+        },
+        "pro",
+      );
+
+      const session = service
+        .listForUser(["ollama"])
+        .find((snapshot) => snapshot.rateLimitType === "five_hour");
+      __jait_capture(0, (session?.resetsAt));
+    } finally {
+      vi.useRealTimers();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_341_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    db.insert(providerUsage).values({
+      accountId: "ollama",
+      rateLimitType: "five_hour",
+      providerType: "ollama",
+      utilization: 0.25,
+      resetsAt: "2026-09-20T13:45:00.000Z",
+      updatedAt: "2026-09-20T13:45:00.000Z",
+      rawJson: "{}",
     }).run();
-    db.insert(messages).values({
-      id: "message-1",
-      sessionId: "session-1",
-      role: "user",
-      content: "Remember that this project prefers slim todo controls.",
-      createdAt: "2026-05-23T00:01:00.000Z",
-    }).run();
-
-    __jait_capture(0, (service.scanOldChatsForMemory("user-1")));
-    const [created] = service.list({ userId: "user-1", status: "active" });
-    __jait_capture(1, (created));
-    __jait_capture(2, (service.scanOldChatsForMemory("user-1")));
+    const service = new ProviderUsageService(db);
+    __jait_capture(0, (service.listForUser(["ollama"])[0]));
   
 })();
 
 } finally {
-await __jait_hook_557();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_reminders_test_ts_116_3": {
-
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-let sqlite: SqliteDatabase;
-let db: JaitDB;
-const __jait_hook_407 = async () => {
-  const opened = await openDatabase(":memory:");
-  sqlite = opened.sqlite;
-  db = opened.db;
-  migrateDatabase(sqlite);
-};
-const __jait_hook_557 = () => {
-  sqlite.close();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_407();
-try {
-await (async()=>{
-
-    const service = new ReminderService(db);
-    const stale = service.create({
-      userId: "user-1",
-      content: "Old generated note",
-      sourceType: "background_memory_scan",
-      tags: ["old"],
-    });
-    db.update(reminders).set({
-      updatedAt: "2025-01-01T00:00:00.000Z",
-    }).where(eq(reminders.id, stale.id)).run();
-    service.create({ userId: "user-1", content: "Use compact todo controls", tags: ["todo"] });
-    service.create({ userId: "user-1", content: "Do not use compact todo controls", tags: ["todo"] });
-
-    const result = service.runHygiene("user-1");
-    __jait_capture(0, (result.archived));
-    __jait_capture(1, (result.flagged));
-    __jait_capture(2, (service.getById(stale.id, "user-1")?.status));
-    const active = service.list({ userId: "user-1", status: "active" });
-    __jait_capture(3, (active.some((row) => row.tags.includes("review:conflict"))));
-  
-})();
-
-} finally {
-await __jait_hook_557();
+await __jait_hook_584();
 }
 }
 

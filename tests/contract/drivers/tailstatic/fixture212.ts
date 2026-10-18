@@ -1,17 +1,16 @@
-// Translated fixture from packages/gateway/src/services/team-chat-stopped-thread.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { TeamChatService } from "../../../../packages/gateway/src/services/team-chat.js";
-
-import { teamDeliveries } from "../../../../packages/gateway/src/db/schema.js";
-import { uuidv7 } from "../../../../packages/gateway/src/db/uuidv7.js";
+// Translated fixture from packages/gateway/src/services/system-one.test.ts; expected literals are in tail_static.rs.
+import { evaluateDecision, rankSystemOne, resolveSystemOne, systemOneEnabled } from "../../../../packages/gateway/src/services/system-one.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
+import { buildSystemOneToolSchemas, buildTieredToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { createDecisionEvaluateTool } from "../../../../packages/gateway/src/tools/decision.js";
+import { buildSystemPrompt } from "../../../../packages/gateway/src/tools/prompts/index.js";
+import { buildCliProviderSystemPrompt } from "../../../../packages/gateway/src/routes/chat.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/team-chat-stopped-thread.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/system-one.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -45,468 +44,503 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_71_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_25_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    const dispatch = vi.fn(() => new Promise<{ content: string }>(() => {}));
-    service.setDispatcher(dispatch);
-    post("Unsettled active turn", "w3-active", ["Developer"]);
-    const active = deliveryFor(service, "Unsettled active turn");
-    profiles.markRunning(active.sessionId, "active-provider");
-    __jait_capture(0, (active.status));
-
-    // Persist FIFO followers directly so this regression is independent of the
-    // separate per-agent/per-thread dispatch serialization change.
-    const followerIds = [uuidv7(), uuidv7()];
-    for (const id of followerIds) {
-      opened.db.insert(teamDeliveries).values({
-        ...active, id, status: "queued", error: null,
-      }).run();
-    }
-    const sibling = profiles.create({
-      userId: owner, personaAgentId: "Developer", providerId: "codex", title: "Sibling work",
-    });
-    profiles.markRunning(sibling.id, "sibling-provider");
-    const siblingDeliveryId = uuidv7();
-    opened.db.insert(teamDeliveries).values({
-      ...active, id: siblingDeliveryId, sessionId: sibling.id, status: "running",
-    }).run();
-    const siblingFollowerId = uuidv7();
-    opened.db.insert(teamDeliveries).values({
-      ...active, id: siblingFollowerId, sessionId: sibling.id, status: "queued",
-    }).run();
-
-    profiles.markInterrupted(active.sessionId);
-    const statuses = new Map(service.deliveries(owner, room.id).map(row => [row.id, row.status]));
-    // No pump, new post, or promise settlement after the stop.
-    for (const id of followerIds) __jait_capture(1, (statuses.get(id)));
-    __jait_capture(2, (statuses.get(active.id)));
-    __jait_capture(3, (statuses.get(siblingDeliveryId)));
-    __jait_capture(4, (statuses.get(siblingFollowerId)));
-    __jait_capture(5, (profiles.getById(sibling.id)?.status));
-    __jait_capture(6, (dispatch.mock.calls));
-    profiles.markInterrupted(active.sessionId);
-    __jait_capture(7, (service.deliveries(owner, room.id).filter(row => followerIds.includes(row.id))
-      .every(row => row.status === "cancelled")));
-    const restored = new TeamChatService(opened.db, sessions, profiles);
-    __jait_capture(8, (restored.deliveries(owner, room.id).filter(row => followerIds.includes(row.id))
-      .every(row => row.status === "cancelled")));
-    restored.close();
+    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
+    const r = registry(); const opts = { query: "read project file" };
+    __jait_capture(0, (systemOneEnabled({ JEV_API_KEY: "  " })));
+    __jait_capture(1, (await buildSystemOneToolSchemas(r, undefined, opts)), (buildTieredToolSchemas(r, undefined, opts)));
+    __jait_capture(2, (await r.rankSearchWithSystemOne("read files")), (r.rankSearch("read files")));
+    await __jait_rejected(3, evaluateDecision({}, "some context", questions));
+    __jait_capture(4, (fetcher.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_118_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_35_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    post("Restart recovery work", "w3-recovery", ["Developer"]);
-    const delivery = deliveryFor(service, "Restart recovery work");
-    profiles.markRunning(delivery.sessionId, "recovery-provider");
-    profiles.queueRestartRecovery();
-    __jait_capture(0, (profiles.getById(delivery.sessionId)?.status));
-    __jait_capture(1, (profiles.getRecovery(delivery.sessionId)?.pending));
-    __jait_capture(2, (deliveryFor(service, "Restart recovery work").status));
-    profiles.markInterrupted(delivery.sessionId);
-    __jait_captureType(3, (profiles.getRecovery(delivery.sessionId)));
-    __jait_capture(4, (deliveryFor(service, "Restart recovery work").status));
+    const fetcher = vi.fn().mockImplementation(async () => response({ relevant: { type: "noul", noul: 0.9 } })); vi.stubGlobal("fetch", fetcher);
+    const account = keys();
+    await evaluateDecision(account, "user request", questions);
+    await evaluateDecision(account, "user request", questions);
+    await evaluateDecision(keys(), "user request", questions);
+    __jait_capture(0, (fetcher.mock.calls));
+    const [url, init] = fetcher.mock.calls[0]!;
+    __jait_capture(1, (url));
+    __jait_capture(2, (init.headers.Authorization), (`Bearer ${account.JEV_API_KEY}`));
+    __jait_capture(3, (JSON.parse(init.body)), ({ model: "jev-latest", state: "user request", questions }));
+    __jait_capture(4, (init.redirect));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_131_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_49_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    const started: string[] = [];
-    const releases = new Map<string, () => void>();
-    const dispatch = async (delivery: { id: string }) => {
-      started.push(delivery.id);
-      // Park only the two slot-holders; anything else that starts is a defect and
-      // completes immediately so the failing run leaves no parked work behind.
-      if (started.length <= 2) await new Promise<void>(resolve => { releases.set(delivery.id, resolve); });
-      return { content: "Completed." };
-    };
-
-    // Queue the backlog before a dispatcher is available. Independent agents can
-    // now run concurrently; stopping queued work must still prevent dispatch.
-    post("Hold first slot", "slot-one", ["Developer"]);
-    post("Hold second slot", "slot-two", ["QA"]);
-    __jait_capture(0, (started));
-
-    post("Work the user then stops", "stopped-work", ["Research"]);
-    const stopped = deliveryFor(service, "Work the user then stops");
-    __jait_capture(1, (stopped.status));
-    __jait_capture(2, (started), (stopped.id));
-
-    // The product stop path: POST /api/threads/:id/stop -> markInterrupted.
-    profiles.markInterrupted(stopped.sessionId);
-    __jait_capture(3, (profiles.getById(stopped.sessionId)!.status));
-    service.setDispatcher(dispatch);
-    await service.pump();
-    __jait_capture(4, (started));
-
-    const slotIds = service.deliveries(owner, room.id)
-      .filter(delivery => delivery.id !== stopped.id).map(delivery => delivery.id);
-    __jait_capture(5, (slotIds));
-    for (const release of releases.values()) release();
-    const statusOf = (source: TeamChatService, id: string) =>
-      source.deliveries(owner, room.id).find(delivery => delivery.id === id)?.status;
-    await vi.waitFor(() => __jait_capture(6, (slotIds.every(id => statusOf(service, id) === "completed"))));
-
-    // The same call both `runDelivery()`'s finally block and `recover()` make.
-    await service.pump();
-
-    __jait_capture(7, (started), (stopped.id));
-    const after = deliveryFor(service, "Work the user then stops");
-    __jait_capture(8, (after.status));
-    // Not "queued" either: an abandoned queued row is what makes Agents/Threads and
-    // reconnect reporting dishonest (ticket 4, D3). Cancel must reach a terminal status.
-    __jait_capture(9, (after.status));
+    const fetcher = vi.fn().mockImplementation(async (_url, init) => {
+      const body = JSON.parse(init.body);
+      __jait_capture(0, (init.body));
+      return response(Object.fromEntries(Object.entries(body.questions).map(([id, q]) => [id, { type: "noul", noul: (q as { instructions: string }).instructions.includes("web.search") ? 0.95 : 0.1 }])));
+    }); vi.stubGlobal("fetch", fetcher);
+    const r = registry();
+    const schemas = await buildSystemOneToolSchemas(r, new Set(["secret.read"]), { query: "read project files but need public information", selectionLimit: 1 }, keys());
+    const names = schemas.map(s => s.function.name);
+    __jait_capture(1, (names)); __jait_capture(2, (names));
+    __jait_capture(3, (names)); __jait_capture(4, (names));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_179_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_62_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    // No dispatcher yet, so the delivery stays genuinely `queued` with nothing running.
-    post("Queued work the user stopped", "stopped-before-restart", ["Developer"]);
-    const stopped = deliveryFor(service, "Queued work the user stopped");
-    __jait_capture(0, (stopped.status));
-    __jait_capture(1, (profiles.getById(stopped.sessionId)!.status));
-    profiles.markInterrupted(stopped.sessionId);
-
-    const dispatcher = vi.fn(async () => ({ content: "should not run" }));
-    const restored = new TeamChatService(opened.db, sessions, profiles);
-    restored.setDispatcher(dispatcher);
-    await restored.recover();
-
-    __jait_capture(2, (dispatcher.mock.calls));
-    const after = deliveryFor(restored, "Queued work the user stopped");
-    __jait_capture(3, (after.status));
-    __jait_capture(4, (after.status));
-    restored.close();
+    const fetcher = vi.fn().mockResolvedValue(new Response("outage", { status: 503 })); vi.stubGlobal("fetch", fetcher);
+    const r = registry(); const account = keys();
+    __jait_capture(0, (await r.rankSearchWithSystemOne("zzzzzzzz", {}, account)));
+    __jait_capture(1, (await r.rankSearchWithSystemOne("read files", {}, account)), (r.rankSearch("read files")));
+    __jait_capture(2, (fetcher.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_205_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_70_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    post("Queued work nobody stopped", "live-thread", ["Developer"]);
-    const live = deliveryFor(service, "Queued work nobody stopped");
-    __jait_capture(0, (live.status));
-    __jait_capture(1, (profiles.getById(live.sessionId)!.status));
-
-    const dispatched: string[] = [];
-    service.setDispatcher(async delivery => { dispatched.push(delivery.id); return { content: "Ran." }; });
-    await service.pump();
-    await vi.waitFor(() => __jait_capture(2, (dispatched.length)));
-    __jait_capture(3, (dispatched), ([live.id]));
-    await vi.waitFor(() => __jait_capture(4, (deliveryFor(service, "Queued work nobody stopped").status)));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ item0: { type: "noul", noul: 4 } })));
+    const memories = ["prefers concise replies", "uses Linux"];
+    __jait_capture(0, (await rankSystemOne(keys(), "user preferences", memories, x => x, "memory")), (memories));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_team_chat_stopped_thread_test_ts_218_3": {
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_76_3": {
 
-const { personaAgentProfileSchema } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let profiles: ThreadService;
-let sessions: SessionService;
-let service: TeamChatService;
-let room: TeamRoom;
-let databaseClosed = false;
-const owner = "owner";
-const profile = (id: string, reportsToId: string | null = null) => personaAgentProfileSchema.parse({
-    id, name: id, reportsToId, persona: "Handle " + id + " work.", avatar: "Nova", providerId: "codex",
-    repositoryIds: [], skillIds: [], allowedTools: [], requiresApproval: true, paused: false,
-    schedule: { kind: "adaptive", rules: "" }, notificationChannels: [], notificationEvents: [],
-  });
-const human: TeamSender = { kind: "user", id: owner, name: "Jakob", avatar: null };
-const post = (content: string, key: string, recipientIds: string[]) =>
-    service.post(owner, room.id, { content, clientKey: key, sender: human, recipientIds });
-const deliveryFor = (source: TeamChatService, content: string) => {
-    const messages = new Map(source.history(owner, room.id).map(message => [message.id, message]));
-    const found = source.deliveries(owner, room.id).find(delivery => messages.get(delivery.messageId)?.content === content);
-    if (!found) throw new Error("No delivery for: " + content);
-    return found;
-  };
-const __jait_hook_2520 = async () => {
-    databaseClosed = false;
-    opened = await openDatabase(":memory:"); migrateDatabase(opened.sqlite);
-    profiles = new ThreadService(opened.db); sessions = new SessionService(opened.db);
-    profiles.savePersonaAgent(owner, profile("Scrum"));
-    profiles.savePersonaAgent(owner, profile("Developer", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("QA", "Scrum"));
-    profiles.savePersonaAgent(owner, profile("Research", "Scrum"));
-    service = new TeamChatService(opened.db, sessions, profiles);
-    room = service.ensureRoom(owner, "Developer");
-  };
-const __jait_hook_3117 = () => { service.close(); if (!databaseClosed) opened.sqlite.close(); };
-await __jait_hook_2520();
+
 try {
 await (async()=>{
 
-    const releases = new Map<string, (value: { content: string }) => void>();
-    const dispatch = vi.fn((delivery: { id: string }) => new Promise<{ content: string }>(resolve => {
-      releases.set(delivery.id, resolve);
-    }));
-    service.setDispatcher(dispatch);
-    try {
-      post("Real active", "real-active", ["Developer"]);
-      const active = deliveryFor(service, "Real active");
-      profiles.markRunning(active.sessionId, "active-provider");
-      post("Real sibling", "real-sibling", ["Developer"]);
-      const sibling = deliveryFor(service, "Real sibling");
-      profiles.markRunning(sibling.sessionId, "sibling-provider");
-      service.post(owner, room.id, {
-        content: "Real follower", clientKey: "real-follower", sender: human,
-        recipientIds: ["Developer"], targetSessionId: active.sessionId,
-      });
-      const follower = deliveryFor(service, "Real follower");
-      __jait_capture(0, (dispatch.mock.calls));
-      __jait_capture(1, (follower.status));
-      profiles.markInterrupted(active.sessionId);
-      __jait_capture(2, (deliveryFor(service, "Real follower").status));
-      __jait_capture(3, (deliveryFor(service, "Real sibling").status));
-      __jait_capture(4, (profiles.getById(sibling.sessionId)?.status));
-      releases.get(sibling.id)!({ content: "" });
-      await vi.waitFor(() => __jait_capture(5, (deliveryFor(service, "Real sibling").status)));
-      __jait_capture(6, (dispatch.mock.calls));
-      __jait_capture(7, (deliveryFor(service, "Real follower").status));
-    } finally {
-      service.close();
-      for (const release of releases.values()) release({ content: "" });
-      await Promise.resolve();
-    }
+    vi.stubGlobal("fetch", vi.fn((_url, init) => new Promise((_resolve, reject) => {
+      init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true });
+    })));
+    const items = ["memory one", "memory two"];
+    __jait_capture(0, (await rankSystemOne(keys(), "request", items, x => x, "memory")), (items));
   
 })();
 
 } finally {
-await __jait_hook_3117();
+await __jait_hook_790();
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_84_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
+    const controller = new AbortController(); controller.abort();
+    const items = ["one", "two"];
+    __jait_capture(0, (await rankSystemOne(keys(), "request", items, x => x, "memory", controller.signal)), (items));
+    __jait_capture(1, (fetcher.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_92_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetcher = vi.fn().mockResolvedValue(response({
+      route: { type: "choice", choice: "technical", confidence: 0.9 },
+      severity: { type: "score", score: 1.2, confidence: 0.7 }, urgent: { type: "noul", noul: 0.8 },
+    })); vi.stubGlobal("fetch", fetcher);
+    const result = await createDecisionEvaluateTool().execute({ state: "Payment integration fails for all customers", questions: [
+      { id: "route", type: "choice", instructions: "Which team?", options: [{ id: "billing", description: "Invoices" }, { id: "technical", description: "Integration errors" }] },
+      { id: "severity", type: "score", instructions: "How severe?", levels: ["Minor", "Major", "Critical"] },
+      { id: "urgent", type: "noul", instructions: "Is this urgent?" },
+    ] }, { sessionId: "s", actionId: "a", projectRoot: "/tmp", requestedBy: "test", apiKeys: keys() });
+    __jait_capture(0, (result.ok)); __jait_capture(1, (fetcher.mock.calls));
+    __jait_capture(2, (JSON.parse(fetcher.mock.calls[0]![1].body).questions.route.criteria));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_106_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ route: { type: "choice", choice: "invented" } })));
+    await __jait_rejected(0, evaluateDecision(keys(), "request", { route: { type: "choice", instructions: "Pick", criteria: { a: "a", b: "b" } } }));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ level: { type: "score", score: 8 } })));
+    await __jait_rejected(1, evaluateDecision(keys(), "request", { level: { type: "score", instructions: "Rate", criteria: ["low", "high"] } }));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_113_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const endpoint = { model: "test-model" };
+    __jait_capture(0, (buildSystemPrompt("agent", endpoint, {})));
+    __jait_capture(1, (buildSystemPrompt("agent", endpoint, { systemOne: true })));
+    __jait_capture(2, (buildCliProviderSystemPrompt("codex", undefined, "agent", {})));
+    __jait_capture(3, (buildCliProviderSystemPrompt("codex", undefined, "agent", { systemOne: true })));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_121_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (resolveSystemOne({ JEV_API_KEY: "legacy", SYSTEM_ONE_API_KEY: "generic", SYSTEM_ONE_MODEL: "gpt-4o-mini" })));
+    __jait_capture(1, (resolveSystemOne({ JEV_API_KEY: "legacy", JEV_MODEL: "jev-latest" })));
+    // A generic endpoint may be keyless (e.g. a local Ollama server).
+    __jait_capture(2, (resolveSystemOne({ SYSTEM_ONE_BASE_URL: "http://localhost:11434/v1" })));
+    __jait_captureType(3, (resolveSystemOne({})));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_132_3": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      choices: [{ message: { content: JSON.stringify({ answers: { relevant: { type: "noul", noul: 0.9 } } }) } }],
+    }))); vi.stubGlobal("fetch", fetcher);
+    const account = { SYSTEM_ONE_BASE_URL: "https://api.example.com/v1/", SYSTEM_ONE_API_KEY: `generic-${++sequence}`, SYSTEM_ONE_MODEL: "gpt-4o-mini" };
+    __jait_capture(0, (systemOneEnabled(account)));
+    const result = await evaluateDecision(account, "user request", questions);
+    __jait_capture(1, (result.answers.relevant.noul));
+    const [url, init] = fetcher.mock.calls[0]!;
+    __jait_capture(2, (url));
+    __jait_capture(3, (init.headers.Authorization), (`Bearer ${account.SYSTEM_ONE_API_KEY}`));
+    __jait_capture(4, (JSON.parse(init.body)));
+    __jait_capture(5, (JSON.parse(init.body).messages[0].role));
+  
+})();
+
+} finally {
+await __jait_hook_790();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_system_one_test_ts_148_1": {
+
+
+let sequence = 0;
+const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
+const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
+const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
+function registry() {
+  const r = new ToolRegistry();
+  for (const [name, description, tier] of [
+    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
+    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
+  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
+  r.register(createDecisionEvaluateTool());
+  return r;
+}
+const __jait_hook_790 = () => vi.unstubAllGlobals();
+
+try {
+await (async()=>{
+
+  vi.stubGlobal("fetch", vi.fn(async () => response({ item0: { type: "noul", noul: 0.1 }, item1: { type: "noul", noul: 0.9 } })));
+  __jait_capture(0, (await rankSystemOne(keys(), "fixture file", ["network notes", "fixture instructions"], x => x, "memory", undefined, undefined, 0.5)));
+
+})();
+
+} finally {
+await __jait_hook_790();
+}
+
 
 break;
 }

@@ -1,12 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/network-tools.test.ts; expected literals are in tail_static.rs.
-
-
+// Translated fixture from packages/gateway/src/tools/mobile-tools.test.ts; expected literals are in tail_static.rs.
+import type { MobilePushService } from "../../../../packages/gateway/src/services/mobile-push.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createMobileAlarmScheduleTool } from "../../../../packages/gateway/src/tools/mobile-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/network-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/mobile-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,27 +41,22 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_network_tools_test_ts_13_3": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/lib/network-scan.ts",import.meta.url)), () => ({ scanNetwork: vi.fn() }));
-const { scanNetwork } = await import("../../../../packages/gateway/src/lib/network-scan.js");
-const { createNetworkScanTool, getLatestNetworkScan } = await import("../../../../packages/gateway/src/tools/network-tools.js");
-const context = { sessionId: "network-tests", actionId: "network-action", projectRoot: "/project", requestedBy: "test" };
-const result: NetworkScanData = {
-  subnet: "192.0.2", scannedAt: "2026-10-09T08:00:00Z", durationMs: 25,
-  hosts: [{ ip: "192.0.2.1", mac: null, hostname: "owned-fixture", alive: true,
-    openPorts: [22], sshReachable: true, agentStatus: "running", osVersion: null, lastSeen: "2026-10-09T08:00:00Z" }],
+case "tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_12_3": {
+
+
+const context: ToolContext = {
+  sessionId: "daily", actionId: "alarm-action", projectRoot: "/workspace",
+  requestedBy: "user", userId: "user-a",
 };
-const __jait_hook_720 = () => { vi.mocked(scanNetwork).mockReset().mockResolvedValue(result); };
 /*__jait_scope_open__*/{
-await __jait_hook_720();
+
 try {
 await (async()=>{
 
-    const response = await createNetworkScanTool().execute({ subnet: "192.0.2", deep: false, includeIps: ["192.0.2.1"] }, context);
-    __jait_capture(0, (scanNetwork.mock.calls));
-    __jait_capture(1, (response), ({ ok: true, data: result }));
-    __jait_capture(2, (response.message));
-    __jait_capture(3, (getLatestNetworkScan()), (result));
+    const scheduleAlarm = vi.fn();
+    const tool = createMobileAlarmScheduleTool({ scheduleAlarm } as unknown as MobilePushService);
+    __jait_capture(0, (await tool.execute({ at: "yesterday" }, context)));
+    __jait_capture(1, (scheduleAlarm.mock.calls));
   
 })();
 
@@ -71,26 +67,24 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_network_tools_test_ts_20_3": {
-await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/lib/network-scan.ts",import.meta.url)), () => ({ scanNetwork: vi.fn() }));
-const { scanNetwork } = await import("../../../../packages/gateway/src/lib/network-scan.js");
-const { createNetworkScanTool, getLatestNetworkScan } = await import("../../../../packages/gateway/src/tools/network-tools.js");
-const context = { sessionId: "network-tests", actionId: "network-action", projectRoot: "/project", requestedBy: "test" };
-const result: NetworkScanData = {
-  subnet: "192.0.2", scannedAt: "2026-10-09T08:00:00Z", durationMs: 25,
-  hosts: [{ ip: "192.0.2.1", mac: null, hostname: "owned-fixture", alive: true,
-    openPorts: [22], sshReachable: true, agentStatus: "running", osVersion: null, lastSeen: "2026-10-09T08:00:00Z" }],
+case "tailstatic_packages_gateway_src_tools_mobile_tools_test_ts_19_3": {
+
+
+const context: ToolContext = {
+  sessionId: "daily", actionId: "alarm-action", projectRoot: "/workspace",
+  requestedBy: "user", userId: "user-a",
 };
-const __jait_hook_720 = () => { vi.mocked(scanNetwork).mockReset().mockResolvedValue(result); };
 /*__jait_scope_open__*/{
-await __jait_hook_720();
+
 try {
 await (async()=>{
 
-    await createNetworkScanTool().execute({}, context);
-    vi.mocked(scanNetwork).mockRejectedValue(new Error("Execution node offline"));
-    __jait_capture(0, (await createNetworkScanTool().execute({}, context)));
-    __jait_capture(1, (getLatestNetworkScan()), (result));
+    const scheduleAlarm = vi.fn(async () => 1);
+    const tool = createMobileAlarmScheduleTool({ scheduleAlarm } as unknown as MobilePushService);
+    const future = new Date(Date.now() + 3_600_000).toISOString();
+    const result = await tool.execute({ at: future, title: "Morning briefing" }, context);
+    __jait_capture(0, (result));
+    __jait_capture(1, (scheduleAlarm.mock.calls));
   
 })();
 

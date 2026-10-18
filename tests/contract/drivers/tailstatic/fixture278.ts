@@ -1,19 +1,14 @@
-// Translated fixture from packages/gateway/src/tools/elevated-tools.test.ts; expected literals are in tail_static.rs.
-import { EventEmitter } from "node:events";
-import { PassThrough } from "node:stream";
-import type { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+// Translated fixture from packages/gateway/src/tools/diagram-tools.test.ts; expected literals are in tail_static.rs.
 import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createElevatedRunTool, type ElevatedSpawnFactory } from "../../../../packages/gateway/src/tools/elevated-tools.js";
-import { vi } from '../tailmock.ts';
+import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
+import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
+import { ASK_MODE_TOOLS, SWARM_ORCHESTRATION_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
+import { createDiagramTool } from "../../../../packages/gateway/src/tools/diagram-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/elevated-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/diagram-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -47,107 +42,141 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3": {
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_10_3": {
 
 
-function context(overrides: Record<string, unknown> = {}) {
-  return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
-}
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
-}
 /*__jait_scope_open__*/{
+const tool = createDiagramTool();
 
 try {
 await (async()=>{
 
-    const { service, requests, secret } = autoSubmitSecret();
-    const { factory, calls } = fakeSpawnFactory();
+    const result = await tool.execute({ diagram: " flowchart LR\nA-->B ", title: "Communication" }, {} as any);
+    __jait_capture(0, (result));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each0": {
+
+
+/*__jait_scope_open__*/{
+const tool = createDiagramTool();
+/*__jait_scope_open__*/{
+const diagram = undefined;
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each1": {
+
+
+/*__jait_scope_open__*/{
+const tool = createDiagramTool();
+/*__jait_scope_open__*/{
+const diagram = 123;
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each2": {
+
+
+/*__jait_scope_open__*/{
+const tool = createDiagramTool();
+/*__jait_scope_open__*/{
+const diagram = " ";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_14_3_each3": {
+
+
+/*__jait_scope_open__*/{
+const tool = createDiagramTool();
+/*__jait_scope_open__*/{
+const diagram = "a".repeat(20001);
+
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await tool.execute({ diagram } as any, {} as any)).ok));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_17_3": {
+
+
+/*__jait_scope_open__*/{
+const tool = createDiagramTool();
+
+try {
+await (async()=>{
+
     const registry = new ToolRegistry();
-    registry.register(createElevatedRunTool(service, factory, {
-      platform: () => "linux",
-      getuid: () => 1000,
-    }));
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "elevated.run",
-      {
-        command: "apt-get update",
-        reason: "install system packages",
-      },
-      context(),
-      audit,
-    );
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, ((result.data as { output: string }).output));
-    __jait_capture(2, (requests));
-    __jait_capture(3, (calls[0]?.command));
-    __jait_capture(4, (calls[0]?.args));
-    __jait_capture(5, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(6, (auditEntries[0]));
+    registry.register(tool);
+    __jait_capture(0, (registry.get("diagram.render")?.defaultConsentLevel));
+    __jait_capture(1, (ASK_MODE_TOOLS.has("diagram.render")));
+    __jait_capture(2, (SWARM_ORCHESTRATION_TOOLS.has("diagram.render")));
+    __jait_capture(3, (registry.listForMcp().map(tool => tool.name)));
+    __jait_capture(4, (registry.search("render Mermaid chat")[0].name));
+    const catalog = await createJaitCatalogTool(registry).execute({ pageId: "chat" }, {} as any);
+    __jait_capture(5, ((catalog.data as any).matches.map((match: any) => match.name)));
+    const result = await registry.execute("diagram.render", { diagram: "graph TD\nA-->B" }, {} as any);
+    const text = (mcpContentForToolResult(result)[0] as { text: string }).text;
+    __jait_capture(6, (JSON.parse(text.slice(text.indexOf("{")))));
+    __jait_capture(7, ((await registry.execute("diagram.render", {}, {} as any)).ok));
   
 })();
 
@@ -158,321 +187,16 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3": {
+case "tailstatic_packages_gateway_src_tools_diagram_tools_test_ts_32_3": {
 
 
-function context(overrides: Record<string, unknown> = {}) {
-  return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
-}
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
-}
 /*__jait_scope_open__*/{
+const tool = createDiagramTool();
 
 try {
 await (async()=>{
 
-    const tools = createToolRegistry(new SurfaceRegistry(), {
-      secretInputService: new SecretInputService(),
-    });
-
-    const schemas = buildToolSchemas(tools);
-    const byName = new Map(schemas.map((schema) => [schema.function.name, schema]));
-
-    __jait_capture(0, (byName.has("elevated_run")));
-    __jait_capture(1, (byName.get("elevated_run")?.function.parameters));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3": {
-
-
-function context(overrides: Record<string, unknown> = {}) {
-  return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
-}
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
-      if (command !== "powershell.exe") return;
-      queueMicrotask(() => {
-        __jait_capture(0, (args));
-        // Decode the EncodedCommand and verify it uses -Verb RunAs (UAC path)
-        const encodedIdx = args.indexOf("-EncodedCommand");
-        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
-        __jait_capture(1, (script));
-        __jait_capture(2, (script));
-        proc.stdout.write(JSON.stringify({
-          exitCode: 0,
-          stdout: "uac-elevated-output\n",
-          stderr: "",
-        }));
-        proc.emit("close", 0, null);
-      });
-    });
-    const tool = createElevatedRunTool(undefined, factory, {
-      platform: () => "win32",
-      getuid: () => undefined,
-    });
-
-    const result = await tool.execute({
-      command: "Get-Service",
-    }, context());
-
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, ((result.data as { output: string }).output));
-    // UAC mode should not require the secret input service at all
-    __jait_capture(5, (calls[0]?.command));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3": {
-
-
-function context(overrides: Record<string, unknown> = {}) {
-  return {
-    sessionId: "elevated-test-session",
-    actionId: "elevated-test-action",
-    projectRoot: process.cwd(),
-    requestedBy: "agent",
-    userId: "user-1",
-    providerId: "codex",
-    model: "gpt-5-codex",
-    ...overrides,
-  };
-}
-function autoSubmitSecret(secret = "sudo-password") {
-  let service: SecretInputService;
-  const requests: Array<{ title: string; prompt: string; requestedBy: string | null }> = [];
-  service = new SecretInputService({
-    onRequest: (request) => {
-      requests.push({
-        title: request.title,
-        prompt: request.prompt,
-        requestedBy: request.requestedBy,
-      });
-      queueMicrotask(() => service.submit(request.id, secret, "user-1"));
-    },
-  });
-  return { service, requests, secret };
-}
-class FakeSpawnedProcess extends EventEmitter {
-  readonly stdout = new PassThrough();
-  readonly stderr = new PassThrough();
-  readonly stdinWrites: string[] = [];
-  constructor(private readonly onStdinWrite?: (chunk: string, proc: FakeSpawnedProcess) => void) {
-    super();
-  }
-  readonly stdin = {
-    write: (chunk: string) => {
-      this.stdinWrites.push(chunk);
-      this.onStdinWrite?.(chunk, this);
-    },
-  };
-
-  kill(): boolean {
-    this.emit("close", 143, "SIGTERM");
-    return true;
-  }
-}
-function fakeSpawnFactory(onSpawn?: (command: string, args: string[], proc: FakeSpawnedProcess) => void) {
-  const calls: Array<{ command: string; args: string[]; proc: FakeSpawnedProcess }> = [];
-  const factory: ElevatedSpawnFactory = (command, args) => {
-    const proc = new FakeSpawnedProcess((chunk, current) => {
-      if (chunk.includes("sudo-password")) {
-        current.stdout.write("root-owned output\n");
-        current.emit("close", 0, null);
-      }
-    });
-    calls.push({ command, args, proc });
-    onSpawn?.(command, args, proc);
-    return proc;
-  };
-  return { factory, calls };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { service, requests, secret } = autoSubmitSecret();
-    const { factory, calls } = fakeSpawnFactory((command, args, proc) => {
-      if (command !== "powershell.exe") return;
-      queueMicrotask(() => {
-        __jait_capture(0, (args));
-        // Verify credential-based path (not UAC) when username is provided
-        const encodedIdx = args.indexOf("-EncodedCommand");
-        const script = Buffer.from(args[encodedIdx + 1], "base64").toString("utf16le");
-        __jait_capture(1, (script));
-        __jait_capture(2, (script));
-        proc.stdout.write(JSON.stringify({
-          exitCode: 0,
-          stdout: "windows-admin-output\n",
-          stderr: "",
-        }));
-        proc.emit("close", 0, null);
-      });
-    });
-    const registry = new ToolRegistry();
-    registry.register(createElevatedRunTool(service, factory, {
-      platform: () => "win32",
-      getuid: () => undefined,
-    }));
-    const auditEntries: unknown[] = [];
-    const audit = {
-      write: vi.fn((entry: unknown) => {
-        auditEntries.push(entry);
-        return "audit-id";
-      }),
-    } as unknown as AuditWriter;
-
-    const result = await registry.execute(
-      "elevated.run",
-      {
-        command: "Get-Service",
-        username: ".\\Administrator",
-        reason: "inspect local services",
-      },
-      context(),
-      audit,
-    );
-
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, ((result.data as { output: string }).output));
-    __jait_capture(5, (requests));
-    __jait_capture(6, (calls[0]?.command));
-    __jait_capture(7, (JSON.stringify(calls[0])), (secret));
-    __jait_capture(8, (JSON.stringify(auditEntries)), (secret));
-    __jait_capture(9, (auditEntries[0]));
+    __jait_capture(0, ((await tool.execute({ diagram: "graph TD\nA-->B", title: "a".repeat(201) }, {} as any)).ok));
   
 })();
 

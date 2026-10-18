@@ -1,11 +1,19 @@
-// Translated fixture from packages/gateway/src/surfaces/project-ui-sync.test.ts; expected literals are in tail_static.rs.
-import { FileSystemSurface } from "../../../../packages/gateway/src/surfaces/filesystem.js";
-import { shouldSyncProjectSurfaceUi } from "../../../../packages/gateway/src/surfaces/project-ui-sync.js";
+// Translated fixture from packages/gateway/src/surfaces/browser-runtime.test.ts; expected literals are in tail_static.rs.
+import {
+  BrowserSurface,
+  createConsoleFloodGuard,
+  pushBrowserRuntimeEvent,
+  type BrowserDriver,
+  type BrowserRuntimeEvent,
+  resolveBrowserRuntimeMode,
+  selectInitialBrowserPage,
+} from "../../../../packages/gateway/src/surfaces/browser.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/project-ui-sync.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/browser-runtime.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,18 +47,264 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_6_3": {
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_54_3": {
 
 
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+const __jait_hook_1063 = () => {
+    vi.useRealTimers();
+    setPlatform(originalPlatform);
+    setBunVersion(originalBunVersion);
+    if (originalBrowserRuntime === undefined) {
+      delete process.env.BROWSER_RUNTIME;
+    } else {
+      process.env.BROWSER_RUNTIME = originalBrowserRuntime;
+    }
+  };
+
+try {
+await (async()=>{
+
+    setBrowserRuntimeEnv("");
+    setPlatform("win32");
+    setBunVersion("1.2.0");
+
+    __jait_capture(0, (resolveBrowserRuntimeMode()));
+  
+})();
+
+} finally {
+await __jait_hook_1063();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_62_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+const __jait_hook_1063 = () => {
+    vi.useRealTimers();
+    setPlatform(originalPlatform);
+    setBunVersion(originalBunVersion);
+    if (originalBrowserRuntime === undefined) {
+      delete process.env.BROWSER_RUNTIME;
+    } else {
+      process.env.BROWSER_RUNTIME = originalBrowserRuntime;
+    }
+  };
+
+try {
+await (async()=>{
+
+    setBrowserRuntimeEnv("node-bridge");
+    setPlatform("win32");
+    setBunVersion("1.2.0");
+
+    __jait_capture(0, (resolveBrowserRuntimeMode()));
+  
+})();
+
+} finally {
+await __jait_hook_1063();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_70_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+const __jait_hook_1063 = () => {
+    vi.useRealTimers();
+    setPlatform(originalPlatform);
+    setBunVersion(originalBunVersion);
+    if (originalBrowserRuntime === undefined) {
+      delete process.env.BROWSER_RUNTIME;
+    } else {
+      process.env.BROWSER_RUNTIME = originalBrowserRuntime;
+    }
+  };
+
+try {
+await (async()=>{
+
+    setBrowserRuntimeEnv("in-process");
+    setPlatform("win32");
+    setBunVersion("1.2.0");
+
+    __jait_capture(0, (resolveBrowserRuntimeMode()));
+  
+})();
+
+} finally {
+await __jait_hook_1063();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_80_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const surface = new FileSystemSurface("fs-session-1");
-    await surface.start({ sessionId: "session-1", projectRoot: process.cwd() });
+    const now = vi.spyOn(Date, "now").mockReturnValue(0);
+    const close = vi.fn().mockResolvedValue(undefined);
+    const driver: BrowserDriver = {
+      navigate: vi.fn().mockResolvedValue(undefined),
+      click: vi.fn().mockResolvedValue(undefined),
+      typeText: vi.fn().mockResolvedValue(undefined),
+      scroll: vi.fn().mockResolvedValue(undefined),
+      select: vi.fn().mockResolvedValue(undefined),
+      waitFor: vi.fn().mockResolvedValue(undefined),
+      screenshot: vi.fn().mockResolvedValue("/tmp/screen.png"),
+      snapshot: vi.fn().mockResolvedValue({
+        url: "about:blank",
+        title: "Blank",
+        text: "",
+        elements: [],
+        activeElement: null,
+        dialogs: [],
+        obstruction: null,
+      }),
+      diagnose: vi.fn().mockResolvedValue({ selector: "#target", found: false }),
+      getMetrics: vi.fn().mockResolvedValue({ sampledAt: new Date().toISOString() }),
+      getEvents: vi.fn().mockReturnValue([]),
+      close,
+      liveView: {
+        display: "container:jait-browser-sb-test",
+        vncPort: 5900,
+        websockifyPort: 6080,
+        novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
+        containerName: "jait-browser-sb-test",
+      },
+    };
+    const surface = new BrowserSurface("browser-test", {
+      driverFactory: async () => driver,
+    });
 
-    __jait_capture(0, (shouldSyncProjectSurfaceUi(surface)));
+    await surface.start({ sessionId: "session-1", projectRoot: "/project" });
+    now.mockReturnValue(5 * 60 * 1000);
+
+    __jait_capture(0, (surface.idleMs), (5 * 60 * 1000));
+    __jait_capture(1, (surface.snapshot().metadata.liveViewContainerName));
+
+    await surface.describe();
+    __jait_capture(2, (surface.idleMs));
+
+    await surface.stop();
+    __jait_capture(3, (close.mock.calls));
+    now.mockRestore();
   
 })();
 
@@ -61,51 +315,569 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each0": {
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_132_3": {
 
 
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const panelOpen = true;
 
 try {
 await (async()=>{
 
-    const surface = new FileSystemSurface(`fs-explicit-${panelOpen}`);
-    await surface.start({ sessionId: "session-1", projectRoot: process.cwd(), panelOpen });
-
-    __jait_capture(0, (shouldSyncProjectSurfaceUi(surface)));
+    let connected = true;
+    const driver = { isConnected: () => connected, close: async () => {} } as BrowserDriver;
+    const surface = new BrowserSurface("ended-browser", { driverFactory: async () => driver });
+    await surface.start({ sessionId: "owned-chat", projectRoot: "/project" });
+    __jait_capture(0, (surface.state));
+    connected = false;
+    __jait_capture(1, (surface.state));
+    __jait_capture(2, (surface.snapshot().state));
+    await surface.stop();
   
 })();
 
 } finally {
 
-}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_surfaces_project_ui_sync_test_ts_13_3_each1": {
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_150_3": {
 
 
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
 /*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const panelOpen = false;
+function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
+    pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
+  }
 
 try {
 await (async()=>{
 
-    const surface = new FileSystemSurface(`fs-explicit-${panelOpen}`);
-    await surface.start({ sessionId: "session-1", projectRoot: process.cwd(), panelOpen });
+    let now = 0;
+    const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });
+    const events: BrowserRuntimeEvent[] = [];
 
-    __jait_capture(0, (shouldSyncProjectSurfaceUi(surface)));
+    pushConsole(events, guard, "a");
+    pushConsole(events, guard, "b");
+    pushConsole(events, guard, "c");
+
+    __jait_capture(0, (events.map((e) => e.text)));
+    __jait_capture(1, (guard.state(now).paused));
   
 })();
 
 } finally {
 
 }
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_163_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
+    pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
+  }
+
+try {
+await (async()=>{
+
+    let now = 0;
+    const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });
+    const events: BrowserRuntimeEvent[] = [];
+
+    for (let i = 1; i <= 4; i++) pushConsole(events, guard, `msg-${i}`);
+
+    // 4th event within the window triggers the pause: it is dropped and
+    // replaced by a warn notice.
+    __jait_capture(0, (guard.state(now).paused));
+    __jait_capture(1, (events.length));
+    __jait_capture(2, (events[3]));
+    __jait_capture(3, (events[3].text));
+    __jait_capture(4, (events[3].text));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_182_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
+    pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
+  }
+
+try {
+await (async()=>{
+
+    let now = 0;
+    const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });
+    const events: BrowserRuntimeEvent[] = [];
+
+    for (let i = 1; i <= 4; i++) pushConsole(events, guard, `msg-${i}`);
+    const pausedAt = events.length;
+
+    pushConsole(events, guard, "spam-1");
+    pushConsole(events, guard, "spam-2");
+    __jait_capture(0, (events.length), (pausedAt)); // dropped
+
+    // Non-console events are unaffected while console capture is paused.
+    pushBrowserRuntimeEvent(events, { type: "pageerror", level: "error", text: "boom" }, guard);
+    pushBrowserRuntimeEvent(events, { type: "response", level: "warn", text: "HTTP 500", status: 500, url: "/x", method: "GET" }, guard);
+    __jait_capture(1, (events.length), (pausedAt + 2));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_200_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
+    pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
+  }
+
+try {
+await (async()=>{
+
+    let now = 0;
+    const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });
+    const events: BrowserRuntimeEvent[] = [];
+
+    for (let i = 1; i <= 4; i++) pushConsole(events, guard, `msg-${i}`);
+    __jait_capture(0, (guard.state(now).paused));
+
+    now += 5000; // cooldown expires
+    __jait_capture(1, (guard.state(now).paused));
+
+    pushConsole(events, guard, "after-pause");
+    __jait_capture(2, (events[events.length - 2].text));
+    __jait_capture(3, (events[events.length - 1].text));
+    __jait_capture(4, (guard.state(now).paused));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_217_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+function pushConsole(events: BrowserRuntimeEvent[], guard: ReturnType<typeof createConsoleFloodGuard>, text: string, level = "log"): void {
+    pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
+  }
+
+try {
+await (async()=>{
+
+    let now = 0;
+    const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });
+    const events: BrowserRuntimeEvent[] = [];
+
+    pushConsole(events, guard, "a");
+    now += 600;
+    pushConsole(events, guard, "b");
+    now += 600; // 'a' now falls out of the 1000ms window
+    pushConsole(events, guard, "c");
+    pushConsole(events, guard, "d");
+
+    __jait_capture(0, (guard.state(now).paused));
+    __jait_capture(1, (events.length));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_235_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const blankPage = { url: () => "about:blank" };
+    const appPage = { url: () => "http://127.0.0.1:8000/" };
+    const newPage = vi.fn().mockResolvedValue({ url: () => "about:blank" });
+
+    await __jait_captureResolved(0, (selectInitialBrowserPage({
+      pages: () => [blankPage, appPage],
+      newPage,
+    })), (blankPage));
+
+    __jait_capture(1, (newPage.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_248_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const newTabPage = { url: () => "chrome://new-tab-page/" };
+    const appPage = { url: () => "http://127.0.0.1:8000/" };
+    const newPage = vi.fn().mockResolvedValue({ url: () => "about:blank" });
+
+    await __jait_captureResolved(0, (selectInitialBrowserPage({
+      pages: () => [newTabPage, appPage],
+      newPage,
+    })), (newTabPage));
+
+    __jait_capture(1, (newPage.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_261_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const createdPage = { url: () => "about:blank" };
+    const newPage = vi.fn().mockResolvedValue(createdPage);
+
+    await __jait_captureResolved(0, (selectInitialBrowserPage({
+      pages: () => [{ url: () => "http://127.0.0.1:8000/" }],
+      newPage,
+    })), (createdPage));
+
+    __jait_capture(1, (newPage.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_browser_runtime_test_ts_273_3": {
+
+
+const originalPlatform = process.platform;
+const originalBunVersion = process.versions.bun;
+const originalBrowserRuntime = process.env.BROWSER_RUNTIME;
+function setPlatform(value: NodeJS.Platform): void {
+  Object.defineProperty(process, "platform", {
+    value,
+    configurable: true,
+  });
+}
+function setBunVersion(value: string | undefined): void {
+  if (value === undefined) {
+    delete (process.versions as NodeJS.ProcessVersions & { bun?: string }).bun;
+    return;
+  }
+  Object.defineProperty(process.versions, "bun", {
+    value,
+    configurable: true,
+  });
+}
+function setBrowserRuntimeEnv(value: string): void {
+  if (value) {
+    process.env.BROWSER_RUNTIME = value;
+    return;
+  }
+  delete process.env.BROWSER_RUNTIME;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const closedBlankPage = { isClosed: () => true, url: () => "about:blank" };
+    const openBlankPage = { isClosed: () => false, url: () => "about:blank" };
+    const newPage = vi.fn().mockResolvedValue({ url: () => "about:blank" });
+
+    await __jait_captureResolved(0, (selectInitialBrowserPage({
+      pages: () => [closedBlankPage, openBlankPage],
+      newPage,
+    })), (openBlankPage));
+
+    __jait_capture(1, (newPage.mock.calls));
+  
+})();
+
+} finally {
+
 }
 }
 

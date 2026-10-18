@@ -24,7 +24,7 @@ use std::{
     num::NonZeroU16,
     sync::Arc,
 };
-type Error = Box<dyn std::error::Error + Send + Sync>;
+pub(crate) type Error = Box<dyn std::error::Error + Send + Sync>;
 pub const BODY_LIMIT: usize = 25 * 1024 * 1024;
 
 pub const ENV_KEYS: &[&str] = &[
@@ -98,6 +98,21 @@ impl AuthState {
             tools: None,
         })
     }
+    pub(crate) fn resolve_user(&self, headers: &HeaderMap) -> Option<AuthUser> {
+        auth_user(headers, &self.secret)
+    }
+    pub(crate) fn origin_allowed(&self, headers: &HeaderMap) -> bool {
+        request_origin::is_allowed_request_origin(
+            headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()),
+            headers.get(header::HOST).and_then(|v| v.to_str().ok()),
+            &self.cors_origin,
+        ) || http_auth::extract_bearer_token(
+            headers
+                .get(header::AUTHORIZATION)
+                .and_then(|v| v.to_str().ok()),
+        )
+        .is_some()
+    }
     pub async fn with_database<T: Send + 'static>(
         &self,
         operation: impl FnOnce(&Connection) -> Result<T, Error> + Send + 'static,
@@ -127,17 +142,17 @@ impl AuthState {
             .with_state(self)
     }
 }
-fn response(status: u16, body: Value) -> Response {
+pub(crate) fn response(status: u16, body: Value) -> Response {
     (
         StatusCode::from_u16(status).expect("fixed status"),
         Json(body),
     )
         .into_response()
 }
-fn denied() -> Response {
+pub(crate) fn denied() -> Response {
     response(401, json!({"detail":"login_required"}))
 }
-fn internal_error() -> Response {
+pub(crate) fn internal_error() -> Response {
     response(
         500,
         json!({"statusCode":500,"error":"Internal Server Error","message":"Internal Server Error"}),
@@ -303,7 +318,7 @@ fn unavailable() -> Response {
         json!({"statusCode":503,"error":"Service Unavailable","message":"Service Unavailable"}),
     )
 }
-fn database_failure(error: &Error) -> Response {
+pub(crate) fn database_failure(error: &Error) -> Response {
     if matches!(
         error.downcast_ref::<DatabaseError>(),
         Some(DatabaseError::Busy | DatabaseError::Closed)
@@ -390,51 +405,9 @@ async fn handle(State(state): State<AuthState>, request: Request) -> Response {
             Err(error) => return database_failure(&error),
         }
     }
-    let bytes = match to_bytes(request.into_body(), BODY_LIMIT).await {
-        Ok(bytes) => bytes,
-        Err(_) => {
-            return response(
-                413,
-                json!({"statusCode":413,"code":"FST_ERR_CTP_BODY_TOO_LARGE","error":"Payload Too Large","message":"Request body is too large"}),
-            );
-        }
-    };
-    let content_type = headers
-        .get(header::CONTENT_TYPE)
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("");
-    let json_type = content_type
-        .split(';')
-        .next()
-        .unwrap_or("")
-        .trim()
-        .eq_ignore_ascii_case("application/json");
-    let body = if bytes.is_empty() {
-        if json_type {
-            return response(
-                400,
-                json!({"statusCode":400,"code":"FST_ERR_CTP_EMPTY_JSON_BODY","error":"Bad Request","message":"Body cannot be empty when content-type is set to 'application/json'"}),
-            );
-        }
-        Value::Null
-    } else if json_type {
-        match serde_json::from_slice::<Value>(&bytes) {
-            Ok(value) => value,
-            Err(_) => {
-                return response(
-                    400,
-                    json!({"statusCode":400,"error":"Bad Request","message":"Invalid JSON body"}),
-                );
-            }
-        }
-    } else if content_type.starts_with("text/plain") {
-        // Auth routes ignore string-body fields in the reference.
-        Value::String(String::from_utf8_lossy(&bytes).into_owned())
-    } else {
-        return response(
-            415,
-            json!({"statusCode":415,"code":"FST_ERR_CTP_INVALID_MEDIA_TYPE","error":"Unsupported Media Type","message":format!("Unsupported Media Type: {content_type}")}),
-        );
+    let body = match parse_body(request.into_body(), &headers).await {
+        Ok(body) => body,
+        Err(result) => return *result,
     };
     let password = match password_work(&state, &path, &body).await {
         Ok(password) => password,
@@ -655,4 +628,47 @@ fn dispatch(
         }
         _ => response(404, json!({"error":"Not Found"})),
     })
+}
+
+pub(crate) async fn parse_body(
+    body: axum::body::Body,
+    headers: &HeaderMap,
+) -> Result<Value, Box<Response>> {
+    let error = |status, body| Box::new(response(status, body));
+    let bytes = to_bytes(body, BODY_LIMIT).await.map_err(|_| error(413, json!({"statusCode":413,"code":"FST_ERR_CTP_BODY_TOO_LARGE","error":"Payload Too Large","message":"Request body is too large"})))?;
+    let content_type = headers
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("");
+    let json_type = content_type
+        .split(';')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .eq_ignore_ascii_case("application/json");
+    if bytes.is_empty() {
+        return if json_type {
+            Err(error(
+                400,
+                json!({"statusCode":400,"code":"FST_ERR_CTP_EMPTY_JSON_BODY","error":"Bad Request","message":"Body cannot be empty when content-type is set to 'application/json'"}),
+            ))
+        } else {
+            Ok(Value::Null)
+        };
+    }
+    if json_type {
+        return serde_json::from_slice(&bytes).map_err(|_| {
+            error(
+                400,
+                json!({"statusCode":400,"error":"Bad Request","message":"Invalid JSON body"}),
+            )
+        });
+    }
+    if content_type.starts_with("text/plain") {
+        return Ok(Value::String(String::from_utf8_lossy(&bytes).into_owned()));
+    }
+    Err(error(
+        415,
+        json!({"statusCode":415,"code":"FST_ERR_CTP_INVALID_MEDIA_TYPE","error":"Unsupported Media Type","message":format!("Unsupported Media Type: {content_type}")}),
+    ))
 }

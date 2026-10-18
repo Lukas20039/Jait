@@ -1,15 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/persona-agent-tools.test.ts; expected literals are in tail_static.rs.
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
-import { createPersonaAgentTool, createPersonaAgentInspectTool } from "../../../../packages/gateway/src/tools/persona-agent-tools.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { ASK_MODE_TOOLS, MUTATING_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
+// Translated fixture from packages/gateway/src/tools/os-tools.test.ts; expected literals are in tail_static.rs.
+
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/persona-agent-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/os-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,182 +39,404 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3": {
-
-
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_12_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const agent = await create(registry, "Developer");
-    const changed = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile: { paused: true } }, owner);
-    __jait_capture(1, (changed.ok));
-    __jait_capture(2, (service.getPersonaAgent(agent.id, "owner")));
-    const listed = await registry.execute("agent.profiles.inspect", { action: "list" }, owner);
-    __jait_capture(3, ((listed.data as any).agents));
+    execAsync.mockRejectedValue(new Error("Command unavailable"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query: "info" }, context)), ({
+      ok: true, data: { platform: process.platform, pid: process.pid, cwd: process.cwd() },
+    }));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_566();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3": {
-
-
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+/*__jait_scope_open__*/{
+const query = "processes";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const agent = await create(registry, "Developer");
-    for (const action of ["get", "update", "delete"]) {
-      const result = await registry.execute("agent.profiles", { action, id: agent.id, profile: { name: "stolen" } }, { ...owner, userId: "other" });
-      __jait_capture(1, (result.ok));
-    }
-    __jait_capture(2, ((await registry.execute("agent.profiles.inspect", { action: "list" }, { ...owner, userId: undefined })).ok));
-    for (const profile of [{ providerId: "missing" }, { schedule: { kind: "cron", cron: "" } }, { notificationEvents: ["arbitrary"] }, { tasks: [{ id: "task", name: "Task", cron: "* * * * *" }] }]) {
-      const result = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile }, owner);
-      __jait_capture(3, (result.ok));
-    }
-    __jait_capture(4, (service.getPersonaAgent(agent.id, "owner")?.name));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3": {
-
-
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_18_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+/*__jait_scope_open__*/{
+const query = "disk";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    const lead = await create(registry, "Lead");
-    const worker = await create(registry, "Worker");
-    const setManager = (id: string, reportsToId: string | null) => registry.execute("agent.profiles", { action: "update", id, profile: { reportsToId } }, owner);
-    __jait_capture(1, ((await setManager(worker.id, lead.id)).ok));
-    __jait_capture(2, ((await setManager(lead.id, worker.id)).ok));
-    __jait_capture(3, ((await setManager(worker.id, worker.id)).ok));
-    __jait_capture(4, ((await setManager(worker.id, null)).ok));
-    await setManager(worker.id, lead.id);
-    const thread = service.create({ title: "Work", providerId: "codex", userId: "owner", personaAgentId: lead.id });
-    __jait_capture(5, ((await registry.execute("agent.profiles", { action: "delete", id: lead.id }, owner)).ok));
-    __jait_captureType(6, (service.getPersonaAgent(worker.id, "owner")?.reportsToId));
-    __jait_captureType(7, (service.getById(thread.id)?.personaAgentId));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_566();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3": {
-
-
-const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
 /*__jait_scope_open__*/{
-let opened: Awaited<ReturnType<typeof openDatabase>>;
-let service: ThreadService;
-let registry: ToolRegistry;
-const create = async (r: ToolRegistry, name: string) => {
-    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
-    __jait_capture(0, (result.ok));
-    return (result.data as any).agent;
-  };
-const __jait_hook_736 = async () => {
-    opened = await openDatabase(":memory:");
-    migrateDatabase(opened.sqlite);
-    service = new ThreadService(opened.db);
-    registry = new ToolRegistry();
-    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
-    registry.register(createPersonaAgentTool(deps));
-    registry.register(createPersonaAgentInspectTool(deps));
-  };
-const __jait_hook_1138 = () => opened.sqlite.close();
-await __jait_hook_736();
+/*__jait_scope_open__*/{
+const query = "processes";
+await __jait_hook_461();
 try {
 await (async()=>{
 
-    __jait_capture(1, (ASK_MODE_TOOLS.has("agent.profiles.inspect")));
-    __jait_capture(2, (ASK_MODE_TOOLS.has("agent.profiles")));
-    __jait_capture(3, (MUTATING_TOOLS.has("agent.profiles")));
-    __jait_capture(4, ((await registry.execute("agent.profiles.inspect", { action: "delete", id: "x" }, owner)).ok));
+    execAsync.mockRejectedValue(new Error("Permission denied"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
   
 })();
 
 } finally {
-await __jait_hook_1138();
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_21_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const query = "disk";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    execAsync.mockRejectedValue(new Error("Permission denied"));
+    __jait_capture(0, (await createOsQueryTool().execute({ query }, context)));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_25_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    vi.stubEnv("JAIT_PRIVATE_TEST_TOKEN", "must-not-leak");
+    const result = await createOsQueryTool().execute({ query: "env" }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (JSON.stringify(result)));
+    __jait_capture(2, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const manager = "apt";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const manager = "brew";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_34_3_each2": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const manager = "winget";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    const result = await createOsInstallTool().execute({ package: "ripgrep", manager }, context);
+    __jait_capture(0, (result), ({ ok: true, data: { manager, stdout: "completed", stderr: "" } }));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each0": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const pkg = "ripgrep;echo injected";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each1": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const pkg = "$(echo injected)";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each2": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const pkg = "ripgrep\nwhoami";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const pkg = "--allow-unauthenticated";
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    __jait_capture(0, ((await createOsInstallTool().execute({ package: pkg, manager: "apt" }, context)).ok));
+    __jait_capture(1, (execAsync.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_566();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_os_tools_test_ts_43_3": {
+const { execAsync } = vi.hoisted(() => ({ execAsync: vi.fn() }));
+await vi.mock("node:child_process", () => ({
+  exec: Object.assign(vi.fn(), { [Symbol.for("nodejs.util.promisify.custom")]: execAsync }),
+}));
+const { createOsInstallTool, createOsQueryTool } = await import("../../../../packages/gateway/src/tools/os-tools.js");
+const context = { sessionId: "os-tests", actionId: "os-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_461 = () => { execAsync.mockReset().mockResolvedValue({ stdout: " completed \n", stderr: "" }); };
+const __jait_hook_566 = () => { vi.unstubAllEnvs(); };
+/*__jait_scope_open__*/{
+await __jait_hook_461();
+try {
+await (async()=>{
+
+    execAsync.mockRejectedValue(new Error("Package not found"));
+    __jait_capture(0, (await createOsInstallTool().execute({ package: "missing-package", manager: "apt" }, context)));
+  
+})();
+
+} finally {
+await __jait_hook_566();
 }
 }
 

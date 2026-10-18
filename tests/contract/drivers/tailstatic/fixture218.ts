@@ -1,15 +1,10 @@
-// Translated fixture from packages/gateway/src/services/thread-title.test.ts; expected literals are in tail_static.rs.
-import {
-  THREAD_TITLE_PROMPT,
-  generateTitleViaApi,
-  normalizeGeneratedThreadTitle,
-} from "../../../../packages/gateway/src/services/thread-title.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/thread-router.test.ts; expected literals are in tail_static.rs.
+import { matchSkills, matchExplicitSkillInvocations } from "../../../../packages/gateway/src/services/thread-router.js"
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/thread-title.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/thread-router.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,311 +38,242 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_6_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (THREAD_TITLE_PROMPT));
+    const skills = [
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes, errors, and broken behavior.' },
+      { id: 'research', name: 'Deep Research', description: 'Compare options, read docs, and synthesize findings.' },
+    ]
+
+    __jait_capture(0, (matchSkills('test todo tool for me', skills)))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_20_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_15_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (normalizeGeneratedThreadTitle('Title: "Fix manager thread selection"\n\nExtra text', "Fallback")));
+    const skills = [
+      { id: 'deep-research', name: 'Deep Research', description: 'Compare options and synthesize findings.' },
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes, errors, and broken behavior.' },
+    ]
+
+    const matched = matchSkills('/deep-research find me the best option', skills)
+    __jait_capture(0, (matched[0]))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_25_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (normalizeGeneratedThreadTitle("3D viewer crash fix", "Fallback")));
-    __jait_capture(1, (normalizeGeneratedThreadTitle("1. Fix project reload loop", "Fallback")));
+    const skills = [
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes.' },
+    ]
+    __jait_capture(0, (matchExplicitSkillInvocations('look at src/debugging/index.ts', skills)))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_31_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_32_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (normalizeGeneratedThreadTitle(" \n ", "Fallback title")));
+    const skills = [
+      { id: 'deep-research', name: 'Deep Research', description: 'Compare options.' },
+    ]
+    __jait_capture(0, (matchExplicitSkillInvocations('/deep-research please', skills)))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_40_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
-      __jait_capture(0, (String(input)));
-      __jait_capture(1, ((init?.headers as Record<string, string>)["Authorization"]));
-      const body = JSON.parse(String(init?.body)) as { model: string; messages: Array<{ role: string; content: string }> };
-      __jait_capture(2, (body.model));
-      __jait_capture(3, (body.messages[0]?.content));
-      return new Response(JSON.stringify({
-        choices: [{ message: { content: "Fix mimo backend selection" } }],
-      }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    });
-    globalThis.fetch = fetchMock as typeof fetch;
+    const skills = [
+      { id: 'openhue', name: 'openhue', description: 'Control Philips Hue lights and scenes via the OpenHue CLI.' },
+      { id: 'eightctl', name: 'eightctl', description: 'Control Eight Sleep pods status, temperature, alarms, schedules.' },
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes, errors, and broken behavior.' },
+    ]
 
-    const title = await generateTitleViaApi({
-      task: "Make sure Jait threads respect the configured backend",
-      config: {
-        port: 0,
-        wsPort: 0,
-        host: "127.0.0.1",
-        logLevel: "silent",
-        corsOrigin: "*",
-        nodeEnv: "test",
-        jwtSecret: "test",
-        llmProvider: "ollama",
-        ollamaUrl: "http://localhost:11434",
-        ollamaModel: "dummy",
-        openaiApiKey: "",
-        openaiModel: "gpt-4o",
-        openaiBaseUrl: "https://api.openai.com/v1",
-        contextWindow: 128000,
-        hookSecret: "test",
-        heartbeatCron: "* * * * *",
-        whisperUrl: "http://localhost:8178",
-      },
-      apiKeys: { OPENROUTER_API_KEY: "openrouter-test-key" },
-      model: "xiaomi/mimo-v2-pro",
-      jaitBackend: "openrouter",
-    });
-
-    __jait_capture(4, (title));
-    __jait_capture(5, (fetchMock.mock.calls));
+    __jait_capture(0, (matchSkills('implement keyboard controls for every button in my app', skills)))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_81_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_50_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // Regression: GLM thinking models via Ollama spend part of the completion
-    // budget on internal reasoning before writing the title. With the old
-    // budget of 24 tokens the visible answer never arrived — `content` came
-    // back empty (finish_reason "length") and every new chat silently kept
-    // its truncated first-message name.
-    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
-      __jait_capture(0, (String(input)));
-      const body = JSON.parse(String(init?.body)) as {
-        model: string;
-        max_tokens: number;
-        messages: Array<{ role: string; content: string }>;
-      };
-      __jait_capture(1, (body.model));
-      __jait_capture(2, (body.max_tokens));
-      __jait_capture(3, (body.messages[0]?.content));
-      // Response shape produced by reasoning models: the answer is present
-      // once the budget allows the model to finish thinking.
-      return new Response(
-        JSON.stringify({
-          choices: [
-            {
-              finish_reason: "stop",
-              message: { content: "Fix chat naming bug", reasoning: "the user wants... ok" },
-            },
-          ],
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    });
-    globalThis.fetch = fetchMock as typeof fetch;
+    const skills = [
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes, errors, broken failures, and unexpected behavior.' },
+      { id: 'review', name: 'Code Review', description: 'Review code quality, errors, bugs, and maintainability.' },
+      { id: 'security', name: 'Security Audit', description: 'Audit code for security errors, bugs, auth, and vulnerabilities.' },
+      { id: 'deep-research', name: 'Deep Research', description: 'Compare options and synthesize findings.' },
+    ]
 
-    const title = await generateTitleViaApi({
-      task: "some longer opening message that should become a chat title",
-      config: {
-        port: 0,
-        wsPort: 0,
-        host: "127.0.0.1",
-        logLevel: "silent",
-        corsOrigin: "*",
-        nodeEnv: "test",
-        jwtSecret: "test",
-        llmProvider: "ollama",
-        ollamaUrl: "http://localhost:11434",
-        ollamaModel: "dummy",
-        openaiApiKey: "",
-        openaiModel: "gpt-4o",
-        openaiBaseUrl: "https://api.openai.com/v1",
-        contextWindow: 128000,
-        hookSecret: "test",
-        heartbeatCron: "* * * * *",
-        whisperUrl: "http://localhost:8178",
-      },
-      model: "glm-5.3-flash:cloud",
-      jaitBackend: "ollama",
-    });
-
-    __jait_capture(4, (title));
-    __jait_capture(5, (fetchMock.mock.calls));
+    const matched = matchSkills('/deep-research review this broken security auth error for bugs', skills)
+    __jait_capture(0, (matched[0]))
+    __jait_capture(1, (matched))
+    __jait_capture(2, (matched.slice(1).sort()))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_142_3": {
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_64_3": {
 
 
-const originalFetch = globalThis.fetch;
-const __jait_hook_220 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // If a reasoning model still burns the whole budget, the helper must fail
-    // loudly (so the route logs it) rather than return "" which the route
-    // silently turns into a first-message-derived title.
-    globalThis.fetch = vi.fn(async () =>
-      new Response(
-        JSON.stringify({
-          choices: [
-            {
-              finish_reason: "length",
-              message: { content: "", reasoning: "let me think about a good title for..." },
-            },
-          ],
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      ),
-    ) as unknown as typeof fetch;
+    const skills = [
+      { id: 'debugging', name: 'Debugging', description: 'Diagnose crashes, errors, and broken behavior.' },
+      { id: 'research', name: 'Deep Research', description: 'Compare options, read docs, and synthesize findings.' },
+    ]
 
-    await __jait_rejected(0, generateTitleViaApi({
-        task: "some longer opening message",
-        config: {
-          port: 0,
-          wsPort: 0,
-          host: "127.0.0.1",
-          logLevel: "silent",
-          corsOrigin: "*",
-          nodeEnv: "test",
-          jwtSecret: "test",
-          llmProvider: "ollama",
-          ollamaUrl: "http://localhost:11434",
-          ollamaModel: "dummy",
-          openaiApiKey: "",
-          openaiModel: "gpt-4o",
-          openaiBaseUrl: "https://api.openai.com/v1",
-          contextWindow: 128000,
-          hookSecret: "test",
-          heartbeatCron: "* * * * *",
-          whisperUrl: "http://localhost:8178",
-        },
-        model: "glm-5.3-flash:cloud",
-        jaitBackend: "ollama",
-      }));
+    __jait_capture(0, (matchSkills('Use the Debugging skill to inspect this error', skills)))
   
 })();
 
 } finally {
-await __jait_hook_220();
+
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_74_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  const skills = [
+    { id: 'bear-notes', name: 'bear-notes', description: 'Create, search, and manage Bear notes via grizzly CLI.' },
+    { id: 'apple-notes', name: 'apple-notes', description: 'Create, view, edit, delete, search, move, or export Apple Notes via memo CLI on macOS.' },
+    { id: 'slack', name: 'slack', description: 'Slack message tool ops: send/read/edit/delete, react, poll, pin, thread, search, presence.' },
+    { id: 'gifgrep', name: 'gifgrep', description: 'Search GIF providers, download results, and extract stills.' },
+  ];
+  __jait_capture(0, (matchSkills('Read notes/service.txt using Jait file tools. Write result.json and verify values from the file.', skills)));
+  __jait_capture(1, (matchSkills('Discover file metadata size modified date and write result.json.', skills)));
+  __jait_capture(2, (matchSkills('Search source and create the result file.', skills)));
+  __jait_capture(3, (matchSkills('Search Apple Notes for my meeting notes', skills)));
+
+})();
+
+} finally {
+
+}
+
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_86_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  const skills = [{ id: 'session-logs', name: 'session-logs', description: 'Search and analyze your own session logs (older/parent conversations) using jq.' }];
+  __jait_capture(0, (matchSkills('Stay inside the fixture workspace. Do not inspect parent folders or other tasks. Write and run your own tests.', skills)));
+  __jait_capture(1, (matchSkills('Analyze my older session logs', skills)));
+
+})();
+
+} finally {
+
+}
+
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_router_test_ts_91_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  __jait_capture(0, (matchSkills('inspect original config', [{ id: 'pin', name: 'pin', description: 'pin pin pin' }])));
+
+})();
+
+} finally {
+
+}
+
 
 break;
 }

@@ -1,16 +1,15 @@
-// Translated fixture from packages/gateway/src/sprint12.test.ts; expected literals are in tail_static.rs.
-import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
-import { createServer } from "../../../../packages/gateway/src/server.js";
-import { loadConfig } from "../../../../packages/gateway/src/config.js";
+// Translated fixture from packages/gateway/src/sprint11.test.ts; expected literals are in tail_static.rs.
+
 import { ConsentManager } from "../../../../packages/gateway/src/security/consent-manager.js";
-import { DeviceRegistry } from "../../../../packages/gateway/src/services/device-registry.js";
-import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { registerVoiceRoutes } from "../../../../packages/gateway/src/routes/voice.js";
+import { VoiceService } from "../../../../packages/gateway/src/voice/service.js";
+import { createVoiceSpeakTool, createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint12.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/sprint11.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,64 +43,33 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint12_test_ts_19_3": {
+case "tailstatic_packages_gateway_src_sprint11_test_ts_10_3": {
 
-
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent" as const,
-  nodeEnv: "test" as const,
-};
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const consentManager = new ConsentManager();
-    const deviceRegistry = new DeviceRegistry();
-    const app = await createServer(testConfig, { consentManager, deviceRegistry });
+    const app = Fastify();
+    const consent = new ConsentManager({ defaultTimeoutMs: 500 });
+    const voice = new VoiceService();
+    registerVoiceRoutes(app, voice, consent);
 
-    const headers = { authorization: "Bearer " + await signAuthToken({ id: "mobile-owner", username: "owner" }, testConfig.jwtSecret) };
-    const discovery = await app.inject({ headers, method: "GET", url: "/api/mobile/discovery" });
-    __jait_capture(0, (discovery.statusCode));
-    const discoveryBody = discovery.json() as { name: string; wsUrl: string };
-    __jait_capture(1, (discoveryBody.name));
-    __jait_capture(2, (discoveryBody.wsUrl));
-
-    const register = await app.inject({ headers,
+    const res = await app.inject({
       method: "POST",
-      url: "/api/mobile/devices/register",
-      payload: {
-        id: "device-mobile-1",
-        name: "Pixel Test",
-        platform: "mobile",
-        capabilities: ["voice", "screen-view", "consent"],
-      },
+      url: "/api/voice/transcribe",
+      payload: { sessionId: "s1", transcript: "Hey Jait run tests" },
     });
-    __jait_capture(3, (register.statusCode));
 
-    const devices = await app.inject({ headers, method: "GET", url: "/api/mobile/devices" });
-    __jait_capture(4, (devices.statusCode));
-    const devicesBody = devices.json() as { devices: Array<{ id: string; lastSeen: string }> };
-    __jait_capture(5, (devicesBody.devices));
-    const lastSeenBefore = devicesBody.devices[0]!.lastSeen;
+    __jait_capture(0, (res.statusCode));
+    const body = res.json() as { text: string; wakeWordDetected: boolean; sentToAgent: boolean };
+    __jait_capture(1, (body.text));
+    __jait_capture(2, (body.wakeWordDetected));
+    __jait_capture(3, (body.sentToAgent));
 
-    await new Promise((resolve) => setTimeout(resolve, 5));
-
-    const heartbeat = await app.inject({ headers,
-      method: "POST",
-      url: "/api/mobile/devices/device-mobile-1/heartbeat",
-    });
-    __jait_capture(6, (heartbeat.statusCode));
-    const heartbeatBody = heartbeat.json() as { device: { lastSeen: string } };
-    __jait_capture(7, (heartbeatBody.device.lastSeen > lastSeenBefore));
-
-    const health = await app.inject({ headers, method: "GET", url: "/health" });
-    const healthBody = health.json() as { devices: number };
-    __jait_capture(8, (healthBody.devices));
-
+    const state = await app.inject({ method: "GET", url: "/api/voice/state/s1" });
+    __jait_capture(4, ((state.json() as { state: { listening: boolean } }).state.listening));
     await app.close();
   
 })();
@@ -113,41 +81,76 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint12_test_ts_66_3": {
+case "tailstatic_packages_gateway_src_sprint11_test_ts_33_3": {
 
-
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent" as const,
-  nodeEnv: "test" as const,
-};
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const sessionService = new SessionService(db);
-    sessionService.create({ name: "Mobile Control Session", userId: "mobile-owner" });
+    const app = Fastify();
+    const consent = new ConsentManager({ defaultTimeoutMs: 1_000 });
+    const voice = new VoiceService();
+    registerVoiceRoutes(app, voice, consent);
 
-    const app = await createServer(testConfig, {
-      consentManager: new ConsentManager(),
-      deviceRegistry: new DeviceRegistry(),
-      sessionService,
+    const pendingPromise = consent.requestConsent({
+      actionId: "a1",
+      toolName: "terminal.run",
+      summary: "run",
+      preview: { cmd: "npm test" },
+      risk: "high",
+      policy: {
+        consentLevel: "always",
+        description: "Run a shell command.",
+        knownTool: true,
+        source: "profile",
+      },
+      sessionId: "s-voice",
+      timeoutMs: 10_000,
     });
 
-    const headers = { authorization: "Bearer " + await signAuthToken({ id: "mobile-owner", username: "owner" }, testConfig.jwtSecret) };
-    const response = await app.inject({ headers, method: "GET", url: "/api/mobile/os-tool/sessions" });
-    __jait_capture(0, (response.statusCode));
-    const body = response.json() as { sessions: Array<{ id: string; name: string }> };
-    __jait_capture(1, (body.sessions.length));
-    __jait_capture(2, (body.sessions[0]!.name));
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/voice/transcribe",
+      payload: { sessionId: "s-voice", transcript: "Yes, run it" },
+    });
 
+    __jait_capture(0, (res.statusCode));
+    const decision = await pendingPromise;
+    __jait_capture(1, (decision.approved));
+    __jait_capture(2, (decision.decidedVia));
     await app.close();
-    sqlite.close();
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_sprint11_test_ts_68_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const voice = new VoiceService();
+    const tool = createVoiceSpeakTool(voice);
+    const result = await tool.execute({ text: "Build succeeded" }, {
+      actionId: "a2",
+      sessionId: "s2",
+      projectRoot: "/project/Jait",
+      requestedBy: "test",
+    });
+    __jait_capture(0, (result.ok));
+
+    const registry = createToolRegistry(new SurfaceRegistry(), { voiceService: voice });
+    __jait_capture(1, (registry.listNames()));
   
 })();
 

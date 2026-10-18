@@ -1,15 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/preview-tools.test.ts; expected literals are in tail_static.rs.
-import { createPreviewInspectTool, createPreviewOpenTool, createPreviewRestartTool } from "../../../../packages/gateway/src/tools/preview-tools.js";
+// Translated fixture from packages/gateway/src/tools/persona-agent-tools.test.ts; expected literals are in tail_static.rs.
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+import { createPersonaAgentTool, createPersonaAgentInspectTool } from "../../../../packages/gateway/src/tools/persona-agent-tools.js";
+import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { buildToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { vi } from '../tailmock.ts';
+import { ASK_MODE_TOOLS, MUTATING_TOOLS } from "../../../../packages/gateway/src/tools/chat-modes.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/preview-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/persona-agent-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,420 +43,182 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_29_3": {
 
 
+const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
 /*__jait_scope_open__*/{
-
+let opened: Awaited<ReturnType<typeof openDatabase>>;
+let service: ThreadService;
+let registry: ToolRegistry;
+const create = async (r: ToolRegistry, name: string) => {
+    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
+    __jait_capture(0, (result.ok));
+    return (result.data as any).agent;
+  };
+const __jait_hook_736 = async () => {
+    opened = await openDatabase(":memory:");
+    migrateDatabase(opened.sqlite);
+    service = new ThreadService(opened.db);
+    registry = new ToolRegistry();
+    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
+    registry.register(createPersonaAgentTool(deps));
+    registry.register(createPersonaAgentInspectTool(deps));
+  };
+const __jait_hook_1138 = () => opened.sqlite.close();
+await __jait_hook_736();
 try {
 await (async()=>{
 
-    const tools = createToolRegistry(new SurfaceRegistry());
-    const schemas = buildToolSchemas(tools);
-    const names = new Set(schemas.map((schema) => schema.function.name));
-
-    __jait_capture(0, (names.has("preview_open")));
-    __jait_capture(1, (names.has("preview_start")));
+    const agent = await create(registry, "Developer");
+    const changed = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile: { paused: true } }, owner);
+    __jait_capture(1, (changed.ok));
+    __jait_capture(2, (service.getPersonaAgent(agent.id, "owner")));
+    const listed = await registry.execute("agent.profiles.inspect", { action: "list" }, owner);
+    __jait_capture(3, ((listed.data as any).agents));
   
 })();
 
 } finally {
-
+await __jait_hook_1138();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_37_3": {
 
 
+const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
 /*__jait_scope_open__*/{
-
+let opened: Awaited<ReturnType<typeof openDatabase>>;
+let service: ThreadService;
+let registry: ToolRegistry;
+const create = async (r: ToolRegistry, name: string) => {
+    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
+    __jait_capture(0, (result.ok));
+    return (result.data as any).agent;
+  };
+const __jait_hook_736 = async () => {
+    opened = await openDatabase(":memory:");
+    migrateDatabase(opened.sqlite);
+    service = new ThreadService(opened.db);
+    registry = new ToolRegistry();
+    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
+    registry.register(createPersonaAgentTool(deps));
+    registry.register(createPersonaAgentInspectTool(deps));
+  };
+const __jait_hook_1138 = () => opened.sqlite.close();
+await __jait_hook_736();
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const mockSession = {
-      id: "preview-session-123",
-      sessionId: "session-123",
-      status: "ready",
-      url: "http://127.0.0.1:5173/",
-      target: "3000",
-      mode: "local",
-      logs: [],
-      browserEvents: [],
-    };
-    const previewService = {
-      start: vi.fn().mockResolvedValue(mockSession),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "session-123",
-      actionId: "action-123",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    };
-
-    const result = await tool.execute({ target: "3000" }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (previewService.start.mock.calls));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
+    const agent = await create(registry, "Developer");
+    for (const action of ["get", "update", "delete"]) {
+      const result = await registry.execute("agent.profiles", { action, id: agent.id, profile: { name: "stolen" } }, { ...owner, userId: "other" });
+      __jait_capture(1, (result.ok));
+    }
+    __jait_capture(2, ((await registry.execute("agent.profiles.inspect", { action: "list" }, { ...owner, userId: undefined })).ok));
+    for (const profile of [{ providerId: "missing" }, { schedule: { kind: "cron", cron: "" } }, { notificationEvents: ["arbitrary"] }, { tasks: [{ id: "task", name: "Task", cron: "* * * * *" }] }]) {
+      const result = await registry.execute("agent.profiles", { action: "update", id: agent.id, profile }, owner);
+      __jait_capture(3, (result.ok));
+    }
+    __jait_capture(4, (service.getPersonaAgent(agent.id, "owner")?.name));
   
 })();
 
 } finally {
-
+await __jait_hook_1138();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3": {
+case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_50_3": {
 
 
+const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
 /*__jait_scope_open__*/{
-
+let opened: Awaited<ReturnType<typeof openDatabase>>;
+let service: ThreadService;
+let registry: ToolRegistry;
+const create = async (r: ToolRegistry, name: string) => {
+    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
+    __jait_capture(0, (result.ok));
+    return (result.data as any).agent;
+  };
+const __jait_hook_736 = async () => {
+    opened = await openDatabase(":memory:");
+    migrateDatabase(opened.sqlite);
+    service = new ThreadService(opened.db);
+    registry = new ToolRegistry();
+    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
+    registry.register(createPersonaAgentTool(deps));
+    registry.register(createPersonaAgentInspectTool(deps));
+  };
+const __jait_hook_1138 = () => opened.sqlite.close();
+await __jait_hook_736();
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "http://127.0.0.1:8765/",
-        target: "8765",
-        mode: "url",
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "mcp-session",
-      actionId: "action-456",
-      projectRoot: "/project/mcp",
-      requestedBy: "mcp-client",
-    };
-
-    const result = await tool.execute({ target: "8765" }, context);
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (previewService.start.mock.calls));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
+    const lead = await create(registry, "Lead");
+    const worker = await create(registry, "Worker");
+    const setManager = (id: string, reportsToId: string | null) => registry.execute("agent.profiles", { action: "update", id, profile: { reportsToId } }, owner);
+    __jait_capture(1, ((await setManager(worker.id, lead.id)).ok));
+    __jait_capture(2, ((await setManager(lead.id, worker.id)).ok));
+    __jait_capture(3, ((await setManager(worker.id, worker.id)).ok));
+    __jait_capture(4, ((await setManager(worker.id, null)).ok));
+    await setManager(worker.id, lead.id);
+    const thread = service.create({ title: "Work", providerId: "codex", userId: "owner", personaAgentId: lead.id });
+    __jait_capture(5, ((await registry.execute("agent.profiles", { action: "delete", id: lead.id }, owner)).ok));
+    __jait_captureType(6, (service.getPersonaAgent(worker.id, "owner")?.reportsToId));
+    __jait_captureType(7, (service.getById(thread.id)?.personaAgentId));
   
 })();
 
 } finally {
-
+await __jait_hook_1138();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3": {
+case "tailstatic_packages_gateway_src_tools_persona_agent_tools_test_ts_64_3": {
 
 
+const owner: ToolContext = { userId: "owner", sessionId: "chat", actionId: "test", requestedBy: "agent", projectRoot: "/tmp" };
 /*__jait_scope_open__*/{
-
+let opened: Awaited<ReturnType<typeof openDatabase>>;
+let service: ThreadService;
+let registry: ToolRegistry;
+const create = async (r: ToolRegistry, name: string) => {
+    const result = await r.execute("agent.profiles", { action: "create", profile: { name, providerId: "codex", role: "Developer", skillIds: ["coding"] } }, owner);
+    __jait_capture(0, (result.ok));
+    return (result.data as any).agent;
+  };
+const __jait_hook_736 = async () => {
+    opened = await openDatabase(":memory:");
+    migrateDatabase(opened.sqlite);
+    service = new ThreadService(opened.db);
+    registry = new ToolRegistry();
+    const deps = { threadService: service, providerAvailable: (id: string) => id === "codex" };
+    registry.register(createPersonaAgentTool(deps));
+    registry.register(createPersonaAgentInspectTool(deps));
+  };
+const __jait_hook_1138 = () => opened.sqlite.close();
+await __jait_hook_736();
 try {
 await (async()=>{
 
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-999",
-        sessionId: "session-999",
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        mode: "local",
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const context: ToolContext = {
-      sessionId: "session-999",
-      actionId: "action-999",
-      projectRoot: "/project/live",
-      requestedBy: "assistant",
-      userId: "user-999",
-    };
-
-    const result = await tool.execute({ projectRoot: "/project/live" }, context);
-
-    __jait_capture(0, (result.ok));
+    __jait_capture(1, (ASK_MODE_TOOLS.has("agent.profiles.inspect")));
+    __jait_capture(2, (ASK_MODE_TOOLS.has("agent.profiles")));
+    __jait_capture(3, (MUTATING_TOOLS.has("agent.profiles")));
+    __jait_capture(4, ((await registry.execute("agent.profiles.inspect", { action: "delete", id: "x" }, owner)).ok));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-error",
-        sessionId: "session-error",
-        status: "error",
-        url: null,
-        target: "3000",
-        mode: "local",
-        lastError: "Preview server did not become ready",
-        logs: [],
-        browserEvents: [],
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-    );
-
-    const result = await tool.execute({ target: "3000" }, {
-      sessionId: "session-error",
-      actionId: "action-error",
-      projectRoot: "/project/error",
-      requestedBy: "assistant",
-      userId: "user-error",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (broadcast.mock.calls));
-    __jait_capture(4, (set.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const sendUICommand = vi.fn();
-    const broadcast = vi.fn();
-    const set = vi.fn();
-    const syncPreviewSession = vi.fn();
-    const previewService = {
-      start: vi.fn().mockResolvedValue({
-        id: "preview-session-error",
-        sessionId: "session-error",
-        status: "error",
-        url: null,
-        target: "3000",
-        mode: "local",
-        lastError: "Preview server did not become ready",
-        logs: [],
-        browserEvents: [],
-      }),
-    };
-    const tool = createPreviewOpenTool(
-      { sendUICommand, broadcast } as any,
-      { set } as any,
-      previewService as any,
-      { syncPreviewSession } as any,
-    );
-
-    const result = await tool.execute({ target: "3000" }, {
-      sessionId: "session-error",
-      actionId: "action-error",
-      projectRoot: "/project/error",
-      requestedBy: "assistant",
-      userId: "user-error",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (sendUICommand.mock.calls));
-    __jait_capture(3, (syncPreviewSession.mock.calls));
-    __jait_capture(4, (broadcast.mock.calls));
-    __jait_capture(5, (set.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const previewService = {
-      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
-      assertAgentControl: vi.fn(),
-      inspect: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        logs: [{ id: 1, stream: "system", text: "ready", timestamp: "2026-03-27T00:00:00.000Z" }],
-        browserEvents: [
-          { type: "console", text: "ready" },
-          { type: "pageerror", text: "boom" },
-          { type: "response", status: 500, url: "http://127.0.0.1:4173/api" },
-        ],
-        screenshot: "base64-image",
-        page: { title: "Preview App" },
-        snapshot: "Title: Preview App",
-      }),
-    };
-    const tool = createPreviewInspectTool(previewService as any);
-
-    const result = await tool.execute({}, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.message));
-    __jait_capture(3, (result.data));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const previewService = {
-      get: vi.fn().mockReturnValue({ browserId: "preview-browser-session-1" }),
-      assertAgentControl: vi.fn(),
-      inspect: vi.fn().mockResolvedValue({
-        status: "ready",
-        url: "/api/dev-proxy/4173/",
-        logs: [],
-        browserEvents: [],
-        screenshot: "base64-image",
-        page: null,
-        snapshot: null,
-      }),
-    };
-    const tool = createPreviewInspectTool(previewService as any);
-
-    const result = await tool.execute({ screenshot: true }, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-    });
-
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const restartedSession = {
-      id: "preview-session-1",
-      sessionId: "session-1",
-      projectRoot: "/project/app",
-      target: "http://127.0.0.1:5173/",
-      status: "ready",
-      url: "/noVNC/vnc_lite.html?path=api/live-view/38345/websockify",
-      mode: "url",
-      logs: [],
-      browserEvents: [],
-    };
-    const previewService = {
-      restart: vi.fn().mockResolvedValue(restartedSession),
-    };
-    const tool = createPreviewRestartTool(
-      previewService as any,
-    );
-
-    const result = await tool.execute({}, {
-      sessionId: "session-1",
-      actionId: "action-1",
-      projectRoot: "/project/app",
-      requestedBy: "assistant",
-      userId: "user-1",
-    });
-
-    __jait_capture(0, (result.ok));
-  
-})();
-
-} finally {
-
+await __jait_hook_1138();
 }
 }
 

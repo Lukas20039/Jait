@@ -2,8 +2,77 @@
 use rusqlite::{Connection, OptionalExtension, params, params_from_iter};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value, json, value::RawValue};
-use std::collections::BTreeMap;
-type RawObject = BTreeMap<String, Box<RawValue>>;
+// Preserve JSON.parse/Object.assign insertion order, including raw UTF-16
+// strings; numeric property names are serialized first in ECMAScript order.
+#[derive(Default)]
+struct RawObject(Vec<(String, Box<RawValue>)>);
+impl RawObject {
+    fn new() -> Self {
+        Self::default()
+    }
+    fn insert(&mut self, key: String, value: Box<RawValue>) {
+        if let Some(entry) = self.0.iter_mut().find(|(k, _)| *k == key) {
+            entry.1 = value;
+        } else {
+            self.0.push((key, value));
+        }
+    }
+    fn remove(&mut self, key: &str) -> Option<Box<RawValue>> {
+        self.0
+            .iter()
+            .position(|(k, _)| k == key)
+            .map(|i| self.0.remove(i).1)
+    }
+}
+impl FromIterator<(String, Box<RawValue>)> for RawObject {
+    fn from_iter<T: IntoIterator<Item = (String, Box<RawValue>)>>(iter: T) -> Self {
+        let mut object = Self::new();
+        for (key, value) in iter {
+            object.insert(key, value);
+        }
+        object
+    }
+}
+impl Serialize for RawObject {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut fields = self.0.iter().collect::<Vec<_>>();
+        fields.sort_by_key(|(key, _)| {
+            key.parse::<u32>()
+                .ok()
+                .filter(|v| *v != u32::MAX && v.to_string() == *key)
+                .map(|v| (0, v))
+                .unwrap_or((1, 0))
+        });
+        let mut map = serializer.serialize_map(Some(fields.len()))?;
+        for (key, value) in fields {
+            map.serialize_entry(key, value)?;
+        }
+        map.end()
+    }
+}
+impl<'de> Deserialize<'de> for RawObject {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct ObjectVisitor;
+        impl<'de> serde::de::Visitor<'de> for ObjectVisitor {
+            type Value = RawObject;
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("a JSON object")
+            }
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                mut map: A,
+            ) -> Result<Self::Value, A::Error> {
+                let mut object = RawObject::new();
+                while let Some((key, value)) = map.next_entry::<String, Box<RawValue>>()? {
+                    object.insert(key, value);
+                }
+                Ok(object)
+            }
+        }
+        deserializer.deserialize_map(ObjectVisitor)
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -473,12 +542,12 @@ fn raw_property(
 }
 fn raw_chat(metadata: &RawValue) -> rusqlite::Result<RawObject> {
     if !metadata.get().starts_with('{') {
-        return Ok(BTreeMap::new());
+        return Ok(RawObject::new());
     }
     let mut root: RawObject =
         serde_json::from_str(metadata.get()).map_err(|_| rusqlite::Error::InvalidQuery)?;
     let Some(chat) = root.remove("chat") else {
-        return Ok(BTreeMap::new());
+        return Ok(RawObject::new());
     };
     match chat.get().as_bytes().first() {
         Some(b'{') => serde_json::from_str(chat.get()).map_err(|_| rusqlite::Error::InvalidQuery),
@@ -501,6 +570,6 @@ fn raw_chat(metadata: &RawValue) -> rusqlite::Result<RawObject> {
                 .map(|(i, u)| (i.to_string(), raw_json(&format!("\"\\u{u:04x}\""))))
                 .collect())
         }
-        _ => Ok(BTreeMap::new()),
+        _ => Ok(RawObject::new()),
     }
 }

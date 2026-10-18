@@ -1,16 +1,11 @@
-// Translated fixture from packages/gateway/src/services/system-one.test.ts; expected literals are in tail_static.rs.
-import { evaluateDecision, rankSystemOne, resolveSystemOne, systemOneEnabled } from "../../../../packages/gateway/src/services/system-one.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { buildSystemOneToolSchemas, buildTieredToolSchemas } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { createDecisionEvaluateTool } from "../../../../packages/gateway/src/tools/decision.js";
-import { buildSystemPrompt } from "../../../../packages/gateway/src/tools/prompts/index.js";
-import { buildCliProviderSystemPrompt } from "../../../../packages/gateway/src/routes/chat.js";
+// Translated fixture from packages/gateway/src/services/subscription-usage-fetchers.test.ts; expected literals are in tail_static.rs.
+import { fetchOllamaSettingsUsage, fetchOpenCodeGoUsage, normalizeOllamaSession, parseOllamaSettingsUsage } from "../../../../packages/gateway/src/services/subscription-usage-fetchers.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/system-one.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/subscription-usage-fetchers.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,503 +39,197 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_25_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_12_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
-    const r = registry(); const opts = { query: "read project file" };
-    __jait_capture(0, (systemOneEnabled({ JEV_API_KEY: "  " })));
-    __jait_capture(1, (await buildSystemOneToolSchemas(r, undefined, opts)), (buildTieredToolSchemas(r, undefined, opts)));
-    __jait_capture(2, (await r.rankSearchWithSystemOne("read files")), (r.rankSearch("read files")));
-    await __jait_rejected(3, evaluateDecision({}, "some context", questions));
-    __jait_capture(4, (fetcher.mock.calls));
+    __jait_capture(0, (parseOllamaSettingsUsage(settingsHtml)));
+    __jait_captureType(1, (parseOllamaSettingsUsage(settingsHtml.replace(/data-time="[^"]*"/g, 'data-time="invalid"')).limits.session?.resetsAt));
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_35_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_19_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetcher = vi.fn().mockImplementation(async () => response({ relevant: { type: "noul", noul: 0.9 } })); vi.stubGlobal("fetch", fetcher);
-    const account = keys();
-    await evaluateDecision(account, "user request", questions);
-    await evaluateDecision(account, "user request", questions);
-    await evaluateDecision(keys(), "user request", questions);
-    __jait_capture(0, (fetcher.mock.calls));
-    const [url, init] = fetcher.mock.calls[0]!;
-    __jait_capture(1, (url));
-    __jait_capture(2, (init.headers.Authorization), (`Bearer ${account.JEV_API_KEY}`));
-    __jait_capture(3, (JSON.parse(init.body)), ({ model: "jev-latest", state: "user request", questions }));
-    __jait_capture(4, (init.redirect));
+    for (const html of ["<form>Sign in</form>", settingsHtml.replace("81%", "bad"), settingsHtml.replace("42.5%", "142.5%"), `<script>${settingsHtml}</script>`, `<!--${settingsHtml}-->`]) {
+      __jait_thrown(0, () => parseOllamaSettingsUsage(html));
+    }
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_24_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetcher = vi.fn().mockImplementation(async (_url, init) => {
-      const body = JSON.parse(init.body);
-      __jait_capture(0, (init.body));
-      return response(Object.fromEntries(Object.entries(body.questions).map(([id, q]) => [id, { type: "noul", noul: (q as { instructions: string }).instructions.includes("web.search") ? 0.95 : 0.1 }])));
-    }); vi.stubGlobal("fetch", fetcher);
-    const r = registry();
-    const schemas = await buildSystemOneToolSchemas(r, new Set(["secret.read"]), { query: "read project files but need public information", selectionLimit: 1 }, keys());
-    const names = schemas.map(s => s.function.name);
-    __jait_capture(1, (names)); __jait_capture(2, (names));
-    __jait_capture(3, (names)); __jait_capture(4, (names));
+    __jait_capture(0, (normalizeOllamaSession(" __Secure-session=value ")));
+    for (const value of ["", "a;b=c", "a\r\nX: test", "a b", "x".repeat(4097)]) __jait_thrown(1, () => normalizeOllamaSession(value));
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_62_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_28_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetcher = vi.fn().mockResolvedValue(new Response("outage", { status: 503 })); vi.stubGlobal("fetch", fetcher);
-    const r = registry(); const account = keys();
-    __jait_capture(0, (await r.rankSearchWithSystemOne("zzzzzzzz", {}, account)));
-    __jait_capture(1, (await r.rankSearchWithSystemOne("read files", {}, account)), (r.rankSearch("read files")));
-    __jait_capture(2, (fetcher.mock.calls));
+    const mock = vi.fn().mockResolvedValue(new Response(settingsHtml)); vi.stubGlobal("fetch", mock);
+    __jait_capture(0, ((await fetchOllamaSettingsUsage("private-session")).limits.weekly?.usage));
+    __jait_capture(1, (mock.mock.calls));
+    mock.mockResolvedValue(new Response("private-provider-details", { status: 303, headers: { location: "https://evil.invalid" } }));
+    await __jait_rejected(2, fetchOllamaSettingsUsage("private-session"));
+    __jait_capture(3, (mock.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_70_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_36_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ item0: { type: "noul", noul: 4 } })));
-    const memories = ["prefers concise replies", "uses Linux"];
-    __jait_capture(0, (await rankSystemOne(keys(), "user preferences", memories, x => x, "memory")), (memories));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("x".repeat(2_000_001))));
+    await __jait_rejected(0, fetchOllamaSettingsUsage("session"));
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_76_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_40_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    vi.stubGlobal("fetch", vi.fn((_url, init) => new Promise((_resolve, reject) => {
-      init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true });
-    })));
-    const items = ["memory one", "memory two"];
-    __jait_capture(0, (await rankSystemOne(keys(), "request", items, x => x, "memory")), (items));
+    const body = { usage: { rolling: window, weekly: { ...window, percent: 90 }, monthly: { ...window, status: "rate-limited", percent: 100 } } };
+    const mock = vi.fn().mockResolvedValue(Response.json(body)); vi.stubGlobal("fetch", mock);
+    __jait_capture(0, (await fetchOpenCodeGoUsage("go-key")), (body));
+    __jait_capture(1, (mock.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_84_3": {
+case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_46_3": {
 
 
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
+const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
+  <div data-time="2026-10-09T12:00:00Z"></div>
+  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
+  <div data-time="2026-10-15T10:00:00Z"></div>`;
+const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
+const __jait_hook_598 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
-    const controller = new AbortController(); controller.abort();
-    const items = ["one", "two"];
-    __jait_capture(0, (await rankSystemOne(keys(), "request", items, x => x, "memory", controller.signal)), (items));
-    __jait_capture(1, (fetcher.mock.calls));
+    const mock = vi.fn(); vi.stubGlobal("fetch", mock);
+    for (const body of [null, {}, { usage: { rolling: window } }, { usage: { rolling: { ...window, percent: "20" }, weekly: window, monthly: window } }]) {
+      mock.mockResolvedValue(Response.json(body)); await __jait_rejected(0, fetchOpenCodeGoUsage("key"));
+    }
+    for (const [status, message] of [[401, "rejected"], [403, "subscription"], [500, "failed"]] as const) {
+      mock.mockResolvedValue(new Response("private-provider-details", { status })); await __jait_rejected(1, fetchOpenCodeGoUsage("key"), (message));
+    }
   
 })();
 
 } finally {
-await __jait_hook_790();
+await __jait_hook_598();
 }
 }
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_92_3": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetcher = vi.fn().mockResolvedValue(response({
-      route: { type: "choice", choice: "technical", confidence: 0.9 },
-      severity: { type: "score", score: 1.2, confidence: 0.7 }, urgent: { type: "noul", noul: 0.8 },
-    })); vi.stubGlobal("fetch", fetcher);
-    const result = await createDecisionEvaluateTool().execute({ state: "Payment integration fails for all customers", questions: [
-      { id: "route", type: "choice", instructions: "Which team?", options: [{ id: "billing", description: "Invoices" }, { id: "technical", description: "Integration errors" }] },
-      { id: "severity", type: "score", instructions: "How severe?", levels: ["Minor", "Major", "Critical"] },
-      { id: "urgent", type: "noul", instructions: "Is this urgent?" },
-    ] }, { sessionId: "s", actionId: "a", projectRoot: "/tmp", requestedBy: "test", apiKeys: keys() });
-    __jait_capture(0, (result.ok)); __jait_capture(1, (fetcher.mock.calls));
-    __jait_capture(2, (JSON.parse(fetcher.mock.calls[0]![1].body).questions.route.criteria));
-  
-})();
-
-} finally {
-await __jait_hook_790();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_106_3": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ route: { type: "choice", choice: "invented" } })));
-    await __jait_rejected(0, evaluateDecision(keys(), "request", { route: { type: "choice", instructions: "Pick", criteria: { a: "a", b: "b" } } }));
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ level: { type: "score", score: 8 } })));
-    await __jait_rejected(1, evaluateDecision(keys(), "request", { level: { type: "score", instructions: "Rate", criteria: ["low", "high"] } }));
-  
-})();
-
-} finally {
-await __jait_hook_790();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_113_3": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const endpoint = { model: "test-model" };
-    __jait_capture(0, (buildSystemPrompt("agent", endpoint, {})));
-    __jait_capture(1, (buildSystemPrompt("agent", endpoint, { systemOne: true })));
-    __jait_capture(2, (buildCliProviderSystemPrompt("codex", undefined, "agent", {})));
-    __jait_capture(3, (buildCliProviderSystemPrompt("codex", undefined, "agent", { systemOne: true })));
-  
-})();
-
-} finally {
-await __jait_hook_790();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_121_3": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (resolveSystemOne({ JEV_API_KEY: "legacy", SYSTEM_ONE_API_KEY: "generic", SYSTEM_ONE_MODEL: "gpt-4o-mini" })));
-    __jait_capture(1, (resolveSystemOne({ JEV_API_KEY: "legacy", JEV_MODEL: "jev-latest" })));
-    // A generic endpoint may be keyless (e.g. a local Ollama server).
-    __jait_capture(2, (resolveSystemOne({ SYSTEM_ONE_BASE_URL: "http://localhost:11434/v1" })));
-    __jait_captureType(3, (resolveSystemOne({})));
-  
-})();
-
-} finally {
-await __jait_hook_790();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_132_3": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      choices: [{ message: { content: JSON.stringify({ answers: { relevant: { type: "noul", noul: 0.9 } } }) } }],
-    }))); vi.stubGlobal("fetch", fetcher);
-    const account = { SYSTEM_ONE_BASE_URL: "https://api.example.com/v1/", SYSTEM_ONE_API_KEY: `generic-${++sequence}`, SYSTEM_ONE_MODEL: "gpt-4o-mini" };
-    __jait_capture(0, (systemOneEnabled(account)));
-    const result = await evaluateDecision(account, "user request", questions);
-    __jait_capture(1, (result.answers.relevant.noul));
-    const [url, init] = fetcher.mock.calls[0]!;
-    __jait_capture(2, (url));
-    __jait_capture(3, (init.headers.Authorization), (`Bearer ${account.SYSTEM_ONE_API_KEY}`));
-    __jait_capture(4, (JSON.parse(init.body)));
-    __jait_capture(5, (JSON.parse(init.body).messages[0].role));
-  
-})();
-
-} finally {
-await __jait_hook_790();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_system_one_test_ts_148_1": {
-
-
-let sequence = 0;
-const keys = () => ({ JEV_API_KEY: `test-account-${++sequence}` });
-const questions = { relevant: { type: "noul" as const, instructions: "Is this relevant?" } };
-const response = (answers: unknown) => new Response(JSON.stringify({ model: "jev-latest", answers }));
-function registry() {
-  const r = new ToolRegistry();
-  for (const [name, description, tier] of [
-    ["tools.search", "Find tools", "core"], ["file.read", "Read project files", "standard"],
-    ["web.search", "Search the web", "standard"], ["secret.read", "Read confidential record", "standard"],
-  ] as const) r.register({ name, description, tier, parameters: { type: "object", properties: {} }, execute: async () => ({ ok: true, message: "ok" }) });
-  r.register(createDecisionEvaluateTool());
-  return r;
-}
-const __jait_hook_790 = () => vi.unstubAllGlobals();
-
-try {
-await (async()=>{
-
-  vi.stubGlobal("fetch", vi.fn(async () => response({ item0: { type: "noul", noul: 0.1 }, item1: { type: "noul", noul: 0.9 } })));
-  __jait_capture(0, (await rankSystemOne(keys(), "fixture file", ["network notes", "fixture instructions"], x => x, "memory", undefined, undefined, 0.5)));
-
-})();
-
-} finally {
-await __jait_hook_790();
-}
-
 
 break;
 }

@@ -1,10 +1,11 @@
-// Translated fixture from packages/gateway/src/ws-computer-permissions.test.ts; expected literals are in tail_static.rs.
-import { nodeCapabilityForTool } from "../../../../packages/gateway/src/ws.js";
+// Translated fixture from packages/gateway/src/voice/service.test.ts; expected literals are in tail_static.rs.
+import { VoiceService } from "../../../../packages/gateway/src/voice/service.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/ws-computer-permissions.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/voice/service.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,18 +39,204 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_ws_computer_permissions_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_voice_service_test_ts_11_3": {
 
 
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+const __jait_hook_208 = () => {
+    globalThis.fetch = originalFetch;
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      __jait_capture(0, (String(_url)));
+      __jait_capture(1, (init!.method));
+      __jait_capture(2, ((init!.headers as Record<string, string>).Authorization));
+      const form = init!.body as FormData;
+      __jait_capture(3, (form.get("model")));
+      __jait_instance(4, form.get("file"), Blob);
+      return new Response(JSON.stringify({ text: "hello from gpt" }), { status: 200 });
+    });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const service = new VoiceService();
+    const text = await service.transcribeViaGpt({
+      audioBase64: Buffer.from("wav").toString("base64"),
+      apiKey: "openai-key",
+      baseUrl: "https://api.openai.com/v1/",
+      model: "gpt-4o-mini-transcribe",
+    });
+
+    __jait_capture(5, (text));
+    __jait_capture(6, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_208();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_35_3": {
+
+
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+const __jait_hook_208 = () => {
+    globalThis.fetch = originalFetch;
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      __jait_capture(0, (String(_url)));
+      __jait_capture(1, (init!.method));
+      __jait_capture(2, ((init!.headers as Record<string, string>)["xi-api-key"]));
+      const form = init!.body as FormData;
+      __jait_capture(3, (form.get("model_id")));
+      __jait_capture(4, (form.get("language_code")));
+      __jait_instance(5, form.get("file"), Blob);
+      return new Response(JSON.stringify({ text: "hallo von elevenlabs" }), { status: 200 });
+    });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const service = new VoiceService();
+    const text = await service.transcribeViaElevenLabs({
+      audioBase64: Buffer.from("wav").toString("base64"),
+      apiKey: "eleven-key",
+      model: "scribe_v2",
+      languageCode: "de",
+    });
+
+    __jait_capture(6, (text));
+    __jait_capture(7, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_208();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_60_3": {
+
+
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+const __jait_hook_208 = () => {
+    globalThis.fetch = originalFetch;
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const form = init!.body as FormData;
+      __jait_capture(0, (form.get("prompt")));
+      return new Response(JSON.stringify({ text: "ok" }), { status: 200 });
+    });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const service = new VoiceService();
+    const text = await service.transcribeViaGpt({
+      audioBase64: Buffer.from("wav").toString("base64"),
+      apiKey: "openai-key",
+      baseUrl: "https://api.openai.com/v1/",
+      model: "gpt-4o-mini-transcribe",
+      prompt: "Jait",
+    });
+
+    __jait_capture(1, (text));
+    __jait_capture(2, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_208();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_83_3": {
+
+
+const originalFetch = globalThis.fetch;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (nodeCapabilityForTool("computer.session", { action: "start" })));
-    __jait_capture(1, (nodeCapabilityForTool("computer.act", { action: "click" })));
-    __jait_capture(2, (nodeCapabilityForTool("computer.observe", {})));
-    __jait_captureType(3, (nodeCapabilityForTool("computer.session", { action: "stop" })));
+    __jait_capture(0, (VoiceService.normalizeTranscript("hey jade what is the weather")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_89_3": {
+
+
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (VoiceService.normalizeTranscript("JADE is great")));
+    __jait_capture(1, (VoiceService.normalizeTranscript("I love Jade and Jade")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_94_3": {
+
+
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (VoiceService.normalizeTranscript("jaded view")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_voice_service_test_ts_98_3": {
+
+
+const originalFetch = globalThis.fetch;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (VoiceService.normalizeTranscript("hey Jait")));
   
 })();
 

@@ -1,10 +1,11 @@
-// Translated fixture from packages/gateway/src/services/usage-summary.test.ts; expected literals are in tail_static.rs.
-import { summarizeProviderUsage } from "../../../../packages/gateway/src/services/usage-summary.js";
+// Translated fixture from packages/gateway/src/services/usage-refresh-cache.test.ts; expected literals are in tail_static.rs.
+import { UsageRefreshCache } from "../../../../packages/gateway/src/services/usage-refresh-cache.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/usage-summary.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/usage-refresh-cache.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,73 +39,98 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_usage_summary_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_4_1": {
 
 
-/*__jait_scope_open__*/{
+
 
 try {
 await (async()=>{
 
-    const codexQuota = {
-      accountId: "codex-1",
-      rateLimitType: "five_hour",
-      providerType: "codex",
-      status: "allowed",
-      utilization: 0.25,
-      resetsAt: null,
-      isUsingOverage: false,
-      updatedAt: "2026-09-09T12:00:00.000Z",
-      planType: "plus",
-      windowDurationMins: 300,
-      credits: null,
-      models: [],
-      activityCost: null,
-    };
-    const ollamaQuota = {
-      ...codexQuota,
-      accountId: "jait-backend:ollama",
-      providerType: "ollama",
-      rateLimitType: "monthly",
-      utilization: 0.4,
-    };
+  let now = 0;
+  const cache = new UsageRefreshCache<number>(() => now);
+  let finish!: (value: number) => void;
+  const load = vi.fn(() => new Promise<number>(resolve => { finish = resolve; }));
+  const first = cache.run("user/account", load);
+  __jait_capture(0, (cache.run("user/account", load, { force: true })), (first));
+  await Promise.resolve();
+  finish(42);
+  __jait_capture(1, (await first));
+  now = 299_999;
+  __jait_capture(2, (await cache.run("user/account", load)));
+  __jait_capture(3, (load.mock.calls));
+  now = 300_000;
+  const next = cache.run("user/account", async () => 43);
+  __jait_capture(4, (await next));
 
-    const result = summarizeProviderUsage(
-      [
-        {
-          id: "codex-1",
-          providerType: "codex",
-          label: "Personal",
-          nodeId: "gateway",
-        },
-        {
-          id: "claude-1",
-          providerType: "claude-code",
-          label: "Work",
-          nodeId: "desktop",
-        },
-      ],
-      [codexQuota, ollamaQuota],
-      {
-        quotaErrors: { "claude-1": "No live snapshot" },
-        jaitBackendProfiles: [{
-          id: "jait-backend:ollama",
-          providerType: "ollama",
-          providerLabel: "Ollama",
-          profileLabel: "Local Ollama",
-          quotaAccountId: "jait-backend:ollama",
-        }],
-      },
-    );
-
-    __jait_capture(0, (result.profiles), ([codexQuota,ollamaQuota]));
-  
 })();
 
 } finally {
 
 }
+
+
+break;
 }
+case "tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_22_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  let now = 100;
+  const cache = new UsageRefreshCache<number>(() => now);
+  const load = vi.fn(async () => 1);
+  await cache.run("alice/config1", load);
+  await cache.run("bob/config1", load);
+  await cache.run("alice/config2", load);
+  await cache.run("alice/config1", load, { force: true });
+  __jait_capture(0, (load.mock.calls));
+  now += 30_000;
+  await cache.run("alice/config1", load, { force: true });
+  __jait_capture(1, (load.mock.calls));
+
+})();
+
+} finally {
+
+}
+
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_36_1": {
+
+
+
+
+try {
+await (async()=>{
+
+  let now = 1;
+  const cache = new UsageRefreshCache<{ failed: boolean }>(() => now);
+  const load = vi.fn(async () => ({ failed: true }));
+  const options = { force: true, failed: (value: { failed: boolean }) => value.failed };
+  await cache.run("alice", load, options);
+  now += 300_000;
+  await cache.run("alice", load, options);
+  __jait_capture(0, (load.mock.calls));
+  now += 300_000;
+  await cache.run("alice", load, options);
+  __jait_capture(1, (load.mock.calls));
+  const broken = vi.fn(async () => { throw new Error("offline"); });
+  await __jait_rejected(2, cache.run("bob", broken));
+  await __jait_rejected(3, cache.run("bob", broken, { force: true }));
+  __jait_capture(4, (broken.mock.calls));
+
+})();
+
+} finally {
+
+}
+
 
 break;
 }

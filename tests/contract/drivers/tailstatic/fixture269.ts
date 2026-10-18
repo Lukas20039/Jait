@@ -1,15 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/computer-tools.test.ts; expected literals are in tail_static.rs.
-import type { NodeState } from "@jait/shared";
-import { ComputerControlSessionService } from "../../../../packages/gateway/src/services/computer-control.js";
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { createComputerTools } from "../../../../packages/gateway/src/tools/computer-tools.js";
-import type { ToolContext, ToolDefinition } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/code-graph-tools.test.ts; expected literals are in tail_static.rs.
+import type { CodeGraphService } from "../../../../packages/gateway/src/services/code-graph/code-graphs.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createCodeGraphTools } from "../../../../packages/gateway/src/tools/code-graph-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/computer-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/code-graph-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -43,244 +41,45 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_65_3": {
+case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_21_3": {
 
 
 const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "test",
+  userId: "user-1",
 };
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
+function toolByName(service: CodeGraphService, name: string) {
+  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
+  if (!tool) throw new Error(`Missing tool ${name}`);
+  return tool;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const oldNode = windowsNode({
-      id: "old-windows",
-      capabilities: {
-        ...windowsNode().capabilities,
-        tools: ["terminal.run"],
-      },
+    const query = vi.fn().mockResolvedValue({
+      query: "authentication storage",
+      mode: "hybrid",
+      context: "AuthService -[calls]-> SessionStore",
+      nodes: [{ id: "auth", label: "AuthService" }],
+      edges: [{ id: "calls" }],
+      graphRagStatus: "prepared",
     });
-    const { tools } = setup([windowsNode(), oldNode, windowsNode({ id: "linux-a", platform: "linux" })]);
+    const tool = toolByName({ query } as unknown as CodeGraphService, "codegraph.query");
 
-    const result = await tool<Record<string, never>>(tools, "computer.targets").execute({}, context);
-    const targets = (result.data as { targets: Array<{ nodeId: string; available: boolean; reason?: string }> }).targets;
-
-    __jait_capture(0, (targets));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_85_3": {
-
-
-const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
-};
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { tools, proxyToolOp } = setup();
-    const started = await tool<{ action: "start"; nodeId: string }>(tools, "computer.session")
-      .execute({ action: "start", nodeId: "windows-a" }, context);
-
-    __jait_capture(0, (started.ok));
-    const sessionId = (started.data as { session: { id: string } }).session.id;
-    __jait_capture(1, (proxyToolOp.mock.calls), ([sessionId]));
-
-    const acted = await tool<Record<string, unknown>>(tools, "computer.act").execute({
-      sessionId,
-      action: "type",
-      text: "hello im jait",
-      includeScreenshot: false,
-    }, context);
-    __jait_capture(2, (acted.ok));
-    __jait_capture(3, (proxyToolOp.mock.calls), ([sessionId]));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_114_3": {
-
-
-const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
-};
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { tools, proxyToolOp } = setup();
-    const result = await tool<Record<string, unknown>>(tools, "computer.act").execute({
-      sessionId: "missing",
-      action: "click",
-      x: 10,
+    const result = await tool.execute({
+      query: "authentication storage",
+      mode: "hybrid",
+      maxNodes: 80,
+      maxDepth: 3,
     }, context);
 
-    __jait_capture(0, (result));
-    __jait_capture(1, (proxyToolOp.mock.calls));
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (query.mock.calls));
   
 })();
 
@@ -291,80 +90,40 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_126_3": {
+case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_50_3": {
 
 
 const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "test",
+  userId: "user-1",
 };
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
+function toolByName(service: CodeGraphService, name: string) {
+  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
+  if (!tool) throw new Error(`Missing tool ${name}`);
+  return tool;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { tools, proxyToolOp } = setup();
-    const started = await tool<{ action: "start" }>(tools, "computer.session")
-      .execute({ action: "start" }, context);
-    const sessionId = (started.data as { session: { id: string } }).session.id;
-    proxyToolOp.mockClear();
-
-    const result = await tool<Record<string, unknown>>(tools, "computer.observe").execute(
-      { sessionId },
-      { ...context, sessionId: "chat-b" },
+    const prepareGraphRag = vi.fn().mockResolvedValue({
+      index: { graphRagStatus: "prepared" },
+      manifest: { entityCount: 12, relationshipCount: 18 },
+    });
+    const tool = toolByName(
+      { prepareGraphRag } as unknown as CodeGraphService,
+      "codegraph.prepare_graphrag",
     );
+
+    const result = await tool.execute({}, context);
 
     __jait_capture(0, (result.ok));
     __jait_capture(1, (result.message));
-    __jait_capture(2, (proxyToolOp.mock.calls));
+    __jait_capture(2, (prepareGraphRag.mock.calls));
   
 })();
 
@@ -375,154 +134,34 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_143_3": {
+case "tailstatic_packages_gateway_src_tools_code_graph_tools_test_ts_70_3": {
 
 
 const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "test",
+  userId: "user-1",
 };
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
+function toolByName(service: CodeGraphService, name: string) {
+  const tool = createCodeGraphTools(service).find((candidate) => candidate.name === name);
+  if (!tool) throw new Error(`Missing tool ${name}`);
+  return tool;
 }
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { tools, proxyToolOp } = setup();
-    const sessionTool = tool<Record<string, unknown>>(tools, "computer.session");
-    const started = await sessionTool.execute({ action: "start" }, context);
-    const sessionId = (started.data as { session: { id: string } }).session.id;
-    proxyToolOp.mockRejectedValueOnce(new Error("node disconnected"));
+    const index = vi.fn();
+    const tool = toolByName({ index } as unknown as CodeGraphService, "codegraph.index");
 
-    const stopped = await sessionTool.execute({ action: "stop", sessionId }, context);
-    const status = await sessionTool.execute({ action: "status" }, context);
+    const result = await tool.execute({}, { ...context, projectRoot: undefined });
 
-    __jait_capture(0, (stopped));
-    __jait_capture(1, (status));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_computer_tools_test_ts_156_3": {
-
-
-const context: ToolContext = {
-  sessionId: "chat-a",
-  actionId: "action-a",
-  projectRoot: "/workspace",
-  requestedBy: "assistant",
-};
-function windowsNode(overrides: Partial<NodeState> = {}): NodeState {
-  return {
-    id: "windows-a",
-    name: "Windows PC",
-    platform: "windows",
-    role: "desktop",
-    lifecycle: "ready",
-    protocolVersion: 1,
-    capabilities: {
-      providers: [],
-      surfaces: ["computer"],
-      tools: ["computer.session", "computer.observe", "computer.act"],
-      screenShare: true,
-      voice: false,
-      preview: false,
-    },
-    connectedAt: new Date(0).toISOString(),
-    lastSeenAt: new Date(0).toISOString(),
-    ...overrides,
-  };
-}
-function setup(nodes: NodeState[] = [windowsNode()]) {
-  const proxyToolOp = vi.fn(async (_nodeId: string, tool: string) => ({
-    ok: true,
-    message: `${tool} completed`,
-    data: { accepted: true },
-  }));
-  const ws = {
-    getNodeRegistry: () => ({
-      version: 1,
-      serverTime: new Date().toISOString(),
-      nodes,
-    }),
-    proxyToolOp,
-  } as unknown as WsControlPlane;
-  const sessions = new ComputerControlSessionService();
-  const tools = new Map(
-    createComputerTools(ws, sessions).map((tool) => [tool.name, tool] as const),
-  );
-  return { tools, proxyToolOp, sessions };
-}
-function tool<T>(tools: Map<string, ToolDefinition>, name: string): ToolDefinition<T> {
-  const found = tools.get(name);
-  if (!found) throw new Error(`Missing tool ${name}`);
-  return found as ToolDefinition<T>;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { tools, proxyToolOp, sessions } = setup();
-    proxyToolOp.mockRejectedValueOnce(new Error("Tool 'computer.session' timed out"));
-    const result = await tool<Record<string, unknown>>(tools, "computer.session")
-      .execute({ action: "start" }, context);
-    __jait_capture(0, (result));
-    __jait_capture(1, (proxyToolOp.mock.calls), ([context.sessionId]));
-    __jait_capture(2, (sessions.listForOwner(context.sessionId)));
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (index.mock.calls));
   
 })();
 

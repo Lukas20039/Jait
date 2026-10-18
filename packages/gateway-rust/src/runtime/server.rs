@@ -37,6 +37,11 @@ impl Gateway {
         gateway.router = gateway.router.merge(auth.router());
         Ok(gateway)
     }
+    /// Explicit opt-in session API; production activation remains separately gated.
+    pub fn with_sessions(mut self, sessions: routes::sessions::SessionRoutes) -> Self {
+        self.router = self.router.merge(sessions.router());
+        self
+    }
     /// Opt-in immutable asset hook. Full frontend/static fallback serving is separate.
     pub fn with_static_asset_cache(
         mut self,

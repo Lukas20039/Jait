@@ -1,17 +1,13 @@
-// Translated fixture from packages/gateway/src/services/provider-accounts.test.ts; expected literals are in tail_static.rs.
-import { ProviderUsageService } from "../../../../packages/gateway/src/services/provider-usage.js";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
-import { ProviderAccountService } from "../../../../packages/gateway/src/services/provider-accounts.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/projects.test.ts; expected literals are in tail_static.rs.
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
+import { getProjectRepositoryId, ProjectService } from "../../../../packages/gateway/src/services/projects.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-accounts.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/projects.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -45,288 +41,917 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_28_3": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:"); migrateDatabase(sqlite);
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-go-usage-")); roots.push(root);
-    const usage = new ProviderUsageService(db);
-    const service = new ProviderAccountService(db, new ProviderRegistry(), [{ id: "opencode", name: "OpenCode", description: "Test", command: process.execPath }], root, usage);
-    const own = service.create("user-1", "opencode", "Own");
-    const other = service.create("user-2", "opencode", "Other");
-    service.connectOpenCodeGo(own.id, "user-1", "own-key");
-    service.connectOpenCodeGo(other.id, "user-2", "other-key");
-    const window = { status: "ok", percent: 40, resetsAt: "2026-10-09T12:00:00Z" };
-    const mock = vi.fn().mockResolvedValue(Response.json({ usage: { rolling: window, weekly: window, monthly: window } }));
-    vi.stubGlobal("fetch", mock);
-    __jait_capture(0, (await service.refreshUsage("user-1")));
-    __jait_capture(1, (mock.mock.calls));
-    __jait_capture(2, (mock.mock.calls[0]?.[1].headers.Authorization));
-    __jait_capture(3, (usage.listForUser([own.id])));
-    __jait_capture(4, (usage.listForUser([other.id])));
-    sqlite.close();
+    const remote = projects.create({
+      userId,
+      rootPath: "E:\\TizenAnilabStream",
+      nodeId: "desktop-windows"
+    });
+
+    const resolved = projects.getOrCreateForRoot({
+      userId,
+      rootPath: "e:/tizenanilabstream/",
+      nodeId: "gateway"
+    });
+
+    __jait_capture(0, (resolved.id), (remote.id));
+    __jait_capture(1, (projects.list("active", userId)));
+    __jait_capture(2, (resolved.nodeId));
   
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_37_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_46_3": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const registry = new ProviderRegistry();
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
-    roots.push(root);
-    const service = new ProviderAccountService(db, registry, [{
-      id: "codex",
-      name: "Codex",
-      description: "Codex test provider",
-      command: process.execPath,
-      args: [],
-    }], root);
+    const first = projects.getOrCreateForRoot({ userId, rootPath: "/workspace/app", nodeId: "node-a" });
+    const second = projects.getOrCreateForRoot({ userId, rootPath: "/workspace/app", nodeId: "node-b" });
 
-    const personal = service.create("user-1", "codex", "Personal");
-    const work = service.create("user-1", "codex", "Work");
-
-    __jait_capture(0, (personal.id), (work.id));
-    __jait_capture(1, (service.list("user-1").map((account) => account.label).sort()));
-    __jait_capture(2, (registry.getForUser(personal.id, "user-1")?.providerType));
-    __jait_captureType(3, (registry.getForUser(personal.id, "user-2")));
-
-    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
-    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
-    __jait_capture(4, (personalAdapter.config.env?.CODEX_HOME), (join(root, personal.id)));
-    __jait_capture(5, (workAdapter.config.env?.CODEX_HOME), (join(root, work.id)));
-    __jait_capture(6, (personalAdapter.config.env?.CODEX_HOME), (workAdapter.config.env?.CODEX_HOME));
-    __jait_capture(7, (existsSync(join(root, personal.id))));
-
-    sqlite.close();
+    __jait_capture(0, (second.id), (first.id));
+    __jait_capture(1, (projects.list("active", userId)));
   
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_69_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_54_3": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const registry = new ProviderRegistry();
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
-    roots.push(root);
-    const service = new ProviderAccountService(db, registry, [
-      {
-        id: "codex",
-        name: "Codex",
-        description: "Codex test provider",
-        command: process.execPath,
-      },
-      {
-        id: "claude-code",
-        name: "Claude Code",
-        description: "Claude Code test provider",
-        command: process.execPath,
-      },
-      {
-        id: "local-acp",
-        name: "Local ACP",
-        description: "ACP provider without Jait-managed login",
-        command: process.execPath,
-        auth: false,
-      },
-    ], root);
+    const matchingProject = projects.create({ userId, title: "Desktop reliability", rootPath: "/workspace/desktop" });
+    const otherProject = projects.create({ userId, title: "Gateway", rootPath: "/workspace/gateway" });
+    sessions.create({ userId, projectId: matchingProject.id, name: "Investigate gray window" });
+    sessions.create({ userId, projectId: otherProject.id, name: "Improve global chat search" });
+    sessions.create({ userId, name: "Personal gray-screen notes" });
 
-    __jait_capture(0, (service.listTypes()));
+    const otherUserId = users.createUser("other-owner", "password123").id;
+    const privateProject = projects.create({ userId: otherUserId, title: "Gray private project" });
+    sessions.create({ userId: otherUserId, projectId: privateProject.id, name: "Gray private chat" });
 
-    const personal = service.create("user-1", "claude-code", "Personal");
-    const work = service.create("user-1", "claude-code", "Work");
-    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
-    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
+    const grayResults = projects.searchWithSessions(userId, "gray");
+    __jait_capture(0, (grayResults.projects.map((project) => project.id)), ([matchingProject.id]));
+    __jait_capture(1, (grayResults.projects[0]?.sessions.map((session) => session.name)));
+    __jait_capture(2, (grayResults.personalSessions.map((session) => session.name)));
 
-    __jait_capture(1, (personalAdapter.config.env?.HOME), (join(root, personal.id)));
-    __jait_capture(2, (workAdapter.config.env?.HOME), (join(root, work.id)));
-    __jait_capture(3, (personalAdapter.config.env?.CLAUDE_CONFIG_DIR), (workAdapter.config.env?.CLAUDE_CONFIG_DIR));
-    __jait_capture(4, (personalAdapter.config.env?.NPM_CONFIG_CACHE), (workAdapter.config.env?.NPM_CONFIG_CACHE));
-    __jait_capture(5, (personalAdapter.config.env?.ANTHROPIC_API_KEY));
-    __jait_thrown(6, () => service.create("user-1", "local-acp", "Local"));
-
-    sqlite.close();
+    const olderChatResults = projects.searchWithSessions(userId, "global chat search");
+    __jait_capture(3, (olderChatResults.projects.map((project) => project.id)), ([otherProject.id]));
+    __jait_capture(4, (olderChatResults.projects[0]?.sessions.map((session) => session.name)));
   
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_119_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_76_5": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const registry = new ProviderRegistry();
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
-    roots.push(root);
-    const service = new ProviderAccountService(db, registry, [{
-      id: "codex",
-      name: "Codex",
-      description: "Codex test provider",
-      command: process.execPath,
-    }], root);
-
-    const first = service.create("user-1", "codex", "First");
-    const second = service.create("user-1", "codex", "Second");
-    __jait_capture(0, (await service.delete(first.id, "user-2")));
-    __jait_capture(1, (await service.delete(first.id, "user-1")));
-
-    __jait_captureType(2, (registry.get(first.id)));
-    __jait_capture(3, (existsSync(join(root, first.id))));
-    __jait_captureType(4, (registry.get(second.id)));
-    __jait_capture(5, (existsSync(join(root, second.id))));
-
-    sqlite.close();
-  
+      const folder = projects.create({ userId, title: "Work" });
+      __jait_capture(0, (folder.kind));
+      __jait_captureType(1, (folder.rootPath));
+    
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_145_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_82_5": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const registry = new ProviderRegistry();
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
-    roots.push(root);
-    const service = new ProviderAccountService(db, registry, [{
-      id: "codex",
-      name: "Codex",
-      description: "Codex test provider",
-      command: process.execPath,
-    }], root);
+      const folder = projects.create({ userId, title: "Work" });
 
-    const windows = service.create("user-1", "codex", "Work", "windows-node");
-    const laptop = service.create("user-1", "codex", "Work", "laptop-node");
+      projects.update(folder.id, { rootPath: "/tmp/app" }, userId);
+      __jait_capture(0, (projects.getById(folder.id, userId)?.kind));
 
-    __jait_capture(0, (windows.nodeId));
-    __jait_capture(1, (laptop.nodeId));
-    __jait_capture(2, (registry.get(windows.id)?.executionNodeId));
-    __jait_capture(3, (existsSync(join(root, windows.id))));
-
-    sqlite.close();
-  
+      // Kind is derived, never chosen, so clearing the directory has to restore
+      // the folder rather than leave a project claiming a path it lost.
+      projects.update(folder.id, { rootPath: null }, userId);
+      const cleared = projects.getById(folder.id, userId);
+      __jait_capture(1, (cleared?.kind));
+      __jait_captureType(2, (cleared?.rootPath));
+    
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_169_3": {
+case "tailstatic_packages_gateway_src_services_projects_test_ts_96_5": {
 
 
-const roots: string[] = [];
-const __jait_hook_469 = () => {
-  vi.unstubAllGlobals();
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-};
 /*__jait_scope_open__*/{
-
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    const registry = new ProviderRegistry();
-    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
-    roots.push(root);
-    const service = new ProviderAccountService(db, registry, [{
-      id: "codex",
-      name: "Codex",
-      description: "Codex test provider",
-      command: process.execPath,
-    }], root);
-
-    service.create("user-1", "codex", "Work");
-    __jait_thrown(0, () => service.create("user-1", "codex", "Work"));
-    __jait_thrown(1, () => service.create("user-1", "claude-code", "Work"));
-
-    sqlite.close();
-  
+      const project = projects.create({ userId, rootPath: "/tmp/app" });
+      __jait_capture(0, (project.kind));
+      __jait_captureType(1, (project.parentId));
+    
 })();
 
 } finally {
-await __jait_hook_469();
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_102_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const project = projects.create({ userId, rootPath: "/tmp/app" });
+      projects.assignRepository(project.id, "repo-1", userId);
+      __jait_capture(0, (getProjectRepositoryId(projects.getById(project.id, userId))));
+
+      projects.update(project.id, { rootPath: null }, userId);
+      projects.clearRepository(project.id, userId);
+
+      __jait_captureType(1, (getProjectRepositoryId(projects.getById(project.id, userId))));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_113_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const mono = projects.create({ userId, title: "Monorepo", rootPath: "/srv/mono" });
+      const group = projects.create({ userId, title: "Experiments", parentId: mono.id });
+      const leaf = projects.create({ userId, title: "Spike", parentId: group.id });
+
+      // Without this a chat under a pathless folder would run in the gateway's
+      // own cwd instead of the project it visibly sits in.
+      __jait_capture(0, (projects.effectiveRootPath(leaf.id, userId)));
+      __jait_capture(1, (projects.effectiveRootPath(mono.id, userId)));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_124_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const folder = projects.create({ userId, title: "Ideas" });
+      const child = projects.create({ userId, title: "Later", parentId: folder.id });
+      __jait_captureType(0, (projects.effectiveRootPath(child.id, userId)));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_130_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const folder = projects.create({
+        userId,
+        title: "Ops",
+        description: "  Infra chats  ",
+        color: "#AABBCC"
+      });
+      __jait_capture(0, (folder.description));
+      __jait_capture(1, (folder.color));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_141_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const folder = projects.create({ userId, color: "url(evil)" });
+      __jait_captureType(0, (folder.color));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_146_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const parent = projects.create({ userId, title: "Parent" });
+      const child = projects.create({ userId, rootPath: "/tmp/child" });
+      const moved = projects.move(child.id, parent.id, userId);
+      __jait_capture(0, (moved?.parentId), (parent.id));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_153_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const a = projects.create({ userId, title: "A" });
+      const b = projects.create({ userId, title: "B", parentId: a.id });
+      __jait_thrown(0, () => projects.move(a.id, b.id, userId));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_159_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const ws = projects.create({ userId, rootPath: "/tmp/ws" });
+      const folder = projects.create({ userId, title: "F" });
+      // The child inherits /tmp/ws unless it gets a directory of its own, so
+      // there is nothing ambiguous about hanging it here.
+      __jait_capture(0, (projects.move(folder.id, ws.id, userId)?.parentId), (ws.id));
+      __jait_capture(1, (projects.effectiveRootPath(folder.id, userId)));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_168_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const root = projects.create({ userId, title: "Root", instructions: "always german" });
+      const leaf = projects.create({ userId, title: "Leaf", parentId: root.id, instructions: "be brief" });
+      const chain = projects.resolveInstructionChain(leaf.id, userId)!;
+      __jait_capture(0, (chain));
+      __jait_capture(1, (chain));
+      __jait_capture(2, (chain.indexOf("always german")), (chain.indexOf("be brief")));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_177_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      // The point of "Work" / "Private" folders: a real project with a path on
+      // disk is categorised under one and picks up its context.
+      const folder = projects.create({ userId, title: "Private", instructions: "casual tone" });
+      const ws = projects.create({ userId, rootPath: "/tmp/side-project", title: "Side project" });
+      projects.move(ws.id, folder.id, userId);
+
+      const chain = projects.resolveInstructionChain(ws.id, userId)!;
+      __jait_capture(0, (chain));
+      // Categorising must not disturb the workspace's own identity.
+      __jait_capture(1, (projects.getById(ws.id, userId)?.rootPath));
+      __jait_capture(2, (projects.getById(ws.id, userId)?.kind));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_191_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const outer = projects.create({ userId, title: "Private", instructions: "casual tone" });
+      const inner = projects.create({ userId, title: "OSS", parentId: outer.id, instructions: "answer in english" });
+      const ws = projects.create({ userId, rootPath: "/tmp/oss", title: "Lib" });
+      projects.move(ws.id, inner.id, userId);
+
+      const chain = projects.resolveInstructionChain(ws.id, userId)!;
+      __jait_capture(0, (chain.indexOf("casual tone")), (chain.indexOf("answer in english")));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_201_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const root = projects.create({ userId, title: "Root" });
+      const leaf = projects.create({ userId, title: "Leaf", parentId: root.id });
+      __jait_captureType(0, (projects.resolveInstructionChain(leaf.id, userId)));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_207_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const root = projects.create({ userId, title: "Root" });
+      const mid = projects.create({ userId, title: "Mid", parentId: root.id });
+      const leaf = projects.create({ userId, rootPath: "/tmp/leaf" });
+      projects.move(leaf.id, mid.id, userId);
+
+      projects.archive(root.id, userId);
+
+      __jait_capture(0, (projects.getById(mid.id, userId)?.status));
+      __jait_capture(1, (projects.getById(leaf.id, userId)?.status));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_219_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const root = projects.create({ userId, title: "Root" });
+      const child = projects.create({ userId, title: "Child", parentId: root.id });
+      sessions.create({ userId, projectId: root.id, name: "one" });
+      sessions.create({ userId, projectId: child.id, name: "two" });
+      __jait_capture(0, (projects.countSessionsInSubtree(root.id, userId)));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_projects_test_ts_227_5": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projects: ProjectService;
+let sessions: SessionService;
+let users: UserService;
+let userId: string;
+const __jait_hook_513 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projects = new ProjectService(opened.db);
+    sessions = new SessionService(opened.db);
+    users = new UserService(opened.db);
+    userId = users.createUser("project-owner", "password123").id;
+  };
+const __jait_hook_853 = () => {
+    sqlite.close();
+  };
+/*__jait_scope_open__*/{
+await __jait_hook_513();
+try {
+await (async()=>{
+
+      const root = projects.create({ userId, title: "Root" });
+      const child = projects.create({ userId, title: "Child", parentId: root.id });
+      // Make the child the most recent so a limit of 1 would otherwise cut the
+      // parent away and strand the child at the tree root.
+      projects.touch(child.id);
+      const { projects: page } = projects.listWithSessions(userId, "active", 1);
+      __jait_capture(0, (page.map((p) => p.id).sort()), ([root.id, child.id].sort()));
+    
+})();
+
+} finally {
+await __jait_hook_853();
+}
 }
 }
 

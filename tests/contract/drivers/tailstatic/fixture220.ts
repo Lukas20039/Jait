@@ -1,12 +1,11 @@
-// Translated fixture from packages/gateway/src/services/threads.test.ts; expected literals are in tail_static.rs.
-import type { Database } from "bun:sqlite";
-import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/index.js";
+// Translated fixture from packages/gateway/src/services/threads-diff-stats.test.ts; expected literals are in tail_static.rs.
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
 import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/threads.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/threads-diff-stats.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,271 +39,33 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_threads_test_ts_28_3": {
+case "tailstatic_packages_gateway_src_services_threads_diff_stats_test_ts_5_1": {
 
 
-/*__jait_scope_open__*/{
-let db: JaitDB;
-let sqlite: Database;
-let service: ThreadService;
-let threadId: string;
-const __jait_hook_392 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    service = new ThreadService(db);
-    threadId = service.create({
-      title: "Persistence bounds",
-      providerId: "codex",
-    }).id;
-  };
-const __jait_hook_696 = () => {
-    sqlite.close();
-  };
-await __jait_hook_392();
+
+
 try {
 await (async()=>{
 
-    service.markRunning(threadId, "live-provider");
-    service.addActivity(threadId, "message", "Work preserved", { content: "Patch prepared" });
-    const blocked = service.markError(threadId, "Execution blocked: Required executable unavailable persisted after two retries.");
-    __jait_capture(0, (blocked?.status));
-    __jait_capture(1, (blocked?.providerSessionId));
-    __jait_captureType(2, (blocked?.completedAt));
-    __jait_capture(3, (service.getActivities(threadId)));
-    service.markRunning(threadId, "live-provider");
-    __jait_captureType(4, (service.getById(threadId)?.error));
-    __jait_capture(5, (service.getActivities(threadId)));
-  
-})();
-
-} finally {
-await __jait_hook_696();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_threads_test_ts_41_3": {
-
-
-/*__jait_scope_open__*/{
-let db: JaitDB;
-let sqlite: Database;
-let service: ThreadService;
-let threadId: string;
-const __jait_hook_392 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    service = new ThreadService(db);
-    threadId = service.create({
-      title: "Persistence bounds",
-      providerId: "codex",
-    }).id;
-  };
-const __jait_hook_696 = () => {
+  const { db, sqlite } = await openDatabase(":memory:");
+  migrateDatabase(sqlite);
+  const service = new ThreadService(db);
+  const threadId = service.create({ title: "Persistence bounds", providerId: "codex" }).id;
+  try {
+    service.update(threadId, { changeFiles: 2, changeInsertions: 12, changeDeletions: 3 });
+    __jait_capture(0, (service.getById(threadId)));
+    service.update(threadId, { changeFiles: 0, changeInsertions: 0, changeDeletions: 0 });
+    __jait_capture(1, (service.getById(threadId)));
+  } finally {
     sqlite.close();
-  };
-await __jait_hook_392();
-try {
-await (async()=>{
+  }
 
-    const activity = service.addActivity(
-      threadId,
-      "tool.result",
-      "🙂".repeat(10_000),
-      { output: "x".repeat(1_000_000) },
-    );
-
-    const row = sqlite.prepare(
-      "SELECT summary, payload FROM agent_thread_activities WHERE id = ?",
-    ).get(activity.id) as { summary: string; payload: string };
-
-    __jait_capture(0, (Buffer.byteLength(row.summary, "utf8")));
-    __jait_capture(1, (Buffer.byteLength(row.payload, "utf8")));
-    __jait_captureType(2, (JSON.parse(row.payload)));
-  
 })();
 
 } finally {
-await __jait_hook_696();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_threads_test_ts_58_3": {
-
-
-/*__jait_scope_open__*/{
-let db: JaitDB;
-let sqlite: Database;
-let service: ThreadService;
-let threadId: string;
-const __jait_hook_392 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    service = new ThreadService(db);
-    threadId = service.create({
-      title: "Persistence bounds",
-      providerId: "codex",
-    }).id;
-  };
-const __jait_hook_696 = () => {
-    sqlite.close();
-  };
-await __jait_hook_392();
-try {
-await (async()=>{
-
-    const activity = service.logProviderEvent(threadId, {
-      type: "activity",
-      sessionId: "provider-session",
-      kind: "codex/event/exec_command_output_delta",
-      summary: "streamed output",
-      payload: { delta: "hello" },
-    });
-
-    __jait_capture(0, (activity), ({
-      threadId,
-      kind: "codex/event/exec_command_output_delta",
-      summary: "streamed output",
-      payload: { delta: "hello" },
-    }));
-    const row = sqlite.prepare(
-      "SELECT id FROM agent_thread_activities WHERE id = ?",
-    ).get(activity!.id);
-    __jait_captureType(1, (row ?? undefined));
-  
-})();
-
-} finally {
-await __jait_hook_696();
-}
 }
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_threads_test_ts_79_3": {
-
-
-/*__jait_scope_open__*/{
-let db: JaitDB;
-let sqlite: Database;
-let service: ThreadService;
-let threadId: string;
-const __jait_hook_392 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    service = new ThreadService(db);
-    threadId = service.create({
-      title: "Persistence bounds",
-      providerId: "codex",
-    }).id;
-  };
-const __jait_hook_696 = () => {
-    sqlite.close();
-  };
-await __jait_hook_392();
-try {
-await (async()=>{
-
-    const first = service.logProviderEvent(threadId, {
-      type: "activity",
-      sessionId: "provider-session",
-      kind: "context_flow",
-      summary: "Round 1 context",
-      payload: { provider: "jait", rounds: [{ round: 1 }] },
-    });
-    const second = service.logProviderEvent(threadId, {
-      type: "activity",
-      sessionId: "provider-session",
-      kind: "context_flow",
-      summary: "Round 2 context",
-      payload: { provider: "jait", rounds: [{ round: 1 }, { round: 2 }] },
-    });
-
-    __jait_capture(0, (first?.payload));
-    __jait_capture(1, (second?.payload));
-    __jait_capture(2, (sqlite.prepare(
-      "SELECT COUNT(*) AS count FROM agent_thread_activities WHERE kind = 'context_flow'",
-    ).get()));
-
-    service.logProviderEvent(threadId, {
-      type: "turn.completed",
-      sessionId: "provider-session",
-    });
-
-    const rows = sqlite.prepare(
-      "SELECT payload FROM agent_thread_activities WHERE kind = 'context_flow'",
-    ).all() as Array<{ payload: string }>;
-    __jait_capture(3, (rows));
-    __jait_capture(4, (JSON.parse(rows[0]!.payload)));
-  
-})();
-
-} finally {
-await __jait_hook_696();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_threads_test_ts_116_3": {
-
-
-/*__jait_scope_open__*/{
-let db: JaitDB;
-let sqlite: Database;
-let service: ThreadService;
-let threadId: string;
-const __jait_hook_392 = async () => {
-    const opened = await openDatabase(":memory:");
-    db = opened.db;
-    sqlite = opened.sqlite;
-    migrateDatabase(sqlite);
-    service = new ThreadService(db);
-    threadId = service.create({
-      title: "Persistence bounds",
-      providerId: "codex",
-    }).id;
-  };
-const __jait_hook_696 = () => {
-    sqlite.close();
-  };
-await __jait_hook_392();
-try {
-await (async()=>{
-
-    const activity = service.logProviderEvent(threadId, {
-      type: "tool.result",
-      sessionId: "provider-session",
-      tool: "terminal.run",
-      ok: true,
-      message: "done",
-      data: { output: "x".repeat(1_000_000) },
-    });
-
-    const row = sqlite.prepare(
-      "SELECT payload FROM agent_thread_activities WHERE id = ?",
-    ).get(activity!.id) as { payload: string };
-
-    __jait_capture(0, (Buffer.byteLength(row.payload, "utf8")));
-    __jait_captureType(1, (JSON.parse(row.payload)));
-  
-})();
-
-} finally {
-await __jait_hook_696();
-}
-}
 
 break;
 }

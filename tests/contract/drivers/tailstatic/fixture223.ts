@@ -1,11 +1,10 @@
-// Translated fixture from packages/gateway/src/services/user-questions.test.ts; expected literals are in tail_static.rs.
-import { UserQuestionService } from "../../../../packages/gateway/src/services/user-questions.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/usage-summary.test.ts; expected literals are in tail_static.rs.
+import { summarizeProviderUsage } from "../../../../packages/gateway/src/services/usage-summary.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/user-questions.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/usage-summary.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,132 +38,71 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_user_questions_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_services_usage_summary_test_ts_5_3": {
 
 
-const __jait_hook_122 = () => {
-  vi.useRealTimers();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = new UserQuestionService();
-    const resolvedStatuses: string[] = [];
-    const observedRequests: string[] = [];
-    const trackedService = new UserQuestionService({
-      onRequest: (request) => observedRequests.push(request.title),
-      onResolved: (request) => resolvedStatuses.push(request.status),
-    });
+    const codexQuota = {
+      accountId: "codex-1",
+      rateLimitType: "five_hour",
+      providerType: "codex",
+      status: "allowed",
+      utilization: 0.25,
+      resetsAt: null,
+      isUsingOverage: false,
+      updatedAt: "2026-09-09T12:00:00.000Z",
+      planType: "plus",
+      windowDurationMins: 300,
+      credits: null,
+      models: [],
+      activityCost: null,
+    };
+    const ollamaQuota = {
+      ...codexQuota,
+      accountId: "jait-backend:ollama",
+      providerType: "ollama",
+      rateLimitType: "monthly",
+      utilization: 0.4,
+    };
 
-    const resultPromise = trackedService.ask({
-      sessionId: "session-1",
-      userId: "user-1",
-      requestedBy: "user.ask",
-      title: "Deployment target",
-      questions: [{
-        id: "target",
-        header: "Target",
-        question: "Where should this deploy?",
-        options: [{ label: "staging" }, { label: "production" }],
-      }],
-    });
-
-    const [request] = trackedService.listPending("session-1", "user-1");
-    __jait_capture(0, (request));
-    __jait_capture(1, (observedRequests));
-
-    __jait_capture(2, (trackedService.submit(request!.id, {
-      answers: {
-        target: { selected: ["staging"], freeText: null, skipped: false },
+    const result = summarizeProviderUsage(
+      [
+        {
+          id: "codex-1",
+          providerType: "codex",
+          label: "Personal",
+          nodeId: "gateway",
+        },
+        {
+          id: "claude-1",
+          providerType: "claude-code",
+          label: "Work",
+          nodeId: "desktop",
+        },
+      ],
+      [codexQuota, ollamaQuota],
+      {
+        quotaErrors: { "claude-1": "No live snapshot" },
+        jaitBackendProfiles: [{
+          id: "jait-backend:ollama",
+          providerType: "ollama",
+          providerLabel: "Ollama",
+          profileLabel: "Local Ollama",
+          quotaAccountId: "jait-backend:ollama",
+        }],
       },
-    }, "user-1")));
+    );
 
-    await __jait_captureResolved(3, (resultPromise));
-    __jait_capture(4, (trackedService.listPending("session-1", "user-1")));
-    __jait_capture(5, (resolvedStatuses));
-    __jait_capture(6, (service.listPending()));
+    __jait_capture(0, (result.profiles), ([codexQuota,ollamaQuota]));
   
 })();
 
 } finally {
-await __jait_hook_122();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_user_questions_test_ts_56_3": {
-
-
-const __jait_hook_122 = () => {
-  vi.useRealTimers();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.useFakeTimers();
-    const service = new UserQuestionService();
-
-    const resultPromise = service.ask({
-      sessionId: "session-1",
-      userId: "user-1",
-      title: "Runtime choice",
-      questions: [{ id: "runtime", header: "Runtime", question: "Which runtime?" }],
-    });
-    const [request] = service.listPending("session-1", "user-1");
-
-    __jait_capture(0, (service.cancel(request!.id, "user-2")));
-    __jait_capture(1, (service.submit(request!.id, { answers: {} })));
-    __jait_capture(2, (service.listPending("session-1", "user-1")));
-
-    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
-    __jait_capture(3, (vi.getTimerCount()));
-    __jait_capture(4, (service.listPending("session-1", "user-1")));
-    __jait_captureType(5, (request!.expiresAt));
-    __jait_capture(6, (service.cancel(request!.id, "user-1")));
-    await __jait_captureResolved(7, (resultPromise));
-    __jait_capture(8, (service.listPending("session-1", "user-1")));
-  
-})();
-
-} finally {
-await __jait_hook_122();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_user_questions_test_ts_80_3": {
-
-
-const __jait_hook_122 = () => {
-  vi.useRealTimers();
-};
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.useFakeTimers();
-    const service = new UserQuestionService();
-    const promise = service.ask({ sessionId: "session-1", userId: "user-1",
-      questions: [{ id: "choice", header: "Choice", question: "Which one?" }] });
-    vi.advanceTimersByTime(24 * 60 * 60 * 1000);
-    const [request] = service.listPending("session-1", "user-1");
-    __jait_captureType(0, (request));
-    const answers = { choice: { selected: ["yes"], freeText: null, skipped: false } };
-    __jait_capture(1, (service.submit(request!.id, { answers }, "user-1")));
-    await __jait_captureResolved(2, (promise), ({ answers }));
-    __jait_capture(3, (service.listPending()));
-  
-})();
-
-} finally {
-await __jait_hook_122();
 }
 }
 

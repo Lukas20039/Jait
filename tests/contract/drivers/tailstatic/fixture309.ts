@@ -1,16 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/skill-tools.test.ts; expected literals are in tail_static.rs.
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { SkillRegistry } from "../../../../packages/gateway/src/skills/index.js";
-import { createSkillsManageTool, createExtensionsManageTool } from "../../../../packages/gateway/src/tools/skill-tools.js";
-import type { PluginManager } from "../../../../packages/gateway/src/plugins/manager.js";
+// Translated fixture from packages/gateway/src/tools/session-search-tools.test.ts; expected literals are in tail_static.rs.
+import type { SessionSearchOptions, SessionSearchResult, SessionSearchService } from "../../../../packages/gateway/src/services/session-search.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createSessionSearchTool } from "../../../../packages/gateway/src/tools/session-search-tools.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/skill-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/session-search-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,432 +40,58 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_tools_session_search_tools_test_ts_15_3": {
 
 
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
+const context: ToolContext = {
+  sessionId: "session-1",
+  actionId: "action-1",
+  projectRoot: "/project/jait",
+  requestedBy: "test",
+  userId: "user-1",
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
-    const res = await tool.execute({ action: "list" }, ctx);
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, ((res.data as { skills: unknown[] }).skills));
+    const result: SessionSearchResult = {
+      source: "message",
+      id: "msg-1",
+      sessionId: "session-1",
+      role: "user",
+      content: "Prior context",
+      snippet: "[Prior] context",
+      createdAt: "2026-05-25T00:00:00.000Z",
+      score: 1,
+    };
+    let received: SessionSearchOptions | undefined;
+    const service = {
+      search: (options: SessionSearchOptions) => {
+        received = options;
+        return [result];
+      },
+    } as unknown as SessionSearchService;
+    const tool = createSessionSearchTool(service);
+
+    const response = await tool.execute({
+      query: "prior context",
+      limit: 25,
+      sessionId: "session-1",
+      includeMessages: true,
+      includeThreadActivities: false,
+    }, context);
+
+    __jait_capture(0, (response.ok));
+    __jait_capture(1, (response.message));
+    __jait_capture(2, (response.message));
+    __jait_capture(3, (response.data), ({ results: [result] }));
+    __jait_capture(4, (received));
   
 })();
 
 } finally {
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_33_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const reg = registryWithOneSkill();
-    const tool = createSkillsManageTool({ skillRegistry: reg });
-    const enabled = await tool.execute({ action: "enable", id: "deep-research" }, ctx);
-    __jait_capture(0, (enabled.ok));
-    __jait_capture(1, (reg.get("deep-research")?.enabled));
-    await tool.execute({ action: "disable", id: "deep-research" }, ctx);
-    __jait_capture(2, (reg.get("deep-research")?.enabled));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_43_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
-    const res = await tool.execute({ action: "enable", id: "nope" }, ctx);
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, (res.message));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_50_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const tool = createSkillsManageTool({ skillRegistry: registryWithOneSkill() });
-    const res = await tool.execute({ action: "search" }, ctx);
-    __jait_capture(0, (res.ok));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_58_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fakeManager = {
-      listInstalled: () => [
-        { id: "openclaw:whatsapp", displayName: "whatsapp", version: "0.0.0", status: "installed" },
-      ],
-    } as unknown as PluginManager;
-    const tool = createExtensionsManageTool({ pluginManager: fakeManager });
-    const res = await tool.execute({ action: "list" }, ctx);
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, ((res.data as { plugins: unknown[] }).plugins));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_70_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const fakeManager = {
-      enable: async () => ({ id: "x", displayName: "X", status: "error", error: "missing dep" }),
-    } as unknown as PluginManager;
-    const tool = createExtensionsManageTool({ pluginManager: fakeManager });
-    const res = await tool.execute({ action: "enable", id: "x" }, ctx);
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, (res.message));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_97_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-let home: string;
-let previousHome: string | undefined;
-const __jait_hook_3313 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
-    previousHome = process.env["HOME"];
-    process.env["HOME"] = home;
-  };
-const __jait_hook_3481 = async () => {
-    if (previousHome === undefined) delete process.env["HOME"];
-    else process.env["HOME"] = previousHome;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_3313();
-try {
-await (async()=>{
-
-    const reg = new SkillRegistry();
-    const tool = createSkillsManageTool({ skillRegistry: reg });
-
-    const res = await tool.execute({
-      action: "create",
-      id: "weather-warnings",
-      name: "Weather Warnings",
-      description: "Use when monitoring Austrian weather warnings.",
-      body: "Call the GeoSphere API and report the active warnings.",
-    }, ctx);
-
-    __jait_capture(0, (res.ok));
-    __jait_capture(1, (res.message));
-    __jait_capture(2, (reg.get("weather-warnings")?.enabled));
-  
-})();
-
-} finally {
-await __jait_hook_3481();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_114_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-let home: string;
-let previousHome: string | undefined;
-const __jait_hook_3313 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
-    previousHome = process.env["HOME"];
-    process.env["HOME"] = home;
-  };
-const __jait_hook_3481 = async () => {
-    if (previousHome === undefined) delete process.env["HOME"];
-    else process.env["HOME"] = previousHome;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_3313();
-try {
-await (async()=>{
-
-    const reg = new SkillRegistry();
-    const tool = createSkillsManageTool({ skillRegistry: reg });
-
-    await tool.execute({
-      action: "create",
-      name: "Fire Department Instagram",
-      description: "Use when drafting Instagram posts for the fire department.",
-      body: "Write in German, present tense.",
-    }, ctx);
-
-    __jait_captureType(0, (reg.get("fire-department-instagram")));
-  
-})();
-
-} finally {
-await __jait_hook_3481();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_128_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-let home: string;
-let previousHome: string | undefined;
-const __jait_hook_3313 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
-    previousHome = process.env["HOME"];
-    process.env["HOME"] = home;
-  };
-const __jait_hook_3481 = async () => {
-    if (previousHome === undefined) delete process.env["HOME"];
-    else process.env["HOME"] = previousHome;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_3313();
-try {
-await (async()=>{
-
-    const tool = createSkillsManageTool({ skillRegistry: new SkillRegistry() });
-
-    __jait_capture(0, ((await tool.execute({ action: "create", name: "X", body: "b" }, ctx)).message));
-    __jait_capture(1, ((await tool.execute({ action: "create", name: "X", description: "d" }, ctx)).message));
-    __jait_capture(2, ((await tool.execute({ action: "create", description: "d", body: "b" }, ctx)).message));
-  
-})();
-
-} finally {
-await __jait_hook_3481();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_skill_tools_test_ts_139_3": {
-
-
-const ctx = {} as ToolContext;
-function registryWithOneSkill(): SkillRegistry {
-  const reg = new SkillRegistry();
-  reg.add({
-    id: "deep-research",
-    name: "Deep Research",
-    description: "Compare options and synthesize findings.",
-    filePath: "/skills/deep-research/SKILL.md",
-    source: "user",
-    enabled: false,
-  });
-  return reg;
-}
-/*__jait_scope_open__*/{
-let home: string;
-let previousHome: string | undefined;
-const __jait_hook_3313 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skill-tool-"));
-    previousHome = process.env["HOME"];
-    process.env["HOME"] = home;
-  };
-const __jait_hook_3481 = async () => {
-    if (previousHome === undefined) delete process.env["HOME"];
-    else process.env["HOME"] = previousHome;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_3313();
-try {
-await (async()=>{
-
-    const reg = new SkillRegistry();
-    const tool = createSkillsManageTool({ skillRegistry: reg });
-    const input = { action: "create" as const, id: "notes", name: "Notes", description: "d", body: "b" };
-    await tool.execute(input, ctx);
-
-    const second = await tool.execute(input, ctx);
-
-    __jait_capture(0, (second.ok));
-    __jait_capture(1, (second.message));
-  
-})();
-
-} finally {
-await __jait_hook_3481();
 }
 }
 

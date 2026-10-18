@@ -1,11 +1,17 @@
-// Translated fixture from packages/gateway/src/services/provider-updates.test.ts; expected literals are in tail_static.rs.
-import { ProviderUpdateService, isNativeClaudeInstall } from "../../../../packages/gateway/src/services/provider-updates.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/provider-reset-windows.test.ts; expected literals are in tail_static.rs.
+import {
+  deriveOllamaResetWindow,
+  describeOllamaResetSource,
+  parseOllamaResetSource,
+  OLLAMA_MONTH_MINS,
+  OLLAMA_SESSION_MINS,
+  OLLAMA_WEEK_MINS,
+} from "../../../../packages/gateway/src/services/provider-reset-windows.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-updates.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-reset-windows.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,27 +45,29 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_updates_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_16_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const run = vi.fn(async () => ({ stdout: "codex-cli 0.100.0\n", stderr: "" }));
-    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ version: "0.101.0" }), { status: 200 }));
-    const service = new ProviderUpdateService({
-      execFile: run,
-      fetchImpl: fetchImpl as typeof fetch,
-      now: () => new Date("2026-09-23T12:00:00.000Z"),
+    const now = new Date("2026-03-11T09:37:00.000Z");
+    // Ollama's activity period ends "now", which is what used to leak into resetsAt.
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now,
+      utilization: 0.42,
+      anchorIso: now.toISOString(),
     });
-
-    await __jait_captureResolved(0, (service.getStatus("codex")));
-    await service.getStatus("codex");
-
-    __jait_capture(1, (run.mock.calls));
-    __jait_capture(2, (fetchImpl.mock.calls));
+    __jait_capture(0, (new Date(window.resetsAt).getTime()), (now.getTime()));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+    __jait_capture(3, (window.source));
   
 })();
 
@@ -70,29 +78,32 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_updates_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_31_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let installed = false;
-    const run = vi.fn(async (command: string, args: string[]) => {
-      if (command === "npm" || command === "npm.cmd") {
-        __jait_capture(0, (args));
-        installed = true;
-        return { stdout: "", stderr: "" };
-      }
-      return { stdout: installed ? "codex-cli 0.101.0" : "codex-cli 0.100.0", stderr: "" };
+    // The anchor Ollama reports is week-aligned; using it directly would shift a
+    // 5-hour grid by three hours every week.
+    const first = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.4,
+      anchorIso: "2026-03-09T00:00:00.000Z",
     });
-    const service = new ProviderUpdateService({
-      execFile: run,
-      fetchImpl: vi.fn(async () => new Response(JSON.stringify({ version: "0.101.0" }), { status: 200 })) as typeof fetch,
+    const second = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-18T09:37:00.000Z"),
+      utilization: 0.4,
+      anchorIso: "2026-03-16T00:00:00.000Z",
     });
-
-    await __jait_captureResolved(1, (service.update("codex")));
+    __jait_capture(0, (new Date(first.resetsAt).getUTCHours()), (new Date(second.resetsAt).getUTCHours()));
   
 })();
 
@@ -103,17 +114,25 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_updates_test_ts_51_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_49_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const service = new ProviderUpdateService();
-    await __jait_captureResolved(0, (service.getStatus("jait")));
-    await __jait_rejected(1, service.update("jait"));
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: WEEK,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.2,
+      anchorIso: "2026-03-09T00:00:00.000Z",
+    });
+    __jait_capture(0, (window.windowStartAt));
+    __jait_capture(1, (window.resetsAt));
   
 })();
 
@@ -124,30 +143,25 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_updates_test_ts_57_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_60_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let updated = false;
-    const run = vi.fn(async (command: string, args: string[]) => {
-      if (args[0] === "update") {
-        __jait_capture(0, (command));
-        updated = true;
-        return { stdout: "updated", stderr: "" };
-      }
-      return { stdout: updated ? "2.1.0" : "2.0.0", stderr: "" };
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: MONTH,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: 0.2,
+      anchorIso: "2026-01-31T00:00:00.000Z",
     });
-    const service = new ProviderUpdateService({
-      execFile: run,
-      resolveCommandPath: () => "/home/user/.local/share/claude/versions/2.0.0",
-      fetchImpl: vi.fn(async () => new Response(JSON.stringify({ version: "2.1.0" }), { status: 200 })) as typeof fetch,
-    });
-    await __jait_captureResolved(1, (service.update("claude-code")));
-    __jait_capture(2, (run.mock.calls));
+    __jait_capture(0, (window.windowStartAt));
+    __jait_capture(1, (window.resetsAt));
   
 })();
 
@@ -158,22 +172,271 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_updates_test_ts_76_3": {
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_71_3": {
 
 
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const run = vi.fn(async (command: string, args: string[]) => {
-      __jait_capture(0, (command));
-      __jait_capture(1, (args));
-      throw Object.assign(new Error("install failed"), { stderr: "EACCES: permission denied" });
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T10:20:00.000Z"),
+      utilization: 0.03,
+      previous: {
+        utilization: 0.81,
+        resetsAt: "2026-03-11T10:00:00.000Z",
+        source: "observed",
+        observedAt: "2026-03-11T09:37:00.000Z",
+      },
     });
-    const service = new ProviderUpdateService({ execFile: run, resolveCommandPath: () => "/home/user/.npm-global/bin/claude" });
-    await __jait_rejected(2, service.update("claude-code"));
-    __jait_capture(3, (isNativeClaudeInstall("/home/user/.npm-global/bin/claude")));
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_88_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // The stale grid point (05:00) predates the previous snapshot, so it cannot
+    // be the boundary the drop crossed; "now" is the honest upper bound.
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T09:50:00.000Z"),
+      utilization: 0.05,
+      previous: {
+        utilization: 0.6,
+        resetsAt: "2026-03-11T10:00:00.000Z",
+        source: "window-grid",
+        observedAt: "2026-03-11T09:40:00.000Z",
+      },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_107_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const now = new Date("2026-03-11T16:20:00.000Z");
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now,
+      utilization: 0.55,
+      previous: { utilization: 0.5, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.resetsAt));
+    __jait_capture(2, (window.windowStartAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_120_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T21:30:00.000Z"),
+      utilization: 0.6,
+      previous: { utilization: 0.6, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_132_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T21:30:00.000Z"),
+      utilization: 0.4,
+      previous: { utilization: 0.4, resetsAt: "2026-03-11T20:00:00.000Z", source: "window-grid" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_144_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: SESSION,
+      now: new Date("2026-03-11T12:00:00.000Z"),
+      utilization: 0.799,
+      previous: { utilization: 0.8, resetsAt: "2026-03-11T15:00:00.000Z", source: "window-grid" },
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_155_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const window = deriveOllamaResetWindow({
+      windowDurationMins: WEEK,
+      now: new Date("2026-03-11T09:37:00.000Z"),
+      utilization: null,
+      previous: { utilization: null, resetsAt: null, source: null },
+      anchorIso: null,
+    });
+    __jait_capture(0, (window.source));
+    __jait_capture(1, (window.windowStartAt));
+    __jait_capture(2, (window.resetsAt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_170_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (parseOllamaResetSource("observed")));
+    __jait_captureType(1, (parseOllamaResetSource("bogus")));
+    __jait_captureType(2, (parseOllamaResetSource(undefined)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_176_3": {
+
+
+const SESSION = OLLAMA_SESSION_MINS;
+const WEEK = OLLAMA_WEEK_MINS;
+const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const messages = [
+      describeOllamaResetSource("observed"),
+      describeOllamaResetSource("window-boundary"),
+      describeOllamaResetSource("window-grid"),
+      describeOllamaResetSource(null),
+    ];
+    __jait_capture(0, (new Set(messages).size), (messages.length));
   
 })();
 

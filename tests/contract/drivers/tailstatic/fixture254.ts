@@ -1,10 +1,11 @@
-// Translated fixture from packages/gateway/src/tools/agent-loop-connection-error.test.ts; expected literals are in tail_static.rs.
-import { formatConnectionError, isTransientTransportError } from "../../../../packages/gateway/src/tools/agent-loop.js";
+// Translated fixture from packages/gateway/src/tools/agent-loop-compaction.test.ts; expected literals are in tail_static.rs.
+import { __testUtils, compactActiveTurnHistory, generateLLMConversationSummary, pruneHistory, type AgentMessage, type LLMConfig } from "../../../../packages/gateway/src/tools/agent-loop.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-loop-connection-error.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-loop-compaction.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,408 +39,549 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_25_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_28_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function imageRequest(): AgentMessage {
+    // Match the content-part array created by routes/chat.ts for attachments.
+    return { role: "user", content: [
+      { type: "text", text: "Remove the orange dot and center the Agents button" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
+      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
+    ] as unknown as string };
+  }
 
 try {
 await (async()=>{
 
-    // Regression: an unreachable router used to surface as a bare "fetch failed",
-    // which says nothing about which backend or what to do next.
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://localhost:20128/v1",
-    });
-
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
-    __jait_capture(2, (message));
+    const summary = __testUtils.buildStructuredConversationSummary([imageRequest()]);
+    __jait_capture(0, (summary));
+    __jait_capture(1, (summary));
+    __jait_capture(2, (summary));
+    __jait_capture(3, (summary));
+    __jait_capture(4, (summary));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_38_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function imageRequest(): AgentMessage {
+    // Match the content-part array created by routes/chat.ts for attachments.
+    return { role: "user", content: [
+      { type: "text", text: "Remove the orange dot and center the Agents button" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
+      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
+    ] as unknown as string };
+  }
 
 try {
 await (async()=>{
 
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "ollama",
-      openaiBaseUrl: "http://localhost:11434/v1",
-    });
-
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
+    const requests = model();
+    await generateLLMConversationSummary([imageRequest()], llm);
+    const input = JSON.stringify(requests[0].messages);
+    __jait_capture(0, (input));
+    __jait_capture(1, (input));
+    __jait_capture(2, (input));
+    __jait_capture(3, (input));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_48_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_47_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function imageRequest(): AgentMessage {
+    // Match the content-part array created by routes/chat.ts for attachments.
+    return { role: "user", content: [
+      { type: "text", text: "Remove the orange dot and center the Agents button" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
+      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
+    ] as unknown as string };
+  }
 
 try {
 await (async()=>{
 
-    const dns = formatConnectionError(fetchFailure("ENOTFOUND"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://typo-host:20128/v1",
-    });
-    __jait_capture(0, (dns));
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 503 })));
+    const summary = await generateLLMConversationSummary([imageRequest()], llm);
+    __jait_capture(0, (summary));
+    __jait_capture(1, (summary));
+    __jait_capture(2, (summary));
+    __jait_capture(3, (summary));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_56_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function imageRequest(): AgentMessage {
+    // Match the content-part array created by routes/chat.ts for attachments.
+    return { role: "user", content: [
+      { type: "text", text: "Remove the orange dot and center the Agents button" },
+      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
+      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
+    ] as unknown as string };
+  }
 
 try {
 await (async()=>{
 
-    const err = new Error("The operation was aborted due to timeout");
-    err.name = "TimeoutError";
-    __jait_capture(0, (formatConnectionError(err, { backend: "omniroute", openaiBaseUrl: "http://x/v1" })));
+    const request = imageRequest();
+    const original = structuredClone(request);
+    const history: AgentMessage[] = [
+      { role: "system", content: "base" },
+      request,
+      { role: "assistant", content: "x".repeat(18000) },
+      { role: "user", content: "continue" },
+    ];
+    __jait_capture(0, (await pruneHistory(history, 2000, [])));
+    __jait_capture(1, (history.some(m => m.role === "user" && m.content.includes("Remove the orange dot"))));
+    __jait_capture(2, (history.at(-1)?.content));
+    __jait_capture(3, (request), (original));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_63_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_73_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // Regression: hung backends surface as `TypeError: fetch failed` with a
-    // HeadersTimeoutError cause, which used to fall through every check and
-    // end the agent loop as a bare error the user had to manually continue.
-    __jait_capture(0, (formatConnectionError(undiciHeadersTimeout(), { backend: "omniroute", openaiBaseUrl: "http://x/v1" })));
+    const requests = model();
+    const history: AgentMessage[] = [
+      { role: "system", content: "base instructions" },
+      { role: "system", content: "[conversation-summary]scope-expires-at-18:00[/conversation-summary]" },
+      { role: "user", content: "Prepare rollback " + "x".repeat(10000) },
+      { role: "assistant", content: "Tests passed " + "x".repeat(10000) },
+      { role: "user", content: "Verify changes" },
+    ];
+    for (let pass = 0; pass < 2; pass++) {
+      __jait_capture(0, (await pruneHistory(history, 2000, [], { summaryGenerator: removed => generateLLMConversationSummary(removed, llm) })));
+      __jait_capture(1, (history.filter(m => m.content.includes("[conversation-summary]")).length));
+      __jait_capture(2, (history.find(m => m.content.includes("[conversation-summary]"))?.content));
+      history.push({ role: "assistant", content: "More evidence " + "y".repeat(15000) }, { role: "user", content: "Continue verification" });
+    }
+    __jait_capture(3, (requests));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_71_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_91_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const message = formatConnectionError(fetchFailure("ECONNREFUSED"), {
-      backend: "openai",
-      openaiBaseUrl: "https://api.openai.com/v1",
-    });
-    __jait_capture(0, (message));
-    __jait_capture(1, (message));
+    const requests = model();
+    await generateLLMConversationSummary([
+      { role: "assistant", content: "Run verification", thinking: "unnecessary-internal-narrative" },
+      { role: "tool", content: "header " + "x".repeat(4000) + " FINAL: 7 passed", tool_call_id: "c1" },
+    ], llm);
+    const input = JSON.stringify(requests[0].messages);
+    __jait_capture(0, (input));
+    __jait_capture(1, (input));
+    // A generous cap costs nothing when unused and leaves reasoning headroom.
+    __jait_capture(2, (requests[0].options.num_predict));
+    __jait_capture(3, (input));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_80_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_105_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // Real bugs must keep propagating instead of being dressed up as network trouble.
-    __jait_captureType(0, (formatConnectionError(new Error("Cannot read properties of undefined"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://x/v1",
-    })));
-    __jait_captureType(1, (formatConnectionError(fetchFailure("EPIPE"), {
-      backend: "omniroute",
-      openaiBaseUrl: "http://x/v1",
-    })));
+    const abort = new AbortController();
+    const history: AgentMessage[] = [{ role: "system", content: "base" }, { role: "user", content: "old task" }, { role: "assistant", content: "x".repeat(18000) }, { role: "user", content: "current task" }];
+    const before = structuredClone(history);
+    vi.stubGlobal("fetch", vi.fn(async () => { abort.abort(); throw new DOMException("Aborted", "AbortError"); }));
+    await __jait_rejected(0, pruneHistory(history, 2000, [], { summaryGenerator: removed => generateLLMConversationSummary(removed, llm, abort.signal) }));
+    __jait_capture(1, (history), (before));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_94_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_143_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function history(): AgentMessage[] {
+    return [
+      { role: "system", content: "base instructions" },
+      { role: "user", content: "Verify authorized targets; preserve evidence" },
+      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
+      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
+        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
+        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
+      ]).flat(),
+    ];
+  }
 
 try {
 await (async()=>{
 
-    // These are worth retrying the same round: a healthy turn should not die
-    // to a one-off blip after tens of productive rounds.
-    __jait_capture(0, (isTransientTransportError(undiciHeadersTimeout())));
-
-    const bodyTimeout = fetchFailure("UND_ERR_BODY_TIMEOUT");
-    (bodyTimeout as { cause: { name?: string } }).cause.name = "BodyTimeoutError";
-    __jait_capture(1, (isTransientTransportError(bodyTimeout)));
-
-    __jait_capture(2, (isTransientTransportError(fetchFailure("UND_ERR_SOCKET"))));
-    __jait_capture(3, (isTransientTransportError(fetchFailure("UND_ERR_CONNECT_TIMEOUT"))));
-    __jait_capture(4, (isTransientTransportError(fetchFailure("ECONNRESET"))));
-    __jait_capture(5, (isTransientTransportError(fetchFailure("EPIPE"))));
-    __jait_capture(6, (isTransientTransportError(fetchFailure("ETIMEDOUT"))));
+    const messages = history();
+    const original = structuredClone(messages);
+    await __jait_rejected(0, compactActiveTurnHistory(messages, [], 1000, { summaryGenerator: async () => { throw new Error("cancelled"); } }));
+    __jait_capture(1, (messages), (original));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_110_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_149_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function history(): AgentMessage[] {
+    return [
+      { role: "system", content: "base instructions" },
+      { role: "user", content: "Verify authorized targets; preserve evidence" },
+      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
+      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
+        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
+        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
+      ]).flat(),
+    ];
+  }
 
 try {
 await (async()=>{
 
-    // Nothing to retry: the backend is not listening and DNS will not heal by
-    // re-issuing the request, so these must surface immediately.
-    __jait_capture(0, (isTransientTransportError(fetchFailure("ECONNREFUSED"))));
-    __jait_capture(1, (isTransientTransportError(fetchFailure("ENOTFOUND"))));
-    __jait_capture(2, (isTransientTransportError(fetchFailure("EAI_AGAIN"))));
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("unavailable", { status: 503 })));
+    const result = await generateLLMConversationSummary(history(), llm);
+    __jait_capture(0, (result));
+    __jait_capture(1, (result));
   
 })();
 
 } finally {
-
+await __jait_hook_377();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_connection_error_test_ts_118_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_156_3": {
 
 
-function fetchFailure(code: string): Error {
-  const err = new TypeError("fetch failed");
-  (err as { cause?: unknown }).cause = { code };
-  return err;
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
 }
-function undiciHeadersTimeout(): Error {
-  const err = new TypeError(
-    "fetch failed: Headers Timeout Error (test performed on a server that did not respond in time)",
-  );
-  (err as { cause?: unknown }).cause = {
-    name: "HeadersTimeoutError",
-    code: "UND_ERR_HEADERS_TIMEOUT",
-    message: "Headers Timeout Error (test performed on a server that did not respond in time)",
-  };
-  return err;
-}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
+function history(): AgentMessage[] {
+    return [
+      { role: "system", content: "base instructions" },
+      { role: "user", content: "Verify authorized targets; preserve evidence" },
+      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
+      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
+        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
+        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
+      ]).flat(),
+    ];
+  }
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isTransientTransportError(new TypeError("fetch failed"))));
-    __jait_capture(1, (isTransientTransportError(new Error("Cannot read properties of undefined"))));
-    __jait_capture(2, (isTransientTransportError(null)));
-    __jait_capture(3, (isTransientTransportError(undefined)));
-    __jait_capture(4, (isTransientTransportError("boom")));
+    // Reasoning models can consume the whole budget before emitting content, so
+    // a capped-but-non-empty handoff must survive in both wire formats.
+    for (const body of [
+      { message: { content: "Objective: verify rollback. Next: re-run probe." }, done_reason: "length" },
+      { choices: [{ message: { content: "Objective: verify rollback. Next: re-run probe." }, finish_reason: "length" }] },
+    ]) {
+      vi.stubGlobal("fetch", vi.fn(async () => Response.json(body)));
+      const result = await generateLLMConversationSummary(history(), llm);
+      __jait_capture(0, (result));
+      __jait_capture(1, (result));
+      __jait_capture(2, (result));
+      __jait_capture(3, (result));
+    }
   
 })();
 
 } finally {
+await __jait_hook_377();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_172_3": {
+
+
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
+}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+function history(): AgentMessage[] {
+    return [
+      { role: "system", content: "base instructions" },
+      { role: "user", content: "Verify authorized targets; preserve evidence" },
+      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
+      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
+        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
+        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
+      ]).flat(),
+    ];
+  }
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ message: { content: "   " }, done_reason: "length" })));
+    const result = await generateLLMConversationSummary(history(), llm);
+    __jait_capture(0, (result));
+    __jait_capture(1, (result));
+  
+})();
+
+} finally {
+await __jait_hook_377();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_179_3": {
+
+
+const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
+function model() {
+  const requests: any[] = [];
+  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body));
+    requests.push(body);
+    const input = JSON.stringify(body.messages);
+    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
+  }));
+  return requests;
+}
+const __jait_hook_377 = () => vi.unstubAllGlobals();
+/*__jait_scope_open__*/{
+function history(): AgentMessage[] {
+    return [
+      { role: "system", content: "base instructions" },
+      { role: "user", content: "Verify authorized targets; preserve evidence" },
+      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
+      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
+        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
+        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
+      ]).flat(),
+    ];
+  }
+
+try {
+await (async()=>{
+
+    // A budget above a model's output limit is refused, not clamped, so the
+    // raised cap must not cost the model-written handoff outright.
+    const budgets: unknown[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body));
+      budgets.push(body.max_tokens);
+      if (body.max_tokens === 8192) return new Response("max_tokens too large", { status: 400 });
+      return Response.json({ choices: [{ message: { content: "Objective: verify rollback." }, finish_reason: "stop" }] });
+    }));
+    const result = await generateLLMConversationSummary(history(), { ...llm, backend: "openai" });
+    __jait_capture(0, (budgets));
+    __jait_capture(1, (result));
+    __jait_capture(2, (result));
+  
+})();
+
+} finally {
+await __jait_hook_377();
 }
 }
 

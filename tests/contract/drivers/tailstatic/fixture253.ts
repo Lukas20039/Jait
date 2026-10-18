@@ -1,11 +1,10 @@
-// Translated fixture from packages/gateway/src/tools/agent-loop-compaction.test.ts; expected literals are in tail_static.rs.
-import { __testUtils, compactActiveTurnHistory, generateLLMConversationSummary, pruneHistory, type AgentMessage, type LLMConfig } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/agent-communication.test.ts; expected literals are in tail_static.rs.
+import { describePerformative, isSuccessfulPerformative, parsePerformative } from "../../../../packages/gateway/src/tools/agent-communication.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-loop-compaction.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/agent-communication.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,549 +38,146 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_28_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_5_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-function imageRequest(): AgentMessage {
-    // Match the content-part array created by routes/chat.ts for attachments.
-    return { role: "user", content: [
-      { type: "text", text: "Remove the orange dot and center the Agents button" },
-      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
-      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
-    ] as unknown as string };
-  }
 
 try {
 await (async()=>{
 
-    const summary = __testUtils.buildStructuredConversationSummary([imageRequest()]);
-    __jait_capture(0, (summary));
-    __jait_capture(1, (summary));
-    __jait_capture(2, (summary));
-    __jait_capture(3, (summary));
-    __jait_capture(4, (summary));
+    __jait_capture(0, (parsePerformative("Here are the results.")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_37_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_12_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-function imageRequest(): AgentMessage {
-    // Match the content-part array created by routes/chat.ts for attachments.
-    return { role: "user", content: [
-      { type: "text", text: "Remove the orange dot and center the Agents button" },
-      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
-      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
-    ] as unknown as string };
-  }
 
 try {
 await (async()=>{
 
-    const requests = model();
-    await generateLLMConversationSummary([imageRequest()], llm);
-    const input = JSON.stringify(requests[0].messages);
-    __jait_capture(0, (input));
-    __jait_capture(1, (input));
-    __jait_capture(2, (input));
-    __jait_capture(3, (input));
+    __jait_capture(0, (parsePerformative("[REFUSE] This is out of scope.")));
+    __jait_capture(1, (parsePerformative("[FAILURE] Could not reproduce the crash.")));
+    __jait_capture(2, (parsePerformative("[PROPOSE] Option A or Option B.")));
+    __jait_capture(3, (parsePerformative("[QUERY] Which environment should I target?")));
+    __jait_capture(4, (parsePerformative("[AGREE] Starting now.")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_47_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_35_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-function imageRequest(): AgentMessage {
-    // Match the content-part array created by routes/chat.ts for attachments.
-    return { role: "user", content: [
-      { type: "text", text: "Remove the orange dot and center the Agents button" },
-      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
-      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
-    ] as unknown as string };
-  }
 
 try {
 await (async()=>{
 
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 503 })));
-    const summary = await generateLLMConversationSummary([imageRequest()], llm);
-    __jait_capture(0, (summary));
-    __jait_capture(1, (summary));
-    __jait_capture(2, (summary));
-    __jait_capture(3, (summary));
+    __jait_capture(0, (parsePerformative("  [inform]   Done.")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_56_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_42_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
-function imageRequest(): AgentMessage {
-    // Match the content-part array created by routes/chat.ts for attachments.
-    return { role: "user", content: [
-      { type: "text", text: "Remove the orange dot and center the Agents button" },
-      { type: "image_url", image_url: { url: "data:image/png;base64,PRIVATE_IMAGE_BYTES" } },
-      { type: "text", text: "[File: apps/web/src/button.tsx] preserve the label" },
-    ] as unknown as string };
-  }
 
 try {
 await (async()=>{
 
-    const request = imageRequest();
-    const original = structuredClone(request);
-    const history: AgentMessage[] = [
-      { role: "system", content: "base" },
-      request,
-      { role: "assistant", content: "x".repeat(18000) },
-      { role: "user", content: "continue" },
-    ];
-    __jait_capture(0, (await pruneHistory(history, 2000, [])));
-    __jait_capture(1, (history.some(m => m.role === "user" && m.content.includes("Remove the orange dot"))));
-    __jait_capture(2, (history.at(-1)?.content));
-    __jait_capture(3, (request), (original));
+    __jait_capture(0, (parsePerformative("Summary: [INFORM] done")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_73_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_51_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const requests = model();
-    const history: AgentMessage[] = [
-      { role: "system", content: "base instructions" },
-      { role: "system", content: "[conversation-summary]scope-expires-at-18:00[/conversation-summary]" },
-      { role: "user", content: "Prepare rollback " + "x".repeat(10000) },
-      { role: "assistant", content: "Tests passed " + "x".repeat(10000) },
-      { role: "user", content: "Verify changes" },
-    ];
-    for (let pass = 0; pass < 2; pass++) {
-      __jait_capture(0, (await pruneHistory(history, 2000, [], { summaryGenerator: removed => generateLLMConversationSummary(removed, llm) })));
-      __jait_capture(1, (history.filter(m => m.content.includes("[conversation-summary]")).length));
-      __jait_capture(2, (history.find(m => m.content.includes("[conversation-summary]"))?.content));
-      history.push({ role: "assistant", content: "More evidence " + "y".repeat(15000) }, { role: "user", content: "Continue verification" });
-    }
-    __jait_capture(3, (requests));
+    __jait_capture(0, (isSuccessfulPerformative("inform")));
+    __jait_capture(1, (isSuccessfulPerformative("agree")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_91_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_56_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const requests = model();
-    await generateLLMConversationSummary([
-      { role: "assistant", content: "Run verification", thinking: "unnecessary-internal-narrative" },
-      { role: "tool", content: "header " + "x".repeat(4000) + " FINAL: 7 passed", tool_call_id: "c1" },
-    ], llm);
-    const input = JSON.stringify(requests[0].messages);
-    __jait_capture(0, (input));
-    __jait_capture(1, (input));
-    // A generous cap costs nothing when unused and leaves reasoning headroom.
-    __jait_capture(2, (requests[0].options.num_predict));
-    __jait_capture(3, (input));
+    __jait_capture(0, (isSuccessfulPerformative("refuse")));
+    __jait_capture(1, (isSuccessfulPerformative("failure")));
+    __jait_capture(2, (isSuccessfulPerformative("query")));
   
 })();
 
 } finally {
-await __jait_hook_377();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_105_3": {
+case "tailstatic_packages_gateway_src_tools_agent_communication_test_ts_64_3": {
 
 
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const abort = new AbortController();
-    const history: AgentMessage[] = [{ role: "system", content: "base" }, { role: "user", content: "old task" }, { role: "assistant", content: "x".repeat(18000) }, { role: "user", content: "current task" }];
-    const before = structuredClone(history);
-    vi.stubGlobal("fetch", vi.fn(async () => { abort.abort(); throw new DOMException("Aborted", "AbortError"); }));
-    await __jait_rejected(0, pruneHistory(history, 2000, [], { summaryGenerator: removed => generateLLMConversationSummary(removed, llm, abort.signal) }));
-    __jait_capture(1, (history), (before));
+    __jait_capture(0, (describePerformative("inform")));
+    __jait_capture(1, (describePerformative("propose")));
+    __jait_capture(2, (describePerformative("refuse")));
+    __jait_capture(3, (describePerformative("failure")));
+    __jait_capture(4, (describePerformative("query")));
+    __jait_capture(5, (describePerformative("agree")));
   
 })();
 
 } finally {
-await __jait_hook_377();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_143_3": {
-
-
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-function history(): AgentMessage[] {
-    return [
-      { role: "system", content: "base instructions" },
-      { role: "user", content: "Verify authorized targets; preserve evidence" },
-      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
-      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
-        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
-        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
-      ]).flat(),
-    ];
-  }
-
-try {
-await (async()=>{
-
-    const messages = history();
-    const original = structuredClone(messages);
-    await __jait_rejected(0, compactActiveTurnHistory(messages, [], 1000, { summaryGenerator: async () => { throw new Error("cancelled"); } }));
-    __jait_capture(1, (messages), (original));
-  
-})();
-
-} finally {
-await __jait_hook_377();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_149_3": {
-
-
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-function history(): AgentMessage[] {
-    return [
-      { role: "system", content: "base instructions" },
-      { role: "user", content: "Verify authorized targets; preserve evidence" },
-      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
-      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
-        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
-        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
-      ]).flat(),
-    ];
-  }
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("unavailable", { status: 503 })));
-    const result = await generateLLMConversationSummary(history(), llm);
-    __jait_capture(0, (result));
-    __jait_capture(1, (result));
-  
-})();
-
-} finally {
-await __jait_hook_377();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_156_3": {
-
-
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-function history(): AgentMessage[] {
-    return [
-      { role: "system", content: "base instructions" },
-      { role: "user", content: "Verify authorized targets; preserve evidence" },
-      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
-      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
-        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
-        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
-      ]).flat(),
-    ];
-  }
-
-try {
-await (async()=>{
-
-    // Reasoning models can consume the whole budget before emitting content, so
-    // a capped-but-non-empty handoff must survive in both wire formats.
-    for (const body of [
-      { message: { content: "Objective: verify rollback. Next: re-run probe." }, done_reason: "length" },
-      { choices: [{ message: { content: "Objective: verify rollback. Next: re-run probe." }, finish_reason: "length" }] },
-    ]) {
-      vi.stubGlobal("fetch", vi.fn(async () => Response.json(body)));
-      const result = await generateLLMConversationSummary(history(), llm);
-      __jait_capture(0, (result));
-      __jait_capture(1, (result));
-      __jait_capture(2, (result));
-      __jait_capture(3, (result));
-    }
-  
-})();
-
-} finally {
-await __jait_hook_377();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_172_3": {
-
-
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-function history(): AgentMessage[] {
-    return [
-      { role: "system", content: "base instructions" },
-      { role: "user", content: "Verify authorized targets; preserve evidence" },
-      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
-      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
-        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
-        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
-      ]).flat(),
-    ];
-  }
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ message: { content: "   " }, done_reason: "length" })));
-    const result = await generateLLMConversationSummary(history(), llm);
-    __jait_capture(0, (result));
-    __jait_capture(1, (result));
-  
-})();
-
-} finally {
-await __jait_hook_377();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_agent_loop_compaction_test_ts_179_3": {
-
-
-const llm: LLMConfig = { backend: "ollama", openaiBaseUrl: "http://fixture.invalid/v1", openaiApiKey: "fixture", openaiModel: "fixture", contextWindow: 8000 };
-function model() {
-  const requests: any[] = [];
-  vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-    const body = JSON.parse(String(init?.body));
-    requests.push(body);
-    const input = JSON.stringify(body.messages);
-    return Response.json({ message: { content: input.includes("scope-expires-at-18:00") ? "Keep scope-expires-at-18:00; tests passed; next verify rollback." : "tests passed; next verify rollback." } });
-  }));
-  return requests;
-}
-const __jait_hook_377 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-function history(): AgentMessage[] {
-    return [
-      { role: "system", content: "base instructions" },
-      { role: "user", content: "Verify authorized targets; preserve evidence" },
-      { role: "system", content: "[active-turn-summary]scope-expires-at-18:00[/active-turn-summary]" },
-      ...Array.from({ length: 38 }, (_, i): AgentMessage[] => [
-        { role: "assistant", content: `Evidence ${i}`, tool_calls: [{ id: `c${i}`, type: "function", function: { name: "file_read", arguments: "{}" } }] },
-        { role: "tool", tool_call_id: `c${i}`, content: `result-${i} ` + "x".repeat(400) },
-      ]).flat(),
-    ];
-  }
-
-try {
-await (async()=>{
-
-    // A budget above a model's output limit is refused, not clamped, so the
-    // raised cap must not cost the model-written handoff outright.
-    const budgets: unknown[] = [];
-    vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init?: RequestInit) => {
-      const body = JSON.parse(String(init?.body));
-      budgets.push(body.max_tokens);
-      if (body.max_tokens === 8192) return new Response("max_tokens too large", { status: 400 });
-      return Response.json({ choices: [{ message: { content: "Objective: verify rollback." }, finish_reason: "stop" }] });
-    }));
-    const result = await generateLLMConversationSummary(history(), { ...llm, backend: "openai" });
-    __jait_capture(0, (budgets));
-    __jait_capture(1, (result));
-    __jait_capture(2, (result));
-  
-})();
-
-} finally {
-await __jait_hook_377();
 }
 }
 

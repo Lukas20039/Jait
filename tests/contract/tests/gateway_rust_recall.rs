@@ -105,11 +105,9 @@ fn scenario(mut input: Value) -> Value {
         fs::create_dir_all(log_dir.parent().unwrap()).unwrap();
         fs::write(&log_dir, "blocked").unwrap();
     }
-    if log_enabled {
-        if let Some(curated) = input["curated"].as_str() {
-            fs::create_dir_all(log_dir.parent().unwrap()).unwrap();
-            fs::write(log_dir.parent().unwrap().join("MEMORY.md"), curated).unwrap();
-        }
+    if log_enabled && let Some(curated) = input["curated"].as_str() {
+        fs::create_dir_all(log_dir.parent().unwrap()).unwrap();
+        fs::write(log_dir.parent().unwrap().join("MEMORY.md"), curated).unwrap();
     }
     let engine =
         MemoryEngine::new(backend, log_enabled.then_some(log_dir.clone())).with_clock(|| {

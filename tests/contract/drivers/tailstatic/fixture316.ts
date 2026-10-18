@@ -1,17 +1,13 @@
-// Translated fixture from packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts; expected literals are in tail_static.rs.
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
-import { resolve, join } from "node:path";
-import { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
-import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
-import { createJaitTerminalTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
-import { backgroundCommandMonitor } from "../../../../packages/gateway/src/services/background-command-monitor.js";
+// Translated fixture from packages/gateway/src/tools/team-chat-tools.test.ts; expected literals are in tail_static.rs.
+import type { TeamChatService } from "../../../../packages/gateway/src/services/team-chat.js";
+import type { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { createTeamChatTool } from "../../../../packages/gateway/src/tools/team-chat-tools.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/terminal-sandbox-background.integration.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/team-chat-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -45,209 +41,336 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_30_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_22_3": {
 
 
-/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-const manager = new SandboxManager();
-const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
-let projectRoot: string;
-let containerName: string;
-let context: ToolContext;
-const __jait_hook_802 = async () => {
-    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
-    await mkdir(artifacts, { recursive: true });
-    projectRoot = await mkdtemp(join(artifacts, "docker-"));
-    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
-    containerName = session.containerName;
-    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
-  };
-const __jait_hook_1310 = async () => {
-    backgroundCommandMonitor.clearForTests();
-    if (containerName) await manager.stopContainer(containerName);
-    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
-  };
-await __jait_hook_802();
+
 try {
 await (async()=>{
 
-    const abort = new AbortController();
-    const start = Date.now();
-    const notify = vi.fn();
-    backgroundCommandMonitor.setCompletionHandler(notify);
-    const result = await tool.execute({
-      sandbox: true, isBackground: true, timeout: 30000,
-      command: `bun -e 'Bun.serve({hostname:"127.0.0.1",port:3411,fetch(){return new Response("ok")}}); console.log("Listening")'`,
-    }, { ...context, signal: abort.signal });
-    __jait_capture(0, (Date.now() - start));
-    __jait_capture(1, (result.ok));
-    __jait_capture(2, (result.data));
-    __jait_capture(3, ((result.data as { output: string }).output));
-    const probe = await manager.execInContainer({
-      containerName, timeoutMs: 5000,
-      command: `bun -e 'console.log(await (await fetch("http://127.0.0.1:3411")).text())'`,
-    });
-    __jait_capture(4, (probe.output));
-    abort.abort();
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    const after = await manager.execInContainer({
-      containerName, timeoutMs: 5000,
-      command: `bun -e 'try { await fetch("http://127.0.0.1:3411"); process.exit(1) } catch { console.log("stopped") }'`,
-    });
-    __jait_capture(5, (after.ok));
-    __jait_capture(6, (after.output));
-    __jait_capture(7, (notify.mock.calls));
-    __jait_capture(8, (backgroundCommandMonitor.activeCount));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "list" }, { ...context, userId: undefined })).ok));
+    __jait_capture(1, (f.service.list.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1310();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_27_3": {
 
 
-/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-const manager = new SandboxManager();
-const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
-let projectRoot: string;
-let containerName: string;
-let context: ToolContext;
-const __jait_hook_802 = async () => {
-    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
-    await mkdir(artifacts, { recursive: true });
-    projectRoot = await mkdtemp(join(artifacts, "docker-"));
-    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
-    containerName = session.containerName;
-    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
-  };
-const __jait_hook_1310 = async () => {
-    backgroundCommandMonitor.clearForTests();
-    if (containerName) await manager.stopContainer(containerName);
-    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
-  };
-await __jait_hook_802();
+
 try {
 await (async()=>{
 
-    const notify = vi.fn();
-    backgroundCommandMonitor.setCompletionHandler(notify);
-    const result = await tool.execute({
-      sandbox: true, isBackground: true, timeout: 1500,
-      command: `bun -e 'console.log("x".repeat(50000)); setInterval(()=>{},1000)'`,
-    }, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, ((result.data as { output: string }).output.length));
-    await vi.waitFor(() => __jait_capture(2, (notify.mock.calls)), { timeout: 6000 });
-    __jait_capture(3, (notify.mock.calls[0]![0]));
-    __jait_capture(4, (notify.mock.calls[0]![0].output.length));
+    const f = fixture();
+    __jait_capture(0, (await f.tool.execute({ action: "list" }, context)), ({ ok: true, data: { rooms: [f.room] } }));
+    __jait_capture(1, (f.service.list.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1310();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_74_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_32_3": {
 
 
-/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-const manager = new SandboxManager();
-const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
-let projectRoot: string;
-let containerName: string;
-let context: ToolContext;
-const __jait_hook_802 = async () => {
-    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
-    await mkdir(artifacts, { recursive: true });
-    projectRoot = await mkdtemp(join(artifacts, "docker-"));
-    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
-    containerName = session.containerName;
-    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
-  };
-const __jait_hook_1310 = async () => {
-    backgroundCommandMonitor.clearForTests();
-    if (containerName) await manager.stopContainer(containerName);
-    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
-  };
-await __jait_hook_802();
+
 try {
 await (async()=>{
 
-    const result = await tool.execute({
-      sandbox: true, isBackground: true,
-      command: "printf '%s\\n' '$(echo literal)' '`echo also-literal`'\nprintf 'container=%s\\n' \"$PWD\"\nexit 9",
-    }, context);
-    __jait_capture(0, (result.ok));
-    __jait_capture(1, (result.data));
-    const output = (result.data as { output: string }).output;
-    __jait_capture(2, (output));
-    __jait_capture(3, (output));
-    __jait_capture(4, (output));
-    __jait_capture(5, (output));
+    const f = fixture();
+    __jait_capture(0, (await f.tool.execute({ action: "get", roomId: "room-1" }, context)), ({ ok: true, data: { room: f.room, members: [{ id: "reviewer-1" }], messages: [] } }));
+    __jait_capture(1, (f.service.get.mock.calls));
+    __jait_capture(2, (f.service.history.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_1310();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3": {
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_38_3": {
 
 
-/*__jait_source_gate__ skipIf process.env["JAIT_TEST_DOCKER"] !== "1" */
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
 /*__jait_scope_open__*/{
-const manager = new SandboxManager();
-const tool = createJaitTerminalTool({} as SurfaceRegistry, manager);
-let projectRoot: string;
-let containerName: string;
-let context: ToolContext;
-const __jait_hook_802 = async () => {
-    const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts/sandbox-background");
-    await mkdir(artifacts, { recursive: true });
-    projectRoot = await mkdtemp(join(artifacts, "docker-"));
-    const session = await manager.startCommandSandbox({ projectRoot, networkEnabled: false });
-    containerName = session.containerName;
-    context = { sessionId: "docker-test", actionId: "action", requestedBy: "test", projectRoot, sandboxContainerName: containerName };
-  };
-const __jait_hook_1310 = async () => {
-    backgroundCommandMonitor.clearForTests();
-    if (containerName) await manager.stopContainer(containerName);
-    if (projectRoot) await rm(projectRoot, { recursive: true, force: true });
-  };
-await __jait_hook_802();
+
 try {
 await (async()=>{
 
-    const abort = new AbortController();
-    const result = await tool.execute({
-      sandbox: true, isBackground: true, timeout: 15000,
-      command: "id -u; echo owned > owned.txt; sleep 10",
-    }, { ...context, sandboxContainerName: undefined, signal: abort.signal });
-    __jait_capture(0, (result.data));
-    const { stat } = await import("node:fs/promises");
-    __jait_capture(1, ((await stat(join(projectRoot, "owned.txt"))).uid), (process.getuid!()));
-    abort.abort();
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    __jait_capture(2, (backgroundCommandMonitor.activeCount));
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "send", roomId: "room-1", content: "Review the test results", recipientIds: ["reviewer-1"], kind: "assignment" }, context)).ok));
+    __jait_capture(1, (f.service.postRouted.mock.calls), ([f.sender]));
   
 })();
 
 } finally {
-await __jait_hook_1310();
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_46_3": {
+
+
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "send", roomId: "room-1", content: " " }, context)).ok));
+    __jait_capture(1, (f.service.postRouted.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_51_3": {
+
+
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "goal", roomId: "room-1", content: "Verify tools", criteria: ["Browser passes"] }, context)).ok));
+    __jait_capture(1, (f.service.setGoal.mock.calls), (["owner-1","room-1","Verify tools",["Browser passes"],f.sender]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_56_3": {
+
+
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    f.service.completeGoal.mockImplementation(() => { throw new Error("Independent verification required"); });
+    __jait_capture(0, (await f.tool.execute({ action: "complete", roomId: "room-1", evidence: ["Browser checks passed"] }, context)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_61_3": {
+
+
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    __jait_capture(0, ((await f.tool.execute({ action: "complete", roomId: "room-1", evidence: ["Browser checks passed"] }, context)).ok));
+    __jait_capture(1, (f.service.completeGoal.mock.calls), (["owner-1","room-1",["Browser checks passed"],f.sender]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_team_chat_tools_test_ts_66_3": {
+
+
+const context = { sessionId: "team-tests", actionId: "team-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+function fixture() {
+  const room = { id: "room-1", rootAgentId: "manager-1", name: "Developer team" };
+  const sender = { kind: "chat", sourceSessionId: context.sessionId };
+  const service = {
+    list: vi.fn().mockReturnValue([room]), workForSession: vi.fn().mockReturnValue(null),
+    ensureRoom: vi.fn().mockReturnValue(room), get: vi.fn().mockReturnValue(room),
+    roomMembers: vi.fn().mockReturnValue([{ id: "reviewer-1" }]), history: vi.fn().mockReturnValue([]),
+    deliveries: vi.fn().mockReturnValue([{ messageId: "message-1", recipientId: "reviewer-1" }]),
+    sender: vi.fn().mockReturnValue(sender), setGoal: vi.fn().mockReturnValue(room),
+    completeGoal: vi.fn().mockReturnValue(room),
+    postRouted: vi.fn().mockResolvedValue({ id: "message-1" }), threadById: vi.fn().mockReturnValue(null),
+  };
+  const tool = createTeamChatTool(service as unknown as TeamChatService, {} as SessionService);
+  return { service, tool, room, sender };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const f = fixture();
+    f.service.get.mockImplementation(() => { throw new Error("Room not found"); });
+    __jait_capture(0, (await f.tool.execute({ action: "get", roomId: "foreign-room" }, context)));
+    __jait_capture(1, (f.service.postRouted.mock.calls));
+  
+})();
+
+} finally {
+
 }
 }
 

@@ -1,13 +1,13 @@
-// Translated fixture from packages/gateway/src/services/static-asset-cache.test.ts; expected literals are in tail_static.rs.
-
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { resolve, join } from "node:path";
-import { registerStaticAssetCache } from "../../../../packages/gateway/src/services/static-asset-cache.js";
+// Translated fixture from packages/gateway/src/services/sessions.test.ts; expected literals are in tail_static.rs.
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/static-asset-cache.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/sessions.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,45 +41,374 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_static_asset_cache_test_ts_7_1": {
-
-const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_23_3": {
 
 
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
 try {
 await (async()=>{
 
-  const output = resolve(__jait_original_dir, "../../../../.jait/artifacts/static-cache-tests");
-  await mkdir(output, { recursive: true });
-  const directory = await mkdtemp(join(output, "cache-"));
-  const assets = join(directory, "assets");
-  await mkdir(assets);
-  const file = join(assets, "app-abcdefgh.js");
-  await writeFile(file, "cached asset");
-  const app = Fastify();
-  registerStaticAssetCache(app, directory);
-  app.get("/*", async () => "fallback");
-  try {
-    const first = await app.inject({ url: "/assets/app-abcdefgh.js" });
-    __jait_capture(0, (first.body));
-    __jait_capture(1, (first.headers["cache-control"]));
-    await rm(file);
-    const second = await app.inject({ url: "/assets/app-abcdefgh.js?version=1" });
-    __jait_capture(2, (second.body));
-    __jait_capture(3, ((await app.inject({ url: "/assets/missing-abcdefgh.js" })).body));
-    __jait_capture(4, ((await app.inject({ url: "/index.html" })).body));
-    __jait_capture(5, ((await app.inject({ url: "/assets/app-abcdefgh.js", headers: { range: "bytes=0-1" } })).body));
-  } finally {
-    await app.close();
-    await rm(directory, { recursive: true, force: true });
-  }
-
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      vi.setSystemTime(new Date("2026-09-13T10:00:00.000Z"));
+      const session = sessions.create({ userId });
+      const observedAt = session.lastActiveAt;
+      __jait_capture(0, (session.viewedAt), (observedAt));
+      vi.setSystemTime(new Date("2026-09-13T10:01:00.000Z"));
+      sessions.touch(session.id);
+      sessions.markViewed(session.id, userId, observedAt);
+      __jait_capture(1, (sessions.getById(session.id)?.viewedAt), (observedAt));
+      __jait_capture(2, (sessions.getById(session.id)?.lastActiveAt));
+      sessions.markViewed(session.id, userId, "2026-09-13T10:01:00.000Z");
+      sessions.markViewed(session.id, userId, observedAt);
+      __jait_capture(3, (sessions.getById(session.id)?.viewedAt));
+    } finally {
+      vi.useRealTimers();
+    }
+  
 })();
 
 } finally {
-
+await __jait_hook_662();
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_43_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    try {
+      vi.setSystemTime(new Date("2026-09-13T10:00:00.000Z"));
+      const session = sessions.create({ userId });
+      sessions.touch(session.id);
+      const promptAt = sessions.getById(session.id)!.lastActiveAt;
+      sessions.markViewed(session.id, userId, promptAt);
+      sessions.touch(session.id);
+      const reply = sessions.getById(session.id)!;
+      __jait_capture(0, (Date.parse(reply.lastActiveAt)), (Date.parse(promptAt)));
+      __jait_capture(1, (reply.viewedAt), (promptAt));
+    } finally {
+      vi.useRealTimers();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_60_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({ userId, name: "Personal chat" });
+    __jait_captureType(0, (session.projectId));
+
+    const moved = sessions.moveToProject(session.id, "project-1", "/repo/jait", userId);
+
+    __jait_capture(1, (moved?.projectId));
+    __jait_capture(2, (moved?.projectPath));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_70_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({
+      userId,
+      projectId: "project-1",
+      projectPath: "/repo/jait",
+      name: "Project chat",
+    });
+
+    const moved = sessions.moveToProject(session.id, null, null, userId);
+
+    __jait_captureType(0, (moved?.projectId));
+    // A stale projectPath would keep pointing the chat at the folder of the
+    // project it just left, since tool execution falls back to it.
+    __jait_captureType(1, (moved?.projectPath));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_86_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({
+      userId,
+      name: "Keep my name",
+      metadata: { chat: { provider: "anthropic" } },
+    });
+
+    const moved = sessions.moveToProject(session.id, "project-2", "/repo/other", userId);
+
+    __jait_capture(0, (moved?.name));
+    __jait_capture(1, (JSON.parse(moved?.metadata ?? "{}")));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_99_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({ userId, name: "Mine" });
+
+    sessions.moveToProject(session.id, "project-1", "/repo/jait", "someone-else");
+
+    __jait_captureType(0, (sessions.getById(session.id)?.projectId));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_107_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({
+      userId,
+      metadata: { chat: { provider: "anthropic", model: "claude-sonnet-4-5" } },
+    });
+
+    sessions.updateChatError(session.id, "Provider request failed with status 429", userId);
+
+    const chat = JSON.parse(sessions.getById(session.id, userId)?.metadata ?? "{}").chat;
+    __jait_capture(0, (chat.provider));
+    __jait_capture(1, (chat.model));
+    __jait_capture(2, (chat.lastError));
+    __jait_capture(3, (typeof chat.lastErrorAt));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_122_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({ userId });
+    sessions.updateChatError(session.id, "boom", userId);
+
+    sessions.updateChatError(session.id, null, userId);
+
+    const chat = JSON.parse(sessions.getById(session.id, userId)?.metadata ?? "{}").chat;
+    __jait_captureType(0, (chat.lastError));
+    __jait_captureType(1, (chat.lastErrorAt));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_sessions_test_ts_133_3": {
+
+
+/*__jait_scope_open__*/{
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let sessions: SessionService;
+let userId: string;
+const __jait_hook_387 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    sessions = new SessionService(opened.db);
+    userId = new UserService(opened.db).createUser("session-owner", "password123").id;
+  };
+const __jait_hook_662 = () => {
+    sqlite.close();
+  };
+await __jait_hook_387();
+try {
+await (async()=>{
+
+    const session = sessions.create({ userId });
+
+    sessions.updateChatError(session.id, "boom", "someone-else");
+
+    const metadata = sessions.getById(session.id, userId)?.metadata ?? "";
+    __jait_capture(0, (metadata.includes("lastError")));
+  
+})();
+
+} finally {
+await __jait_hook_662();
+}
+}
 
 break;
 }

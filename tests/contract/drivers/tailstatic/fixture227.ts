@@ -1,12 +1,14 @@
-// Translated fixture from packages/gateway/src/sprint10.test.ts; expected literals are in tail_static.rs.
-
-import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
-import { createToolRegistry } from "../../../../packages/gateway/src/tools/index.js";
+// Translated fixture from packages/gateway/src/skills/install.test.ts; expected literals are in tail_static.rs.
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { SkillRegistry } from "../../../../packages/gateway/src/skills/index.js";
+import { renderSkillMarkdown, slugifySkillId, writeUserSkill } from "../../../../packages/gateway/src/skills/install.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint10.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/skills/install.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,143 +42,252 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint10_test_ts_7_3": {
+case "tailstatic_packages_gateway_src_skills_install_test_ts_9_3": {
 
-const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
+
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const screenShare = new ScreenShareService();
-    const tools = createToolRegistry(new SurfaceRegistry(), { screenShare });
+    __jait_capture(0, (slugifySkillId("Feuerwehr Instagram Posts")));
+    __jait_capture(1, (slugifySkillId("  Weather   Warnings  ")));
+  
+})();
 
-    __jait_capture(0, (tools.listNames()));
-    __jait_capture(1, (tools.listNames()));
-    __jait_capture(2, (tools.listNames()));
-    __jait_capture(3, (tools.listNames()));
+} finally {
 
-    await tools.execute("os_tool", {
-      action: "register-device",
-      device: { id: "host-1", name: "Primary Desktop", platform: "desktop", capabilities: ["capture", "input"] },
-    }, {
-      actionId: "a1",
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-      requestedBy: "test",
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_install_test_ts_14_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (slugifySkillId("../../etc/passwd")));
+    __jait_capture(1, (slugifySkillId("/absolute/path")));
+    __jait_capture(2, (slugifySkillId("..")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_install_test_ts_22_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const md = renderSkillMarkdown({
+      name: "Deploy: staging",
+      description: 'Use when shipping to staging: run the "safe" path.',
+      body: "# Steps\n\n1. Do the thing.",
     });
 
-    await tools.execute("os_tool", {
-      action: "register-device",
-      device: { id: "viewer-1", name: "Phone", platform: "react-native", capabilities: ["view", "control"] },
-    }, {
-      actionId: "a2",
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-      requestedBy: "test",
+    __jait_capture(0, (md));
+    __jait_capture(1, (md));
+    __jait_capture(2, (md));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_install_test_ts_34_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const md = renderSkillMarkdown({ name: "X", description: "first\nsecond", body: "body" });
+    __jait_capture(0, (md));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_install_test_ts_56_3": {
+
+
+/*__jait_scope_open__*/{
+let home: string;
+let previousStateDirectory: string | undefined;
+const __jait_hook_1735 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
+    previousStateDirectory = process.env["JAIT_STATE_DIR"];
+    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
+  };
+const __jait_hook_1944 = async () => {
+    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
+    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_1735();
+try {
+await (async()=>{
+
+    const registry = new SkillRegistry();
+    const written = await writeUserSkill({
+      skillRegistry: registry,
+      id: "Bysenft Auslastung",
+      name: "Bysenft Auslastung",
+      description: "Use when asked how busy bysenft.at is.",
+      body: "Fetch https://bysenft.at and read the occupancy widget.",
     });
 
-    await tools.execute("screen.share", {
-      action: "start",
-      hostDeviceId: "host-1",
-      viewerDeviceIds: ["viewer-1"],
-    }, {
-      actionId: "a3",
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-      requestedBy: "test",
-    });
+    __jait_capture(0, (written));
+    __jait_capture(1, (await readFile(written.filePath, "utf-8")));
 
-    const state = await tools.execute("os_tool", { action: "state" }, {
-      actionId: "a4",
-      sessionId: "s1",
-      projectRoot: "/project/Jait",
-      requestedBy: "test",
-    });
+    const registered = registry.get("bysenft-auslastung");
+    __jait_capture(2, (registered));
+  
+})();
 
-    __jait_capture(4, (state.ok));
-    const payload = state.data as {
-      devices: Array<{ id: string }>;
-      activeSession: {
-        hostDeviceId: string;
-        viewers: Array<{ deviceId: string }>;
-        controllerDeviceId: string | null;
-        capabilities: { remoteInput: boolean };
-      } | null;
+} finally {
+await __jait_hook_1944();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_install_test_ts_73_3": {
+
+
+/*__jait_scope_open__*/{
+let home: string;
+let previousStateDirectory: string | undefined;
+const __jait_hook_1735 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
+    previousStateDirectory = process.env["JAIT_STATE_DIR"];
+    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
+  };
+const __jait_hook_1944 = async () => {
+    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
+    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_1735();
+try {
+await (async()=>{
+
+    const registry = new SkillRegistry();
+    const params = {
+      skillRegistry: registry,
+      id: "notes",
+      name: "Notes",
+      description: "Use when taking notes.",
+      body: "original",
     };
-    __jait_capture(5, (payload.devices));
-    __jait_capture(6, (payload.activeSession?.hostDeviceId));
-    __jait_capture(7, (payload.activeSession?.viewers[0]?.deviceId));
-    __jait_capture(8, (payload.activeSession?.controllerDeviceId));
-    __jait_capture(9, (payload.activeSession?.capabilities.remoteInput));
+    await writeUserSkill(params);
+
+    await __jait_rejected(0, writeUserSkill({ ...params, body: "replacement" }));
+
+    const kept = await readFile(join(home, ".jait", "skills", "notes", "SKILL.md"), "utf-8");
+    __jait_capture(1, (kept));
   
 })();
 
 } finally {
-
+await __jait_hook_1944();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint10_test_ts_71_3": {
+case "tailstatic_packages_gateway_src_skills_install_test_ts_90_3": {
 
-const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
+
 /*__jait_scope_open__*/{
-
+let home: string;
+let previousStateDirectory: string | undefined;
+const __jait_hook_1735 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
+    previousStateDirectory = process.env["JAIT_STATE_DIR"];
+    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
+  };
+const __jait_hook_1944 = async () => {
+    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
+    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_1735();
 try {
 await (async()=>{
 
-    const screenShare = new ScreenShareService();
-    screenShare.registerDevice({ id: "host", name: "Desktop", platform: "desktop", authorized: true, capabilities: ["capture"] });
-    screenShare.registerDevice({ id: "viewer", name: "Tablet", platform: "react-native", authorized: true, capabilities: ["view", "control"] });
+    const registry = new SkillRegistry();
+    const params = { skillRegistry: registry, id: "notes", name: "Notes", description: "d", body: "original" };
+    await writeUserSkill(params);
 
-    screenShare.startShare({ hostDeviceId: "host", viewerDeviceIds: ["viewer"] });
-    screenShare.updateViewerTransport({ deviceId: "viewer", latencyMs: 82, preferP2P: true });
+    const second = await writeUserSkill({ ...params, body: "replacement", overwrite: true });
 
-    let session = screenShare.getState().activeSession;
-    __jait_capture(0, (session?.transport.routeMode));
-    __jait_capture(1, (session?.transport.avgLatencyMs));
-
-    screenShare.updateViewerTransport({ deviceId: "viewer", latencyMs: 180, preferP2P: true });
-    session = screenShare.getState().activeSession;
-    __jait_capture(2, (session?.transport.routeMode));
-    __jait_capture(3, (session?.transport.relayActive));
+    __jait_capture(0, (second.created));
+    __jait_capture(1, (await readFile(second.filePath, "utf-8")));
   
 })();
 
 } finally {
-
+await __jait_hook_1944();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint10_test_ts_89_3": {
+case "tailstatic_packages_gateway_src_skills_install_test_ts_101_3": {
 
-const { ScreenShareService } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/screen-share", __jait_original_dir):__jait_require.resolve("@jait/screen-share")));
+
 /*__jait_scope_open__*/{
-
+let home: string;
+let previousStateDirectory: string | undefined;
+const __jait_hook_1735 = async () => {
+    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
+    previousStateDirectory = process.env["JAIT_STATE_DIR"];
+    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
+  };
+const __jait_hook_1944 = async () => {
+    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
+    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
+    await rm(home, { recursive: true, force: true });
+  };
+await __jait_hook_1735();
 try {
 await (async()=>{
 
-    const screenShare = new ScreenShareService();
-    screenShare.registerDevice({ id: "host", name: "Desktop", platform: "desktop", authorized: true, capabilities: ["capture"] });
-    screenShare.registerDevice({ id: "phone", name: "Phone", platform: "react-native", authorized: true, capabilities: ["view", "control"] });
-    screenShare.registerDevice({ id: "viewer-web", name: "Browser", platform: "web", authorized: true, capabilities: ["view"] });
-
-    const started = screenShare.startShare({ hostDeviceId: "host", viewerDeviceIds: ["phone", "viewer-web"] });
-    const sessionId = started.id;
-
-    const transferred = screenShare.transferControl("phone");
-    __jait_capture(0, (transferred.id), (sessionId));
-    __jait_capture(1, (transferred.controllerDeviceId));
-    __jait_capture(2, (transferred.status));
+    await __jait_rejected(0, writeUserSkill({
+      skillRegistry: new SkillRegistry(),
+      id: "...",
+      name: "X",
+      description: "d",
+      body: "b",
+    }));
   
 })();
 
 } finally {
-
+await __jait_hook_1944();
 }
 }
 

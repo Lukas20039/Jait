@@ -185,6 +185,22 @@ const DOCKER_TESTS: [&str; 9] = [
     "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_integration_test_ts_88_3",
 ];
 
+const SCANNER_TESTS: [&str; 4] = [
+    "tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_12_2",
+    "tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_20_2",
+    "tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_30_2",
+    "tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_40_2",
+];
+
+fn scanner_inventory(available: &BTreeSet<String>) -> Result<BTreeSet<String>> {
+    let required: BTreeSet<_> = SCANNER_TESTS.iter().map(|id| (*id).to_owned()).collect();
+    ensure!(
+        required.is_subset(available),
+        "required real-scanner integration is absent from the compiled inventory"
+    );
+    Ok(required)
+}
+
 fn docker_inventory(available: &BTreeSet<String>) -> Result<BTreeSet<String>> {
     let required: BTreeSet<_> = DOCKER_TESTS.iter().map(|id| (*id).to_owned()).collect();
     ensure!(
@@ -216,6 +232,7 @@ fn suite(
     directory: &Path,
     docker: bool,
     chromium: bool,
+    scanners: bool,
 ) -> Result<(Vec<Value>, bool)> {
     let mut build = Command::new(env!("CARGO"));
     build
@@ -249,6 +266,8 @@ fn suite(
         docker_inventory(&available)?
     } else if chromium {
         chromium_inventory(&available)?
+    } else if scanners {
+        scanner_inventory(&available)?
     } else {
         available
     };
@@ -256,7 +275,7 @@ fn suite(
     tests
         .current_dir(root)
         .args(["--format", "pretty", "--color", "never"]);
-    if docker || chromium {
+    if docker || chromium || scanners {
         tests
             .args(["--include-ignored", "--exact", "--test-threads=1"])
             .args(&expected);
@@ -271,9 +290,10 @@ fn run() -> Result<bool> {
     let arguments: Vec<_> = std::env::args().skip(1).collect();
     let docker = arguments == ["--profile", "docker"];
     let chromium = arguments == ["--profile", "chromium"];
+    let scanners = arguments == ["--profile", "scanners"];
     ensure!(
-        arguments.is_empty() || docker || chromium,
-        "Usage: translated-contract [--profile docker|chromium] (no arbitrary filters)"
+        arguments.is_empty() || docker || chromium || scanners,
+        "Usage: translated-contract [--profile docker|chromium|scanners] (no arbitrary filters)"
     );
     ctrlc::set_handler(|| CANCELLED.store(true, Ordering::SeqCst))?;
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -286,14 +306,15 @@ fn run() -> Result<bool> {
     println!("Artifacts: {}", directory.display());
     let source_fingerprints = evidence::snapshot(&root)?;
     let started = Instant::now();
-    let result = suite(&root, &directory, docker, chromium);
+    let result = suite(&root, &directory, docker, chromium, scanners);
     let (cases, process_succeeded, error) = match result {
         Ok((cases, succeeded)) => (cases, succeeded, Value::Null),
         Err(error) => (Vec::new(), false, json!(format!("{error:#}"))),
     };
     let sources_unchanged = source_fingerprints == evidence::snapshot(&root)?;
     let success = full_results(&cases, process_succeeded, sources_unchanged)
-        && (!(docker || chromium) || cases.iter().all(|case| case["status"] == "passed"));
+        && (!(docker || chromium || scanners)
+            || cases.iter().all(|case| case["status"] == "passed"));
     let passed = cases
         .iter()
         .filter(|case| case["status"] == "passed")
@@ -309,7 +330,7 @@ fn run() -> Result<bool> {
         .collect();
     let report = json!({
         "schema_version":1,"contract_version":env!("CARGO_PKG_VERSION"),
-        "profile":if docker { "translated-docker-typescript-reference" } else if chromium { "translated-chromium-typescript-reference" } else { "translated-enabled-typescript-reference" },"backend_label":"typescript",
+        "profile":if docker { "translated-docker-typescript-reference" } else if chromium { "translated-chromium-typescript-reference" } else if scanners { "translated-scanners-typescript-reference" } else { "translated-enabled-typescript-reference" },"backend_label":"typescript",
         "success":success,"sources_unchanged":sources_unchanged,"source_fingerprints":source_fingerprints,
         "duration_ms":started.elapsed().as_millis(),"summary":{"passed":passed,"failed":failed,"skipped":skipped.len(),"total":cases.len()},
         "cases":cases,"not_covered":skipped,"error":error,
@@ -355,6 +376,21 @@ mod tests {
         inventory
             .remove("tailstatic_packages_gateway_src_tools_browser_tools_integration_test_ts_0");
         assert!(chromium_inventory(&inventory).is_err());
+    }
+
+    #[test]
+    fn scanner_profile_requires_all_four_real_checks_and_excludes_other_cases() {
+        let mut available: BTreeSet<String> =
+            SCANNER_TESTS.iter().map(|id| (*id).to_owned()).collect();
+        available.insert("unrelated_network_or_paid_provider_case".into());
+        let selected = scanner_inventory(&available).unwrap();
+        assert_eq!(selected.len(), 4);
+        assert!(!selected.contains("unrelated_network_or_paid_provider_case"));
+        for id in SCANNER_TESTS {
+            available.remove(id);
+            assert!(scanner_inventory(&available).is_err());
+            available.insert(id.to_owned());
+        }
     }
 
     #[test]

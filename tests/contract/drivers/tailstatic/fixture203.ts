@@ -1,11 +1,14 @@
-// Translated fixture from packages/gateway/src/services/repo-proposals.test.ts; expected literals are in tail_static.rs.
-import { openDatabase } from "../../../../packages/gateway/src/db/connection.js";
-import { RepoProposalService } from "../../../../packages/gateway/src/services/repo-proposals.js";
+// Translated fixture from packages/gateway/src/services/reminders.test.ts; expected literals are in tail_static.rs.
+
+import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages/gateway/src/db/connection.js";
+import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
+import { messages, reminders, sessions } from "../../../../packages/gateway/src/db/schema.js";
+import { ReminderService } from "../../../../packages/gateway/src/services/reminders.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/repo-proposals.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/reminders.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,203 +42,241 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_33_3": {
+case "tailstatic_packages_gateway_src_services_reminders_test_ts_23_3": {
 
-
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+const __jait_hook_407 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_557 = () => {
+  sqlite.close();
+};
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+await __jait_hook_407();
 try {
 await (async()=>{
 
-    const first = service.create({
-      repoId: "repo-1",
+    const service = new ReminderService(db);
+    const created = service.create({
       userId: "user-1",
-      message: "First follow-up",
-    });
-    const second = service.create({
-      repoId: "repo-1",
-      userId: "user-1",
-      message: "Second follow-up",
-      priority: "high",
-      dueDate: "2026-05-12",
-      tags: ["ui", "todo"],
-      sourceThreadId: "thread-2",
-      sourceThreadTitle: "Thread Two",
+      projectId: "project-1",
+      sessionId: "session-1",
+      content: "Remember the deployment note",
+      tags: ["Deploy", "deploy", "Notes"],
     });
 
-    const proposals = service.listByRepo("repo-1");
-    __jait_capture(0, (proposals));
-    __jait_capture(1, (proposals[0]?.id), (second.id));
-    __jait_capture(2, (proposals[1]?.id), (first.id));
-    __jait_capture(3, (proposals[0]?.sourceThreadTitle));
-    __jait_capture(4, (proposals[0]?.priority));
-    __jait_capture(5, (proposals[0]?.dueDate));
-    __jait_capture(6, (proposals[0]?.tags), (JSON.stringify(["ui", "todo"])));
-    __jait_captureType(7, (proposals[0]?.completedAt));
-    __jait_capture(8, (proposals[0]?.completionHistory));
+    __jait_capture(0, (created), ({
+      userId: "user-1",
+      projectId: "project-1",
+      sessionId: "session-1",
+      content: "Remember the deployment note",
+      status: "active",
+      tags: JSON.stringify(["deploy", "notes"]),
+    }));
+
+    __jait_capture(1, (service.list({ userId: "user-1", projectId: "project-1" })));
+    __jait_capture(2, (service.list({ userId: "user-2" })));
   
 })();
 
 } finally {
-
+await __jait_hook_557();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_62_3": {
+case "tailstatic_packages_gateway_src_services_reminders_test_ts_46_3": {
 
-
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+const __jait_hook_407 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_557 = () => {
+  sqlite.close();
+};
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+await __jait_hook_407();
 try {
 await (async()=>{
 
+    const service = new ReminderService(db);
     const created = service.create({
-      repoId: "repo-1",
       userId: "user-1",
-      message: "Original",
+      content: "Follow up later",
     });
 
-    const updated = service.update(created.id, {
-      message: "Updated prompt",
-      status: "in_progress",
-      priority: "low",
-      dueDate: "2026-05-20",
-      tags: ["cleanup"],
-    });
-    __jait_capture(0, (updated?.message));
-    __jait_capture(1, (updated?.status));
-    __jait_capture(2, (updated?.priority));
-    __jait_capture(3, (updated?.dueDate));
-    __jait_capture(4, (updated?.tags), (JSON.stringify(["cleanup"])));
-    __jait_captureType(5, (updated?.completedAt));
-
-    const completed = service.update(created.id, {
-      status: "done",
-    });
-    __jait_capture(6, (completed?.completedAt));
-    const history = JSON.parse(completed?.completionHistory ?? "[]") as Array<{ completedAt: string; previousStatus: string }>;
-    __jait_capture(7, (history));
-    __jait_capture(8, (history[0]?.completedAt), (completed?.completedAt));
-    __jait_capture(9, (history[0]?.previousStatus));
-
-    const reopened = service.update(created.id, {
-      status: "open",
-    });
-    __jait_captureType(10, (reopened?.completedAt));
-    __jait_capture(11, (JSON.parse(reopened?.completionHistory ?? "[]")));
-
-    service.delete(created.id);
-    __jait_captureType(12, (service.getById(created.id)));
+    const archived = service.update(created.id, { status: "archived" }, "user-1");
+    __jait_capture(0, (archived?.status));
+    __jait_capture(1, (service.list({ userId: "user-1", status: "active" })));
+    __jait_capture(2, (service.delete(created.id, "user-2")));
+    __jait_capture(3, (service.delete(created.id, "user-1")));
   
 })();
 
 } finally {
-
+await __jait_hook_557();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_102_3": {
+case "tailstatic_packages_gateway_src_services_reminders_test_ts_60_3": {
 
-
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+const __jait_hook_407 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_557 = () => {
+  sqlite.close();
+};
 /*__jait_scope_open__*/{
-let service: RepoProposalService;
-const __jait_hook_250 = async () => {
-    const { db, sqlite } = await openDatabase(":memory:");
-    sqlite.exec(`
-      CREATE TABLE automation_repo_proposals (
-        id TEXT PRIMARY KEY,
-        repo_id TEXT NOT NULL,
-        user_id TEXT,
-        message TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'open',
-        priority TEXT NOT NULL DEFAULT 'normal',
-        due_date TEXT,
-        tags TEXT NOT NULL DEFAULT '[]',
-        completed_at TEXT,
-        completion_history TEXT NOT NULL DEFAULT '[]',
-        source_thread_id TEXT,
-        source_thread_title TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-      )
-    `);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
-    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
-    service = new RepoProposalService(db);
-  };
-await __jait_hook_250();
+await __jait_hook_407();
 try {
 await (async()=>{
 
+    const service = new ReminderService(db);
     const created = service.create({
-      repoId: "repo-1",
       userId: "user-1",
-      message: "Already finished",
-      status: "done",
+      projectId: "project-1",
+      content: "Use icon-only controls for compact todo metadata",
+      sourceType: "user",
+      sourceId: "session-1",
+      sourceSurface: "web",
+      tags: ["todo", "ui"],
     });
 
-    __jait_capture(0, (created.completedAt));
-    const history = JSON.parse(created.completionHistory) as Array<{ completedAt: string; previousStatus: string | null }>;
-    __jait_capture(1, (history), ([{ completedAt: created.completedAt, previousStatus: null }]));
+    __jait_capture(0, (created.usageCount));
+    __jait_captureType(1, (created.lastRetrievedAt));
+    __jait_capture(2, (service.markRetrieved([created.id], "user-1")));
+
+    const retrieved = service.getById(created.id, "user-1");
+    __jait_capture(3, (retrieved?.usageCount));
+    __jait_captureType(4, (retrieved?.lastRetrievedAt));
+
+    const markdown = service.exportMarkdown({ userId: "user-1" });
+    __jait_capture(5, (markdown));
+    __jait_capture(6, (markdown));
+    __jait_capture(7, (markdown));
+    __jait_capture(8, (markdown));
   
 })();
 
 } finally {
+await __jait_hook_557();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_reminders_test_ts_87_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+const __jait_hook_407 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_557 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_407();
+try {
+await (async()=>{
+
+    const service = new ReminderService(db);
+    db.insert(sessions).values({
+      id: "session-1",
+      userId: "user-1",
+      projectId: "project-1",
+      name: "Chat",
+      createdAt: "2026-05-23T00:00:00.000Z",
+      lastActiveAt: "2026-05-23T00:00:00.000Z",
+    }).run();
+    db.insert(messages).values({
+      id: "message-1",
+      sessionId: "session-1",
+      role: "user",
+      content: "Remember that this project prefers slim todo controls.",
+      createdAt: "2026-05-23T00:01:00.000Z",
+    }).run();
+
+    __jait_capture(0, (service.scanOldChatsForMemory("user-1")));
+    const [created] = service.list({ userId: "user-1", status: "active" });
+    __jait_capture(1, (created));
+    __jait_capture(2, (service.scanOldChatsForMemory("user-1")));
+  
+})();
+
+} finally {
+await __jait_hook_557();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_reminders_test_ts_116_3": {
+
+const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+const __jait_hook_407 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_557 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_407();
+try {
+await (async()=>{
+
+    const service = new ReminderService(db);
+    const stale = service.create({
+      userId: "user-1",
+      content: "Old generated note",
+      sourceType: "background_memory_scan",
+      tags: ["old"],
+    });
+    db.update(reminders).set({
+      updatedAt: "2025-01-01T00:00:00.000Z",
+    }).where(eq(reminders.id, stale.id)).run();
+    service.create({ userId: "user-1", content: "Use compact todo controls", tags: ["todo"] });
+    service.create({ userId: "user-1", content: "Do not use compact todo controls", tags: ["todo"] });
+
+    const result = service.runHygiene("user-1");
+    __jait_capture(0, (result.archived));
+    __jait_capture(1, (result.flagged));
+    __jait_capture(2, (service.getById(stale.id, "user-1")?.status));
+    const active = service.list({ userId: "user-1", status: "active" });
+    __jait_capture(3, (active.some((row) => row.tags.includes("review:conflict"))));
+  
+})();
+
+} finally {
+await __jait_hook_557();
 }
 }
 

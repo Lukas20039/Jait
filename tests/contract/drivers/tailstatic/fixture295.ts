@@ -1,16 +1,20 @@
-// Translated fixture from packages/gateway/src/tools/prompts/prompt-registry.test.ts; expected literals are in tail_static.rs.
-
-
-
-import { buildSystemPrompt } from "../../../../packages/gateway/src/tools/prompts/prompt-registry.js";
-import "../../../../packages/gateway/src/tools/prompts/index.js";
-import type { Skill } from "../../../../packages/gateway/src/skills/index.js";
-import { JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE, PROJECT_ARTIFACT_INSTRUCTIONS } from "../../../../packages/gateway/src/tools/prompts/shared-sections.js";
+// Translated fixture from packages/gateway/src/tools/project-tools.test.ts; expected literals are in tail_static.rs.
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { openDatabase, migrateDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
+import { ProjectService } from "../../../../packages/gateway/src/services/projects.js";
+import { RepositoryService } from "../../../../packages/gateway/src/services/repositories.js";
+import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createProjectCreateTool, createProjectMoveTool, createProjectTransferTool } from "../../../../packages/gateway/src/tools/project-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/prompts/prompt-registry.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/project-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,614 +48,784 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_11_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE), (PROJECT_ARTIFACT_INSTRUCTIONS));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each0": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const endpoint = { model: "gpt-4o", baseUrl: "https://api.openai.com/v1" };
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt));
-    __jait_capture(7, (prompt));
-    __jait_capture(8, (prompt));
-    __jait_capture(9, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each1": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const endpoint = { model: "glm-4.7", baseUrl: "https://openrouter.ai/api/v1", backend: "openrouter" };
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt));
-    __jait_capture(7, (prompt));
-    __jait_capture(8, (prompt));
-    __jait_capture(9, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each2": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const endpoint = { model: "llama3.2", baseUrl: "http://localhost:11434/v1", backend: "ollama" };
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt));
-    __jait_capture(7, (prompt));
-    __jait_capture(8, (prompt));
-    __jait_capture(9, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_33_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt));
-    __jait_capture(7, (prompt));
-    __jait_capture(8, (prompt));
-    __jait_capture(9, (prompt));
-    __jait_capture(10, (prompt));
-    __jait_capture(11, (prompt));
-    __jait_capture(12, (prompt));
-    __jait_capture(13, (prompt));
-    __jait_capture(14, (prompt));
-    __jait_capture(15, (prompt));
-    __jait_capture(16, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_60_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // What ProjectService.resolveInstructionChain produces for a project
-    // filed under Private > OSS.
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-      projectInstructions: "## Private\ncasual tone\n\n## OSS\nanswer in english",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt.indexOf("casual tone")), (prompt.indexOf("answer in english")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_77_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-      projectInstructions: "## Private\ncasual tone",
-    });
-
-    const globalIndex = prompt.indexOf("<globalJaitInstructions>");
-    if (globalIndex >= 0) {
-      __jait_capture(0, (globalIndex), (prompt.indexOf("<projectInstructions>")));
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
     }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const broadcastToUser = vi.fn();
+    const ws = { broadcastToUser } as unknown as WsControlPlane;
+    const tool = createProjectCreateTool({ projectService, repoService, ws });
+
+    const result = await tool.execute(
+      { title: "Agent Project", assignRepository: false },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(1, (broadcastToUser.mock.calls), ([project.id]));
   
 })();
-__jait_record({slot:1,completed:true});
-} finally {
 
+} finally {
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_92_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-    });
-
-    __jait_capture(0, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_103_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    // The block sits outside the local-model compaction branch on purpose:
-    // the user typed these instructions and would notice their absence.
-    const prompt = buildSystemPrompt("agent", {
-      model: "llama3.2",
-      baseUrl: "http://localhost:11434/v1",
-      backend: "ollama",
-    }, {
-      projectRoot: "/tmp/project",
-      projectInstructions: "## Private\ncasual tone",
-    });
-
-    __jait_capture(0, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_118_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "llama3.2",
-      baseUrl: "http://localhost:11434/v1",
-      backend: "ollama",
-    }, {
-      projectRoot: "/tmp/project",
-      backend: "ollama",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    __jait_capture(5, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_137_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_148_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const skills: Skill[] = [
-      {
-        id: "word-docx",
-        name: "Word / DOCX",
-        description: "Handle DOCX files without formatting drift.",
-        filePath: "C:/skills/word-docx/SKILL.md",
-        source: "user",
-        enabled: true,
-      },
-    ];
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-      skills,
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      responseStyle: "caveman",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3": {
-
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const originalSoulPath = process.env["JAIT_SOUL_PATH"];
-    const originalGlobalPath = process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
-    const dir = mkdtempSync(join(__jait_fixture_dir, "jait-soul-"));
-    const soulPath = join(dir, "SOUL.md");
-    writeFileSync(soulPath, "Always use chat.traces before memory.search for Jait chat IDs.");
-
-    try {
-      process.env["JAIT_SOUL_PATH"] = soulPath;
-      delete process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
-
-      const prompt = buildSystemPrompt("agent", {
-        model: "gpt-4o",
-        baseUrl: "https://api.openai.com/v1",
-      });
-
-      __jait_capture(0, (prompt));
-      __jait_capture(1, (prompt));
-    } finally {
-      if (originalSoulPath === undefined) delete process.env["JAIT_SOUL_PATH"];
-      else process.env["JAIT_SOUL_PATH"] = originalSoulPath;
-
-      if (originalGlobalPath === undefined) delete process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
-      else process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"] = originalGlobalPath;
-
-      rmSync(dir, { recursive: true, force: true });
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
     }
+  };
+/*__jait_scope_open__*/{
+const existing = false;
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const sessionService = new SessionService(db);
+    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
+    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
+    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
+    const broadcastToUser = vi.fn();
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
+    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
+    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
+    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+/*__jait_scope_open__*/{
+const existing = true;
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const prompt = buildSystemPrompt("agent", {
-      model: "gpt-4o",
-      baseUrl: "https://api.openai.com/v1",
-    }, {
-      projectRoot: "/tmp/project",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
+    const sessionService = new SessionService(db);
+    const previous = projectService.create({ userId: "user-1", rootPath: "/old" });
+    const chat = sessionService.create({ userId: "user-1", projectId: previous.id, projectPath: "/old" });
+    if (existing) projectService.create({ userId: "user-1", rootPath: "/new", nodeId: "gateway" });
+    const broadcastToUser = vi.fn();
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService, ws: { broadcastToUser } as unknown as WsControlPlane });
+    const result = await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    const project = (result.data as { project: { id: string } }).project;
+    __jait_capture(0, (sessionService.getById(chat.id)?.projectId), (project.id));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
+    __jait_capture(2, (broadcastToUser.mock.calls.map((call) => call[1].type)));
+    __jait_capture(3, (broadcastToUser.mock.calls), ([previous.id,project.id,chat.id]));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const prompt = buildSystemPrompt("agent", {
-      model: "zhipu/glm-4.6",
-      baseUrl: "https://openrouter.ai/api/v1",
-    }, {
-      projectRoot: "/tmp/project",
-    });
-
-    // GLM runs natively inside Jait's agent loop (Jait tools registered
-    // directly) — it is NOT an external CLI provider, so it must NOT get the
-    // <jaitExternalProvider> steering block.
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    // It still gets identity + safety (internal provider keeps the wrapper shell).
-    __jait_capture(3, (prompt));
-    __jait_capture(4, (prompt));
-    // Core instructions + keep-going contract
-    __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt));
-    // Explicit tool-call format discipline (GLM-specific block)
-    __jait_capture(7, (prompt));
-    __jait_capture(8, (prompt));
-    // Shared sections — including the tools.search discovery mechanism so the
-    // model can find the search tool and other Jait tools.
-    __jait_capture(9, (prompt));
-    __jait_capture(10, (prompt));
-    __jait_capture(11, (prompt));
-    __jait_capture(12, (prompt));
-    __jait_capture(13, (prompt));
-    __jait_capture(14, (prompt));
-    // Project context injection
-    __jait_capture(15, (prompt));
+    const sessionService = new SessionService(db);
+    const chat = sessionService.create({ userId: "user-2", projectPath: "/old" });
+    const tool = createProjectCreateTool({ projectService, repoService, sessionService });
+    await tool.execute({ projectRoot: "/new", assignRepository: false }, context({ sessionId: chat.id }));
+    __jait_captureType(0, (sessionService.getById(chat.id)?.projectId));
+    __jait_capture(1, (sessionService.getById(chat.id)?.projectPath));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const prompt = buildSystemPrompt("agent", {
-      model: "zhipu/glm-4.6",
-      baseUrl: "https://openrouter.ai/api/v1",
-    });
-
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
+    const tool = createProjectMoveTool({ projectService, repoService });
+    const result = await tool.execute({}, context());
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
   
 })();
 
 } finally {
-
+await __jait_hook_1564();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3": {
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3": {
 
-const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
-const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
-const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+
 /*__jait_scope_open__*/{
-
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
 try {
 await (async()=>{
 
-    const prompt = buildSystemPrompt("agent", {
-      model: "glm-4.5",
-      baseUrl: "https://open.bigmodel.cn/api/v1",
-    });
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
 
-    // Same internal-provider treatment: tool-rich prompt, no external block.
-    __jait_capture(0, (prompt));
-    __jait_capture(1, (prompt));
-    __jait_capture(2, (prompt));
-    __jait_capture(3, (prompt));
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: join(source, "does-not-exist") },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    const unchanged = projectService.getById(project.id, "user-1");
+    __jait_capture(2, (unchanged?.rootPath), (source));
   
 })();
 
 } finally {
+await __jait_hook_1564();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const destination = makeDir();
+    const project = projectService.create({ userId: "user-1", title: "My Project", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: destination },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    const moved = projectService.getById(project.id, "user-1");
+    __jait_capture(1, (moved?.rootPath), (destination));
+    __jait_capture(2, (moved?.nodeId));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "gateway", rootPath: source },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const tool = createProjectMoveTool({ projectService, repoService });
+
+    const result = await tool.execute(
+      { projectId: project.id, nodeId: "remote-node-1", rootPath: "/remote/path" },
+      context(),
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    const unchanged = projectService.getById(project.id, "user-1");
+    __jait_capture(2, (unchanged?.nodeId));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const tool = createProjectMoveTool({ projectService, repoService });
+    const result = await tool.execute(
+      { projectId: "missing-project", nodeId: "gateway", rootPath: "/anywhere" },
+      context(),
+    );
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", title: "Move Me", rootPath: source, nodeId: "gateway" });
+    const transfer = vi.fn(async () => ({ output: "copied" }));
+    const proxyFsOp = vi.fn(async () => true);
+    const broadcastToUser = vi.fn();
+    const ws = {
+      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
+      proxyFsOp,
+      broadcastToUser,
+    } as unknown as WsControlPlane;
+    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
+
+    const result = await tool.execute({
+      projectId: project.id,
+      nodeId: "node-2",
+      rootPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+    }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (transfer.mock.calls), ([{
+      sourcePath: source,
+      destinationPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+      sshPort: undefined,
+    }]));
+    __jait_capture(2, (proxyFsOp.mock.calls));
+    __jait_capture(3, (projectService.getById(project.id, "user-1")));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3": {
+
+
+/*__jait_scope_open__*/{
+let db: Awaited<ReturnType<typeof openDatabase>>["db"];
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let projectService: ProjectService;
+let repoService: RepositoryService;
+const tempRoots: string[] = [];
+function makeDir() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-move-"));
+    tempRoots.push(root);
+    return root;
+  }
+function context(overrides: Partial<ToolContext> = {}): ToolContext {
+    return {
+      sessionId: "session-1",
+      actionId: "action-1",
+      projectRoot: "/unused",
+      requestedBy: "user",
+      userId: "user-1",
+      ...overrides,
+    };
+  }
+const __jait_hook_1312 = async () => {
+    const opened = await openDatabase(":memory:");
+    db = opened.db;
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    projectService = new ProjectService(db);
+    repoService = new RepositoryService(db);
+  };
+const __jait_hook_1564 = () => {
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+await __jait_hook_1312();
+try {
+await (async()=>{
+
+    const source = makeDir();
+    const project = projectService.create({ userId: "user-1", rootPath: source, nodeId: "gateway" });
+    const transfer = vi.fn(async () => { throw new Error("authentication failed"); });
+    const ws = {
+      getFsNodes: () => [{ id: "node-2", name: "Studio", isGateway: false }],
+    } as unknown as WsControlPlane;
+    const tool = createProjectTransferTool({ projectService, repoService, transfer, ws });
+
+    const result = await tool.execute({
+      projectId: project.id,
+      nodeId: "node-2",
+      rootPath: "/work/move-me",
+      sshHost: "studio.local",
+      sshUser: "jakob",
+    }, context());
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (projectService.getById(project.id, "user-1")), ({ nodeId: "gateway", rootPath: source }));
+  
+})();
+
+} finally {
+await __jait_hook_1564();
 }
 }
 

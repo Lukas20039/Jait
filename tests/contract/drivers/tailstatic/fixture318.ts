@@ -1,32 +1,15 @@
-// Translated fixture from packages/gateway/src/tools/terminal-tools.test.ts; expected literals are in tail_static.rs.
-import type { WsControlPlane } from "../../../../packages/gateway/src/ws.js";
-import { RemoteTerminalSurface } from "../../../../packages/gateway/src/surfaces/remote-terminal.js";
-import {
-  AGENT_TERMINAL_ENV_PWSH,
-  AGENT_TERMINAL_ENV_POSIX,
-  buildAgentCommand,
-  buildAgentEnvAssignments,
-  buildRemoteTerminalInput,
-  buildTerminalExitMarkerCommand,
-  buildSingleLineTerminalInput,
-  collapseLongTerminalLines,
-  dedupeTerminalEchoForModel,
-  describeTerminalOutputFlood,
-  detectPagerPrompt,
-  getTerminalCommandDoneEndOffset,
-  hasStrongPagerPrompt,
-  isCmdShell,
-  measureTerminalOutput,
-  rewriteProjectPathForSandboxCommand,
-  terminalOutputStatsFor,
-  truncateTerminalAnsiEcho,
-  truncateTerminalToolOutput,
-} from "../../../../packages/gateway/src/tools/terminal-tools.js";
+// Translated fixture from packages/gateway/src/tools/terminal-sandbox-background.test.ts; expected literals are in tail_static.rs.
+import type { SandboxManager, SandboxRunResult } from "../../../../packages/gateway/src/security/sandbox-manager.js";
+import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { createJaitTerminalTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
+import { backgroundCommandMonitor } from "../../../../packages/gateway/src/services/background-command-monitor.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/terminal-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/terminal-sandbox-background.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -60,1417 +43,297 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_27_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_15_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (truncateTerminalToolOutput("short output", 20)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_31_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const output = `START-${"x".repeat(100)}-END`;
-    const truncated = truncateTerminalToolOutput(output, 50);
-
-    __jait_capture(0, (truncated));
-    __jait_capture(1, (truncated));
-    __jait_capture(2, (truncated));
-    __jait_capture(3, (truncated));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_43_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const capture = "$ grep -n foo src/a.ts\n3:foo\n7:foo\n";
-    __jait_capture(0, (dedupeTerminalEchoForModel(capture, "3:foo\n7:foo\n")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_48_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (dedupeTerminalEchoForModel("same body\n", "same body\n")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_52_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const screen = "$ git log\ncommit abc\n--More--";
-    __jait_capture(0, (dedupeTerminalEchoForModel(screen, "")), (screen));
-    __jait_capture(1, (dedupeTerminalEchoForModel(screen, "commit abc\n")), (screen));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_60_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (collapseLongTerminalLines("a\nb\nc")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_64_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const line = `head:${"A".repeat(200_000)}:tail`;
-    const collapsed = collapseLongTerminalLines(`ok\n${line}`, 1_000);
-
-    __jait_capture(0, (collapsed.startsWith("ok\nhead:")));
-    __jait_capture(1, (collapsed.trimEnd().endsWith(":tail")));
-    __jait_capture(2, (collapsed));
-    __jait_capture(3, (collapsed.length));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_74_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const collapsed = collapseLongTerminalLines(`ok\n${"B".repeat(200_000)}`, 500);
-
-    __jait_capture(0, (collapsed.startsWith("ok\n")));
-    __jait_capture(1, (collapsed.length));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_81_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (collapseLongTerminalLines("tiny", 2_000)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_87_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const ansi = `\x1b[32m${"CAAC,".repeat(400_000)}`;
-    const bounded = truncateTerminalAnsiEcho(ansi);
-
-    __jait_capture(0, (bounded.startsWith("\x1b[32m")));
-    __jait_capture(1, (bounded));
-    __jait_capture(2, (bounded));
-    __jait_capture(3, (bounded.length));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_97_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const output = `${"d".repeat(5_000)}\n`.repeat(80);
-    const bounded = truncateTerminalAnsiEcho(output);
-
-    __jait_capture(0, (bounded.length));
-    __jait_capture(1, (bounded));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_105_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (truncateTerminalAnsiEcho("short \x1b[31mred\x1b[0m")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_111_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_captureType(0, (terminalOutputStatsFor("a".repeat(1_000))));
-    __jait_captureType(1, (describeTerminalOutputFlood(measureTerminalOutput("normal\noutput\n"))));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_116_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (terminalOutputStatsFor("a".repeat(10_000))));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_124_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const note = describeTerminalOutputFlood(measureTerminalOutput("x".repeat(120_000)));
-
-    __jait_capture(0, (note));
-    __jait_capture(1, (note));
-    __jait_capture(2, (note));
-    __jait_capture(3, (note));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_133_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const note = describeTerminalOutputFlood(measureTerminalOutput("line\n".repeat(20_000)));
-
-    __jait_capture(0, (note));
-    __jait_capture(1, (note));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_142_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (rewriteProjectPathForSandboxCommand(
-      'cd "/home/alice/project" && ls /home/alice/project/src',
-      "/home/alice/project",
-    )));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_149_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (rewriteProjectPathForSandboxCommand(
-      'ls /home/alice/project-backup /tmp/home/alice/project-backup',
-      "/home/alice/project",
-    )));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_156_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (rewriteProjectPathForSandboxCommand(
-      'ROOT=/home/alice/project pnpm --dir /home/alice/project build && echo /home/alice/project.tmp',
-      "/home/alice/project",
-    )));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_163_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (rewriteProjectPathForSandboxCommand(
-      'cd "C:\\Users\\alice\\project" && type C:\\Users\\alice\\project\\README.md',
-      "C:\\Users\\alice\\project",
-    )));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_172_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const command = buildTerminalExitMarkerCommand("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "done");
-
-    __jait_capture(0, (command));
-    __jait_capture(1, (command));
-    __jait_capture(2, (command));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_180_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildTerminalExitMarkerCommand("/bin/bash", "done")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_195_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const surface = makeSurface();
-    surface.ingestOutput("command output\r\n");
-    // Shells deliver the done marker bundled with the next prompt redraw:
-    surface.ingestOutput(
-      "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~$ \x1b]633;C\x07",
-    );
-    surface.ingestOutput("just the new prompt, no command yet\r\n");
-    const outputOffset = 1;
-
-    __jait_capture(0, (surface.getOutputOffset()));
-    __jait_capture(1, (surface.getCommandDoneEndOffset()));
-    __jait_capture(2, (getTerminalCommandDoneEndOffset(surface, outputOffset)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_210_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const surface = makeSurface();
-    // Previous command's done marker, pinned at chunk 1:
-    surface.ingestOutput(
-      "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~$ \x1b]633;C\x07",
-    );
-    surface.ingestOutput("banner redraw\r\n");
-    const startOffset = surface.getOutputOffset();
-    // A command that never finishes (timed out) leaves the pin stale:
-    surface.ingestOutput("long running output\r\n");
-
-    __jait_capture(0, (surface.getCommandDoneEndOffset()));
-    __jait_captureType(1, (getTerminalCommandDoneEndOffset(surface, startOffset)));
-    // Only stale relative to the captured start offset:
-    __jait_capture(2, (getTerminalCommandDoneEndOffset(surface, 0)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_229_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const result = buildAgentCommand("git log --oneline", "/bin/bash");
-
-    __jait_capture(0, (result.startsWith("export ")));
-    __jait_capture(1, (result));
-    __jait_capture(2, (result));
-    __jait_capture(3, (result));
-    __jait_capture(4, (result.endsWith("git log --oneline")));
-    // Every env entry must survive the prefix.
-    for (const entry of AGENT_TERMINAL_ENV_POSIX) {
-      __jait_capture(5, (result), (entry));
+    vi.useFakeTimers();
+    let finish!: (value: unknown) => void;
+    const completion = new Promise(resolve => { finish = resolve; });
+    const manager = {
+      execInContainer: vi.fn(() => new Promise(() => {})),
+      startBackgroundCommand: vi.fn(() => ({
+        containerName: context.sandboxContainerName, output: "server listening",
+        completion, stop: vi.fn(), onOutput: vi.fn(() => () => {}),
+      })),
+    };
+    const notify = vi.fn();
+    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
+    try {
+      const tool = createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager);
+      let result: Awaited<ReturnType<typeof tool.execute>> | undefined;
+      const pending = tool.execute({ command: "bun run dev", sandbox: true, isBackground: true }, context)
+        .then(value => { result = value; });
+      await vi.advanceTimersByTimeAsync(5000);
+      __jait_captureType(0, (result));
+      __jait_capture(1, (result!.data));
+      __jait_capture(2, (notify.mock.calls));
+      finish({ ok: false, output: "server stopped", exitCode: 7, timedOut: false, containerName: context.sandboxContainerName });
+      await pending;
+      await vi.advanceTimersByTimeAsync(0);
+      __jait_capture(3, (notify.mock.calls));
+      __jait_capture(4, (notify.mock.calls[0]![0]), ({ sessionId: context.sessionId, exitCode: 7, output: "server stopped" }));
+    } finally {
+      unregister();
     }
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_243_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_60_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    const command = "echo one\necho two";
-    const result = buildAgentCommand(command, "/bin/bash");
-
-    __jait_capture(0, (result.startsWith("export ")));
-    __jait_capture(1, (result));
-    // The original command body stays untouched after the prefix line.
-    __jait_capture(2, (result.endsWith(command)));
+    const { tool } = fixture({ ok: false, output: "port in use", exitCode: 1, timedOut: false, containerName: "jait-agent-sb-test" });
+    const notify = vi.fn();
+    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
+    try {
+      const result = await tool.execute({ command: "server", sandbox: true, isBackground: true }, context);
+      __jait_capture(0, (result.ok));
+      __jait_capture(1, (result.data));
+      __jait_capture(2, (notify.mock.calls));
+    } finally { unregister(); }
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_253_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_72_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    const result = buildAgentCommand("git log", "pwsh.exe");
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (result));
-    __jait_capture(2, (result.endsWith("git log")));
-    __jait_capture(3, (result));
+    const { tool, manager } = fixture();
+    const result = await tool.execute({ command: "build", sandbox: true }, context);
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (manager.execInContainer.mock.calls));
+    __jait_capture(2, (manager.startBackgroundCommand.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_262_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_80_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    const command = "git log";
-    __jait_capture(0, (buildAgentCommand(command, "cmd.exe")), (command));
-    __jait_capture(1, (buildAgentCommand(command, "C:\\Windows\\system32\\cmd.EXE")), (command));
+    const { tool, manager } = fixture({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "one-shot" });
+    await tool.execute({ command: "cat /repo/file", sandbox: true, sandboxMountMode: "read-only", isBackground: true }, { ...context, sandboxContainerName: undefined });
+    __jait_capture(0, (manager.startBackgroundCommand.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_268_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_89_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    const command = "git log";
-    for (const shell of ["/usr/bin/zsh", "/usr/bin/fish", "/bin/sh"]) {
-      const result = buildAgentCommand(command, shell);
-      __jait_capture(0, (result.startsWith("export ")));
-      __jait_capture(1, (result.endsWith(command)));
-    }
+    const { tool, manager } = fixture();
+    const abort = new AbortController(); abort.abort();
+    const result = await tool.execute({ command: "server", sandbox: true, isBackground: true }, { ...context, signal: abort.signal });
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (manager.startBackgroundCommand.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_277_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_97_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (buildAgentCommand("", "/bin/bash")));
-    __jait_capture(1, (buildAgentCommand("   ", "/bin/bash")));
+    vi.useFakeTimers();
+    const { tool, stop } = fixture();
+    const abort = new AbortController();
+    const pending = tool.execute({ command: "server", sandbox: true, isBackground: true }, { ...context, signal: abort.signal });
+    abort.abort();
+    const result = await pending;
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.message));
+    __jait_capture(2, (stop.mock.calls));
   
 })();
 
 } finally {
-
+await __jait_hook_589();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_282_3": {
+case "tailstatic_packages_gateway_src_tools_terminal_sandbox_background_test_ts_109_3": {
 
 
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
+const context: ToolContext = {
+  sessionId: "sandbox-session", actionId: "action", requestedBy: "user",
+  projectRoot: "/repo", sandboxContainerName: "jait-agent-sb-test",
+};
+const __jait_hook_589 = () => { backgroundCommandMonitor.clearForTests(); vi.useRealTimers(); };
 /*__jait_scope_open__*/{
+function fixture(completed?: { ok: boolean; output: string; exitCode: number; timedOut: boolean; containerName: string }) {
+    let finish!: (value: SandboxRunResult) => void;
+    const completion = completed ? Promise.resolve(completed) : new Promise<SandboxRunResult>(resolve => { finish = resolve; });
+    const stop = vi.fn(async () => {});
+    const manager = {
+      startBackgroundCommand: vi.fn(() => ({ containerName: "jait-agent-sb-test", output: "booting", completion, stop, onOutput: vi.fn(() => () => {}) })),
+      execInContainer: vi.fn(async () => ({ ok: true, output: "done", exitCode: 0, timedOut: false, containerName: "jait-agent-sb-test" })),
+    };
+    return { tool: createJaitTerminalTool({} as SurfaceRegistry, manager as unknown as SandboxManager), manager, stop, finish };
+  }
 
 try {
 await (async()=>{
 
-    const result = buildAgentCommand("gh pr list", "/bin/bash", {
-      GH_TOKEN: "ghs_installation_token",
-      GIT_AUTHOR_NAME: "jait-agent",
-    });
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (result));
-    __jait_capture(2, (result));
-    __jait_capture(3, (result));
-    __jait_capture(4, (result.endsWith("gh pr list")));
+    vi.useFakeTimers();
+    const { tool, stop, finish } = fixture();
+    const notify = vi.fn();
+    const unregister = backgroundCommandMonitor.setCompletionHandler(notify);
+    try {
+      const pending = tool.execute({ command: "server", sandbox: true, isBackground: true }, context);
+      await vi.advanceTimersByTimeAsync(5000);
+      await pending;
+      backgroundCommandMonitor.stopForSession(context.sessionId);
+      __jait_capture(0, (stop.mock.calls));
+      finish({ ok: false, exitCode: 143, output: "stopped", timedOut: false, containerName: "jait-agent-sb-test" });
+      await vi.advanceTimersByTimeAsync(0);
+      __jait_capture(1, (notify.mock.calls));
+      __jait_capture(2, (backgroundCommandMonitor.activeCount));
+    } finally { unregister(); }
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_295_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const assignments = buildAgentEnvAssignments({ GH_TOKEN: "a'b; rm -rf / ;echo 'c" }, "/bin/bash");
-
-    // The value stays a single shell word: every quote is closed, escaped and
-    // reopened, so the embedded `; rm -rf / ;echo` never runs as its own command.
-    __jait_capture(0, (assignments));
-    __jait_capture(1, (buildAgentCommand("echo hi", "/bin/bash", { GH_TOKEN: "a'b" })));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_306_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const result = buildAgentCommand("gh pr list", "pwsh.exe", {
-      GH_TOKEN: "a'b",
-    });
-
-    __jait_capture(0, (result));
-    __jait_capture(1, (result));
-    __jait_capture(2, (result));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_316_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const assignments = buildAgentEnvAssignments(
-      {
-        GH_TOKEN: "ok",
-        "BAD NAME": "nope",
-        "9LEADING": "nope",
-        "INJECT;rm -rf /": "nope",
-        EMPTY: "",
-      },
-      "/bin/bash",
-    );
-
-    __jait_capture(0, (assignments));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_331_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildAgentEnvAssignments({ GH_TOKEN: "x" }, "cmd.exe")));
-    __jait_capture(1, (buildAgentEnvAssignments(null, "/bin/bash")));
-    __jait_capture(2, (buildAgentEnvAssignments({}, "pwsh.exe")));
-    __jait_capture(3, (buildAgentCommand("git log", "cmd.exe", { GH_TOKEN: "x" })));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_340_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (AGENT_TERMINAL_ENV_PWSH), (AGENT_TERMINAL_ENV_POSIX.length));
-    __jait_capture(1, (AGENT_TERMINAL_ENV_PWSH[0]));
-    __jait_capture(2, (AGENT_TERMINAL_ENV_PWSH));
-    __jait_capture(3, (AGENT_TERMINAL_ENV_PWSH));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_347_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (isCmdShell("cmd")));
-    __jait_capture(1, (isCmdShell("cmd.exe")));
-    __jait_capture(2, (isCmdShell("C:\\Windows\\System32\\cmd.exe")));
-    __jait_capture(3, (isCmdShell("/bin/bash")));
-    __jait_capture(4, (isCmdShell("pwsh")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_357_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (hasStrongPagerPrompt("some paged content\r\n(END)")));
-    __jait_capture(1, (hasStrongPagerPrompt("content\n  (END)  ")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_362_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (hasStrongPagerPrompt("manual page\nPress RETURN to continue ")));
-    __jait_capture(1, (hasStrongPagerPrompt("Manual page git(1) line 1\nNo next tag")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_367_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (hasStrongPagerPrompt("git log output\n:")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_371_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (hasStrongPagerPrompt("Dependencies resolved.\n\ndone")));
-    __jait_capture(1, (hasStrongPagerPrompt("Building project...\nDone in 1.2s")));
-    // "Dependencies resolved:" is not a lone-colon line.
-    __jait_capture(2, (hasStrongPagerPrompt("step 1 ok\nDependencies resolved:")));
-    // Colon only matches when it is the last line.
-    __jait_capture(3, (hasStrongPagerPrompt(":\nmore output after the prompt")));
-    __jait_capture(4, (hasStrongPagerPrompt("")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_383_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (detectPagerPrompt("lines of output\n(END)")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_387_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (detectPagerPrompt("vite v5.0.0 ready in 320 ms\n")));
-    __jait_capture(1, (detectPagerPrompt("")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_394_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildSingleLineTerminalInput(true, "powershell.exe", "Get-Location")));
-    __jait_capture(1, (buildSingleLineTerminalInput(true, "pwsh", "Get-Location")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_403_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildSingleLineTerminalInput(false, "powershell.exe", "Get-Location")));
-    __jait_capture(1, (buildSingleLineTerminalInput(false, "/bin/bash", "ls -la")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_410_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (buildSingleLineTerminalInput(true, "/bin/bash", "ls -la")));
-    __jait_capture(1, (buildSingleLineTerminalInput(true, "/bin/zsh", "ls -la")));
-    __jait_capture(2, (buildSingleLineTerminalInput(true, "C:\\Windows\\System32\\cmd.exe", "dir")));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_416_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const multiLine = "line one\nline two";
-    __jait_capture(0, (buildSingleLineTerminalInput(true, "powershell.exe", multiLine)), (multiLine));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_terminal_tools_test_ts_425_3": {
-
-
-function makeSurface(): RemoteTerminalSurface {
-  return new RemoteTerminalSurface(
-    "term-test",
-    {} as unknown as WsControlPlane,
-    "node-1",
-  );
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const script = "Write-Output 'héllo'\n" + buildTerminalExitMarkerCommand("powershell.exe", "done");
-    const input = buildRemoteTerminalInput(script, "powershell.exe");
-    __jait_capture(0, (input));
-    __jait_capture(1, (input));
-    __jait_capture(2, (input.endsWith("\r")));
-    const encoded = input.match(/FromBase64String\('([^']+)'\)/)![1];
-    __jait_capture(3, (Buffer.from(encoded, "base64").toString("utf8")), (script));
-    __jait_capture(4, (input.startsWith(". ([scriptblock]::Create(")));
-  
-})();
-
-} finally {
-
+await __jait_hook_589();
 }
 }
 

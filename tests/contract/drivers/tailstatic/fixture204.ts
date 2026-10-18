@@ -1,11 +1,11 @@
-// Translated fixture from packages/gateway/src/services/secret-input.test.ts; expected literals are in tail_static.rs.
-import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/repo-proposals.test.ts; expected literals are in tail_static.rs.
+import { openDatabase } from "../../../../packages/gateway/src/db/connection.js";
+import { RepoProposalService } from "../../../../packages/gateway/src/services/repo-proposals.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/secret-input.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/repo-proposals.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,132 +39,203 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_secret_input_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_33_3": {
 
 
-const __jait_hook_119 = () => {
-  vi.useRealTimers();
-};
 /*__jait_scope_open__*/{
-
+let service: RepoProposalService;
+const __jait_hook_250 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE automation_repo_proposals (
+        id TEXT PRIMARY KEY,
+        repo_id TEXT NOT NULL,
+        user_id TEXT,
+        message TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'open',
+        priority TEXT NOT NULL DEFAULT 'normal',
+        due_date TEXT,
+        tags TEXT NOT NULL DEFAULT '[]',
+        completed_at TEXT,
+        completion_history TEXT NOT NULL DEFAULT '[]',
+        source_thread_id TEXT,
+        source_thread_title TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
+    service = new RepoProposalService(db);
+  };
+await __jait_hook_250();
 try {
 await (async()=>{
 
-    const service = new SecretInputService();
-
-    const ownedPromise = service.requestSecret({
-      sessionId: "session-1",
+    const first = service.create({
+      repoId: "repo-1",
       userId: "user-1",
-      title: "SSH password",
-      prompt: "Password for host-a",
-      requestedBy: "ssh.run",
-      command: "ssh deploy@host-a",
+      message: "First follow-up",
     });
-    const sharedPromise = service.requestSecret({
-      sessionId: "session-2",
-      title: "Admin password",
-      prompt: "Password for sudo",
-      requestedBy: "elevated.run",
+    const second = service.create({
+      repoId: "repo-1",
+      userId: "user-1",
+      message: "Second follow-up",
+      priority: "high",
+      dueDate: "2026-05-12",
+      tags: ["ui", "todo"],
+      sourceThreadId: "thread-2",
+      sourceThreadTitle: "Thread Two",
     });
 
-    const [ownedRequest] = service.listPending("session-1", "user-1");
-    const [sharedRequest] = service.listPending("session-2", "user-2");
-
-    __jait_capture(0, (ownedRequest));
-    __jait_capture(1, (sharedRequest));
-    __jait_capture(2, (service.listPending(undefined, "user-2")));
-
-    __jait_capture(3, (service.submit(ownedRequest!.id, "secret-1", "user-1")));
-    __jait_capture(4, (service.cancel(sharedRequest!.id, "user-2")));
-
-    await __jait_captureResolved(5, (ownedPromise));
-    await __jait_captureResolved(6, (sharedPromise));
+    const proposals = service.listByRepo("repo-1");
+    __jait_capture(0, (proposals));
+    __jait_capture(1, (proposals[0]?.id), (second.id));
+    __jait_capture(2, (proposals[1]?.id), (first.id));
+    __jait_capture(3, (proposals[0]?.sourceThreadTitle));
+    __jait_capture(4, (proposals[0]?.priority));
+    __jait_capture(5, (proposals[0]?.dueDate));
+    __jait_capture(6, (proposals[0]?.tags), (JSON.stringify(["ui", "todo"])));
+    __jait_captureType(7, (proposals[0]?.completedAt));
+    __jait_capture(8, (proposals[0]?.completionHistory));
   
 })();
 
 } finally {
-await __jait_hook_119();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_secret_input_test_ts_52_3": {
+case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_62_3": {
 
 
-const __jait_hook_119 = () => {
-  vi.useRealTimers();
-};
 /*__jait_scope_open__*/{
-
+let service: RepoProposalService;
+const __jait_hook_250 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE automation_repo_proposals (
+        id TEXT PRIMARY KEY,
+        repo_id TEXT NOT NULL,
+        user_id TEXT,
+        message TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'open',
+        priority TEXT NOT NULL DEFAULT 'normal',
+        due_date TEXT,
+        tags TEXT NOT NULL DEFAULT '[]',
+        completed_at TEXT,
+        completion_history TEXT NOT NULL DEFAULT '[]',
+        source_thread_id TEXT,
+        source_thread_title TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
+    service = new RepoProposalService(db);
+  };
+await __jait_hook_250();
 try {
 await (async()=>{
 
-    vi.useFakeTimers();
-    const service = new SecretInputService({ defaultTimeoutMs: 50 });
-
-    const secretPromise = service.requestSecret({
-      sessionId: "session-1",
+    const created = service.create({
+      repoId: "repo-1",
       userId: "user-1",
-      title: "SSH password",
-      prompt: "Password for host-a",
+      message: "Original",
     });
-    const [request] = service.listPending("session-1", "user-1");
 
-    __jait_capture(0, (service.submit(request!.id, "secret-1")));
-    __jait_capture(1, (service.cancel(request!.id, "user-2")));
-    __jait_capture(2, (service.listPending("session-1", "user-1")));
+    const updated = service.update(created.id, {
+      message: "Updated prompt",
+      status: "in_progress",
+      priority: "low",
+      dueDate: "2026-05-20",
+      tags: ["cleanup"],
+    });
+    __jait_capture(0, (updated?.message));
+    __jait_capture(1, (updated?.status));
+    __jait_capture(2, (updated?.priority));
+    __jait_capture(3, (updated?.dueDate));
+    __jait_capture(4, (updated?.tags), (JSON.stringify(["cleanup"])));
+    __jait_captureType(5, (updated?.completedAt));
 
-    vi.advanceTimersByTime(50);
-    await __jait_captureResolved(3, (secretPromise));
+    const completed = service.update(created.id, {
+      status: "done",
+    });
+    __jait_capture(6, (completed?.completedAt));
+    const history = JSON.parse(completed?.completionHistory ?? "[]") as Array<{ completedAt: string; previousStatus: string }>;
+    __jait_capture(7, (history));
+    __jait_capture(8, (history[0]?.completedAt), (completed?.completedAt));
+    __jait_capture(9, (history[0]?.previousStatus));
+
+    const reopened = service.update(created.id, {
+      status: "open",
+    });
+    __jait_captureType(10, (reopened?.completedAt));
+    __jait_capture(11, (JSON.parse(reopened?.completionHistory ?? "[]")));
+
+    service.delete(created.id);
+    __jait_captureType(12, (service.getById(created.id)));
   
 })();
 
 } finally {
-await __jait_hook_119();
+
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_secret_input_test_ts_72_3": {
+case "tailstatic_packages_gateway_src_services_repo_proposals_test_ts_102_3": {
 
 
-const __jait_hook_119 = () => {
-  vi.useRealTimers();
-};
 /*__jait_scope_open__*/{
-
+let service: RepoProposalService;
+const __jait_hook_250 = async () => {
+    const { db, sqlite } = await openDatabase(":memory:");
+    sqlite.exec(`
+      CREATE TABLE automation_repo_proposals (
+        id TEXT PRIMARY KEY,
+        repo_id TEXT NOT NULL,
+        user_id TEXT,
+        message TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'open',
+        priority TEXT NOT NULL DEFAULT 'normal',
+        due_date TEXT,
+        tags TEXT NOT NULL DEFAULT '[]',
+        completed_at TEXT,
+        completion_history TEXT NOT NULL DEFAULT '[]',
+        source_thread_id TEXT,
+        source_thread_title TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_repo ON automation_repo_proposals(repo_id, updated_at DESC)`);
+    sqlite.exec(`CREATE INDEX idx_automation_repo_proposals_user ON automation_repo_proposals(user_id, updated_at DESC)`);
+    service = new RepoProposalService(db);
+  };
+await __jait_hook_250();
 try {
 await (async()=>{
 
-    vi.useFakeTimers();
-    const resolvedStatuses: string[] = [];
-    const service = new SecretInputService({
-      defaultTimeoutMs: 25,
-      onResolved: (request) => {
-        resolvedStatuses.push(request.status);
-      },
+    const created = service.create({
+      repoId: "repo-1",
+      userId: "user-1",
+      message: "Already finished",
+      status: "done",
     });
 
-    const secretPromise = service.requestSecret({
-      sessionId: "session-1",
-      title: "SSH password",
-      prompt: "Password for host-a",
-    });
-
-    __jait_capture(0, (service.listPending("session-1")));
-
-    vi.advanceTimersByTime(25);
-
-    await __jait_captureResolved(1, (secretPromise));
-    __jait_capture(2, (service.listPending("session-1")));
-    __jait_capture(3, (resolvedStatuses));
+    __jait_capture(0, (created.completedAt));
+    const history = JSON.parse(created.completionHistory) as Array<{ completedAt: string; previousStatus: string | null }>;
+    __jait_capture(1, (history), ([{ completedAt: created.completedAt, previousStatus: null }]));
   
 })();
 
 } finally {
-await __jait_hook_119();
+
 }
 }
 

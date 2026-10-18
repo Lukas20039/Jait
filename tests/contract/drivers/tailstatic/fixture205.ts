@@ -1,16 +1,11 @@
-// Translated fixture from packages/gateway/src/services/session-search.test.ts; expected literals are in tail_static.rs.
-
-import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
-import { messages } from "../../../../packages/gateway/src/db/schema.js";
-import { SessionSearchService, buildFtsQuery } from "../../../../packages/gateway/src/services/session-search.js";
-import { ChatTracesService } from "../../../../packages/gateway/src/services/chat-traces.js";
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { ThreadService } from "../../../../packages/gateway/src/services/threads.js";
+// Translated fixture from packages/gateway/src/services/secret-input.test.ts; expected literals are in tail_static.rs.
+import { SecretInputService } from "../../../../packages/gateway/src/services/secret-input.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/session-search.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/secret-input.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,200 +39,132 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_session_search_test_ts_11_3": {
+case "tailstatic_packages_gateway_src_services_secret_input_test_ts_9_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
+const __jait_hook_119 = () => {
+  vi.useRealTimers();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (buildFtsQuery('rollback OR "drop" -table')));
-    __jait_captureType(1, (buildFtsQuery("!")));
+    const service = new SecretInputService();
+
+    const ownedPromise = service.requestSecret({
+      sessionId: "session-1",
+      userId: "user-1",
+      title: "SSH password",
+      prompt: "Password for host-a",
+      requestedBy: "ssh.run",
+      command: "ssh deploy@host-a",
+    });
+    const sharedPromise = service.requestSecret({
+      sessionId: "session-2",
+      title: "Admin password",
+      prompt: "Password for sudo",
+      requestedBy: "elevated.run",
+    });
+
+    const [ownedRequest] = service.listPending("session-1", "user-1");
+    const [sharedRequest] = service.listPending("session-2", "user-2");
+
+    __jait_capture(0, (ownedRequest));
+    __jait_capture(1, (sharedRequest));
+    __jait_capture(2, (service.listPending(undefined, "user-2")));
+
+    __jait_capture(3, (service.submit(ownedRequest!.id, "secret-1", "user-1")));
+    __jait_capture(4, (service.cancel(sharedRequest!.id, "user-2")));
+
+    await __jait_captureResolved(5, (ownedPromise));
+    await __jait_captureResolved(6, (sharedPromise));
   
 })();
 
 } finally {
-
+await __jait_hook_119();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_session_search_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_services_secret_input_test_ts_52_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
+const __jait_hook_119 = () => {
+  vi.useRealTimers();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      const search = new SessionSearchService(sqlite);
-      const session = sessionService.create({ userId: "user-1", name: "Rollback planning" });
-      const otherSession = sessionService.create({ userId: "user-2", name: "Private notes" });
-      const now = new Date().toISOString();
+    vi.useFakeTimers();
+    const service = new SecretInputService({ defaultTimeoutMs: 50 });
 
-      db.insert(messages).values([
-        {
-          id: "msg-user-1",
-          sessionId: session.id,
-          role: "user",
-          content: "Please preserve the rollback sentinel in the migration plan.",
-          createdAt: now,
-        },
-        {
-          id: "msg-user-2",
-          sessionId: otherSession.id,
-          role: "user",
-          content: "A private zephyr rollback note from another user.",
-          createdAt: now,
-        },
-      ]).run();
+    const secretPromise = service.requestSecret({
+      sessionId: "session-1",
+      userId: "user-1",
+      title: "SSH password",
+      prompt: "Password for host-a",
+    });
+    const [request] = service.listPending("session-1", "user-1");
 
-      const thread = threadService.create({
-        userId: "user-1",
-        sessionId: session.id,
-        title: "Migration thread",
-        providerId: "jait",
-      });
-      threadService.addActivity(thread.id, "message", "Captured migration context", {
-        content: "Thread activity mentions rollback sentinel coverage.",
-      });
+    __jait_capture(0, (service.submit(request!.id, "secret-1")));
+    __jait_capture(1, (service.cancel(request!.id, "user-2")));
+    __jait_capture(2, (service.listPending("session-1", "user-1")));
 
-      const results = search.search({ query: "rollback sentinel", userId: "user-1", limit: 10 });
-
-      __jait_capture(0, (results), ([session.id,thread.id]));
-      __jait_capture(1, (results.some((result) => result.id === "msg-user-2")));
-
-      const privateResults = search.search({ query: "private zephyr", userId: "user-1" });
-      __jait_capture(2, (privateResults));
-    } finally {
-      sqlite.close();
-    }
+    vi.advanceTimersByTime(50);
+    await __jait_captureResolved(3, (secretPromise));
   
 })();
 
 } finally {
-
+await __jait_hook_119();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_session_search_test_ts_79_3": {
+case "tailstatic_packages_gateway_src_services_secret_input_test_ts_72_3": {
 
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
+
+const __jait_hook_119 = () => {
+  vi.useRealTimers();
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const search = new SessionSearchService(sqlite);
-      const session = sessionService.create({ userId: "user-1", name: "Index updates" });
+    vi.useFakeTimers();
+    const resolvedStatuses: string[] = [];
+    const service = new SecretInputService({
+      defaultTimeoutMs: 25,
+      onResolved: (request) => {
+        resolvedStatuses.push(request.status);
+      },
+    });
 
-      db.insert(messages).values({
-        id: "msg-update",
-        sessionId: session.id,
-        role: "assistant",
-        content: "Initial phrase about compact summaries.",
-        createdAt: new Date().toISOString(),
-      }).run();
+    const secretPromise = service.requestSecret({
+      sessionId: "session-1",
+      title: "SSH password",
+      prompt: "Password for host-a",
+    });
 
-      __jait_capture(0, (search.search({
-        query: "compact summaries",
-        userId: "user-1",
-        includeThreadActivities: false,
-      })));
+    __jait_capture(0, (service.listPending("session-1")));
 
-      db.update(messages)
-        .set({ content: "Updated phrase about durable session search." })
-        .where(eq(messages.id, "msg-update"))
-        .run();
+    vi.advanceTimersByTime(25);
 
-      __jait_capture(1, (search.search({ query: "compact summaries", userId: "user-1" })));
-      const updated = search.search({ query: "durable session", userId: "user-1", includeThreadActivities: false });
-      __jait_capture(2, (updated), ([session.id]));
-
-      db.delete(messages).where(eq(messages.id, "msg-update")).run();
-      __jait_capture(3, (search.search({ query: "durable session", userId: "user-1" })));
-    } finally {
-      sqlite.close();
-    }
+    await __jait_captureResolved(1, (secretPromise));
+    __jait_capture(2, (service.listPending("session-1")));
+    __jait_capture(3, (resolvedStatuses));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_session_search_test_ts_123_3": {
-
-const { eq } = await import((typeof Bun!=="undefined"?Bun.resolveSync("drizzle-orm", __jait_original_dir):__jait_require.resolve("drizzle-orm")));
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const { db, sqlite } = await openDatabase(":memory:");
-    migrateDatabase(sqlite);
-    try {
-      const sessionService = new SessionService(db);
-      const threadService = new ThreadService(db);
-      const search = new SessionSearchService(sqlite);
-      const session = sessionService.create({ userId: "user-1", name: "Focused activity search" });
-      const thread = threadService.create({
-        userId: "user-1",
-        sessionId: session.id,
-        title: "Searchable thread",
-        providerId: "jait",
-      });
-
-      const durable = threadService.addActivity(thread.id, "tool.result", "Migration inspection completed", {
-        content: "durableresultmarker appears in the final tool result",
-      });
-      const noisy = threadService.addActivity(thread.id, "context_flow", "Outbound context snapshot", {
-        content: "contextpollutionmarker appears in a diagnostic context dump",
-      });
-      threadService.addActivity(thread.id, "codex/event/exec_command_output_delta", "stream chunk", {
-        content: "streamfragmentmarker appears in transient output",
-      });
-
-      __jait_capture(0, (search.search({ query: "durableresultmarker", userId: "user-1" })), ([durable.id]));
-      __jait_capture(1, (search.search({ query: "contextpollutionmarker", userId: "user-1" })));
-      __jait_capture(2, (search.search({ query: "streamfragmentmarker", userId: "user-1" })));
-
-      const trace = new ChatTracesService(sqlite).traces({
-        chatId: session.id,
-        userId: "user-1",
-        includeMessages: false,
-      });
-      __jait_capture(3, (trace.threads[0]?.activities), ([noisy.id]));
-
-      sqlite.prepare(`UPDATE agent_thread_activities SET kind = 'message' WHERE id = ?`).run(noisy.id);
-      __jait_capture(4, (search.search({ query: "contextpollutionmarker", userId: "user-1" })), ([noisy.id]));
-
-      sqlite.prepare(`UPDATE agent_thread_activities SET kind = 'context_flow' WHERE id = ?`).run(durable.id);
-      __jait_capture(5, (search.search({ query: "durableresultmarker", userId: "user-1" })));
-    } finally {
-      sqlite.close();
-    }
-  
-})();
-
-} finally {
-
+await __jait_hook_119();
 }
 }
 

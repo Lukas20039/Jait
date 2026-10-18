@@ -1,6 +1,7 @@
 {
   "review_scope": "Complete active-turn compaction declaration including nested callback assertion",
-  "declarations": [
+  "declarations": [],
+  "superseded_declarations": [
     {
       "id": "packages/gateway/src/tools/agent-loop-compaction.test.ts:72:3",
       "status": "verified",
@@ -11,7 +12,8 @@
           "source": "tests/contract/src/internal_contracts.rs",
           "report": ".jait/artifacts/contracts/3539ec5a-78f6-4f6d-813e-080fd9d67882/report.json"
         }
-      ]
+      ],
+      "superseded_reason": "Compaction source changed; original review retained, replaced by current source-bound review in parity-source-reconcile-reviewed.json."
     }
   ]
 }

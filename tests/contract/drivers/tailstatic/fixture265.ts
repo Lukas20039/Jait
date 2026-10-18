@@ -1,14 +1,12 @@
-// Translated fixture from packages/gateway/src/tools/catalog-tools.test.ts; expected literals are in tail_static.rs.
-
-import { mcpContentForToolResult } from "../../../../packages/gateway/src/routes/mcp-server.js";
-import { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import { createJaitCatalogTool } from "../../../../packages/gateway/src/tools/catalog-tools.js";
-import type { ToolContext, ToolDefinition } from "../../../../packages/gateway/src/tools/contracts.js";
+// Translated fixture from packages/gateway/src/tools/calendar-tools.test.ts; expected literals are in tail_static.rs.
+import type { CalendarService } from "../../../../packages/gateway/src/services/calendar/index.js";
+import { createCalendarTools } from "../../../../packages/gateway/src/tools/calendar-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/catalog-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/calendar-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,150 +40,147 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_15_3": {
+case "tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each0": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const context = { sessionId: "calendar-tests", actionId: "calendar-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const account = { id: "account-1", email: "owner@example.test", provider: "google", refreshToken: "must-not-leak" };
+const cases = [
+  { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" },
+  { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" },
+];
+/*__jait_scope_open__*/{
+const { name, method, input, args, output, key } = { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    const catalog = createJaitCatalogTool(registry);
-    registry.register(catalog);
-    registry.register(stub("agent.profiles"));
-    registry.register(stub("agent.profiles.inspect"));
-    let result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(0, ((result.data as any).pages[0].tools.map((t: any) => t.name)));
-    registry.register({ ...stub("my.new.tool"), page: "agents" });
-    result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(1, ((result.data as any).pages[0].tools.map((t: any) => t.name)));
-    registry.unregister("agent.profiles");
-    result = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(2, ((result.data as any).pages[0].features[0].missingToolRefs));
-    __jait_capture(3, ((result.data as any).matches.map((t: any) => t.name)));
+    const service = { [method]: vi.fn().mockResolvedValue(output) };
+    const tool = createCalendarTools(service as unknown as CalendarService).find((tool) => tool.name === name)!;
+    const result = await tool.execute(input, context);
+    __jait_capture(0, (service[method].mock.calls), ([...args]));
+    __jait_capture(1, (result.ok));
+    __jait_capture(2, (result.data), ({ account: { id: account.id, email: account.email, provider: account.provider }, [key]: output[key as keyof typeof output] }));
+    __jait_capture(3, (JSON.stringify(result)));
   
 })();
 
 } finally {
 
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_31_3": {
+case "tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each0": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const context = { sessionId: "calendar-tests", actionId: "calendar-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const account = { id: "account-1", email: "owner@example.test", provider: "google", refreshToken: "must-not-leak" };
+const cases = [
+  { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" },
+  { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" },
+];
+/*__jait_scope_open__*/{
+const { name, method, input, args, output, key } = { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register(stub("agent.profiles"));
-    const catalog = createJaitCatalogTool(registry);
-    const data = (await catalog.execute({ query: "Scrum team" }, context)).data as any;
-    __jait_capture(0, (data.pages[0].id));
-    __jait_capture(1, (data.matches));
-    __jait_capture(2, (data.pageLinks[0]));
-    const all = (await catalog.execute({}, context)).data as any;
-    __jait_capture(3, (all.pages), (JAIT_PAGE_IDS.length));
-    __jait_capture(4, (all.matches));
+    const service = { [method]: vi.fn().mockRejectedValue(new Error("Calendar account disconnected")) };
+    const tool = createCalendarTools(service as unknown as CalendarService).find((tool) => tool.name === name)!;
+    __jait_capture(0, (await tool.execute(input, context)));
   
 })();
 
 } finally {
 
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_43_3": {
+case "tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_14_3_each1": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const context = { sessionId: "calendar-tests", actionId: "calendar-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const account = { id: "account-1", email: "owner@example.test", provider: "google", refreshToken: "must-not-leak" };
+const cases = [
+  { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" },
+  { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" },
+];
+/*__jait_scope_open__*/{
+const { name, method, input, args, output, key } = { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    registry.register({ ...stub("edit", "filesystem"), tier: "core" });
-    registry.register(stub("agent.profiles"));
-    const catalog = createJaitCatalogTool(registry);
-    registry.register(catalog);
-    __jait_capture(0, (registry.listForMcp().map((t) => t.name)));
-    const data = (await catalog.execute({ pageId: "chat" }, { ...context, requestedBy: "mcp-client" })).data as any;
-    __jait_capture(1, (data.pages[0].tools.map((t: any) => t.name)));
-    const changed = await registry.execute("agent.profiles", {}, context);
-    __jait_capture(2, (changed.data));
-    registry.register(stub("custom.adapter", "external"));
-    const settings = (await catalog.execute({ pageId: "settings" }, context)).data as any;
-    __jait_capture(3, (settings.pages[0].tools.map((t: any) => t.name)));
+    const service = { [method]: vi.fn().mockResolvedValue(output) };
+    const tool = createCalendarTools(service as unknown as CalendarService).find((tool) => tool.name === name)!;
+    const result = await tool.execute(input, context);
+    __jait_capture(0, (service[method].mock.calls), ([...args]));
+    __jait_capture(1, (result.ok));
+    __jait_capture(2, (result.data), ({ account: { id: account.id, email: account.email, provider: account.provider }, [key]: output[key as keyof typeof output] }));
+    __jait_capture(3, (JSON.stringify(result)));
   
 })();
 
 } finally {
 
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_58_3": {
+case "tailstatic_packages_gateway_src_tools_calendar_tools_test_ts_23_3_each1": {
 
-const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
-const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
-const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
-  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
-  category, parameters: { type: "object", properties: {} },
-  async execute() { return { ok: true, message: "Done" }; },
-});
+
+const context = { sessionId: "calendar-tests", actionId: "calendar-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+const account = { id: "account-1", email: "owner@example.test", provider: "google", refreshToken: "must-not-leak" };
+const cases = [
+  { name: "calendar_list", method: "listCalendars", input: { accountId: "account-1" }, args: ["owner-1", "account-1"],
+    output: { account, calendars: [{ name: "Work", primary: true, selected: true, timeZone: "UTC" }] }, key: "calendars" },
+  { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" },
+];
+/*__jait_scope_open__*/{
+const { name, method, input, args, output, key } = { name: "calendar_events", method: "listEvents", input: { accountId: "account-1", calendarId: "work", query: "maintenance", limit: 5 },
+    args: ["owner-1", "account-1", { calendarId: "work", query: "maintenance", limit: 5, timeMin: undefined, timeMax: undefined }],
+    output: { account, events: [{ title: "Maintenance", start: "2026-10-09T08:00:00Z", calendarName: "Work" }] }, key: "events" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const registry = new ToolRegistry();
-    for (let index = 0; index < 20; index++) registry.register(stub(`agent.profiles.custom${index}`));
-    registry.register({ ...stub("agent.profiles.huge"), parameters: { type: "object", properties: {
-      payload: { type: "string", description: "x".repeat(50_000) },
-    } } });
-    const catalog = createJaitCatalogTool(registry);
-    const first = await catalog.execute({ pageId: "agents" }, context);
-    __jait_capture(0, ((first.data as any).pages[0]));
-    __jait_capture(1, ((first.data as any).pages[0].tools));
-    const next = await catalog.execute({ pageId: "agents", toolOffset: 15 }, context);
-    __jait_capture(2, ((next.data as any).pages[0].tools));
-    __jait_capture(3, ((next.data as any).schemaLookupRequired));
-    const content = mcpContentForToolResult(next);
-    const text = (content[0] as { text: string }).text;
-    __jait_capture(4, (text.length));
-    __jait_thrown(5, () => JSON.parse(text.slice(text.indexOf("{"))));
+    const service = { [method]: vi.fn().mockRejectedValue(new Error("Calendar account disconnected")) };
+    const tool = createCalendarTools(service as unknown as CalendarService).find((tool) => tool.name === name)!;
+    __jait_capture(0, (await tool.execute(input, context)));
   
 })();
 
 } finally {
 
+}
 }
 }
 

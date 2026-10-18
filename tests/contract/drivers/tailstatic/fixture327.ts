@@ -1,13 +1,11 @@
-// Translated fixture from packages/gateway/src/voice-assistant/tools.registry.test.ts; expected literals are in tail_static.rs.
-import { getVoiceToolSchemas, executeVoiceTool } from "../../../../packages/gateway/src/voice-assistant/tools.js";
-import type { ToolRegistry } from "../../../../packages/gateway/src/tools/registry.js";
-import type { ToolDefinition, ToolResult } from "../../../../packages/gateway/src/tools/contracts.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/voice-assistant/service.test.ts; expected literals are in tail_static.rs.
+import { loadConfig } from "../../../../packages/gateway/src/config.js";
+import { VoiceAssistantService } from "../../../../packages/gateway/src/voice-assistant/service.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/voice-assistant/tools.registry.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/voice-assistant/service.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -41,278 +39,138 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_21_3": {
+case "tailstatic_packages_gateway_src_voice_assistant_service_test_ts_14_3": {
 
 
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
 /*__jait_scope_open__*/{
+const __jait_hook_200 = () => {
+    delete process.env["OPENAI_REALTIME_TURN_DETECTION"];
+    delete process.env["OPENAI_REALTIME_VAD_THRESHOLD"];
+    delete process.env["OPENAI_REALTIME_PREFIX_PADDING_MS"];
+    delete process.env["OPENAI_REALTIME_SILENCE_DURATION_MS"];
+    delete process.env["OPENAI_REALTIME_SEMANTIC_EAGERNESS"];
+  };
 
 try {
 await (async()=>{
 
-    const registry = fakeRegistry([
-      fakeTool("file.read", "core"),
-      fakeTool("terminal.run", "standard"),
-      fakeTool("mcp.external", "external"),
-    ]);
-
-    const schemas = getVoiceToolSchemas(registry);
-    const names = schemas.map((s) => s.name);
-
-    // Built-in voice tools present
-    __jait_capture(0, (names));
-    __jait_capture(1, (names));
-    __jait_capture(2, (names));
-    __jait_capture(3, (names));
-    __jait_capture(4, (names));
-
-    // Registry tools present (non-external)
-    __jait_capture(5, (names));
-    __jait_capture(6, (names));
-
-    // External tier excluded
-    __jait_capture(7, (names));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_46_3": {
-
-
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const registry = fakeRegistry([fakeTool("get_time_and_date", "core")]);
-    const schemas = getVoiceToolSchemas(registry);
-    const matches = schemas.filter((s) => s.name === "get_time_and_date");
-    __jait_capture(0, (matches));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_53_3": {
-
-
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const schemas = getVoiceToolSchemas();
-    __jait_capture(0, (schemas.length));
-    __jait_capture(1, (schemas.every((s) => s.type === "function")));
-    const names = schemas.map((s) => s.name);
-    __jait_capture(2, (names));
-    __jait_capture(3, (names));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_64_3": {
-
-
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const executor = vi.fn(async (_name: string, _input: unknown, ctx: any): Promise<ToolResult> => {
-      __jait_capture(0, (ctx.requestedBy));
-      __jait_capture(1, (ctx.sessionId));
-      __jait_capture(2, (ctx.actionId));
-      __jait_capture(3, (ctx.projectRoot));
-      return { ok: true, message: "done", data: { ok: true } };
+    const service = new VoiceAssistantService({
+      config: loadConfig(),
+      verifyToken: async () => ({ id: "u1", username: "Alice" }),
     });
 
-    const result = await executeVoiceTool("file.read", { path: "/x" }, {
-      config: {} as any,
-      toolExecutor: executor,
-      sessionId: "sess-1",
-      actionId: "act-1",
-      projectRoot: "/proj",
-      userId: "u1",
-    });
+    const instructions = (service as any).buildInstructions("Alice") as string;
 
-    __jait_capture(4, (executor.mock.calls));
-    __jait_capture(5, (executor.mock.calls));
-    __jait_capture(6, (result));
+    __jait_capture(0, (instructions));
+    __jait_capture(1, (instructions));
   
 })();
 
 } finally {
-
+await __jait_hook_200();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_91_3": {
+case "tailstatic_packages_gateway_src_voice_assistant_service_test_ts_26_3": {
 
 
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
 /*__jait_scope_open__*/{
+const __jait_hook_200 = () => {
+    delete process.env["OPENAI_REALTIME_TURN_DETECTION"];
+    delete process.env["OPENAI_REALTIME_VAD_THRESHOLD"];
+    delete process.env["OPENAI_REALTIME_PREFIX_PADDING_MS"];
+    delete process.env["OPENAI_REALTIME_SILENCE_DURATION_MS"];
+    delete process.env["OPENAI_REALTIME_SEMANTIC_EAGERNESS"];
+  };
 
 try {
 await (async()=>{
 
-    const executor = vi.fn(async () => ({ ok: false, message: "consent denied" }));
-    const result = await executeVoiceTool("file.write", { path: "/x" }, {
-      config: {} as any,
-      toolExecutor: executor,
+    const service = new VoiceAssistantService({
+      config: { ...loadConfig(), realtimeVoice: "shimmer" },
+      verifyToken: async () => ({ id: "u1", username: "Alice" }),
     });
-    __jait_capture(0, (result));
+
+    const update = (service as any).buildSessionUpdate("Alice");
+
+    __jait_capture(0, (update.session.voice));
+    __jait_capture(1, (update.session.turn_detection));
   
 })();
 
 } finally {
-
+await __jait_hook_200();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_100_3": {
+case "tailstatic_packages_gateway_src_voice_assistant_service_test_ts_43_3": {
 
 
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
 /*__jait_scope_open__*/{
+const __jait_hook_200 = () => {
+    delete process.env["OPENAI_REALTIME_TURN_DETECTION"];
+    delete process.env["OPENAI_REALTIME_VAD_THRESHOLD"];
+    delete process.env["OPENAI_REALTIME_PREFIX_PADDING_MS"];
+    delete process.env["OPENAI_REALTIME_SILENCE_DURATION_MS"];
+    delete process.env["OPENAI_REALTIME_SEMANTIC_EAGERNESS"];
+  };
 
 try {
 await (async()=>{
 
-    const result = await executeVoiceTool("file.read", { path: "/x" }, { config: {} as any });
-    __jait_capture(0, (result));
+    process.env["OPENAI_REALTIME_TURN_DETECTION"] = "semantic_vad";
+    process.env["OPENAI_REALTIME_SEMANTIC_EAGERNESS"] = "low";
+    const service = new VoiceAssistantService({
+      config: loadConfig(),
+      verifyToken: async () => ({ id: "u1", username: "Alice" }),
+    });
+
+    const update = (service as any).buildSessionUpdate("Alice");
+
+    __jait_capture(0, (update.session.turn_detection));
   
 })();
 
 } finally {
-
+await __jait_hook_200();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_voice_assistant_tools_registry_test_ts_105_3": {
+case "tailstatic_packages_gateway_src_voice_assistant_service_test_ts_61_3": {
 
 
-function fakeTool(name: string, tier: "core" | "standard" | "external"): ToolDefinition {
-  return {
-    name,
-    description: `desc for ${name}`,
-    parameters: { type: "object", properties: {} },
-    tier,
-    execute: async () => ({ ok: true, message: "ok" }),
-  };
-}
-function fakeRegistry(tools: ToolDefinition[]): ToolRegistry {
-  return { list: () => tools } as unknown as ToolRegistry;
-}
 /*__jait_scope_open__*/{
+const __jait_hook_200 = () => {
+    delete process.env["OPENAI_REALTIME_TURN_DETECTION"];
+    delete process.env["OPENAI_REALTIME_VAD_THRESHOLD"];
+    delete process.env["OPENAI_REALTIME_PREFIX_PADDING_MS"];
+    delete process.env["OPENAI_REALTIME_SILENCE_DURATION_MS"];
+    delete process.env["OPENAI_REALTIME_SEMANTIC_EAGERNESS"];
+  };
 
 try {
 await (async()=>{
 
-    const executor = vi.fn();
-    const result = await executeVoiceTool("get_time_and_date", {}, {
-      config: {} as any,
-      toolExecutor: executor,
+    process.env["OPENAI_REALTIME_TURN_DETECTION"] = "disabled";
+    const service = new VoiceAssistantService({
+      config: loadConfig(),
+      verifyToken: async () => ({ id: "u1", username: "Alice" }),
     });
-    __jait_capture(0, (executor.mock.calls));
-    __jait_capture(1, (typeof result));
+
+    const update = (service as any).buildSessionUpdate("Alice");
+
+    __jait_captureType(0, (update.session.turn_detection));
   
 })();
 
 } finally {
-
+await __jait_hook_200();
 }
 }
 

@@ -1,10 +1,16 @@
-// Translated fixture from packages/gateway/src/tools/prompts/shared-sections.test.ts; expected literals are in tail_static.rs.
-import { JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS, JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE, getSwarmModeInstructions } from "../../../../packages/gateway/src/tools/prompts/shared-sections.js";
+// Translated fixture from packages/gateway/src/tools/prompts/prompt-registry.test.ts; expected literals are in tail_static.rs.
+
+
+
+import { buildSystemPrompt } from "../../../../packages/gateway/src/tools/prompts/prompt-registry.js";
+import "../../../../packages/gateway/src/tools/prompts/index.js";
+import type { Skill } from "../../../../packages/gateway/src/skills/index.js";
+import { JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE, PROJECT_ARTIFACT_INSTRUCTIONS } from "../../../../packages/gateway/src/tools/prompts/shared-sections.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/prompts/shared-sections.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/prompts/prompt-registry.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,24 +44,17 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_11_3": {
 
-
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const instructions = getSwarmModeInstructions();
-
-    __jait_capture(0, (instructions));
-    __jait_capture(1, (instructions));
-    __jait_capture(2, (instructions));
-    __jait_capture(3, (instructions));
-    __jait_capture(4, (instructions));
-    __jait_capture(5, (instructions));
-    __jait_capture(6, (instructions));
-    __jait_capture(7, (instructions));
+    __jait_capture(0, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE), (PROJECT_ARTIFACT_INSTRUCTIONS));
   
 })();
 
@@ -66,22 +65,142 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_18_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each0": {
 
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const endpoint = { model: "gpt-4o", baseUrl: "https://api.openai.com/v1" };
 
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
+    __jait_capture(9, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each1": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const endpoint = { model: "glm-4.7", baseUrl: "https://openrouter.ai/api/v1", backend: "openrouter" };
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
+    __jait_capture(9, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each2": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const endpoint = { model: "llama3.2", baseUrl: "http://localhost:11434/v1", backend: "ollama" };
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", endpoint, { projectRoot: "/work/project" });
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
+    __jait_capture(9, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_33_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const instructions = getSwarmModeInstructions();
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+    });
 
-    __jait_capture(0, (instructions));
-    __jait_capture(1, (instructions));
-    __jait_capture(2, (instructions));
-    __jait_capture(3, (instructions));
-    __jait_capture(4, (instructions));
-    __jait_capture(5, (instructions));
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
+    __jait_capture(9, (prompt));
+    __jait_capture(10, (prompt));
+    __jait_capture(11, (prompt));
+    __jait_capture(12, (prompt));
+    __jait_capture(13, (prompt));
+    __jait_capture(14, (prompt));
+    __jait_capture(15, (prompt));
+    __jait_capture(16, (prompt));
   
 })();
 
@@ -92,19 +211,30 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_29_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_60_3": {
 
-
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(1, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(2, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(3, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(4, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE));
+    // What ProjectService.resolveInstructionChain produces for a project
+    // filed under Private > OSS.
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+      projectInstructions: "## Private\ncasual tone\n\n## OSS\nanswer in english",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt.indexOf("casual tone")), (prompt.indexOf("answer in english")));
   
 })();
 
@@ -115,19 +245,408 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_shared_sections_test_ts_37_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_77_3": {
 
-
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(1, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(2, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(3, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS));
-    __jait_capture(4, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE));
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+      projectInstructions: "## Private\ncasual tone",
+    });
+
+    const globalIndex = prompt.indexOf("<globalJaitInstructions>");
+    if (globalIndex >= 0) {
+      __jait_capture(0, (globalIndex), (prompt.indexOf("<projectInstructions>")));
+    }
+  
+})();
+__jait_record({slot:1,completed:true});
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_92_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+    });
+
+    __jait_capture(0, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_103_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // The block sits outside the local-model compaction branch on purpose:
+    // the user typed these instructions and would notice their absence.
+    const prompt = buildSystemPrompt("agent", {
+      model: "llama3.2",
+      baseUrl: "http://localhost:11434/v1",
+      backend: "ollama",
+    }, {
+      projectRoot: "/tmp/project",
+      projectInstructions: "## Private\ncasual tone",
+    });
+
+    __jait_capture(0, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_118_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "llama3.2",
+      baseUrl: "http://localhost:11434/v1",
+      backend: "ollama",
+    }, {
+      projectRoot: "/tmp/project",
+      backend: "ollama",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_137_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_148_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const skills: Skill[] = [
+      {
+        id: "word-docx",
+        name: "Word / DOCX",
+        description: "Handle DOCX files without formatting drift.",
+        filePath: "C:/skills/word-docx/SKILL.md",
+        source: "user",
+        enabled: true,
+      },
+    ];
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+      skills,
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      responseStyle: "caveman",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const originalSoulPath = process.env["JAIT_SOUL_PATH"];
+    const originalGlobalPath = process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
+    const dir = mkdtempSync(join(__jait_fixture_dir, "jait-soul-"));
+    const soulPath = join(dir, "SOUL.md");
+    writeFileSync(soulPath, "Always use chat.traces before memory.search for Jait chat IDs.");
+
+    try {
+      process.env["JAIT_SOUL_PATH"] = soulPath;
+      delete process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
+
+      const prompt = buildSystemPrompt("agent", {
+        model: "gpt-4o",
+        baseUrl: "https://api.openai.com/v1",
+      });
+
+      __jait_capture(0, (prompt));
+      __jait_capture(1, (prompt));
+    } finally {
+      if (originalSoulPath === undefined) delete process.env["JAIT_SOUL_PATH"];
+      else process.env["JAIT_SOUL_PATH"] = originalSoulPath;
+
+      if (originalGlobalPath === undefined) delete process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"];
+      else process.env["JAIT_GLOBAL_INSTRUCTIONS_PATH"] = originalGlobalPath;
+
+      rmSync(dir, { recursive: true, force: true });
+    }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "gpt-4o",
+      baseUrl: "https://api.openai.com/v1",
+    }, {
+      projectRoot: "/tmp/project",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "zhipu/glm-4.6",
+      baseUrl: "https://openrouter.ai/api/v1",
+    }, {
+      projectRoot: "/tmp/project",
+    });
+
+    // GLM runs natively inside Jait's agent loop (Jait tools registered
+    // directly) — it is NOT an external CLI provider, so it must NOT get the
+    // <jaitExternalProvider> steering block.
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    // It still gets identity + safety (internal provider keeps the wrapper shell).
+    __jait_capture(3, (prompt));
+    __jait_capture(4, (prompt));
+    // Core instructions + keep-going contract
+    __jait_capture(5, (prompt));
+    __jait_capture(6, (prompt));
+    // Explicit tool-call format discipline (GLM-specific block)
+    __jait_capture(7, (prompt));
+    __jait_capture(8, (prompt));
+    // Shared sections — including the tools.search discovery mechanism so the
+    // model can find the search tool and other Jait tools.
+    __jait_capture(9, (prompt));
+    __jait_capture(10, (prompt));
+    __jait_capture(11, (prompt));
+    __jait_capture(12, (prompt));
+    __jait_capture(13, (prompt));
+    __jait_capture(14, (prompt));
+    // Project context injection
+    __jait_capture(15, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "zhipu/glm-4.6",
+      baseUrl: "https://openrouter.ai/api/v1",
+    });
+
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3": {
+
+const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
+const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
+const { join } = await import((typeof Bun!=="undefined"?Bun.resolveSync("path", __jait_original_dir):__jait_require.resolve("path")));
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const prompt = buildSystemPrompt("agent", {
+      model: "glm-4.5",
+      baseUrl: "https://open.bigmodel.cn/api/v1",
+    });
+
+    // Same internal-provider treatment: tool-rich prompt, no external block.
+    __jait_capture(0, (prompt));
+    __jait_capture(1, (prompt));
+    __jait_capture(2, (prompt));
+    __jait_capture(3, (prompt));
   
 })();
 

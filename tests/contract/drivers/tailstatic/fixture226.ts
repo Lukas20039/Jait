@@ -1,14 +1,10 @@
-// Translated fixture from packages/gateway/src/skills/install.test.ts; expected literals are in tail_static.rs.
-import { mkdtemp, readFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { SkillRegistry } from "../../../../packages/gateway/src/skills/index.js";
-import { renderSkillMarkdown, slugifySkillId, writeUserSkill } from "../../../../packages/gateway/src/skills/install.js";
+// Translated fixture from packages/gateway/src/skills/index.test.ts; expected literals are in tail_static.rs.
+import { parseFrontmatter } from "../../../../packages/gateway/src/skills/index.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/skills/install.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/skills/index.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,7 +38,7 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_skills_install_test_ts_9_3": {
+case "tailstatic_packages_gateway_src_skills_index_test_ts_5_3": {
 
 
 /*__jait_scope_open__*/{
@@ -50,8 +46,9 @@ case "tailstatic_packages_gateway_src_skills_install_test_ts_9_3": {
 try {
 await (async()=>{
 
-    __jait_capture(0, (slugifySkillId("Feuerwehr Instagram Posts")));
-    __jait_capture(1, (slugifySkillId("  Weather   Warnings  ")));
+    const fm = parseFrontmatter(["---", "name: Word / DOCX", "description: Handle DOCX files.", "---", "body"].join("\n"));
+    __jait_capture(0, (fm.name));
+    __jait_capture(1, (fm.description));
   
 })();
 
@@ -62,7 +59,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_skills_install_test_ts_14_3": {
+case "tailstatic_packages_gateway_src_skills_index_test_ts_11_3": {
 
 
 /*__jait_scope_open__*/{
@@ -70,9 +67,28 @@ case "tailstatic_packages_gateway_src_skills_install_test_ts_14_3": {
 try {
 await (async()=>{
 
-    __jait_capture(0, (slugifySkillId("../../etc/passwd")));
-    __jait_capture(1, (slugifySkillId("/absolute/path")));
-    __jait_capture(2, (slugifySkillId("..")));
+    const content = [
+      "---",
+      "name: coding-agent",
+      'description: "Delegate coding work to background workers."',
+      "metadata:",
+      "  openclaw:",
+      "    requires:",
+      '      anyBins: ["claude", "codex"]',
+      "    install:",
+      "      - id: node-claude",
+      "        kind: node",
+      "        package: \"@anthropic-ai/claude-code\"",
+      '        bins: ["claude"]',
+      "        label: Install Claude Code CLI",
+      "---",
+      "body",
+    ].join("\n");
+
+    const fm = parseFrontmatter(content);
+    __jait_capture(0, (fm.name));
+    __jait_capture(1, (fm.requires?.anyBins));
+    __jait_capture(2, (fm.install?.[0]));
   
 })();
 
@@ -83,7 +99,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_skills_install_test_ts_22_3": {
+case "tailstatic_packages_gateway_src_skills_index_test_ts_42_3": {
 
 
 /*__jait_scope_open__*/{
@@ -91,203 +107,14 @@ case "tailstatic_packages_gateway_src_skills_install_test_ts_22_3": {
 try {
 await (async()=>{
 
-    const md = renderSkillMarkdown({
-      name: "Deploy: staging",
-      description: 'Use when shipping to staging: run the "safe" path.',
-      body: "# Steps\n\n1. Do the thing.",
-    });
-
-    __jait_capture(0, (md));
-    __jait_capture(1, (md));
-    __jait_capture(2, (md));
+    const fm = parseFrontmatter(["---", "name: Plain", "description: A skill", "  : broken", "---"].join("\n"));
+    __jait_capture(0, (fm.name));
+    __jait_capture(1, (fm.description));
   
 })();
 
 } finally {
 
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_skills_install_test_ts_34_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const md = renderSkillMarkdown({ name: "X", description: "first\nsecond", body: "body" });
-    __jait_capture(0, (md));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_skills_install_test_ts_56_3": {
-
-
-/*__jait_scope_open__*/{
-let home: string;
-let previousStateDirectory: string | undefined;
-const __jait_hook_1735 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
-    previousStateDirectory = process.env["JAIT_STATE_DIR"];
-    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
-  };
-const __jait_hook_1944 = async () => {
-    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
-    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_1735();
-try {
-await (async()=>{
-
-    const registry = new SkillRegistry();
-    const written = await writeUserSkill({
-      skillRegistry: registry,
-      id: "Bysenft Auslastung",
-      name: "Bysenft Auslastung",
-      description: "Use when asked how busy bysenft.at is.",
-      body: "Fetch https://bysenft.at and read the occupancy widget.",
-    });
-
-    __jait_capture(0, (written));
-    __jait_capture(1, (await readFile(written.filePath, "utf-8")));
-
-    const registered = registry.get("bysenft-auslastung");
-    __jait_capture(2, (registered));
-  
-})();
-
-} finally {
-await __jait_hook_1944();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_skills_install_test_ts_73_3": {
-
-
-/*__jait_scope_open__*/{
-let home: string;
-let previousStateDirectory: string | undefined;
-const __jait_hook_1735 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
-    previousStateDirectory = process.env["JAIT_STATE_DIR"];
-    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
-  };
-const __jait_hook_1944 = async () => {
-    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
-    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_1735();
-try {
-await (async()=>{
-
-    const registry = new SkillRegistry();
-    const params = {
-      skillRegistry: registry,
-      id: "notes",
-      name: "Notes",
-      description: "Use when taking notes.",
-      body: "original",
-    };
-    await writeUserSkill(params);
-
-    await __jait_rejected(0, writeUserSkill({ ...params, body: "replacement" }));
-
-    const kept = await readFile(join(home, ".jait", "skills", "notes", "SKILL.md"), "utf-8");
-    __jait_capture(1, (kept));
-  
-})();
-
-} finally {
-await __jait_hook_1944();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_skills_install_test_ts_90_3": {
-
-
-/*__jait_scope_open__*/{
-let home: string;
-let previousStateDirectory: string | undefined;
-const __jait_hook_1735 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
-    previousStateDirectory = process.env["JAIT_STATE_DIR"];
-    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
-  };
-const __jait_hook_1944 = async () => {
-    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
-    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_1735();
-try {
-await (async()=>{
-
-    const registry = new SkillRegistry();
-    const params = { skillRegistry: registry, id: "notes", name: "Notes", description: "d", body: "original" };
-    await writeUserSkill(params);
-
-    const second = await writeUserSkill({ ...params, body: "replacement", overwrite: true });
-
-    __jait_capture(0, (second.created));
-    __jait_capture(1, (await readFile(second.filePath, "utf-8")));
-  
-})();
-
-} finally {
-await __jait_hook_1944();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_skills_install_test_ts_101_3": {
-
-
-/*__jait_scope_open__*/{
-let home: string;
-let previousStateDirectory: string | undefined;
-const __jait_hook_1735 = async () => {
-    home = await mkdtemp(join(__jait_fixture_dir, "jait-skills-"));
-    previousStateDirectory = process.env["JAIT_STATE_DIR"];
-    process.env["JAIT_STATE_DIR"] = join(home, ".jait");
-  };
-const __jait_hook_1944 = async () => {
-    if (previousStateDirectory === undefined) delete process.env["JAIT_STATE_DIR"];
-    else process.env["JAIT_STATE_DIR"] = previousStateDirectory;
-    await rm(home, { recursive: true, force: true });
-  };
-await __jait_hook_1735();
-try {
-await (async()=>{
-
-    await __jait_rejected(0, writeUserSkill({
-      skillRegistry: new SkillRegistry(),
-      id: "...",
-      name: "X",
-      description: "d",
-      body: "b",
-    }));
-  
-})();
-
-} finally {
-await __jait_hook_1944();
 }
 }
 

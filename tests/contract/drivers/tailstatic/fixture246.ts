@@ -1,14 +1,11 @@
-// Translated fixture from packages/gateway/src/terminal-completion-marker.test.ts; expected literals are in tail_static.rs.
-import { createTerminalRunTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
-import { backgroundCommandMonitor } from "../../../../packages/gateway/src/services/background-command-monitor.js";
-import type { TerminalSurface } from "../../../../packages/gateway/src/surfaces/terminal.js";
-import type { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+// Translated fixture from packages/gateway/src/surfaces/terminal-stop.test.ts; expected literals are in tail_static.rs.
+import { TerminalSurface } from "../../../../packages/gateway/src/surfaces/terminal.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/terminal-completion-marker.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/surfaces/terminal-stop.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -42,59 +39,147 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_terminal_completion_marker_test_ts_33_1": {
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_19_3": {
 
 
-function setup() {
-  const listeners = new Set<(data: string) => void>();
-  const writes: string[] = [];
-  const surface = {
-    id: "term-waiting", type: "terminal", state: "running",
-    shellIntegrationReady: true,
-    touch() {},
-    addOutputListener(cb: (data: string) => void) { listeners.add(cb); },
-    removeOutputListener(cb: (data: string) => void) { listeners.delete(cb); },
-    write(data: string) { writes.push(data); },
-    snapshot() { return { metadata: { shell: "/bin/bash" } }; },
-  } as unknown as TerminalSurface;
-  const tool = createTerminalRunTool({ getSurface: () => surface } as unknown as SurfaceRegistry);
-  const notify = vi.fn();
-  backgroundCommandMonitor.setCompletionHandler(notify);
-  return {
-    writes, notify,
-    emit(data: string) { for (const cb of [...listeners]) cb(data); },
-    run(isBackground: boolean, timeout = 1000) {
-      return tool.execute({ command: "build-app", terminalId: surface.id, isBackground, timeout },
-        { sessionId: "s-waiting", actionId: "a-waiting", projectRoot: process.cwd(), requestedBy: "test" });
-    },
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
   };
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
 }
+const __jait_hook_112 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-  vi.useFakeTimers();
-  try {
-    const env = setup();
-    const run = env.run(false);
-    await vi.advanceTimersByTimeAsync(20);
-    env.emit("completed output\r\n\x1b]633;D;\x07");
-    env.emit("trailing output\r\n");
-    env.emit("\x1b]633;B\x07");
-    await vi.advanceTimersByTimeAsync(100);
-    __jait_capture(0, ((await run).data));
-    __jait_capture(1, (env.notify.mock.calls));
-  } finally {
-    backgroundCommandMonitor.clearForTests();
-    vi.useRealTimers();
-  }
-
+    const { terminal, pty, exit } = pendingTerminal();
+    let stopped = false;
+    const stopping = terminal.stop().then(() => { stopped = true; });
+    await Promise.resolve();
+    __jait_capture(0, (pty.kill.mock.calls));
+    __jait_capture(1, (stopped));
+    __jait_capture(2, (terminal.state));
+    exit();
+    await stopping;
+    __jait_capture(3, (terminal.state));
+  
 })();
 
 } finally {
-
+await __jait_hook_112();
+}
 }
 
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_32_3": {
+
+
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
+  };
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
+}
+const __jait_hook_112 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { terminal, pty, exit } = pendingTerminal();
+    pty.kill.mockImplementation(exit);
+    await terminal.stop();
+    __jait_capture(0, (pty.onExit.mock.calls));
+    __jait_capture(1, (terminal.state));
+  
+})();
+
+} finally {
+await __jait_hook_112();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_40_3": {
+
+
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
+  };
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
+}
+const __jait_hook_112 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    vi.useFakeTimers();
+    const { terminal } = pendingTerminal();
+    const stopping = terminal.stop();
+    await vi.advanceTimersByTimeAsync(6000);
+    await stopping;
+    __jait_capture(0, (terminal.state));
+  
+})();
+
+} finally {
+await __jait_hook_112();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_surfaces_terminal_stop_test_ts_49_3": {
+
+
+function pendingTerminal() {
+  const terminal = new TerminalSurface("stop-repro", { shell: "/bin/sh" });
+  let exited!: (event: { exitCode: number }) => void;
+  const pty = {
+    pid: 123,
+    onExit: vi.fn((callback: typeof exited) => { exited = callback; }),
+    kill: vi.fn(),
+  };
+  Object.assign(terminal, { _pty: pty, _state: "running", _pid: 123 });
+  return { terminal, pty, exit: () => exited({ exitCode: 0 }) };
+}
+const __jait_hook_112 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const terminal = new TerminalSurface("exited", { shell: "/bin/sh" });
+    await terminal.stop();
+    __jait_capture(0, (terminal.state));
+  
+})();
+
+} finally {
+await __jait_hook_112();
+}
+}
 
 break;
 }

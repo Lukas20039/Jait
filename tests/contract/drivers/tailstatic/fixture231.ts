@@ -1,16 +1,16 @@
-// Translated fixture from packages/gateway/src/sprint2.test.ts; expected literals are in tail_static.rs.
-import { SessionService } from "../../../../packages/gateway/src/services/sessions.js";
-import { AuditWriter } from "../../../../packages/gateway/src/services/audit.js";
-import { uuidv7 } from "../../../../packages/gateway/src/db/uuidv7.js";
-import { createServer } from "../../../../packages/gateway/src/server.js";
-import { loadConfig } from "../../../../packages/gateway/src/config.js";
-import { UserService } from "../../../../packages/gateway/src/services/users.js";
-import { signAuthToken } from "../../../../packages/gateway/src/security/http-auth.js";
+// Translated fixture from packages/gateway/src/sprint13.test.ts; expected literals are in tail_static.rs.
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
+import { createTerminalRunTool } from "../../../../packages/gateway/src/tools/terminal-tools.js";
+import { SurfaceRegistry } from "../../../../packages/gateway/src/surfaces/registry.js";
+import { createBrowserSandboxStartTool } from "../../../../packages/gateway/src/tools/browser-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/sprint2.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/sprint13.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,2317 +44,840 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_sprint2_test_ts_48_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_27_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-await __jait_hook_964();
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+  };
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
+  };
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const id = uuidv7();
-    __jait_capture(0, (id));
+    const manager = new SandboxManager(async () => ({
+      output: "inside-container",
+      exitCode: 0,
+      timedOut: false,
+    }));
+
+    const tool = createTerminalRunTool(new SurfaceRegistry(), manager);
+    const result = await tool.execute(
+      { command: "pwd", sandbox: true, timeout: 3000 },
+      baseContext,
+    );
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (result.data));
   
 })();
 
 } finally {
-
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_55_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_48_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-await __jait_hook_964();
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+  };
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
+  };
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const ids = new Set(Array.from({ length: 100 }, () => uuidv7()));
-    __jait_capture(0, (ids.size));
+    let captured: string[] = [];
+    const manager = new SandboxManager(async (cmd, _timeoutMs) => {
+      captured = cmd;
+      return {
+        output: "killed",
+        exitCode: null,
+        timedOut: true,
+      };
+    });
+
+    const result = await manager.runCommand({
+      command: "sleep 99",
+      projectRoot: testProject,
+      timeoutMs: 1000,
+      mountMode: "read-only",
+      networkEnabled: false,
+      memoryLimitMb: 128,
+      cpuLimit: "0.5",
+    });
+
+    __jait_capture(0, (result.timedOut));
+    __jait_capture(1, (captured.join(" ")));
+    __jait_capture(2, (captured.join(" ")));
+    __jait_capture(3, (captured.join(" ")));
+    __jait_capture(4, (captured.join(" ")));
   
 })();
 
 } finally {
-
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_76_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-await __jait_hook_964();
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+  };
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
+  };
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const id1 = uuidv7();
-    // Small delay to ensure different timestamp
-    const start = Date.now();
-    while (Date.now() === start) {
-      /* spin */
-    }
-    const id2 = uuidv7();
-    __jait_capture(0, (id1 < id2));
+    const manager = new SandboxManager(async () => ({
+      output: "container-id",
+      exitCode: 0,
+      timedOut: false,
+    }));
+
+    const tool = createBrowserSandboxStartTool(manager);
+    const result = await tool.execute({ novncPort: 6600, vncPort: 6000 }, baseContext);
+
+    __jait_capture(0, (result.ok));
+    __jait_capture(1, (globalThis.fetch.mock.calls));
+    __jait_capture(2, (result.data));
   
 })();
 
 } finally {
-
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_73_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_98_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-await __jait_hook_964();
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+  };
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
+  };
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const { sqlite } = makeTestDb();
-    const tables = sqlite
-      .query(
-        "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
-      )
-      .all() as { name: string }[];
-    const names = tables.map((t) => t.name);
-    __jait_capture(0, (names));
-    __jait_capture(1, (names));
-    __jait_capture(2, (names));
-    __jait_capture(3, (names));
-    sqlite?.close();
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      return {
+        output: "container-id",
+        exitCode: 0,
+        timedOut: false,
+      };
+    });
+
+    const result = await manager.startBrowserSandbox({
+      projectRoot: testProject,
+      mountMode: "none",
+      networkEnabled: true,
+      hostGateway: true,
+      novncPort: 6601,
+      vncPort: 6001,
+      cdpPort: 9223,
+      waitForCdp: false,
+    });
+
+    __jait_capture(0, (result));
+    const imageInspectCmd = commands.find((c) => c.join(" ").includes("image inspect"));
+    __jait_capture(1, (imageInspectCmd?.join(" ")));
+    const runCmd = commands.find((c) => c.join(" ").includes("--add-host"));
+    __jait_capture(2, (runCmd?.join(" ")));
+    __jait_capture(3, (runCmd?.join(" ")));
+    __jait_capture(4, (runCmd?.join(" ")));
   
 })();
 
 } finally {
-
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_88_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_134_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-await __jait_hook_964();
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
+  };
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
+  };
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    if (!DatabaseCtor || !migrateDatabaseFn) throw new Error("Bun DB test dependencies are not loaded");
-    const sqlite = new DatabaseCtor(":memory:");
-    migrateDatabaseFn(sqlite);
-    migrateDatabaseFn(sqlite); // should not throw
-    sqlite.close();
+    const commands: string[][] = [];
+    let runAttempts = 0;
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      const joined = cmd.join(" ");
+      if (joined.includes(" ps ") && joined.includes("{{.Ports}}")) {
+        return {
+          output: "jait-browser-sb-old\t0.0.0.0:6080->6080/tcp, 0.0.0.0:5900->5900/tcp",
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      if (joined.includes(" ps ") && joined.includes("{{.Names}}")) {
+        return { output: "", exitCode: 0, timedOut: false };
+      }
+      if (joined.includes("image inspect")) {
+        return { output: "[]", exitCode: 0, timedOut: false };
+      }
+      if (cmd.includes("run")) {
+        runAttempts += 1;
+        if (runAttempts === 1) {
+          return {
+            output: "docker: Error response from daemon: Bind for 0.0.0.0:6080 failed: port is already allocated",
+            exitCode: 125,
+            timedOut: false,
+          };
+        }
+      }
+      return { output: "container-id", exitCode: 0, timedOut: false };
+    });
+
+    const result = await manager.startBrowserSandbox({
+      projectRoot: testProject,
+      novncPort: 6080,
+      vncPort: 5900,
+    });
+
+    __jait_capture(0, (result));
+    __jait_capture(1, (commands.some((cmd) => cmd.includes("ps") && cmd.includes("--format"))));
+    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-old"))));
   
 })();
-__jait_record({slot:0,completed:true});
-} finally {
 
+} finally {
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_111_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_181_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const session = svc.create({ name: "Test Session" });
-    __jait_captureType(0, (session.id));
-    __jait_capture(1, (session.name));
-    __jait_capture(2, (session.status));
-    __jait_captureType(3, (session.createdAt));
-    __jait_captureType(4, (session.lastActiveAt));
+    const manager = new SandboxManager(async (cmd) => {
+      if (cmd.includes("info")) {
+        return { output: "", exitCode: null, timedOut: true };
+      }
+      return { output: "unexpected", exitCode: 0, timedOut: false };
+    });
+
+    await __jait_rejected(0, manager.startBrowserSandbox({
+      projectRoot: testProject,
+      novncPort: 6082,
+      vncPort: 5902,
+    }));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_120_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_196_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s1 = svc.create({ name: "A" });
-    const s2 = svc.create({ name: "B" });
-    __jait_capture(0, (s1.id), (s2.id));
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return { output: "jait-browser-sb-active", exitCode: 0, timedOut: false };
+      }
+      return { output: "ok", exitCode: 0, timedOut: false };
+    });
+
+    await __jait_captureResolved(0, (manager.startBrowserSandbox({
+      projectRoot: testProject,
+      novncPort: 6083,
+      vncPort: 5903,
+    })));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_126_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_217_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    svc.create({ name: "First" });
-    // Ensure distinct timestamps — wait 5ms
-    await new Promise((r) => setTimeout(r, 5));
-    svc.create({ name: "Second" });
-    const list = svc.list();
-    __jait_capture(0, (list.length));
-    // Most recent should come first
-    __jait_capture(1, (list[0]!.name));
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return {
+          output: "jait-browser-sb-active-1\njait-browser-sb-active-2",
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      return { output: "ok", exitCode: 0, timedOut: false };
+    });
+
+    await __jait_rejected(0, manager.startBrowserSandbox({
+      projectRoot: testProject,
+      novncPort: 6083,
+      vncPort: 5903,
+    }));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_137_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_239_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s = svc.create({ name: "To archive" });
-    svc.archive(s.id);
-    __jait_capture(0, (svc.list("active").length));
-    __jait_capture(1, (svc.list("archived").length));
+    const commands: string[][] = [];
+    const now = Date.now();
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return {
+          output: [
+            `jait-browser-sb-old\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
+            `jait-browser-sb-active\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
+            `jait-browser-sb-fresh\tignored\tjait.kind=browser-sandbox,jait.createdAt=${now}`,
+          ].join("\n"),
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      return { output: "removed", exitCode: 0, timedOut: false };
+    });
+
+    const stopped = await manager.cleanupBrowserSandboxes({
+      maxAgeMs: 60 * 60 * 1000,
+      excludeNames: ["jait-browser-sb-active"],
+    });
+
+    __jait_capture(0, (stopped));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-old"))));
+    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-active"))));
+    __jait_capture(3, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-fresh"))));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_144_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_269_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s = svc.create({ name: "Find me" });
-    __jait_capture(0, (svc.getById(s.id)?.name));
-    __jait_captureType(1, (svc.getById("nonexistent")));
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return {
+          output: "jait-browser-sb-legacy\t2026-04-29 20:00:10 +0000 UTC\t",
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      return { output: "removed", exitCode: 0, timedOut: false };
+    });
+
+    const stopped = await manager.cleanupBrowserSandboxes({ maxAgeMs: 60 * 60 * 1000 });
+
+    __jait_capture(0, (stopped));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-browser-sb-legacy"))));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_150_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_289_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s = svc.create({ name: "Touch me" });
-    const originalTime = s.lastActiveAt;
-    // Wait 1ms to ensure different timestamp
-    const start = Date.now();
-    while (Date.now() === start) {
-      /* spin */
-    }
-    svc.touch(s.id);
-    const updated = svc.getById(s.id)!;
-    __jait_capture(0, (updated.lastActiveAt), (originalTime));
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      return {
+        output: "container-id",
+        exitCode: 0,
+        timedOut: false,
+      };
+    });
+
+    const result = await manager.startLinuxDesktopSandbox({
+      projectRoot: testProject,
+      mountMode: "none",
+      networkEnabled: true,
+      hostGateway: true,
+      novncPort: 6602,
+      vncPort: 6002,
+      cdpPort: 9224,
+      waitForCdp: false,
+      screenRes: "1280x720x24",
+    });
+
+    __jait_capture(0, (result));
+    const imageInspectCmd = commands.find((c) => c.join(" ").includes("image inspect"));
+    __jait_capture(1, (imageInspectCmd?.join(" ")));
+    const runCmd = commands.find((c) => c.join(" ").includes("--add-host"));
+    __jait_capture(2, (runCmd?.join(" ")));
+    __jait_capture(3, (runCmd?.join(" ")));
+    __jait_capture(4, (runCmd?.join(" ")));
+    __jait_capture(5, (runCmd?.join(" ")));
+    __jait_capture(6, (runCmd?.join(" ")));
+    __jait_capture(7, (runCmd?.join(" ")));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_163_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_329_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s = svc.create({ name: "Delete me" });
-    svc.delete(s.id);
-    const deleted = svc.getById(s.id)!;
-    __jait_capture(0, (deleted.status));
+    const commands: string[][] = [];
+    let runAttempts = 0;
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      const joined = cmd.join(" ");
+      if (joined.includes(" ps ") && joined.includes("{{.Ports}}")) {
+        return {
+          output: "jait-linux-desktop-sb-old\t0.0.0.0:6080->6080/tcp, 0.0.0.0:5900->5900/tcp",
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      if (joined.includes(" ps ") && joined.includes("{{.Names}}")) {
+        return { output: "", exitCode: 0, timedOut: false };
+      }
+      if (joined.includes("image inspect")) {
+        return { output: "[]", exitCode: 0, timedOut: false };
+      }
+      if (cmd.includes("run")) {
+        runAttempts += 1;
+        if (runAttempts === 1) {
+          return {
+            output: "docker: Error response from daemon: Bind for 0.0.0.0:6080 failed: port is already allocated",
+            exitCode: 125,
+            timedOut: false,
+          };
+        }
+      }
+      return { output: "container-id", exitCode: 0, timedOut: false };
+    });
+
+    const result = await manager.startLinuxDesktopSandbox({
+      projectRoot: testProject,
+      novncPort: 6080,
+      vncPort: 5900,
+    });
+
+    __jait_capture(0, (result));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-old"))));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_170_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_375_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let svc: SessionService;
-const __jait_hook_3356 = () => {
-    ({ db, sqlite } = makeTestDb());
-    svc = new SessionService(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_3455 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_3356();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const s = svc.create({ name: "Old" });
-    svc.update(s.id, { name: "New" });
-    __jait_capture(0, (svc.getById(s.id)!.name));
+    const manager = new SandboxManager(async (cmd) => {
+      if (cmd.includes("info")) {
+        return { output: "", exitCode: null, timedOut: true };
+      }
+      return { output: "unexpected", exitCode: 0, timedOut: false };
+    });
+
+    await __jait_rejected(0, manager.startLinuxDesktopSandbox({
+      projectRoot: testProject,
+      novncPort: 6084,
+      vncPort: 5904,
+    }));
   
 })();
 
 } finally {
-await __jait_hook_3455();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_191_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_390_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let audit: AuditWriter;
-const __jait_hook_5728 = () => {
-    ({ db, sqlite } = makeTestDb());
-    audit = new AuditWriter(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_5826 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_5728();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const id = audit.write({
-      sessionId: "sess-1",
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      toolName: "terminal.run",
-      inputs: { command: "ls" },
-      status: "executed",
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return { output: "jait-linux-desktop-sb-active", exitCode: 0, timedOut: false };
+      }
+      return { output: "ok", exitCode: 0, timedOut: false };
     });
-    __jait_captureType(0, (id));
-    __jait_capture(1, (id));
+
+    await __jait_rejected(0, manager.startLinuxDesktopSandbox({
+      projectRoot: testProject,
+      novncPort: 6085,
+      vncPort: 5905,
+    }));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("image inspect"))));
   
 })();
 
 } finally {
-await __jait_hook_5826();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_204_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_408_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let audit: AuditWriter;
-const __jait_hook_5728 = () => {
-    ({ db, sqlite } = makeTestDb());
-    audit = new AuditWriter(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_5826 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_5728();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const actionId = uuidv7();
-    audit.write({
-      actionId,
-      actionType: "tool_call",
-      status: "executed",
+    const commands: string[][] = [];
+    const now = Date.now();
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      if (cmd.includes("ps")) {
+        return {
+          output: [
+            `jait-linux-desktop-sb-old\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
+            `jait-linux-desktop-sb-active\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now - 2 * 60 * 60 * 1000}`,
+            `jait-linux-desktop-sb-fresh\tignored\tjait.kind=linux-desktop-sandbox,jait.createdAt=${now}`,
+          ].join("\n"),
+          exitCode: 0,
+          timedOut: false,
+        };
+      }
+      return { output: "removed", exitCode: 0, timedOut: false };
     });
-    __jait_capture(0, (audit.hasAction(actionId)));
-    __jait_capture(1, (audit.hasAction("nonexistent")));
+
+    const stopped = await manager.cleanupLinuxDesktopSandboxes({
+      maxAgeMs: 60 * 60 * 1000,
+      excludeNames: ["jait-linux-desktop-sb-active"],
+    });
+
+    __jait_capture(0, (stopped));
+    __jait_capture(1, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-old"))));
+    __jait_capture(2, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-active"))));
+    __jait_capture(3, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-fresh"))));
   
 })();
 
 } finally {
-await __jait_hook_5826();
+await __jait_hook_737();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_sprint2_test_ts_215_3": {
+case "tailstatic_packages_gateway_src_sprint13_test_ts_438_3": {
 
 
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
+const testProject = join(__jait_fixture_dir, "jait-test-sandbox");
+const baseContext = {
+  actionId: "a1",
+  sessionId: "s1",
+  projectRoot: testProject,
+  requestedBy: "test",
 };
 /*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let audit: AuditWriter;
-const __jait_hook_5728 = () => {
-    ({ db, sqlite } = makeTestDb());
-    audit = new AuditWriter(db);
+const __jait_hook_630 = () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({ ok: true } as Response);
   };
-const __jait_hook_5826 = () => {
-    sqlite?.close();
+const __jait_hook_737 = () => {
+    vi.restoreAllMocks();
   };
-await __jait_hook_964();
-await __jait_hook_5728();
+await __jait_hook_630();
 try {
 await (async()=>{
 
-    const actionId = uuidv7();
-    audit.write({ actionId, actionType: "tool_call", status: "executed" });
-    __jait_thrown(0, () =>
-      audit.write({ actionId, actionType: "tool_call", status: "executed" }));
+    const commands: string[][] = [];
+    const manager = new SandboxManager(async (cmd) => {
+      commands.push(cmd);
+      return { output: "removed", exitCode: 0, timedOut: false };
+    });
+
+    await manager.stopLinuxDesktopSandbox("jait-linux-desktop-sb-abc");
+
+    __jait_capture(0, (commands.some((cmd) => cmd.join(" ").includes("rm -f jait-linux-desktop-sb-abc"))));
   
 })();
 
 } finally {
-await __jait_hook_5826();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_223_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let audit: AuditWriter;
-const __jait_hook_5728 = () => {
-    ({ db, sqlite } = makeTestDb());
-    audit = new AuditWriter(db);
-  };
-const __jait_hook_5826 = () => {
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_5728();
-try {
-await (async()=>{
-
-    audit.write({
-      sessionId: "sess-A",
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      status: "executed",
-    });
-    audit.write({
-      sessionId: "sess-B",
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      status: "executed",
-    });
-    audit.write({
-      sessionId: "sess-A",
-      actionId: uuidv7(),
-      actionType: "message",
-      status: "executed",
-    });
-
-    const entriesA = audit.getBySession("sess-A");
-    __jait_capture(0, (entriesA.length));
-    for (const e of entriesA) {
-      __jait_capture(1, (e.sessionId));
-    }
-
-    const entriesB = audit.getBySession("sess-B");
-    __jait_capture(2, (entriesB.length));
-  
-})();
-
-} finally {
-await __jait_hook_5826();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_253_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let db: ReturnType<typeof makeTestDb>["db"];
-let sqlite: { close: () => void } | undefined;
-let audit: AuditWriter;
-const __jait_hook_5728 = () => {
-    ({ db, sqlite } = makeTestDb());
-    audit = new AuditWriter(db);
-  };
-const __jait_hook_5826 = () => {
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_5728();
-try {
-await (async()=>{
-
-    const actionId = uuidv7();
-    audit.write({
-      actionId,
-      actionType: "tool_call",
-      toolName: "file.write",
-      inputs: { path: "/tmp/test.txt", content: "hello" },
-      outputs: { bytesWritten: 5 },
-      status: "executed",
-    });
-
-    const entries = audit.getAll();
-    __jait_capture(0, (entries.length));
-    const entry = entries[0]!;
-    __jait_capture(1, (JSON.parse(entry.inputs!)));
-    __jait_capture(2, (JSON.parse(entry.outputs!)));
-  
-})();
-
-} finally {
-await __jait_hook_5826();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_302_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const res = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "My Project" },
-    });
-    __jait_capture(0, (res.statusCode));
-    const body = JSON.parse(res.body);
-    __jait_captureType(1, (body.id));
-    __jait_capture(2, (body.name));
-    __jait_capture(3, (body.status));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_316_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Session 1" },
-    });
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Session 2" },
-    });
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/sessions",
-    });
-    __jait_capture(0, (res.statusCode));
-    const body = JSON.parse(res.body);
-    __jait_capture(1, (body.sessions.length));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_340_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Active" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    // Archive it
-    await app.inject({
-      headers,
-      method: "POST",
-      url: `/api/sessions/${session.id}/archive`,
-    });
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/sessions?status=active",
-    });
-    const body = JSON.parse(res.body);
-    __jait_capture(0, (body.sessions.length));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_365_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Session 1" },
-    });
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Session 2" },
-    });
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Session 3" },
-    });
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/sessions?limit=2",
-    });
-    __jait_capture(0, (res.statusCode));
-    const body = JSON.parse(res.body);
-    __jait_capture(1, (body.sessions));
-    __jait_capture(2, (body.hasMore));
-    __jait_capture(3, (body.sessions[0].name));
-    __jait_capture(4, (body.sessions[1].name));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_398_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Find me" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: `/api/sessions/${session.id}`,
-    });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (JSON.parse(res.body).name));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_416_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/sessions/nonexistent-id",
-    });
-    __jait_capture(0, (res.statusCode));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_425_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Old name" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    const res = await app.inject({
-      headers,
-      method: "PATCH",
-      url: `/api/sessions/${session.id}`,
-      payload: { name: "New name" },
-    });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (JSON.parse(res.body).name));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_444_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Delete me" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    const res = await app.inject({
-      headers,
-      method: "DELETE",
-      url: `/api/sessions/${session.id}`,
-    });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (JSON.parse(res.body).ok));
-
-    // Session should be deleted status
-    const getRes = await app.inject({
-      headers,
-      method: "GET",
-      url: `/api/sessions/${session.id}`,
-    });
-    __jait_capture(2, (JSON.parse(getRes.body).status));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_470_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Audited" },
-    });
-
-    const entries = audit.getAll();
-    __jait_capture(0, (entries.length));
-    __jait_capture(1, (entries.some((e) => e.actionType === "session.create")));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_483_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "To delete" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    await app.inject({
-      headers,
-      method: "DELETE",
-      url: `/api/sessions/${session.id}`,
-    });
-
-    const entries = audit.getAll();
-    __jait_capture(0, (entries.some((e) => e.actionType === "session.delete")));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_503_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Active" },
-    });
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/tools/sessions.list",
-    });
-    __jait_capture(0, (res.statusCode));
-    const body = JSON.parse(res.body);
-    __jait_capture(1, (body.sessions.length));
-    __jait_capture(2, (body.sessions[0].name));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_522_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const createRes = await app.inject({
-      headers,
-      method: "POST",
-      url: "/api/sessions",
-      payload: { name: "Check status" },
-    });
-    const session = JSON.parse(createRes.body);
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: `/api/tools/sessions.status?sessionId=${session.id}`,
-    });
-    __jait_capture(0, (res.statusCode));
-    __jait_capture(1, (JSON.parse(res.body).name));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_540_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-let app: Awaited<ReturnType<typeof createServer>>;
-let svc: SessionService;
-let headers: { authorization: string };
-let audit: AuditWriter;
-let sqlite: { close: () => void } | undefined;
-const __jait_hook_8407 = async () => {
-    const testDb = makeTestDb();
-    sqlite = testDb.sqlite;
-    const userService = new UserService(testDb.db);
-    const user = userService.createUser("session-route-owner", "test-password");
-    headers = { authorization: "Bearer " + await signAuthToken({ id: user.id, username: user.username }, testConfig.jwtSecret) };
-    svc = new SessionService(testDb.db);
-    audit = new AuditWriter(testDb.db);
-    app = await createServer(testConfig, {
-      db: testDb.db, sqlite: testDb.sqlite, userService,
-      sessionService: svc,
-      audit,
-    });
-  };
-const __jait_hook_8994 = async () => {
-    await app.close();
-    sqlite?.close();
-  };
-await __jait_hook_964();
-await __jait_hook_8407();
-try {
-await (async()=>{
-
-    const res = await app.inject({
-      headers,
-      method: "GET",
-      url: "/api/tools/sessions.status",
-    });
-    __jait_capture(0, (res.statusCode));
-  
-})();
-
-} finally {
-await __jait_hook_8994();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_sprint2_test_ts_551_3": {
-
-
-const isBunRuntime = typeof (globalThis as { Bun?: unknown }).Bun !== "undefined";
-let DatabaseCtor: { new (path: string): { close: () => void; run: (sql: string) => void; query: (sql: string) => { all: () => unknown[] } } } | undefined;
-let drizzleFn: ((sqlite: unknown, opts: { schema: unknown }) => unknown) | undefined;
-let dbSchema: unknown;
-let migrateDatabaseFn: ((sqlite: unknown) => void) | undefined;
-function makeTestDb() {
-  if (!DatabaseCtor || !drizzleFn || !migrateDatabaseFn || !dbSchema) {
-    throw new Error("Bun DB test dependencies are not loaded");
-  }
-  const sqlite = new DatabaseCtor(":memory:");
-  migrateDatabaseFn(sqlite);
-  const db = drizzleFn(sqlite, { schema: dbSchema });
-  return { db, sqlite };
-}
-const testConfig = {
-  ...loadConfig(),
-  port: 0,
-  wsPort: 0,
-  logLevel: "silent",
-  nodeEnv: "test",
-};
-const __jait_hook_964 = async () => {
-  if (!isBunRuntime) return;
-  ({ Database: DatabaseCtor } = await import("bun:sqlite"));
-  ({ drizzle: drizzleFn } = await import(Bun.resolveSync("drizzle-orm/bun-sqlite", __jait_original_dir)));
-  dbSchema = await import("../../../../packages/gateway/src/db/schema.js");
-  ({ migrateDatabase: migrateDatabaseFn } = await import("../../../../packages/gateway/src/db/connection.js"));
-};
-/*__jait_scope_open__*/{
-await __jait_hook_964();
-try {
-await (async()=>{
-
-    const { db, sqlite } = makeTestDb();
-    const sessionSvc = new SessionService(db);
-    const audit = new AuditWriter(db);
-
-    const sessA = sessionSvc.create({ name: "Project A" });
-    const sessB = sessionSvc.create({ name: "Project B" });
-
-    // Log tool calls to session A
-    audit.write({
-      sessionId: sessA.id,
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      toolName: "terminal.run",
-      inputs: { command: "npm install" },
-      status: "executed",
-    });
-    audit.write({
-      sessionId: sessA.id,
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      toolName: "file.write",
-      inputs: { path: "index.ts" },
-      status: "executed",
-    });
-
-    // Log tool call to session B
-    audit.write({
-      sessionId: sessB.id,
-      actionId: uuidv7(),
-      actionType: "tool_call",
-      toolName: "browser.navigate",
-      inputs: { url: "https://example.com" },
-      status: "executed",
-    });
-
-    // Verify isolation
-    const entriesA = audit.getBySession(sessA.id);
-    const entriesB = audit.getBySession(sessB.id);
-
-    __jait_capture(0, (entriesA.length));
-    __jait_capture(1, (entriesB.length));
-
-    // No cross-contamination
-    __jait_capture(2, (entriesA.every((e) => e.sessionId === sessA.id)));
-    __jait_capture(3, (entriesB.every((e) => e.sessionId === sessB.id)));
-    __jait_capture(4, (entriesB[0]!.toolName));
-
-    sqlite?.close();
-  
-})();
-
-} finally {
-
+await __jait_hook_737();
 }
 }
 

@@ -1,12 +1,10 @@
-// Translated fixture from packages/gateway/src/tools/cron-tools.test.ts; expected literals are in tail_static.rs.
-import type { SchedulerService } from "../../../../packages/gateway/src/scheduler/service.js";
-import { createCronAddTool, createCronListTool, createCronRemoveTool, createCronUpdateTool } from "../../../../packages/gateway/src/tools/cron-tools.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/core/todo.test.ts; expected literals are in tail_static.rs.
+import { clearSessionTodos, createTodoTool, getSessionTodos } from "../../../../packages/gateway/src/tools/core/todo.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/cron-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/core/todo.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -40,228 +38,54 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_tools_core_todo_test_ts_6_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
+const context = { sessionId: "todo-tests", actionId: "todo-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_254 = () => { clearSessionTodos(context.sessionId); clearSessionTodos("other-session"); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    __jait_capture(0, (await createCronAddTool(f.service).execute({ name: "Inventory", cron: "0 8 * * *", toolName: " file_list " }, context)));
-    __jait_capture(1, (f.scheduler.create.mock.calls));
+    const tool = createTodoTool();
+    const item = { id: 1, title: "Verify browser actions", status: "in-progress" as const };
+    await tool.execute({ todoList: [item] }, context);
+    __jait_capture(0, (getSessionTodos(context.sessionId)), ([item]));
+    __jait_capture(1, (getSessionTodos("other-session")));
+    const completed = { ...item, status: "completed" as const };
+    __jait_capture(2, (await tool.execute({ todoList: [completed] }, context)), ({ ok: true, message: "Todo list updated (1/1 done).", data: { items: [completed] } }));
+    await tool.execute({ todoList: [] }, context);
+    __jait_capture(3, (getSessionTodos(context.sessionId)));
   
 })();
 
 } finally {
-
+await __jait_hook_254();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_25_3": {
+case "tailstatic_packages_gateway_src_tools_core_todo_test_ts_17_3": {
 
 
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
+const context = { sessionId: "todo-tests", actionId: "todo-action", projectRoot: "/project", requestedBy: "test" };
+const __jait_hook_254 = () => { clearSessionTodos(context.sessionId); clearSessionTodos("other-session"); };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const f = fixture();
-    f.scheduler.create.mockImplementation(() => { throw new Error("Invalid cron expression"); });
-    await __jait_rejected(0, createCronAddTool(f.service).execute({ name: "Inventory", cron: "invalid", toolName: "file.list" }, context));
+    const item = { id: 1, title: "Verify browser actions", status: "in-progress" as const };
+    await createTodoTool().execute({ todoList: [item] }, context);
+    item.title = "Caller changed this";
+    __jait_capture(0, (getSessionTodos(context.sessionId)[0]!.title));
   
 })();
 
 } finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_32_3": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    const result = await createCronListTool(f.service).execute({}, context);
-    __jait_capture(0, (f.scheduler.list.mock.calls));
-    __jait_capture(1, (result.message));
-    __jait_capture(2, (result.data), ({ jobs: f.scheduler.list.mock.results[0]!.value }));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each0": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const removed = true;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.scheduler.remove.mockReturnValue(removed);
-    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
-    __jait_capture(1, (f.scheduler.remove.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_41_3_each1": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-/*__jait_scope_open__*/{
-const removed = false;
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.scheduler.remove.mockReturnValue(removed);
-    __jait_capture(0, (await createCronRemoveTool(f.service).execute({ id: "job-1" }, context)), ({ ok: removed, data: { removed } }));
-    __jait_capture(1, (f.scheduler.remove.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_49_3": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    __jait_capture(0, ((await createCronUpdateTool(f.service).execute({ id: "job-1", enabled: false }, context)).ok));
-    __jait_capture(1, (f.scheduler.update.mock.calls));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_tools_cron_tools_test_ts_54_3": {
-
-
-const context = { sessionId: "cron-tests", actionId: "cron-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
-function fixture() {
-  const scheduler = {
-    create: vi.fn().mockReturnValue({ id: "job-1" }),
-    list: vi.fn().mockReturnValue([{ id: "job-1", name: "Inventory", cron: "0 8 * * *", toolName: "file.list", enabled: false }]),
-    remove: vi.fn().mockReturnValue(true),
-    update: vi.fn().mockReturnValue({ id: "job-1", enabled: false }),
-  };
-  return { scheduler, service: scheduler as unknown as SchedulerService };
-}
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const f = fixture();
-    f.scheduler.update.mockReturnValue(undefined as never);
-    __jait_capture(0, (await createCronUpdateTool(f.service).execute({ id: "foreign-job" }, context)));
-  
-})();
-
-} finally {
-
+await __jait_hook_254();
 }
 }
 

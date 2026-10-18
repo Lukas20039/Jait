@@ -1,20 +1,16 @@
-// Translated fixture from packages/gateway/src/tools/swarm-stream-repro.test.ts; expected literals are in tail_static.rs.
-import { EventEmitter } from "node:events";
-import { runAgentLoop, toolDefsToSchemas, type AgentLoopEvent } from "../../../../packages/gateway/src/tools/agent-loop.js";
-import { runAcpSpecialistTurn } from "../../../../packages/gateway/src/tools/agent-acp-runner.js";
-import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
-import type {
-  CliProviderAdapter,
-  ProviderEvent,
-  ProviderSession,
-  StartSessionOptions,
-} from "../../../../packages/gateway/src/providers/contracts.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/tools/swarm-mailbox.test.ts; expected literals are in tail_static.rs.
+import {
+  createSwarmRound,
+  endSwarmRound,
+  getSwarmParticipantCount,
+  peekSwarmMessages,
+  postSwarmMessage,
+} from "../../../../packages/gateway/src/tools/swarm-mailbox.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/swarm-stream-repro.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/swarm-mailbox.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -48,158 +44,105 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_swarm_stream_repro_test_ts_82_3": {
+case "tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_11_3": {
 
 
-class FakeAcpProvider implements CliProviderAdapter {
-  readonly id = "claude-code";
-  readonly info = {
-    id: "claude-code",
-    name: "Claude Code",
-    description: "",
-    available: true,
-    modes: ["full-access", "supervised"] as const,
-    auth: { login: false, logout: false, deviceCode: false },
-  };
-  readonly emitter = new EventEmitter();
-  startedSessions: StartSessionOptions[] = [];
-  sentTurns: Array<{ sessionId: string; message: string }> = [];
-
-  async checkAvailability(): Promise<boolean> {
-    return true;
-  }
-  async startSession(options: StartSessionOptions): Promise<ProviderSession> {
-    this.startedSessions.push(options);
-    return { id: `sess-${this.startedSessions.length}`, providerId: this.id, threadId: options.threadId, status: "running" };
-  }
-  async sendTurn(sessionId: string, message: string): Promise<void> {
-    this.sentTurns.push({ sessionId, message });
-    // Stream the specialist's prose live, token by token.
-    this.emitter.emit("event", { type: "token", sessionId, content: "specialist live prose" } satisfies ProviderEvent);
-    this.emitter.emit("event", { type: "token", sessionId, content: " more content" } satisfies ProviderEvent);
-    this.emitter.emit("event", { type: "message", sessionId, role: "assistant", content: "specialist live prose more content" } satisfies ProviderEvent);
-  }
-  async interruptTurn(): Promise<void> {}
-  async respondToApproval(): Promise<void> {}
-  async stopSession(): Promise<void> {}
-  onEvent(handler: (event: ProviderEvent) => void): () => void {
-    this.emitter.on("event", handler);
-    return () => this.emitter.off("event", handler);
-  }
-}
-const coordinatorDelegateStream = [
-  'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-agent-1","type":"function","function":{"name":"agent_spawn","arguments":"{\\"prompt\\":\\"investigate the bug\\",\\"description\\":\\"Specialist Investigator\\"}"}}]}}]}\n\n',
-  'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}\n\n',
-  "data: [DONE]\n\n",
-];
-const coordinatorFinalStream = [
-  'data: {"choices":[{"delta":{"content":"Swarm complete."},"finish_reason":null}]}\n\n',
-  'data: {"choices":[{"delta":{},"finish_reason":"stop"}]}\n\n',
-  "data: [DONE]\n\n",
-];
-const __jait_hook_3410 = () => {
-  vi.restoreAllMocks();
-};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    let fetchCalls = 0;
-    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
-      const chunks = fetchCalls++ === 0 ? coordinatorDelegateStream : coordinatorFinalStream;
-      const encoder = new TextEncoder();
-      const stream = new ReadableStream<Uint8Array>({
-        start(controller) {
-          for (const chunk of chunks) controller.enqueue(encoder.encode(chunk));
-          controller.close();
-        },
-      });
-      return new Response(stream, { status: 200 });
-    });
+    __jait_capture(0, (peekSwarmMessages("nope")));
+    __jait_capture(1, (getSwarmParticipantCount("nope")));
+    __jait_capture(2, (postSwarmMessage("nope", "a", "hello")));
+  
+})();
 
-    const events: AgentLoopEvent[] = [];
-    const registry = new ProviderRegistry();
-    registry.register(new FakeAcpProvider());
+} finally {
 
-    const result = await runAgentLoop(
-      {
-        llm: {
-          openaiApiKey: "test-key",
-          openaiBaseUrl: "https://llm.test",
-          openaiModel: "test-model",
-          contextWindow: 100_000,
-        },
-        history: [
-          { role: "system", content: "system" },
-          { role: "user", content: "investigate the bug" },
-        ],
-        // Build through the production builder: the provider alias → internal name
-        // inverse is derived from advertised schemas, never guessed.
-        toolSchemas: toolDefsToSchemas([
-          { name: "agent.spawn", description: "Spawn a specialist sub-agent", parameters: { type: "object", properties: {} } },
-        ]),
-        hasTools: true,
-        sessionId: "session-1",
-        abort: new AbortController(),
-        maxRounds: 2,
-        mode: "swarm",
-        onEvent: (event) => events.push(event),
-      },
-      async (name, args, sessionId, auth, _onChunk, _signal, onNestedEvent) => {
-        return runAcpSpecialistTurn({
-          providerRegistry: registry,
-          config: { host: "127.0.0.1", port: 8000 },
-          providerId: "claude-code",
-          userId: auth?.userId ?? "user-1",
-          sessionId,
-          subAgentId: "sub-1",
-          projectRoot: "/repo",
-          prompt: String((args as { prompt?: string }).prompt ?? ""),
-          onNestedEvent,
-        });
-      },
-    );
+}
+}
 
-    __jait_capture(0, (result.executedToolCalls));
-    __jait_capture(1, (result.executedToolCalls[0]!.tool));
+break;
+}
+case "tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_17_3": {
 
-    const types = events.map((e) => e.type);
 
-    // The coordinator announces swarm mode (the visible "swarm indication").
-    __jait_capture(2, (types));
+/*__jait_scope_open__*/{
 
-    // ── REGRESSION ────────────────────────────────────────────────────
-    // The specialist's prose must be streamed LIVE as `tool_output` events
-    // (channel=text) with the agent call id stamped on them — NOT withheld
-    // until the specialist's `tool_result`. If these events are absent (or
-    // keyed with an id no frontend tool card matches), the UI would show only
-    // the swarm indication and the content would only surface on reload.
-    const liveProseEvents = events.filter(
-      (e): e is Extract<AgentLoopEvent, { type: "tool_output" }> =>
-        e.type === "tool_output" && typeof e.content === "string" && e.content.includes("specialist live prose"),
-    );
-    __jait_capture(3, (liveProseEvents));
+try {
+await (async()=>{
 
-    // Each live prose event must carry the agent call id (so the frontend can
-    // attach it to the specialist's card) and must arrive before the
-    // specialist's final tool_result.
-    for (const ev of liveProseEvents) {
-      __jait_capture(4, (ev.call_id));
-    }
-    const agentResultIdx = events.findIndex(
-      (e) => e.type === "tool_result" && e.callId === "call-agent-1",
-    );
-    for (const ev of liveProseEvents) {
-      const proseIdx = events.indexOf(ev);
-      __jait_capture(5, (proseIdx));
-      __jait_capture(6, (proseIdx), (agentResultIdx === -1 ? events.length : agentResultIdx));
+    createSwarmRound("round-1", 3);
+    try {
+      postSwarmMessage("round-1", "Research Specialist", "found the root cause");
+      postSwarmMessage("round-1", "Fix Specialist", "applying the patch now");
+
+      const messages = peekSwarmMessages("round-1");
+      __jait_capture(0, (messages));
+      __jait_capture(1, (messages[0]));
+      __jait_capture(2, (messages[1]));
+      __jait_capture(3, (getSwarmParticipantCount("round-1")));
+    } finally {
+      endSwarmRound("round-1");
     }
   
 })();
 
 } finally {
-await __jait_hook_3410();
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_33_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    createSwarmRound("round-2", 2);
+    postSwarmMessage("round-2", "a", "note");
+    endSwarmRound("round-2");
+
+    __jait_capture(0, (peekSwarmMessages("round-2")));
+    __jait_capture(1, (getSwarmParticipantCount("round-2")));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_swarm_mailbox_test_ts_42_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    createSwarmRound("round-a", 2);
+    createSwarmRound("round-b", 2);
+    try {
+      postSwarmMessage("round-a", "x", "only in a");
+      __jait_capture(0, (peekSwarmMessages("round-b")));
+      __jait_capture(1, (peekSwarmMessages("round-a")));
+    } finally {
+      endSwarmRound("round-a");
+      endSwarmRound("round-b");
+    }
+  
+})();
+
+} finally {
+
 }
 }
 

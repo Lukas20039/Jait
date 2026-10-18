@@ -1,18 +1,19 @@
-// Translated fixture from packages/gateway/src/tools/sandbox-tools.test.ts; expected literals are in tail_static.rs.
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import type { SandboxManager } from "../../../../packages/gateway/src/security/sandbox-manager.js";
-import {
-  createLinuxDesktopSandboxStartTool,
-  createLinuxDesktopSandboxStopTool,
-  createWindowsSandboxStartTool,
-  createWindowsSandboxStopTool,
-} from "../../../../packages/gateway/src/tools/sandbox-tools.js";
+// Translated fixture from packages/gateway/src/tools/runtime-service-tools.test.ts; expected literals are in tail_static.rs.
+import type { VoiceService } from "../../../../packages/gateway/src/voice/service.js";
+import type { ChatTracesService } from "../../../../packages/gateway/src/services/chat-traces.js";
+import type { SessionSqlService } from "../../../../packages/gateway/src/services/session-sql.js";
+import type { MaintenanceService } from "../../../../packages/gateway/src/services/maintenance.js";
+import { createVoiceSpeakTool } from "../../../../packages/gateway/src/tools/voice-tools.js";
+import { createChatTracesTool } from "../../../../packages/gateway/src/tools/chat-traces-tools.js";
+import { createSessionSqlTool } from "../../../../packages/gateway/src/tools/session-sql-tools.js";
+import { createMaintenanceRunTool } from "../../../../packages/gateway/src/tools/maintenance-tools.js";
+import { createGatewayStatusTool } from "../../../../packages/gateway/src/tools/gateway-tools.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/tools/sandbox-tools.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/tools/runtime-service-tools.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -46,92 +47,18 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_52_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_14_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createWindowsSandboxStartTool(fakeManager({
-      startWindowsSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-windows-sb-test",
-          browserId: "jait-windows-sb-test",
-          rdpPort: 3390,
-          webViewerPort: 8007,
-          rdpUrl: "rdp://127.0.0.1:3390",
-          webViewerUrl: "http://127.0.0.1:8007/",
-          status: "running",
-          version: "10",
-          storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-          sshPort: 2223,
-          sshUsername: "Docker",
-          sshPassword: "admin",
-        };
-      },
-    }));
-
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
-    __jait_capture(3, (tool.parameters.properties));
-    __jait_capture(4, (tool.parameters.properties));
-
-    const result = await tool.execute(
-      {
-        ramSize: "8G",
-        cpuCores: 8,
-        diskSize: "128G",
-        windowsVersion: "10",
-        rdpPort: 3390,
-        webViewerPort: 8007,
-        waitForWebViewer: true,
-      },
-      baseContext,
-    );
-
-    __jait_capture(5, (calls));
-    __jait_capture(6, (result.ok));
-    __jait_capture(7, (result.data));
+    const service = { speak: vi.fn().mockReturnValue({ mimeType: "audio/wav", audioBase64: "YXVkaW8=" }) };
+    __jait_capture(0, (await createVoiceSpeakTool(service as unknown as VoiceService).execute({ text: "  Checks passed  " }, context)));
+    __jait_capture(1, (service.speak.mock.calls), ([{ sessionId: context.sessionId, text: "Checks passed" }]));
   
 })();
 
@@ -142,55 +69,108 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_116_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_19_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const tool = createWindowsSandboxStartTool(fakeManager());
-    const result = await tool.execute({}, baseContext);
+    const service = { speak: vi.fn() };
+    __jait_capture(0, ((await createVoiceSpeakTool(service as unknown as VoiceService).execute({ text: " " }, context)).ok));
+    __jait_capture(1, (service.speak.mock.calls));
+  
+})();
 
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_26_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const traces = { found: true, counts: { messages: 2, threads: 1, threadActivities: 3 }, threads: [{ status: "completed", kind: "agent", title: "Browser checks" }] };
+    const service = { traces: vi.fn().mockReturnValue(traces) };
+    __jait_capture(0, (await createChatTracesTool(service as unknown as ChatTracesService).execute({ chatId: "chat-1", messageLimit: 5, includeThinking: false }, context)), ({ ok: true, data: traces }));
+    __jait_capture(1, (service.traces.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_32_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const service = { traces: vi.fn().mockReturnValue({ found: false }) };
+    __jait_capture(0, (await createChatTracesTool(service as unknown as ChatTracesService).execute({ chatId: "foreign-chat" }, context)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_38_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const service = { schema: vi.fn().mockReturnValue({ ok: true, data: { tables: ["sessions"] } }), query: vi.fn() };
+    __jait_capture(0, (await createSessionSqlTool(service as unknown as SessionSqlService).execute({ mode: "schema" }, context)));
+    __jait_capture(1, (service.query.mock.calls));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_43_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const service = { query: vi.fn().mockReturnValue({ ok: true, data: { rowCount: 5, truncated: true, rows: [] } }) };
+    const result = await createSessionSqlTool(service as unknown as SessionSqlService).execute({ sql: "SELECT id FROM sessions", max_rows: 5 }, context);
     __jait_capture(0, (result.ok));
     __jait_capture(1, (result.message));
-    __jait_capture(2, (result.message));
+    __jait_capture(2, (service.query.mock.calls));
   
 })();
 
@@ -201,67 +181,17 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_127_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_50_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<{ name: string; options: unknown }> = [];
-    const tool = createWindowsSandboxStopTool(fakeManager({
-      stopWindowsSandbox: async (name, options) => {
-        calls.push({ name, options });
-      },
-    }));
-
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.required));
-
-    const result = await tool.execute(
-      { containerName: "jait-windows-sb-test", removeStorage: true },
-      baseContext,
-    );
-
-    __jait_capture(2, (calls));
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, (result.data));
+    const service = { query: vi.fn().mockReturnValue({ ok: false, message: "Read-only SELECT required", error: "unsafe_query" }) };
+    __jait_capture(0, (await createSessionSqlTool(service as unknown as SessionSqlService).execute({ sql: "DELETE FROM sessions" }, context)));
   
 })();
 
@@ -272,97 +202,18 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_152_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_54_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
-      startLinuxDesktopSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-linux-desktop-sb-test",
-          novncUrl: "http://127.0.0.1:6081/vnc_lite.html",
-          vncPort: 5901,
-          novncPort: 6081,
-          cdpUrl: "http://127.0.0.1:9224",
-        };
-      },
-    }));
-
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.properties));
-    __jait_capture(2, (tool.parameters.properties));
-    __jait_capture(3, (tool.parameters.properties));
-
-    const result = await tool.execute(
-      {
-        screenRes: "1280x720x24",
-        mountMode: "read-write",
-        networkEnabled: false,
-        novncPort: 6081,
-        vncPort: 5901,
-        cdpPort: 9224,
-        waitForCdp: false,
-        hostGateway: true,
-      },
-      baseContext,
-    );
-
-    __jait_capture(4, (calls), ([
-      {
-        projectRoot: testProject,
-        screenRes: "1280x720x24",
-        mountMode: "read-write",
-        networkEnabled: false,
-        novncPort: 6081,
-        vncPort: 5901,
-        cdpPort: 9224,
-        waitForCdp: false,
-        hostGateway: true,
-      },
-    ]));
-    __jait_capture(5, (result.ok));
-    __jait_capture(6, (result.data));
+    const service = { query: vi.fn() };
+    __jait_capture(0, ((await createSessionSqlTool(service as unknown as SessionSqlService).execute({}, context)).ok));
+    __jait_capture(1, (service.query.mock.calls));
   
 })();
 
@@ -373,65 +224,22 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_206_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_61_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: Array<Record<string, unknown>> = [];
-    const tool = createLinuxDesktopSandboxStartTool(fakeManager({
-      startLinuxDesktopSandbox: async (options) => {
-        calls.push(options as unknown as Record<string, unknown>);
-        return {
-          containerName: "jait-linux-desktop-sb-test",
-          novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-          vncPort: 5900,
-          novncPort: 6080,
-        };
-      },
-    }));
-
-    await tool.execute({}, baseContext);
-
-    __jait_capture(0, (calls[0]));
+    const service = { runForRepo: vi.fn().mockResolvedValue({
+      id: "run-1", repoName: "Workbench", allPassed: false, planId: "plan-1",
+      checks: [{ passed: false, name: "typecheck", durationMs: 20 }],
+    }) };
+    const result = await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({ repoId: "repo-1" }, context);
+    __jait_capture(0, (result));
+    __jait_capture(1, (service.runForRepo.mock.calls), (["repo-1",context.actionId]));
   
 })();
 
@@ -442,67 +250,66 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_sandbox_tools_test_ts_227_3": {
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_70_3": {
 
 
-const testProject = join(__jait_fixture_dir, "jait-test-sandbox-tools");
-const baseContext = {
-  actionId: "a1",
-  sessionId: "s1",
-  projectRoot: testProject,
-  requestedBy: "test",
-};
-function fakeManager(overrides: Partial<SandboxManager> = {}): SandboxManager {
-  return {
-    startWindowsSandbox: async () => ({
-      containerName: "jait-windows-sb-test",
-      browserId: "jait-windows-sb-test",
-      rdpPort: 3389,
-      webViewerPort: 8006,
-      rdpUrl: "rdp://127.0.0.1:3389",
-      webViewerUrl: "http://127.0.0.1:8006/",
-      status: "starting",
-      version: "11",
-      storageDir: "/tmp/jait-windows-sandbox/jait-windows-sb-test",
-      sshPort: 2222,
-      sshUsername: "Docker",
-      sshPassword: "admin",
-    }),
-    stopWindowsSandbox: async () => {},
-    startLinuxDesktopSandbox: async () => ({
-      containerName: "jait-linux-desktop-sb-test",
-      novncUrl: "http://127.0.0.1:6080/vnc_lite.html",
-      vncPort: 5900,
-      novncPort: 6080,
-      cdpUrl: "http://127.0.0.1:9223",
-    }),
-    stopLinuxDesktopSandbox: async () => {},
-    ...overrides,
-  } as unknown as SandboxManager;
-}
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const calls: string[] = [];
-    const tool = createLinuxDesktopSandboxStopTool(fakeManager({
-      stopLinuxDesktopSandbox: async (name) => {
-        calls.push(name);
-      },
-    }));
+    const service = { runAll: vi.fn().mockResolvedValue([]) };
+    __jait_capture(0, (await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({}, context)));
+  
+})();
 
-    __jait_capture(0, (tool.name));
-    __jait_capture(1, (tool.parameters.required));
+} finally {
 
-    const result = await tool.execute(
-      { containerName: "jait-linux-desktop-sb-test" },
-      baseContext,
-    );
+}
+}
 
-    __jait_capture(2, (calls));
-    __jait_capture(3, (result.ok));
-    __jait_capture(4, (result.data));
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_74_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const service = { runForRepo: vi.fn().mockRejectedValue(new Error("Execution node offline")) };
+    __jait_capture(0, (await createMaintenanceRunTool(service as unknown as MaintenanceService).execute({ repoId: "repo-1" }, context)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_runtime_service_tools_test_ts_80_3": {
+
+
+const context = { sessionId: "runtime-tests", actionId: "runtime-action", projectRoot: "/project", requestedBy: "test", userId: "owner-1" };
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const deps = {
+      sessionService: { list: vi.fn().mockReturnValue([{}, {}]) }, surfaceRegistry: { listSurfaces: () => [{}] },
+      ws: { clientCount: 3 }, startedAt: Date.now() - 5000,
+      scheduler: { list: () => [{ enabled: true }, { enabled: false }] },
+      hooks: { registeredEventTypes: () => ["session.created"], listenerCount: () => 1 },
+    };
+    const tool = createGatewayStatusTool(deps as unknown as Parameters<typeof createGatewayStatusTool>[0]);
+    __jait_capture(0, (await tool.execute({}, context)));
+    __jait_capture(1, (deps.sessionService.list.mock.calls));
   
 })();
 

@@ -1,11 +1,13 @@
-// Translated fixture from packages/gateway/src/services/subscription-usage-fetchers.test.ts; expected literals are in tail_static.rs.
-import { fetchOllamaSettingsUsage, fetchOpenCodeGoUsage, normalizeOllamaSession, parseOllamaSettingsUsage } from "../../../../packages/gateway/src/services/subscription-usage-fetchers.js";
-import { vi } from '../tailmock.ts';
+// Translated fixture from packages/gateway/src/services/static-asset-cache.test.ts; expected literals are in tail_static.rs.
+
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { resolve, join } from "node:path";
+import { registerStaticAssetCache } from "../../../../packages/gateway/src/services/static-asset-cache.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/subscription-usage-fetchers.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/static-asset-cache.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -39,197 +41,45 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_12_3": {
+case "tailstatic_packages_gateway_src_services_static_asset_cache_test_ts_7_1": {
 
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (parseOllamaSettingsUsage(settingsHtml)));
-    __jait_captureType(1, (parseOllamaSettingsUsage(settingsHtml.replace(/data-time="[^"]*"/g, 'data-time="invalid"')).limits.session?.resetsAt));
-  
+  const output = resolve(__jait_original_dir, "../../../../.jait/artifacts/static-cache-tests");
+  await mkdir(output, { recursive: true });
+  const directory = await mkdtemp(join(output, "cache-"));
+  const assets = join(directory, "assets");
+  await mkdir(assets);
+  const file = join(assets, "app-abcdefgh.js");
+  await writeFile(file, "cached asset");
+  const app = Fastify();
+  registerStaticAssetCache(app, directory);
+  app.get("/*", async () => "fallback");
+  try {
+    const first = await app.inject({ url: "/assets/app-abcdefgh.js" });
+    __jait_capture(0, (first.body));
+    __jait_capture(1, (first.headers["cache-control"]));
+    await rm(file);
+    const second = await app.inject({ url: "/assets/app-abcdefgh.js?version=1" });
+    __jait_capture(2, (second.body));
+    __jait_capture(3, ((await app.inject({ url: "/assets/missing-abcdefgh.js" })).body));
+    __jait_capture(4, ((await app.inject({ url: "/index.html" })).body));
+    __jait_capture(5, ((await app.inject({ url: "/assets/app-abcdefgh.js", headers: { range: "bytes=0-1" } })).body));
+  } finally {
+    await app.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+
 })();
 
 } finally {
-await __jait_hook_598();
-}
-}
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_19_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    for (const html of ["<form>Sign in</form>", settingsHtml.replace("81%", "bad"), settingsHtml.replace("42.5%", "142.5%"), `<script>${settingsHtml}</script>`, `<!--${settingsHtml}-->`]) {
-      __jait_thrown(0, () => parseOllamaSettingsUsage(html));
-    }
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
 }
 
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_24_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (normalizeOllamaSession(" __Secure-session=value ")));
-    for (const value of ["", "a;b=c", "a\r\nX: test", "a b", "x".repeat(4097)]) __jait_thrown(1, () => normalizeOllamaSession(value));
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_28_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const mock = vi.fn().mockResolvedValue(new Response(settingsHtml)); vi.stubGlobal("fetch", mock);
-    __jait_capture(0, ((await fetchOllamaSettingsUsage("private-session")).limits.weekly?.usage));
-    __jait_capture(1, (mock.mock.calls));
-    mock.mockResolvedValue(new Response("private-provider-details", { status: 303, headers: { location: "https://evil.invalid" } }));
-    await __jait_rejected(2, fetchOllamaSettingsUsage("private-session"));
-    __jait_capture(3, (mock.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_36_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("x".repeat(2_000_001))));
-    await __jait_rejected(0, fetchOllamaSettingsUsage("session"));
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_40_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const body = { usage: { rolling: window, weekly: { ...window, percent: 90 }, monthly: { ...window, status: "rate-limited", percent: 100 } } };
-    const mock = vi.fn().mockResolvedValue(Response.json(body)); vi.stubGlobal("fetch", mock);
-    __jait_capture(0, (await fetchOpenCodeGoUsage("go-key")), (body));
-    __jait_capture(1, (mock.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_subscription_usage_fetchers_test_ts_46_3": {
-
-
-const settingsHtml = `<div data-usage-meter><div data-usage-track aria-label="Session usage: 42.5%"></div></div>
-  <div data-time="2026-10-09T12:00:00Z"></div>
-  <div data-usage-meter><div aria-label='Weekly usage: 81%' data-usage-track></div></div>
-  <div data-time="2026-10-15T10:00:00Z"></div>`;
-const window = { status: "ok", percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
-const __jait_hook_598 = () => vi.unstubAllGlobals();
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const mock = vi.fn(); vi.stubGlobal("fetch", mock);
-    for (const body of [null, {}, { usage: { rolling: window } }, { usage: { rolling: { ...window, percent: "20" }, weekly: window, monthly: window } }]) {
-      mock.mockResolvedValue(Response.json(body)); await __jait_rejected(0, fetchOpenCodeGoUsage("key"));
-    }
-    for (const [status, message] of [[401, "rejected"], [403, "subscription"], [500, "failed"]] as const) {
-      mock.mockResolvedValue(new Response("private-provider-details", { status })); await __jait_rejected(1, fetchOpenCodeGoUsage("key"), (message));
-    }
-  
-})();
-
-} finally {
-await __jait_hook_598();
-}
-}
 
 break;
 }

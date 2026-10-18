@@ -277,6 +277,22 @@ pub fn run(
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
+    if name.starts_with("tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_")
+        && let Some(cache) = std::env::var_os("JAIT_TEST_TRIVY_CACHE")
+    {
+        let cache = Path::new(&cache)
+            .canonicalize()
+            .expect("existing scanner fixture cache");
+        let boundary = root
+            .join(".jait")
+            .canonicalize()
+            .expect("project artifact boundary");
+        assert!(
+            cache.starts_with(boundary),
+            "scanner fixture cache must stay inside the project .jait directory"
+        );
+        command.env("JAIT_TEST_TRIVY_CACHE", cache);
+    }
     if let Some(value) = std::env::var_os("SYSTEMROOT") {
         command.env("SYSTEMROOT", value);
     }

@@ -1,10 +1,13 @@
-// Translated fixture from packages/gateway/src/skills/index.test.ts; expected literals are in tail_static.rs.
-import { parseFrontmatter } from "../../../../packages/gateway/src/skills/index.js";
+// Translated fixture from packages/gateway/src/services/users-password.test.ts; expected literals are in tail_static.rs.
+import { scryptSync } from "node:crypto";
+import { openDatabase, migrateDatabase, type SqliteDatabase } from "../../../../packages/gateway/src/db/connection.js";
+import { UserService } from "../../../../packages/gateway/src/services/users.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/skills/index.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/users-password.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -38,83 +41,322 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_skills_index_test_ts_5_3": {
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_27_3": {
 
 
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
 /*__jait_scope_open__*/{
-
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+await __jait_hook_486();
 try {
 await (async()=>{
 
-    const fm = parseFrontmatter(["---", "name: Word / DOCX", "description: Handle DOCX files.", "---", "body"].join("\n"));
-    __jait_capture(0, (fm.name));
-    __jait_capture(1, (fm.description));
+    __jait_capture(0, (users.verifyCredentials(" ALICE ", "correct password 🦀")?.id));
+    __jait_captureType(1, (users.verifyCredentials("alice", "wrong")));
+    __jait_captureType(2, (users.verifyCredentials("missing", "correct password 🦀")));
   
 })();
 
 } finally {
-
+await __jait_hook_905();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_skills_index_test_ts_11_3": {
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each0": {
 
 
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
 /*__jait_scope_open__*/{
-
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = "zz";
+await __jait_hook_486();
 try {
 await (async()=>{
 
-    const content = [
-      "---",
-      "name: coding-agent",
-      'description: "Delegate coding work to background workers."',
-      "metadata:",
-      "  openclaw:",
-      "    requires:",
-      '      anyBins: ["claude", "codex"]',
-      "    install:",
-      "      - id: node-claude",
-      "        kind: node",
-      "        package: \"@anthropic-ai/claude-code\"",
-      '        bins: ["claude"]',
-      "        label: Install Claude Code CLI",
-      "---",
-      "body",
-    ].join("\n");
-
-    const fm = parseFrontmatter(content);
-    __jait_capture(0, (fm.name));
-    __jait_capture(1, (fm.requires?.anyBins));
-    __jait_capture(2, (fm.install?.[0]));
-  
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
 })();
 
 } finally {
-
+await __jait_hook_905();
+}
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_skills_index_test_ts_42_3": {
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each1": {
 
 
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
 /*__jait_scope_open__*/{
-
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = "z".repeat(128);
+await __jait_hook_486();
 try {
 await (async()=>{
 
-    const fm = parseFrontmatter(["---", "name: Plain", "description: A skill", "  : broken", "---"].join("\n"));
-    __jait_capture(0, (fm.name));
-    __jait_capture(1, (fm.description));
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
+})();
+
+} finally {
+await __jait_hook_905();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each2": {
+
+
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
+/*__jait_scope_open__*/{
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = "00zz";
+await __jait_hook_486();
+try {
+await (async()=>{
+
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
+})();
+
+} finally {
+await __jait_hook_905();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each3": {
+
+
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
+/*__jait_scope_open__*/{
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = digest.slice(0, -2);
+await __jait_hook_486();
+try {
+await (async()=>{
+
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
+})();
+
+} finally {
+await __jait_hook_905();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each4": {
+
+
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
+/*__jait_scope_open__*/{
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = digest + "a";
+await __jait_hook_486();
+try {
+await (async()=>{
+
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
+})();
+
+} finally {
+await __jait_hook_905();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_33_3_each5": {
+
+
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
+/*__jait_scope_open__*/{
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+/*__jait_scope_open__*/{
+const corrupt = digest + "aa";
+await __jait_hook_486();
+try {
+await (async()=>{
+
+      sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${corrupt}`);
+      __jait_captureType(0, (users.verifyCredentials("alice", "correct password 🦀")));
+      __jait_captureType(1, (users.verifyCredentials("alice", "arbitrary password")));
+    
+})();
+
+} finally {
+await __jait_hook_905();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_users_password_test_ts_42_3": {
+
+
+const salt = "0123456789abcdef0123456789abcdef";
+const digest = scryptSync("correct password 🦀", salt, 64).toString("hex");
+/*__jait_scope_open__*/{
+let sqlite: SqliteDatabase;
+let users: UserService;
+const __jait_hook_486 = async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    users = new UserService(opened.db);
+    sqlite.prepare("INSERT INTO users(id,username,password_hash,created_at,updated_at) VALUES(?,?,?,?,?)")
+      .run("owner", "alice", `scrypt$${salt}$${digest}`, "now", "now");
+  };
+const __jait_hook_905 = () => {
+    sqlite.close();
+    vi.restoreAllMocks();
+  };
+await __jait_hook_486();
+try {
+await (async()=>{
+
+    sqlite.prepare("UPDATE users SET password_hash=? WHERE id='owner'").run(`scrypt$${salt}$${digest.toUpperCase()}`);
+    __jait_capture(0, (users.verifyCredentials("alice", "correct password 🦀")?.id));
   
 })();
 
 } finally {
-
+await __jait_hook_905();
 }
 }
 

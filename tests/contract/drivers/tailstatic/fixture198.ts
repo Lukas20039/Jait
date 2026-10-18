@@ -1,16 +1,17 @@
-// Translated fixture from packages/gateway/src/services/provider-quota-fetchers.test.ts; expected literals are in tail_static.rs.
-import {
-  fetchOllamaUsageFrom,
-  isOllamaUsageResponse,
-  probeOllamaAccount,
-  describeOllamaUsageGap,
-} from "../../../../packages/gateway/src/services/provider-quota-fetchers.js";
+// Translated fixture from packages/gateway/src/services/provider-accounts.test.ts; expected literals are in tail_static.rs.
+import { ProviderUsageService } from "../../../../packages/gateway/src/services/provider-usage.js";
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { migrateDatabase, openDatabase } from "../../../../packages/gateway/src/db/index.js";
+import { ProviderRegistry } from "../../../../packages/gateway/src/providers/registry.js";
+import { ProviderAccountService } from "../../../../packages/gateway/src/services/provider-accounts.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-quota-fetchers.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-accounts.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -44,408 +45,288 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_18_3": {
 
 
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isOllamaUsageResponse({ limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } })));
+    const { db, sqlite } = await openDatabase(":memory:"); migrateDatabase(sqlite);
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-go-usage-")); roots.push(root);
+    const usage = new ProviderUsageService(db);
+    const service = new ProviderAccountService(db, new ProviderRegistry(), [{ id: "opencode", name: "OpenCode", description: "Test", command: process.execPath }], root, usage);
+    const own = service.create("user-1", "opencode", "Own");
+    const other = service.create("user-2", "opencode", "Other");
+    service.connectOpenCodeGo(own.id, "user-1", "own-key");
+    service.connectOpenCodeGo(other.id, "user-2", "other-key");
+    const window = { status: "ok", percent: 40, resetsAt: "2026-10-09T12:00:00Z" };
+    const mock = vi.fn().mockResolvedValue(Response.json({ usage: { rolling: window, weekly: window, monthly: window } }));
+    vi.stubGlobal("fetch", mock);
+    __jait_capture(0, (await service.refreshUsage("user-1")));
+    __jait_capture(1, (mock.mock.calls));
+    __jait_capture(2, (mock.mock.calls[0]?.[1].headers.Authorization));
+    __jait_capture(3, (usage.listForUser([own.id])));
+    __jait_capture(4, (usage.listForUser([other.id])));
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_37_3": {
 
 
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
 
 try {
 await (async()=>{
 
-    __jait_capture(0, (isOllamaUsageResponse({
-        limits: {
-          session: { usage: 0.2, models: [] },
-          weekly: { usage: 0.4, models: [] },
-        },
-      })));
-    __jait_capture(1, (isOllamaUsageResponse({
-        limits: { monthly: { usage: 0.6, models: [] } },
-      })));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+      args: [],
+    }], root);
+
+    const personal = service.create("user-1", "codex", "Personal");
+    const work = service.create("user-1", "codex", "Work");
+
+    __jait_capture(0, (personal.id), (work.id));
+    __jait_capture(1, (service.list("user-1").map((account) => account.label).sort()));
+    __jait_capture(2, (registry.getForUser(personal.id, "user-1")?.providerType));
+    __jait_captureType(3, (registry.getForUser(personal.id, "user-2")));
+
+    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
+    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
+    __jait_capture(4, (personalAdapter.config.env?.CODEX_HOME), (join(root, personal.id)));
+    __jait_capture(5, (workAdapter.config.env?.CODEX_HOME), (join(root, work.id)));
+    __jait_capture(6, (personalAdapter.config.env?.CODEX_HOME), (workAdapter.config.env?.CODEX_HOME));
+    __jait_capture(7, (existsSync(join(root, personal.id))));
+
+    sqlite.close();
   
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_69_3": {
 
 
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    const activity = {
-      range: "7d", scope: "self", granularity: "day",
-      from: "2026-09-30T00:00:00Z", until: "2026-10-07T11:29:42Z",
-      totals: { request_count: 10388 },
-      buckets: [{ from: "2026-09-30T00:00:00Z", until: "2026-10-01T00:00:00Z", request_count: 81 }],
-    };
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(activity)));
-    await __jait_captureResolved(0, (fetchOllamaUsageFrom("https://ollama.com", "test-key")), (activity));
-    __jait_capture(1, (isOllamaUsageResponse(activity)));
-    for (const count of [-1, "10388", null, Infinity]) {
-      __jait_capture(2, (isOllamaUsageResponse({ ...activity, totals: { request_count: count } })));
-    }
-    __jait_capture(3, (isOllamaUsageResponse({ ...activity, from: "invalid" })));
-    __jait_capture(4, (isOllamaUsageResponse({ ...activity, buckets: [{}] })));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (isOllamaUsageResponse({ limits: {} })));
-    __jait_capture(1, (isOllamaUsageResponse({
-        limits: { monthly: { usage: "60%", models: [] } },
-      })));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
-      __jait_capture(0, (url));
-      __jait_capture(1, ((init?.headers as Record<string, string> | undefined)?.Authorization));
-      return new Response(
-        JSON.stringify({ email: "me@example.com", name: "Me", plan: "pro" }),
-        { status: 200 },
-      );
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const probe = await probeOllamaAccount({ baseUrl: "https://ollama.com/", apiKey: "key-1" });
-    __jait_capture(2, (probe));
-    __jait_capture(3, (fetchMock.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(
-      JSON.stringify({ Email: "me@example.com", Name: "Me", Plan: "pro" }),
-    )));
-    await __jait_captureResolved(0, (probeOllamaAccount({ baseUrl: "http://localhost:11434" })));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 401 })));
-
-    const probe = await probeOllamaAccount({ apiKey: "bad" });
-    __jait_capture(0, (probe));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => {
-        throw new Error("ECONNREFUSED");
-      }),
-    );
-
-    const probe = await probeOllamaAccount({ baseUrl: "http://127.0.0.1:11434" });
-    __jait_capture(0, (probe));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    const fetchMock = vi.fn(async (url: string) => {
-      __jait_capture(0, (url));
-      return new Response(
-        JSON.stringify({ limits: { weekly: { usage: 0.3, models: [{ name: "llama3", requestCount: 2 }] } } }),
-        { status: 200 },
-      );
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const usage = await fetchOllamaUsageFrom("http://127.0.0.1:11434/");
-    __jait_capture(1, (usage.limits.weekly?.usage));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3": {
-
-
-/*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
-    vi.unstubAllGlobals();
-  };
-
-try {
-await (async()=>{
-
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("unauthorized", { status: 401 })));
-
-    await __jait_captureRejected(0, (fetchOllamaUsageFrom("https://ollama.com", "bad")));
-  
-})();
-
-} finally {
-await __jait_hook_254();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3": {
-
-
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const hint = describeOllamaUsageGap({
-      baseUrl: "http://127.0.0.1:11434",
-      cloud: false,
-      probe: { reachable: false, account: null },
-    });
-    __jait_capture(0, (hint));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const hint = describeOllamaUsageGap({
-      baseUrl: "https://ollama.com",
-      cloud: true,
-      probe: { reachable: true, account: null },
-    });
-    __jait_capture(0, (hint));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const hint = describeOllamaUsageGap({
-      baseUrl: "http://127.0.0.1:11434",
-      cloud: false,
-      probe: { reachable: true, account: null },
-    });
-    __jait_capture(0, (hint));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3": {
-
-
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const hint = describeOllamaUsageGap({
-      baseUrl: "http://127.0.0.1:11434",
-      cloud: false,
-      probe: {
-        reachable: true,
-        account: { email: "jakob@example.com", name: "Jakob", plan: "pro" },
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [
+      {
+        id: "codex",
+        name: "Codex",
+        description: "Codex test provider",
+        command: process.execPath,
       },
-    });
-    __jait_capture(0, (hint));
-    __jait_capture(1, (hint));
+      {
+        id: "claude-code",
+        name: "Claude Code",
+        description: "Claude Code test provider",
+        command: process.execPath,
+      },
+      {
+        id: "local-acp",
+        name: "Local ACP",
+        description: "ACP provider without Jait-managed login",
+        command: process.execPath,
+        auth: false,
+      },
+    ], root);
+
+    __jait_capture(0, (service.listTypes()));
+
+    const personal = service.create("user-1", "claude-code", "Personal");
+    const work = service.create("user-1", "claude-code", "Work");
+    const personalAdapter = registry.get(personal.id) as unknown as { config: { env?: Record<string, string> } };
+    const workAdapter = registry.get(work.id) as unknown as { config: { env?: Record<string, string> } };
+
+    __jait_capture(1, (personalAdapter.config.env?.HOME), (join(root, personal.id)));
+    __jait_capture(2, (workAdapter.config.env?.HOME), (join(root, work.id)));
+    __jait_capture(3, (personalAdapter.config.env?.CLAUDE_CONFIG_DIR), (workAdapter.config.env?.CLAUDE_CONFIG_DIR));
+    __jait_capture(4, (personalAdapter.config.env?.NPM_CONFIG_CACHE), (workAdapter.config.env?.NPM_CONFIG_CACHE));
+    __jait_capture(5, (personalAdapter.config.env?.ANTHROPIC_API_KEY));
+    __jait_thrown(6, () => service.create("user-1", "local-acp", "Local"));
+
+    sqlite.close();
   
 })();
 
 } finally {
-
+await __jait_hook_469();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3": {
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_119_3": {
 
 
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const hint = describeOllamaUsageGap({
-      baseUrl: "http://127.0.0.1:11434",
-      cloud: false,
-      probe: { reachable: true, account: { email: null, name: "Jakob", plan: null } },
-    });
-    __jait_capture(0, (hint));
-    __jait_capture(1, (hint));
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
+
+    const first = service.create("user-1", "codex", "First");
+    const second = service.create("user-1", "codex", "Second");
+    __jait_capture(0, (await service.delete(first.id, "user-2")));
+    __jait_capture(1, (await service.delete(first.id, "user-1")));
+
+    __jait_captureType(2, (registry.get(first.id)));
+    __jait_capture(3, (existsSync(join(root, first.id))));
+    __jait_captureType(4, (registry.get(second.id)));
+    __jait_capture(5, (existsSync(join(root, second.id))));
+
+    sqlite.close();
   
 })();
 
 } finally {
+await __jait_hook_469();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_145_3": {
+
+
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
+
+    const windows = service.create("user-1", "codex", "Work", "windows-node");
+    const laptop = service.create("user-1", "codex", "Work", "laptop-node");
+
+    __jait_capture(0, (windows.nodeId));
+    __jait_capture(1, (laptop.nodeId));
+    __jait_capture(2, (registry.get(windows.id)?.executionNodeId));
+    __jait_capture(3, (existsSync(join(root, windows.id))));
+
+    sqlite.close();
+  
+})();
+
+} finally {
+await __jait_hook_469();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_accounts_test_ts_169_3": {
+
+
+const roots: string[] = [];
+const __jait_hook_469 = () => {
+  vi.unstubAllGlobals();
+  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { db, sqlite } = await openDatabase(":memory:");
+    migrateDatabase(sqlite);
+    const registry = new ProviderRegistry();
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-provider-accounts-"));
+    roots.push(root);
+    const service = new ProviderAccountService(db, registry, [{
+      id: "codex",
+      name: "Codex",
+      description: "Codex test provider",
+      command: process.execPath,
+    }], root);
+
+    service.create("user-1", "codex", "Work");
+    __jait_thrown(0, () => service.create("user-1", "codex", "Work"));
+    __jait_thrown(1, () => service.create("user-1", "claude-code", "Work"));
+
+    sqlite.close();
+  
+})();
+
+} finally {
+await __jait_hook_469();
 }
 }
 

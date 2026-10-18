@@ -1,17 +1,16 @@
-// Translated fixture from packages/gateway/src/services/provider-reset-windows.test.ts; expected literals are in tail_static.rs.
+// Translated fixture from packages/gateway/src/services/provider-quota-fetchers.test.ts; expected literals are in tail_static.rs.
 import {
-  deriveOllamaResetWindow,
-  describeOllamaResetSource,
-  parseOllamaResetSource,
-  OLLAMA_MONTH_MINS,
-  OLLAMA_SESSION_MINS,
-  OLLAMA_WEEK_MINS,
-} from "../../../../packages/gateway/src/services/provider-reset-windows.js";
+  fetchOllamaUsageFrom,
+  isOllamaUsageResponse,
+  probeOllamaAccount,
+  describeOllamaUsageGap,
+} from "../../../../packages/gateway/src/services/provider-quota-fetchers.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
 import { fileURLToPath as __jait_fileURLToPath } from 'node:url';
-const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-reset-windows.test.ts",import.meta.url).href;
+const __jait_original_url=new URL("../../../../packages/gateway/src/services/provider-quota-fetchers.test.ts",import.meta.url).href;
 const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
@@ -45,29 +44,302 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3": {
 
 
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (isOllamaUsageResponse({ limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (isOllamaUsageResponse({
+        limits: {
+          session: { usage: 0.2, models: [] },
+          weekly: { usage: 0.4, models: [] },
+        },
+      })));
+    __jait_capture(1, (isOllamaUsageResponse({
+        limits: { monthly: { usage: 0.6, models: [] } },
+      })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    const activity = {
+      range: "7d", scope: "self", granularity: "day",
+      from: "2026-09-30T00:00:00Z", until: "2026-10-07T11:29:42Z",
+      totals: { request_count: 10388 },
+      buckets: [{ from: "2026-09-30T00:00:00Z", until: "2026-10-01T00:00:00Z", request_count: 81 }],
+    };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(activity)));
+    await __jait_captureResolved(0, (fetchOllamaUsageFrom("https://ollama.com", "test-key")), (activity));
+    __jait_capture(1, (isOllamaUsageResponse(activity)));
+    for (const count of [-1, "10388", null, Infinity]) {
+      __jait_capture(2, (isOllamaUsageResponse({ ...activity, totals: { request_count: count } })));
+    }
+    __jait_capture(3, (isOllamaUsageResponse({ ...activity, from: "invalid" })));
+    __jait_capture(4, (isOllamaUsageResponse({ ...activity, buckets: [{}] })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (isOllamaUsageResponse({ limits: {} })));
+    __jait_capture(1, (isOllamaUsageResponse({
+        limits: { monthly: { usage: "60%", models: [] } },
+      })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      __jait_capture(0, (url));
+      __jait_capture(1, ((init?.headers as Record<string, string> | undefined)?.Authorization));
+      return new Response(
+        JSON.stringify({ email: "me@example.com", name: "Me", plan: "pro" }),
+        { status: 200 },
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const probe = await probeOllamaAccount({ baseUrl: "https://ollama.com/", apiKey: "key-1" });
+    __jait_capture(2, (probe));
+    __jait_capture(3, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(
+      JSON.stringify({ Email: "me@example.com", Name: "Me", Plan: "pro" }),
+    )));
+    await __jait_captureResolved(0, (probeOllamaAccount({ baseUrl: "http://localhost:11434" })));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 401 })));
+
+    const probe = await probeOllamaAccount({ apiKey: "bad" });
+    __jait_capture(0, (probe));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("ECONNREFUSED");
+      }),
+    );
+
+    const probe = await probeOllamaAccount({ baseUrl: "http://127.0.0.1:11434" });
+    __jait_capture(0, (probe));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    const fetchMock = vi.fn(async (url: string) => {
+      __jait_capture(0, (url));
+      return new Response(
+        JSON.stringify({ limits: { weekly: { usage: 0.3, models: [{ name: "llama3", requestCount: 2 }] } } }),
+        { status: 200 },
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const usage = await fetchOllamaUsageFrom("http://127.0.0.1:11434/");
+    __jait_capture(1, (usage.limits.weekly?.usage));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3": {
+
+
+/*__jait_scope_open__*/{
+const __jait_hook_254 = () => {
+    vi.unstubAllGlobals();
+  };
+
+try {
+await (async()=>{
+
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("unauthorized", { status: 401 })));
+
+    await __jait_captureRejected(0, (fetchOllamaUsageFrom("https://ollama.com", "bad")));
+  
+})();
+
+} finally {
+await __jait_hook_254();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3": {
+
+
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const now = new Date("2026-03-11T09:37:00.000Z");
-    // Ollama's activity period ends "now", which is what used to leak into resetsAt.
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now,
-      utilization: 0.42,
-      anchorIso: now.toISOString(),
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: false, account: null },
     });
-    __jait_capture(0, (new Date(window.resetsAt).getTime()), (now.getTime()));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
-    __jait_capture(3, (window.source));
+    __jait_capture(0, (hint));
   
 })();
 
@@ -78,32 +350,20 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_31_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3": {
 
 
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // The anchor Ollama reports is week-aligned; using it directly would shift a
-    // 5-hour grid by three hours every week.
-    const first = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T09:37:00.000Z"),
-      utilization: 0.4,
-      anchorIso: "2026-03-09T00:00:00.000Z",
+    const hint = describeOllamaUsageGap({
+      baseUrl: "https://ollama.com",
+      cloud: true,
+      probe: { reachable: true, account: null },
     });
-    const second = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-18T09:37:00.000Z"),
-      utilization: 0.4,
-      anchorIso: "2026-03-16T00:00:00.000Z",
-    });
-    __jait_capture(0, (new Date(first.resetsAt).getUTCHours()), (new Date(second.resetsAt).getUTCHours()));
+    __jait_capture(0, (hint));
   
 })();
 
@@ -114,25 +374,20 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3": {
 
 
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: WEEK,
-      now: new Date("2026-03-11T09:37:00.000Z"),
-      utilization: 0.2,
-      anchorIso: "2026-03-09T00:00:00.000Z",
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: true, account: null },
     });
-    __jait_capture(0, (window.windowStartAt));
-    __jait_capture(1, (window.resetsAt));
+    __jait_capture(0, (hint));
   
 })();
 
@@ -143,60 +398,24 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_60_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3": {
 
 
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: MONTH,
-      now: new Date("2026-03-11T09:37:00.000Z"),
-      utilization: 0.2,
-      anchorIso: "2026-01-31T00:00:00.000Z",
-    });
-    __jait_capture(0, (window.windowStartAt));
-    __jait_capture(1, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_71_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T10:20:00.000Z"),
-      utilization: 0.03,
-      previous: {
-        utilization: 0.81,
-        resetsAt: "2026-03-11T10:00:00.000Z",
-        source: "observed",
-        observedAt: "2026-03-11T09:37:00.000Z",
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: {
+        reachable: true,
+        account: { email: "jakob@example.com", name: "Jakob", plan: "pro" },
       },
     });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
+    __jait_capture(0, (hint));
+    __jait_capture(1, (hint));
   
 })();
 
@@ -207,236 +426,21 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_88_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3": {
 
 
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
 /*__jait_scope_open__*/{
 
 try {
 await (async()=>{
 
-    // The stale grid point (05:00) predates the previous snapshot, so it cannot
-    // be the boundary the drop crossed; "now" is the honest upper bound.
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T09:50:00.000Z"),
-      utilization: 0.05,
-      previous: {
-        utilization: 0.6,
-        resetsAt: "2026-03-11T10:00:00.000Z",
-        source: "window-grid",
-        observedAt: "2026-03-11T09:40:00.000Z",
-      },
+    const hint = describeOllamaUsageGap({
+      baseUrl: "http://127.0.0.1:11434",
+      cloud: false,
+      probe: { reachable: true, account: { email: null, name: "Jakob", plan: null } },
     });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_107_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const now = new Date("2026-03-11T16:20:00.000Z");
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now,
-      utilization: 0.55,
-      previous: { utilization: 0.5, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
-    });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.resetsAt));
-    __jait_capture(2, (window.windowStartAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_120_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T21:30:00.000Z"),
-      utilization: 0.6,
-      previous: { utilization: 0.6, resetsAt: "2026-03-11T20:00:00.000Z", source: "observed" },
-    });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_132_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T21:30:00.000Z"),
-      utilization: 0.4,
-      previous: { utilization: 0.4, resetsAt: "2026-03-11T20:00:00.000Z", source: "window-grid" },
-    });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_144_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: SESSION,
-      now: new Date("2026-03-11T12:00:00.000Z"),
-      utilization: 0.799,
-      previous: { utilization: 0.8, resetsAt: "2026-03-11T15:00:00.000Z", source: "window-grid" },
-    });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_155_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const window = deriveOllamaResetWindow({
-      windowDurationMins: WEEK,
-      now: new Date("2026-03-11T09:37:00.000Z"),
-      utilization: null,
-      previous: { utilization: null, resetsAt: null, source: null },
-      anchorIso: null,
-    });
-    __jait_capture(0, (window.source));
-    __jait_capture(1, (window.windowStartAt));
-    __jait_capture(2, (window.resetsAt));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_170_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    __jait_capture(0, (parseOllamaResetSource("observed")));
-    __jait_captureType(1, (parseOllamaResetSource("bogus")));
-    __jait_captureType(2, (parseOllamaResetSource(undefined)));
-  
-})();
-
-} finally {
-
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_services_provider_reset_windows_test_ts_176_3": {
-
-
-const SESSION = OLLAMA_SESSION_MINS;
-const WEEK = OLLAMA_WEEK_MINS;
-const MONTH = OLLAMA_MONTH_MINS;
-/*__jait_scope_open__*/{
-
-try {
-await (async()=>{
-
-    const messages = [
-      describeOllamaResetSource("observed"),
-      describeOllamaResetSource("window-boundary"),
-      describeOllamaResetSource("window-grid"),
-      describeOllamaResetSource(null),
-    ];
-    __jait_capture(0, (new Set(messages).size), (messages.length));
+    __jait_capture(0, (hint));
+    __jait_capture(1, (hint));
   
 })();
 
