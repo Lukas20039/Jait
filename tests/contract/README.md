@@ -47,6 +47,26 @@ failure; 2 means invalid invocation or a runner/report error. Setup failure mark
 required cases blocked and writes a failing report. Credentials and response bodies
 are excluded from report diagnostics. CI uploads only reports, not databases/logs.
 
+## Run sandboxes
+
+Each translated tail case runs in its own sandbox under
+`.jait/artifacts/gateway-rust-readiness/tailstatic-runs/stream-<uuid>/` holding a
+fake `home/`, `tmp/`, `state/`, the assertion stream, `stdout.log` and
+`stderr.log`. Sandboxes are scratch, not the record: per-case results are
+aggregated into `report.json` and the reviewed fragments committed under
+`tests/contract/fragments/`.
+
+- A passing case deletes its sandbox; a failing case keeps it and the failure
+  message prints the path to inspect.
+- Kept sandboxes expire after 72 hours, swept once per test process, so killed or
+  timed-out runs cannot accumulate unbounded.
+- `JAIT_TAILSTATIC_KEEP_RUNS=1` retains passing sandboxes when debugging the
+  harness itself.
+
+Keeping every sandbox once produced 68,778 directories and 62 GB in this
+repository, which also exceeded the kernel inotify watch budget and stalled the
+gateway's file I/O. Do not reintroduce unbounded retention here.
+
 ## Another backend
 
 Start an empty disposable backend, then run:

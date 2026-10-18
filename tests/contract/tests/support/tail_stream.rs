@@ -5,11 +5,52 @@ use std::{
     io::{BufRead, BufReader, Read, Write},
     path::Path,
     process::{Child, Command, Stdio},
-    sync::mpsc,
+    sync::{Once, mpsc},
     thread,
     time::{Duration, Instant},
 };
 const CLEANUP_TIMEOUT: Duration = Duration::from_secs(2);
+/// Per-run scratch sandboxes (fake HOME/TMPDIR, assertion stream, stderr log).
+const RUN_ROOT: &str = ".jait/artifacts/gateway-rust-readiness/tailstatic-runs";
+/// Kept failing-run evidence expires after this age so a long-lived checkout
+/// cannot accumulate unbounded sandboxes.
+const RUN_RETENTION: Duration = Duration::from_secs(72 * 60 * 60);
+
+/// Passing runs are scratch and delete themselves; keeping every sandbox once
+/// cost this repository 68,778 directories and 62 GB. Set
+/// `JAIT_TAILSTATIC_KEEP_RUNS=1` to retain passing runs while debugging the
+/// harness itself.
+fn keep_runs() -> bool {
+    std::env::var("JAIT_TAILSTATIC_KEEP_RUNS").is_ok_and(|value| value != "0" && !value.is_empty())
+}
+
+/// Drop evidence left behind by earlier runs (timed-out or killed processes
+/// leak their sandbox). Runs once per test process.
+fn sweep_stale_runs(root: &Path) {
+    static SWEEP: Once = Once::new();
+    SWEEP.call_once(|| {
+        let entries = match fs::read_dir(root.join(RUN_ROOT)) {
+            Ok(entries) => entries,
+            Err(_) => return,
+        };
+        for entry in entries.flatten() {
+            let expired = entry
+                .metadata()
+                .and_then(|metadata| metadata.modified())
+                .is_ok_and(|modified| modified.elapsed().is_ok_and(|age| age > RUN_RETENTION));
+            if expired {
+                let _ = fs::remove_dir_all(entry.path());
+            }
+        }
+    });
+}
+
+fn discard_run(directory: &Path) {
+    if keep_runs() {
+        return;
+    }
+    let _ = fs::remove_dir_all(directory);
+}
 
 // Every peer gets its own group. Only ordinary descendants which stay in that
 // group are covered on Unix; deliberately detached sessions require a job/cgroup.
@@ -172,8 +213,9 @@ pub fn run(
     rules: &[Value],
     compare: impl Fn(&Value, &Value) -> bool,
 ) {
+    sweep_stale_runs(root);
     let directory = root
-        .join(".jait/artifacts/gateway-rust-readiness/tailstatic-runs")
+        .join(RUN_ROOT)
         .join(format!("stream-{}", uuid::Uuid::new_v4()));
     for child in ["home", "tmp", "state"] {
         fs::create_dir_all(directory.join(child)).expect("fixture artifact directory");
@@ -397,4 +439,12 @@ pub fn run(
         "{name}: fixture peer failed; {}",
         directory.display()
     );
+    // Every assertion above passed. Close the evidence files before removing the
+    // sandbox (Windows refuses to delete a directory that still has open handles).
+    // A failing run panics before this point, so its sandbox survives to be
+    // inspected at the path printed in the failure message.
+    drop(trace);
+    drop(stdout_log);
+    drop(protocol_log);
+    discard_run(&directory);
 }
