@@ -33,7 +33,7 @@ export function VoiceMicButtonMobile({
   if (!wakeWord.isSupported) return null
   return (
     <button
-      className={`md:hidden flex items-center justify-center h-8 w-8 rounded-lg shrink-0 transition-colors ${
+      className={`md:hidden flex items-center justify-center h-10 w-8 !min-w-8 rounded-lg shrink-0 transition-colors ${
         voiceOverlayOpen
           ? 'text-green-400 bg-green-500/10'
           : wakeWordEnabled

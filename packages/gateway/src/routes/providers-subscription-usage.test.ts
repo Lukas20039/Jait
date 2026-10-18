@@ -63,3 +63,24 @@ it("includes Go backend profiles and refreshes with their saved key", async () =
     expect(recordOpenCodeGoUsage).toHaveBeenCalledWith("jait-backend:user-1:opencode-go", expect.any(Object));
   } finally { await app.close(); }
 });
+
+it("deduplicates simultaneous usage refreshes and serves local snapshots on reopen", async () => {
+  let finish!: (value: Response) => void;
+  const mock = vi.fn(() => new Promise<Response>(resolve => { finish = resolve; }));
+  vi.stubGlobal("fetch", mock);
+  const { app, token, recordOllamaUsage } = await setup({ OLLAMA_URL: "http://localhost:11434", OLLAMA_SESSION_COOKIE: "session" });
+  try {
+    const headers = { authorization: `Bearer ${token}` };
+    const first = app.inject({ url: "/api/provider-usage/summary", headers }).then(r => r);
+    const second = app.inject({ url: "/api/provider-usage/summary", headers }).then(r => r);
+    await vi.waitFor(() => expect(mock).toHaveBeenCalledTimes(1));
+    // A cache-only read must not wait behind slow provider work.
+    expect((await app.inject({ url: "/api/provider-usage/summary?refresh=0", headers })).statusCode).toBe(200);
+    finish(new Response(html));
+    expect((await first).statusCode).toBe(200);
+    expect((await second).statusCode).toBe(200);
+    expect((await app.inject({ url: "/api/provider-usage/summary", headers })).statusCode).toBe(200);
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(recordOllamaUsage).toHaveBeenCalledTimes(1);
+  } finally { await app.close(); }
+});

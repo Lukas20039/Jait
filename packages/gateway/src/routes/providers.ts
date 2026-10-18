@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import { UsageRefreshCache } from "../services/usage-refresh-cache.js";
+import type { UsageSummaryPayload } from "../services/usage-summary.js";
 import { fetchOllamaSettingsUsage, fetchOpenCodeGoUsage, normalizeOllamaSession } from "../services/subscription-usage-fetchers.js";
 import { callJaitLlmCompletion } from "../services/jait-llm.js";
 /**
@@ -160,18 +163,13 @@ export function registerProviderRoutes(
 
   // Subscription usage by connected provider profile. Ollama is a Jait
   // backend profile because requests to it are routed through the Jait provider.
-  app.get("/api/provider-usage/summary", async (request, reply) => {
-    const authUser = await requireAuth(request, reply, config.jwtSecret);
-    if (!authUser) return;
-    // `refresh=0` returns the last known snapshots without touching the provider
-    // APIs, so the modal can paint every configured profile immediately and then
-    // upgrade the numbers with a follow-up `refresh=1` request.
-    const refresh = (request.query as { refresh?: string } | undefined)?.refresh !== "0";
-    const accounts = deps.providerAccountService?.list(authUser.id) ?? [];
+  const usageRefreshCache = new UsageRefreshCache<UsageSummaryPayload>();
+  async function readUsageSummary(userId: string, refresh: boolean): Promise<UsageSummaryPayload> {
+    const accounts = deps.providerAccountService?.list(userId) ?? [];
     const quotaErrors: Record<string, string> = refresh
-      ? await deps.providerAccountService?.refreshUsage(authUser.id) ?? {}
+      ? await deps.providerAccountService?.refreshUsage(userId) ?? {}
       : {};
-    const settings = deps.userService?.getSettings(authUser.id);
+    const settings = deps.userService?.getSettings(userId);
     const apiKeys = settings?.apiKeys ?? {};
     const instances = parseJaitBackendInstances(apiKeys["JAIT_BACKEND_INSTANCES"]);
     const configuredOllamaBackends = instances.filter((instance) => instance.type === "ollama");
@@ -194,7 +192,7 @@ export function registerProviderRoutes(
     const ollamaAccounts = new Map<string, OllamaCloudAccount>();
 
     if (refresh) await Promise.all(ollamaBackends.map(async (backend) => {
-      const quotaAccountId = `jait-backend:${authUser.id}:${backend.id}`;
+      const quotaAccountId = `jait-backend:${userId}:${backend.id}`;
       const cloud = isOllamaCloudUrl(backend.baseUrl);
       const backendApiKey = "apiKey" in backend ? backend.apiKey?.trim() : undefined;
 
@@ -252,25 +250,25 @@ export function registerProviderRoutes(
       goBackends.push({ id: "opencode-go", type: "opencode-go", name: "OpenCode Go", baseUrl: JAIT_BACKEND_DEFAULT_URLS["opencode-go"], apiKey: apiKeys["OPENCODE_GO_API_KEY"] });
     }
     if (refresh) await Promise.all(goBackends.map(async backend => {
-      const id = `jait-backend:${authUser.id}:${backend.id}`;
+      const id = `jait-backend:${userId}:${backend.id}`;
       const key = backend.apiKey?.trim() || apiKeys["OPENCODE_GO_API_KEY"]?.trim();
       if (!key) { quotaErrors[id] = "Connect OpenCode Go in Settings to load subscription usage."; return; }
       try { deps.providerUsageService?.recordOpenCodeGoUsage(id, await fetchOpenCodeGoUsage(key)); }
       catch (error) { quotaErrors[id] = error instanceof Error ? error.message : "OpenCode Go usage refresh failed"; }
     }));
     const ollamaQuotaAccountIds = ollamaBackends.map(
-      (backend) => `jait-backend:${authUser.id}:${backend.id}`,
+      (backend) => `jait-backend:${userId}:${backend.id}`,
     );
     const quotaAccountIds = [
       ...accounts.map((account) => account.id),
       ...ollamaQuotaAccountIds,
-      ...goBackends.map(backend => `jait-backend:${authUser.id}:${backend.id}`),
+      ...goBackends.map(backend => `jait-backend:${userId}:${backend.id}`),
     ];
     const quotas = deps.providerUsageService?.listForUser(quotaAccountIds) ?? [];
     const summary = summarizeProviderUsage(accounts, quotas, {
       quotaErrors,
-      jaitBackendProfiles: [...goBackends.map(backend => ({ id: `jait-backend:${authUser.id}:${backend.id}`, quotaAccountId: `jait-backend:${authUser.id}:${backend.id}`, providerType: "opencode-go", providerLabel: "OpenCode Go", profileLabel: backend.name, planType: "Go" })), ...ollamaBackends.map((backend) => {
-        const quotaAccountIdValue = `jait-backend:${authUser.id}:${backend.id}`;
+      jaitBackendProfiles: [...goBackends.map(backend => ({ id: `jait-backend:${userId}:${backend.id}`, quotaAccountId: `jait-backend:${userId}:${backend.id}`, providerType: "opencode-go", providerLabel: "OpenCode Go", profileLabel: backend.name, planType: "Go" })), ...ollamaBackends.map((backend) => {
+        const quotaAccountIdValue = `jait-backend:${userId}:${backend.id}`;
         const account = ollamaAccounts.get(quotaAccountIdValue);
         const cached = quotas.find(
           (quota) => quota.accountId === quotaAccountIdValue && (quota.planType || quota.accountLabel),
@@ -287,12 +285,41 @@ export function registerProviderRoutes(
       })],
     });
     await Promise.all(summary.profiles.map(async (profile) => {
-      const backend = ollamaBackends.find((item) => profile.id === `jait-backend:${authUser.id}:${item.id}`);
+      const backend = ollamaBackends.find((item) => profile.id === `jait-backend:${userId}:${item.id}`);
       if (refresh && backend && (profile.error || profile.quotas.length === 0)) {
         profile.ollamaSetup = await getOllamaUsageSetup(backend.baseUrl);
       }
     }));
     return summary;
+  }
+
+  app.get("/api/provider-usage/summary", async (request, reply) => {
+    const authUser = await requireAuth(request, reply, config.jwtSecret);
+    if (!authUser) return;
+    reply.header("Cache-Control", "no-store");
+    const mode = (request.query as { refresh?: string } | undefined)?.refresh;
+    if (mode === "0") return readUsageSummary(authUser.id, false);
+    // A changed account or connection must not reuse the previous configuration.
+    // Only its digest is retained; credentials never enter a response/cache key.
+    const settings = deps.userService?.getSettings(authUser.id);
+    const keys = settings?.apiKeys ?? {};
+    const fingerprint = createHash("sha256").update(JSON.stringify([
+      deps.providerAccountService?.list(authUser.id), settings?.jaitBackend,
+      ...["JAIT_BACKEND_INSTANCES", "OLLAMA_URL", "OLLAMA_API_KEY", "OLLAMA_SESSION_COOKIE", "OPENCODE_GO_API_KEY"]
+        .map(key => keys[key]),
+    ])).digest("hex");
+    const refreshed = await usageRefreshCache.run(`${authUser.id}:${fingerprint}`,
+      () => readUsageSummary(authUser.id, true), {
+        force: mode === "force",
+        failed: summary => summary.profiles.some(profile => Boolean(profile.error)),
+      });
+    // Always rebuild from local observations: normal chats may have supplied
+    // newer quotas since the last remote refresh. Preserve refresh diagnostics.
+    const current = await readUsageSummary(authUser.id, false);
+    return { ...current, generatedAt: refreshed.generatedAt, profiles: current.profiles.map(profile => {
+      const cached = refreshed.profiles.find(item => item.id === profile.id);
+      return { ...profile, error: cached?.error ?? profile.error, ollamaSetup: cached?.ollamaSetup };
+    }) };
   });
 
   app.post("/api/provider-usage/ollama/session", async (request, reply) => {

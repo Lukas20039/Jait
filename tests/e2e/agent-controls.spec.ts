@@ -173,3 +173,50 @@ for (const width of [1280, 390, 320]) {
     }
   })
 }
+
+test.describe('mobile header spacing', () => {
+  test.use({ hasTouch: true })
+
+  for (const width of [320, 390, 430]) {
+    test(`matches control gaps and edge insets at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 850 })
+      await page.route('**/api/persona-agents', route => route.fulfill({ json: { agents: [] } }))
+      await page.route('**/api/agent-control{,/**}', route => route.fulfill({ json: {
+        state: { halted: false, reason: null, haltedAt: null, updatedAt: null },
+      } }))
+      await page.goto('/src/e2e-fixtures/index.html')
+      await page.evaluate(() => import('/src/e2e-fixtures/agent-controls.tsx'))
+      const header = page.locator('header')
+      const mic = header.getByRole('button', { name: 'Enable wake word' })
+      const account = header.getByRole('button', { name: 'Account menu' })
+      const menu = header.getByRole('button', { name: 'Open menu' })
+      await expect(mic).toBeVisible()
+      const micBox = (await mic.boundingBox())!
+      const accountBox = (await account.boundingBox())!
+      const menuBox = (await menu.boundingBox())!
+      const headerBox = (await header.boundingBox())!
+      expect(micBox.height).toBe(40)
+      expect(accountBox.height).toBe(40)
+      expect(menuBox.height).toBe(40)
+      const updateBox = (await header.getByRole('button', { name: /^Update to/ }).boundingBox())!
+      const avatar = (await account.locator(':scope > span').boundingBox())!
+      const menuIcon = (await menu.locator('svg').boundingBox())!
+      const micIcon = (await mic.locator('svg').boundingBox())!
+      const referenceGap = avatar.x - updateBox.x - updateBox.width
+      expect(referenceGap).toBe(8)
+      expect(menuIcon.x - avatar.x - avatar.width).toBeCloseTo(referenceGap, 0)
+      const agentFaces = (await header.locator('[data-agent-control] > span').first().boundingBox())!
+      expect(Math.abs(agentFaces.x - micIcon.x - micIcon.width - referenceGap)).toBeLessThanOrEqual(2)
+      const logo = header.locator('div').first().locator(':scope > span')
+      if (await logo.isVisible()) {
+        const logoIcon = (await logo.locator('svg').boundingBox())!
+        expect(micIcon.x - logoIcon.x - logoIcon.width).toBeCloseTo(referenceGap, 0)
+      }
+      const agentBox = (await header.locator('[data-agent-control]').boundingBox())!
+      const tabs = (await header.getByRole('tablist').boundingBox())!
+      expect(tabs.x).toBeGreaterThanOrEqual(agentBox.x + agentBox.width)
+      expect(tabs.x + tabs.width).toBeLessThanOrEqual(accountBox.x)
+      await page.screenshot({ path: path.resolve(__dirname, `../../.jait/shots/mobile-header-spacing-${width}.png`) })
+    })
+  }
+})

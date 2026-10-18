@@ -1005,7 +1005,7 @@ export function ProviderModelSelector({
     <div className={cn(
       'grid min-h-0 flex-1 overflow-hidden',
       isMobile
-        ? 'grid-cols-[minmax(0,0.8fr)_minmax(0,1.45fr)]'
+        ? 'grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]'
         : 'grid-cols-[minmax(9.5rem,0.8fr)_minmax(13rem,1.45fr)]',
     )}>
       <section className="flex min-h-0 min-w-0 flex-col border-r" aria-labelledby="provider-selector-heading">

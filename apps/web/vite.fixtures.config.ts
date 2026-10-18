@@ -19,6 +19,7 @@ export default defineConfig({
       'src/e2e-fixtures/queue-edit-workspace.tsx',
       'src/e2e-fixtures/queue-selection.tsx',
       'src/e2e-fixtures/queued-attachments.tsx',
+      'src/e2e-fixtures/usage-prefetch.tsx',
     ],
     include: ['react', 'react-dom/client', 'react/jsx-runtime'],
   },

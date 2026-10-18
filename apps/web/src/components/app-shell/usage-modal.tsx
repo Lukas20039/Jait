@@ -3,14 +3,13 @@
  */
 import type { OllamaUsageSetup } from '@jait/shared'
 import { OllamaUsageSetupPanel } from './ollama-usage-setup'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { getApiUrl } from '@/lib/gateway-url'
 import { getAuthToken } from '@/lib/auth-token'
 import { providerIcon } from '@/components/icons/provider-icons'
 
-const API_URL = getApiUrl()
+import { getUsageSummary, subscribeUsageSummary, refreshUsageSummary } from '@/lib/usage-summary-store'
 
 interface UsageQuotaSnapshot {
   accountId: string
@@ -50,7 +49,7 @@ interface UsageProfile {
   error: string | null
 }
 
-interface UsageSummary {
+export interface UsageSummary {
   generatedAt: string
   profiles: UsageProfile[]
 }
@@ -188,7 +187,7 @@ function ProfileUsage({ profile, retry, loading }: { profile: UsageProfile; retr
         </details>
       )}
       {profile.providerType === 'ollama' && !profile.error && profile.quotas.some(quota => quota.rateLimitType !== 'request_activity') && (
-        <p role="status" className="text-xs text-emerald-600 dark:text-emerald-400">Connected — cloud usage is up to date.</p>
+        <p role="status" className="text-xs text-emerald-600 dark:text-emerald-400">Connected — showing the last reported cloud usage.</p>
       )}
 
       {profile.error && profile.quotas.length > 0 && (
@@ -197,57 +196,6 @@ function ProfileUsage({ profile, retry, loading }: { profile: UsageProfile; retr
     </div>
   )
 }
-
-/** localStorage key for the last successful summary, shared across reloads. */
-const SUMMARY_CACHE_KEY = 'jait.usage-summary.v1'
-
-/**
- * Read the last persisted summary so the modal can render the real provider
- * grid (same size, all options) on the very first paint instead of a generic
- * skeleton. Transient per-request fields are dropped so a stale error or setup
- * hint never survives a reload.
- */
-function readStoredSummary(): UsageSummary | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const raw = window.localStorage.getItem(SUMMARY_CACHE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as UsageSummary | null
-    if (!parsed || !Array.isArray(parsed.profiles)) return null
-    return {
-      ...parsed,
-      profiles: parsed.profiles.map((profile) => ({
-        ...profile,
-        error: null,
-        ollamaSetup: undefined,
-      })),
-    }
-  } catch {
-    return null
-  }
-}
-
-function writeStoredSummary(summary: UsageSummary): void {
-  if (typeof window === 'undefined') return
-  try {
-    const profiles = summary.profiles.map((profile) => ({
-      ...profile,
-      error: null,
-      ollamaSetup: undefined,
-    }))
-    window.localStorage.setItem(SUMMARY_CACHE_KEY, JSON.stringify({ ...summary, profiles }))
-  } catch {
-    // Storage can be unavailable (quota exceeded or private mode); the in-memory
-    // cache below still carries the summary within the session.
-  }
-}
-
-/**
- * Last successful summary, kept outside React state so reopening the modal (or
- * remounting it) shows the known providers immediately while the refresh runs.
- * Seeded from localStorage as well so a full page reload keeps the layout.
- */
-let cachedSummary: UsageSummary | null = readStoredSummary()
 
 /**
  * Full-size placeholder shown while the first usage response is in flight, so the
@@ -303,73 +251,62 @@ function UsageModalSkeleton() {
 }
 
 export function UsageModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const [summary, setSummary] = useState<UsageSummary | null>(() => cachedSummary)
+  const token = getAuthToken()
+  const summary = useSyncExternalStore(subscribeUsageSummary, getUsageSummary, () => null)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const applySummary = useCallback((data: UsageSummary) => {
-    cachedSummary = data
-    writeStoredSummary(data)
-    setSummary(data)
-    setSelectedId((current) => {
-      const ids = data.profiles.map((profile) => profile.id)
-      return current && ids.includes(current) ? current : (ids[0] ?? null)
-    })
+  const load = useCallback(async (force = true, quiet = false) => {
+    if (!getAuthToken()) return
+    if (!quiet) {
+      setError(null)
+      setLoading(!getUsageSummary())
+      setRefreshing(true)
+    }
+    try { await refreshUsageSummary(force) }
+    catch (error) {
+      if (!quiet) setError(error instanceof Error ? error.message : 'Failed to load provider usage')
+    } finally {
+      if (!quiet) { setLoading(false); setRefreshing(false) }
+    }
   }, [])
 
-  /**
-   * Two phases so the dialog never jumps from a small spinner to the full layout:
-   *  1. `refresh=0` paints the last known snapshots — every configured profile
-   *     plus its cached numbers — without touching the provider APIs.
-   *  2. a live refresh then upgrades utilisation and reset dates in place.
-   */
-  const load = useCallback(async () => {
-    const token = getAuthToken()
-    if (!token) {
-      setError('Sign in to view provider usage.')
-      setLoading(false)
-      setRefreshing(false)
-      return
+  // Prepare usage before opening the modal. Hidden and idle clients do no work.
+  // Multiple mounted headers share the store's promise and freshness timestamp.
+  useEffect(() => {
+    if (!token) return
+    let lastActiveAt = Date.now()
+    const refresh = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine
+        && Date.now() - lastActiveAt < 10 * 60_000) void load(false, true)
     }
-    setError(null)
-    setLoading(true)
-
-    let painted = false
-    try {
-      const response = await fetch(`${API_URL}/api/provider-usage/summary?refresh=0`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!response.ok) throw new Error(`Usage request failed (${response.status})`)
-      applySummary((await response.json()) as UsageSummary)
-      painted = true
-    } catch {
-      // Keep the skeleton up; the live refresh below may still succeed.
+    const active = () => { lastActiveAt = Date.now(); refresh() }
+    const visible = () => { if (document.visibilityState === 'visible') active() }
+    refresh()
+    const interval = window.setInterval(refresh, 60_000)
+    document.addEventListener('visibilitychange', visible)
+    window.addEventListener('online', active)
+    window.addEventListener('pointerdown', active, { passive: true })
+    window.addEventListener('keydown', active)
+    window.addEventListener('wheel', active, { passive: true })
+    return () => {
+      window.clearInterval(interval)
+      document.removeEventListener('visibilitychange', visible)
+      window.removeEventListener('online', active)
+      window.removeEventListener('pointerdown', active)
+      window.removeEventListener('keydown', active)
+      window.removeEventListener('wheel', active)
     }
-    if (painted) setLoading(false)
-
-    setRefreshing(true)
-    try {
-      const response = await fetch(`${API_URL}/api/provider-usage/summary`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!response.ok) throw new Error(`Usage request failed (${response.status})`)
-      applySummary((await response.json()) as UsageSummary)
-    } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : 'Failed to load provider usage')
-    } finally {
-      setRefreshing(false)
-      setLoading(false)
-    }
-  }, [applySummary])
+  }, [token, load])
 
   useEffect(() => {
-    if (open) void load()
-  }, [open, load])
+    if (open) void load(false)
+  }, [open, token, load])
 
   const profiles = summary?.profiles ?? []
-  const selected = profiles.find((profile) => profile.id === selectedId) ?? null
+  const selected = profiles.find((profile) => profile.id === selectedId) ?? profiles[0] ?? null
   const busy = loading || refreshing
 
   return (
@@ -452,7 +389,7 @@ export function UsageModal({ open, onOpenChange }: { open: boolean; onOpenChange
             {selected && <ProfileUsage key={selected.id} profile={selected} retry={load} loading={busy} />}
 
             <p className="text-[11px] text-muted-foreground">
-              {refreshing ? 'Refreshing live limits…' : <>Refreshed {formatDateTime(summary?.generatedAt ?? null)}</>}
+              {refreshing ? 'Refreshing live limits…' : <>Last checked {formatDateTime(summary?.generatedAt ?? null)}</>}
             </p>
           </div>
         )}

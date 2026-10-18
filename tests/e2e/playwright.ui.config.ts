@@ -19,6 +19,7 @@ export default defineConfig({
     'queue-edit-workspace.spec.ts',
     'queue-selection.spec.ts',
     'queued-attachments.spec.ts',
+    'usage-prefetch.spec.ts',
   ],
   workers: process.env.PLAYWRIGHT_WORKERS ? Number(process.env.PLAYWRIGHT_WORKERS) : 2,
   use: { ...base.use, baseURL: frontend },

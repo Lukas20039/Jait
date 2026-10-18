@@ -29,6 +29,12 @@ for (const width of [320, 390, 1280]) {
       await expect.poll(() => longName.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
       const dialog = page.getByRole('dialog', { name: 'Provider and model', exact: true })
       await expect.poll(() => dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+      const providers = page.getByRole('listbox', { name: 'Providers', exact: true })
+      const providerPane = await providers.locator('..').boundingBox()
+      const modelPane = await models.locator('..').boundingBox()
+      const providerShare = providerPane!.width / (providerPane!.width + modelPane!.width)
+      expect(providerShare).toBeGreaterThan(0.44)
+      expect(providerShare).toBeLessThan(0.46)
       const box = await models.boundingBox()
       expect(box!.x + box!.width).toBeGreaterThan(width - 12)
     }

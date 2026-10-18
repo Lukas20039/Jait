@@ -206,7 +206,7 @@ export function AppHeader(props: AppHeaderProps) {
             <header
               className={
                 isMobile
-                  ? 'fixed top-2 left-2 right-2 z-40 flex items-center gap-1 h-10 rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border'
+                  ? 'fixed top-2 left-2 right-2 z-40 flex items-center gap-1 px-1 h-10 rounded-2xl bg-background/70 backdrop-blur-lg shadow-lg border'
                   : `relative flex items-center gap-1 shrink-0 border-b bg-background px-2 sm:gap-2 sm:px-5 ${isDesktop ? 'h-10 !pl-[0.8rem]' : 'h-10'}`
               }
               data-tauri-drag-region={hasCustomTitleBar || undefined}
@@ -220,8 +220,12 @@ export function AppHeader(props: AppHeaderProps) {
               } as React.CSSProperties : undefined}
             >
           {/* Left: Logo + mobile mic */}
-          <div className={`flex items-center gap-1 shrink-0 ${isMobile ? 'px-1 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
-            <JaitIcon size={20} className={isMobile && agentControl ? "hidden min-[360px]:block shrink-0" : "shrink-0"} />
+          <div className={`flex items-center shrink-0 ${isMobile ? 'gap-0 h-10' : 'gap-1'}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+            <span className={isMobile
+              ? `ml-2 h-10 w-5 shrink-0 items-center justify-center ${agentControl ? 'hidden min-[360px]:flex' : 'flex'}`
+              : 'inline-flex shrink-0'}>
+              <JaitIcon size={20} />
+            </span>
             <VoiceMicButtonMobile {...voiceControlProps} />
             {isMobile && agentControl}
           </div>
@@ -248,16 +252,16 @@ export function AppHeader(props: AppHeaderProps) {
               activeProjectTitle={activeProjectTitle}
             />
           ) : !sidebarOwnsNavigation ? (
-            <div ref={selectorRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10" style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+            <div ref={selectorRef} className={isMobile ? "flex min-w-0 flex-1 justify-center z-10" : "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
               <ViewModeSelector mode={viewMode} onChange={setViewMode} compact={isMobile} className={isMobile ? "[&_[role=tab]]:w-8" : undefined} />
             </div>
           ) : null}
 
           {/* Spacer */}
-          <div className={`${isMobile ? 'flex-1' : 'hidden'} min-w-0`} />
+          <div className={`${isMobile && voiceOverlayOpen ? 'flex-1' : 'hidden'} min-w-0`} />
 
           {/* Right: Context + Model + Account */}
-          <div ref={rightRef} className={`flex items-center gap-1 sm:gap-1.5 shrink-0 ${isMobile ? 'px-1 py-0.5 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+          <div ref={rightRef} className={`flex items-center gap-2 sm:gap-1.5 shrink-0 ${isMobile ? 'py-0.5 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
 
             {/* Desktop status items — hidden on mobile */}
             <div className="hidden md:flex items-center gap-1 sm:gap-1.5">
@@ -300,9 +304,11 @@ export function AppHeader(props: AppHeaderProps) {
                 ) : isAuthenticated ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button aria-label="Account menu" className="inline-flex items-center justify-center rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <button aria-label="Account menu" className="inline-flex h-10 w-8 !min-w-8 shrink-0 items-center justify-center rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarFallback className="text-sm font-medium">{userInitial}</AvatarFallback>
+                          <AvatarFallback className="text-sm font-medium leading-none tracking-normal">
+                            <span className="relative -top-px">{userInitial}</span>
+                          </AvatarFallback>
                         </Avatar>
                       </button>
                     </DropdownMenuTrigger>
@@ -367,7 +373,7 @@ export function AppHeader(props: AppHeaderProps) {
                     Sign in
                   </Button>
                 )}
-                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 p-0" onClick={onOpenMobileNav} aria-label="Open menu">
+                <Button variant="ghost" size="icon" className="h-10 w-8 !min-w-8 shrink-0 p-0" onClick={onOpenMobileNav} aria-label="Open menu">
                   <Menu className="h-4 w-4" />
                 </Button>
               </div>
