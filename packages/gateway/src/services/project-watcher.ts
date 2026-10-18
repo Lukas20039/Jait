@@ -39,7 +39,22 @@ export interface ProjectWatcherOptions {
 }
 
 // ── Default ignore list ──────────────────────────────────────────────
-const DEFAULT_IGNORE = [
+/**
+ * Glob patterns that are never watched.
+ *
+ * Generated trees have to be excluded, not merely for noise: the watcher opens
+ * one OS watch handle per directory, and the kernel budget is finite
+ * (`fs.inotify.max_user_watches`, 524288 on a default Linux box). A single
+ * generated directory tree can exceed that on its own, and the recursive scan
+ * then never completes — it fails, retries and keeps re-reading the tree while
+ * starving the process' file I/O.
+ *
+ * `**\/.jait/**` is the important one: the gateway writes its own artifacts
+ * (git worktrees, agent evidence, parity runs, sandbox images, databases)
+ * inside the project it watches, so an unpruned artifact directory is a
+ * self-inflicted watch explosion.
+ */
+export const DEFAULT_IGNORE = [
   "**/.git/**",
   "**/node_modules/**",
   "**/dist/**",
@@ -49,6 +64,20 @@ const DEFAULT_IGNORE = [
   "**/.cache/**",
   "**/.parcel-cache/**",
   "**/__pycache__/**",
+  // Gateway-owned state and generated build/test output.
+  "**/.jait/**",
+  "**/target/**",
+  "**/.turbo/**",
+  "**/.nx/**",
+  "**/.angular/**",
+  "**/.svelte-kit/**",
+  "**/.gradle/**",
+  "**/.terraform/**",
+  "**/.venv/**",
+  "**/coverage/**",
+  "**/.pytest_cache/**",
+  "**/.mypy_cache/**",
+  "**/.ruff_cache/**",
   "**/.DS_Store",
   "**/Thumbs.db",
   "**/*.swp",
@@ -135,17 +164,32 @@ export class ProjectWatcher extends EventEmitter {
 
     // Dynamic import so the native module is only loaded when actually needed
     const parcel = await import("@parcel/watcher");
-    this.subscription = await parcel.subscribe(
-      projectRoot,
-      (err, events) => {
-        if (err) {
-          this.emit("error", err);
-          return;
-        }
-        this.handleRawEvents(events);
-      },
-      { ignore: this.options.ignore },
-    );
+    try {
+      this.subscription = await parcel.subscribe(
+        projectRoot,
+        (err, events) => {
+          if (err) {
+            this.emit("error", err);
+            return;
+          }
+          this.handleRawEvents(events);
+        },
+        { ignore: this.options.ignore },
+      );
+    } catch (err) {
+      // The kernel reports a full watch table as ENOSPC / "No space left on
+      // device", which reads like a full disk. Say what it actually means.
+      const code = (err as NodeJS.ErrnoException | undefined)?.code;
+      const message = err instanceof Error ? err.message : String(err);
+      if (code === "ENOSPC" || /no space left on device/i.test(message)) {
+        throw new Error(
+          `Cannot watch ${projectRoot}: the OS ran out of file-watch descriptors. `
+            + "Ignore or delete generated directories (see DEFAULT_IGNORE), or raise "
+            + `fs.inotify.max_user_watches. Original error: ${message}`,
+        );
+      }
+      throw err;
+    }
   }
 
   /** Stop watching and flush any pending events. */
