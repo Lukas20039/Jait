@@ -5,10 +5,7 @@ use jait_gateway::{
     config::GatewayConfig,
     db,
     health::HealthState,
-    routes::{
-        auth::AuthState,
-        secrets::SecretRoutes,
-    },
+    routes::{auth::AuthState, secrets::SecretRoutes},
     security::http_auth::{self, AuthUser},
     services::{
         input_requests::{SecretInput, SecretInputService},
@@ -150,7 +147,10 @@ async fn route_scenario(call: Value) -> Value {
     if let Some(seed) = call["seed"].as_str() {
         db.execute_batch(seed).unwrap();
     }
-    let secret = call["secret"].as_str().unwrap_or("secrets-fixture").to_string();
+    let secret = call["secret"]
+        .as_str()
+        .unwrap_or("secrets-fixture")
+        .to_string();
     let auth = AuthState::new(db, secret.clone()).unwrap();
     let secret_input =
         SecretInputService::new(jait_gateway::time::default_clock(), 120_000.0, None, None);
