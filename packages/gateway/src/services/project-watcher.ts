@@ -90,7 +90,8 @@ function coalesceEvents(events: FileChangeEvent[]): FileChangeEvent[] {
   const map = new Map<string, FileChangeEvent>();
 
   for (const event of events) {
-    const key = event.path.toLowerCase();
+    // Native watcher paths retain the filesystem's case semantics.
+    const key = event.path;
     const existing = map.get(key);
 
     if (!existing) {
