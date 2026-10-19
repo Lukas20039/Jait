@@ -4,6 +4,41 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.949](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.949) — 2026-10-19
+
+- feat(gateway-rust): port plugins, prompts, scheduler and security with migration contracts — eb67739e
+- feat(web): chat composer layout, crowded provider selector and read status — 07eee50e
+- fix(gateway): guard MCP reconnects and retain native watcher path case — 080ab48b
+- feat(usage): show Codex reset credits and fix quota refresh merging — 7d1e22e2
+- feat(messenger): emoji picker, options and status/team room views — ddc8059b
+
+The usage views now surface Codex's periodic free rate-limit resets
+(`rateLimitResetCredits` from the Codex app-server) as "N resets available"
+with each credit's title and expiry, in the usage modal and the Settings →
+Usage tab. Quota refreshes merge observations by timestamp so a stale cached
+row can never outvote a newer live read (and vice versa), remote-node accounts
+no longer push auto refresh into 30-minute backoff, and a read that yields no
+quota window at all now counts as a failure for backoff.
+
+Messenger gains an emoji picker with search, room options, and dedicated views
+for WhatsApp status broadcasts and team-platform hubs (spaces) with their
+channels (`MessengerRoomKind` in `@jait/shared`). The web chat UI gains a
+redesigned new-chat composer layout, a crowded-layout provider/model selector,
+message read status and agent control refinements.
+
+The MCP bridge tags connection attempts with identity tokens so a late
+handshake can no longer restore a removed server, and the project watcher
+keeps native path case semantics.
+
+The native gateway port grows plugins, prompts, the cron scheduler, security
+(trust engine, assessment lease, path guard), and the architecture, assistant
+profiles, hooks, secrets, trust and user-questions routes, all with translated
+migration contracts and parity tests.
+
+Validation: the release guard, workspace typecheck (8 packages) and oxlint all
+pass with 0 errors; the usage unit suites pass 41/41 locally. The full
+monorepo suite runs in CI.
+
 ## [v0.1.948](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.948) — 2026-10-18
 
 - fix(gateway): stop the project watcher from stalling file I/O — c3e35516
