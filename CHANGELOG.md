@@ -4,6 +4,38 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.950](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.950) — 2026-10-19
+
+- ci(release): retry npm smoke until the packument propagates — 36f9300a
+- fix(contracts): format gateway_rust_secrets with rustfmt — d3622342
+- test(gateway): cover Codex rate-limit response validators — 7976d5a3
+- fix(gateway): settle terminal commands after the output stream quiets — e0e68dc2
+- fix(web): fill the sidebar rail before showing the three-dot menu — caf340bc
+
+The sidebar rail now fills every slot that actually fits before falling back
+to the "⋯" overflow menu: a shared allocator distributes the rail's measured
+height across both sections proportionally and hands leftover space to any
+section still hiding items, and button heights are measured from the rendered
+markup instead of assumed (the Button size variant had been overriding the
+item's declared height, shrinking the effective fit by 4px per button).
+
+Terminal command execution no longer drops output that ConPTY flushes after
+the completion marker or shell prompt — the settle window re-arms while data
+keeps arriving, so the response settles 50ms after the stream goes quiet
+instead of racing it.
+
+The release pipeline is repaired end-to-end: the `npm install -g` smoke test
+retries for up to 20 minutes with `--prefer-online` (registry packument
+propagation for gateway 0.1.949 outgrew the 6-minute budget while the package
+itself was fine), and the Rust contracts' `gateway_rust_secrets.rs` is
+rustfmt-clean again. The Codex rate-limit response validators (reset credits,
+account flags, per-limit snapshots) gain direct unit coverage for the
+component coverage baseline.
+
+Validation: workspace typecheck, oxlint and the touched unit suites pass
+locally (provider-quota-fetchers 23/23, terminals-execute 3/3); the full
+monorepo suite and release jobs run in CI.
+
 ## [v0.1.949](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.949) — 2026-10-19
 
 - feat(gateway-rust): port plugins, prompts, scheduler and security with migration contracts — eb67739e
