@@ -4,6 +4,20 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.951](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.951) — 2026-10-19
+
+- feat(gateway): account token overhead and usage end-to-end — 90a8b2b0
+- feat(gateway-rust): port providers, calendar, security and services with contract coverage — 46a9e828
+
+Token spend is now accounted end-to-end: a shared context-overhead and
+model-usage model (with Rust parity) measures prompt/cached/completion tokens
+and estimated vs reported totals, flows through gateway metrics into the chat
+usage receipt and context-flow dialog, and captures Codex usage events. The
+release also fixes skill-discovery emission, the compacted catalog overview,
+terminal echo removal and valid-JSON truncation for MCP results. On the native
+side, providers, calendar, security and background services are ported to Rust
+with contract drivers and a source-review harness.
+
 ## [v0.1.950](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.950) — 2026-10-19
 
 - ci(release): retry npm smoke until the packument propagates — 36f9300a
