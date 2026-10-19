@@ -1,11 +1,15 @@
 import { useUrlSearchState } from '@/hooks/useUrlSearchState'
 import { automaticReadAllowed } from '@/lib/messenger/notification-actions'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { ArrowLeft, Bell, Link2, Loader2, LockKeyhole, LogOut, MessageCircle, MoreHorizontal, Plus, Search, Settings2, X } from 'lucide-react'
+import { ArrowLeft, ChevronDown, Loader2, LockKeyhole, MessageCircle, MoreHorizontal, Plus, Search, Settings2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Conversation } from '@/components/chat/conversation'
 import { MessengerBubble } from './messenger-message'
+import { MessengerStatusView } from './messenger-status-view'
+import { MessengerOptions } from './messenger-options'
+import { dayDividerLabel, needsDayDivider } from '@/lib/messenger/dates'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { useConfirmDialog } from '@/components/ui/confirm-dialog'
 import { PromptInput, type PromptInputHandle } from '@/components/chat/prompt-input'
@@ -16,10 +20,6 @@ import { appendTranscript } from '@/lib/transcript-merge'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { useMessenger } from './messenger-provider'
 import { MAX_ATTACHMENT_BYTES, messengerError, type MessengerRoom } from '@/lib/messenger/model'
-
-const BRIDGES = [
-  ['WhatsApp', 'whatsappbot'], ['Telegram', 'telegrambot'], ['Signal', 'signalbot'], ['Teams', 'teamsbot'],
-] as const
 
 function ConnectionForm() {
   const { store, snapshot } = useMessenger()
@@ -67,17 +67,17 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
   const confirm = useConfirmDialog()
   const historyBusy = useRef(false)
   const [loadingHistory, setLoadingHistory] = useState(false)
-  const [connectionsOpen, setConnectionsOpen] = useState(false)
-  const [search, setSearch] = useUrlSearchState('messenger')
+  // Messenger options are their own pane, not a drawer sliding over the conversation list.
+  const [pane, setPane] = useUrlSearchState('messenger', 'pane')
+  const optionsOpen = pane === 'options'
+  // One search field drives conversations, loaded-message results, and the open conversation.
+  // Older links that used `messageQ` still restore their query.
+  const [search, setSearch] = useUrlSearchState('messenger', 'q', () => new URLSearchParams(window.location.search).get('messageQ') ?? '')
   const [serviceValue, setService] = useUrlSearchState('messenger', 'service')
   const service = serviceValue || 'All'
-  const [messageSearch, setMessageSearch] = useUrlSearchState('messenger', 'messageQ')
-  const [recipient, setRecipient] = useState('')
   const [drafts, setDrafts] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState(false)
   const [actionError, setActionError] = useState('')
-  const [recoveryKey, setRecoveryKey] = useState('')
-  const [notice, setNotice] = useState('')
   const composerRef = useRef<PromptInputHandle>(null)
   const mobile = useIsMobile()
   const roomId = snapshot.selectedRoomId
@@ -105,9 +105,34 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
   const ready = snapshot.status === 'ready'
   const connected = !!snapshot.session
   const services = ['All', ...new Set([...snapshot.rooms.map(room => room.service), ...(service !== 'All' ? [service] : [])])]
-  const messages = snapshot.messages.filter(message => !messageSearch || (!message.unableToDecrypt && message.body.toLowerCase().includes(messageSearch.toLowerCase())))
-  const searchResults = store.searchLoadedMessages(messageSearch)
-  const rooms = snapshot.rooms.filter(room => (service === 'All' || room.service === service) && (room.name + ' ' + room.network).toLowerCase().includes(search.toLowerCase()))
+  const messages = snapshot.messages.filter(message => !search || (!message.unableToDecrypt && message.body.toLowerCase().includes(search.toLowerCase())))
+  // Message hits are independent of the conversation-name filter: only the service filter narrows them.
+  const searchResults = store.searchLoadedMessages(search).filter(item => service === 'All' || snapshot.rooms.some(room => room.id === item.roomId && room.service === service))
+  const rooms = snapshot.rooms.filter(room => (service === 'All' || room.service === service) && (room.name + ' ' + room.network + ' ' + (room.team ?? '')).toLowerCase().includes(search.toLowerCase()))
+  // Teams (Matrix spaces or bridge workspaces) group their channels instead of listing them flat.
+  const [collapsedTeams, setCollapsedTeams] = useState<Set<string>>(() => new Set())
+  const toggleTeam = (name: string) => setCollapsedTeams(current => {
+    const next = new Set(current)
+    if (next.has(name)) next.delete(name)
+    else next.add(name)
+    return next
+  })
+  const teams = new Map<string, { hub: MessengerRoom | null; channels: MessengerRoom[] }>()
+  for (const room of rooms) if (room.kind === 'team') teams.set(room.name, { hub: room, channels: [] })
+  for (const room of rooms) {
+    if (room.kind !== 'channel') continue
+    const name = room.team ?? room.network ?? 'Channels'
+    const entry = teams.get(name) ?? { hub: null, channels: [] }
+    entry.channels.push(room)
+    teams.set(name, entry)
+  }
+  const chatRooms = rooms.filter(room => room.kind !== 'channel' && room.kind !== 'team')
+  const roomRow = (item: MessengerRoom, channel = false) => (
+    <div key={item.id} role="group" aria-label={'Conversation ' + item.name} data-room-kind={item.kind ?? 'chat'} className="group/room flex min-w-0 items-center border-b border-border/50"><button onClick={() => selectRoom(item.id)} aria-pressed={item.id === roomId} className={'flex min-w-0 flex-1 gap-3 p-3 text-left hover:bg-muted/60 ' + (item.id === roomId ? 'bg-secondary' : '')}>
+      <span className={'flex h-10 w-10 shrink-0 items-center justify-center bg-primary/10 text-sm font-medium text-primary ' + (channel ? 'rounded-lg text-base' : 'rounded-full')}>{channel ? '#' : item.name.slice(0, 2).toUpperCase()}</span>
+      <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{channel ? '#' + item.name : item.name}</span>{(item.unread > 0 || item.markedUnread) && <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">{item.unread || <span aria-label="Unread">•</span>}</span>}</span><span className="block truncate text-2xs text-muted-foreground">{item.team ? item.team + ' · ' + item.service : item.service}{!item.team && item.network ? ' · ' + item.network : ''}{item.membership === 'invite' ? ' · Invitation' : ''}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.preview}</span></span>
+    </button>{roomMenu(item, 'Options for ' + item.name)}</div>
+  )
 
   useEffect(() => {
     const selectFromUrl = () => {
@@ -146,7 +171,6 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
   const act = async (action: () => Promise<unknown>, errorText?: string) => {
     setBusy(true)
     setActionError('')
-    setNotice('')
     try { await action() }
     catch (error) { setActionError(errorText ?? messengerError(error)) }
     finally { setBusy(false) }
@@ -186,7 +210,7 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
         if (item.unread > 0 || item.markedUnread) await store.markRead(item.id)
         else { await store.markUnread(item.id); if (roomId === item.id) selectRoom(null) }
       })}>Mark as {item.unread > 0 || item.markedUnread ? 'read' : 'unread'}</DropdownMenuItem>}
-      <DropdownMenuItem onSelect={() => { selectRoom(mobile ? null : item.id); requestAnimationFrame(() => document.querySelector<HTMLInputElement>('[aria-label="Search loaded messages"]')?.focus()) }}>Search messages</DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => { selectRoom(mobile ? null : item.id); requestAnimationFrame(() => document.querySelector<HTMLInputElement>('[aria-label="Search conversations and messages"]')?.focus()) }}>Search messages</DropdownMenuItem>
       <DropdownMenuItem onSelect={() => void act(() => navigator.clipboard.writeText(item.id))}>Copy conversation ID</DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem disabled={!store.remove} className="text-destructive" onSelect={() => { void (async () => {
@@ -199,68 +223,57 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
   return <section aria-label="Messenger" className="flex h-full min-h-0 w-full flex-col bg-background">
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
       <div className="flex min-w-0 items-center gap-2"><MessageCircle className="h-5 w-5 shrink-0 text-primary" /><h1 className="font-semibold">Messenger</h1><span role="status" className="truncate text-xs text-muted-foreground">{snapshot.status === 'ready' ? 'Connected' : snapshot.status === 'disconnected' ? 'Matrix' : snapshot.status}</span></div>
-      {connected && <Button variant="ghost" size="sm" className="gap-2" onClick={() => setConnectionsOpen(!connectionsOpen)} aria-label="Connections" aria-expanded={connectionsOpen}><Settings2 className="h-4 w-4" /><span className="hidden sm:inline">Connections</span></Button>}
+      {connected && <Button variant="ghost" size="sm" className="gap-2" onClick={() => setPane(optionsOpen ? '' : 'options')} aria-label="Connections" aria-pressed={optionsOpen}><Settings2 className="h-4 w-4" /><span className="hidden sm:inline">Connections</span></Button>}
     </header>
     {connected && snapshot.error && <p role="alert" className="border-b bg-muted px-4 py-2 text-sm">{snapshot.error}</p>}
     {actionError && <div className="flex items-center justify-between gap-3 border-b px-4 py-2 text-sm text-destructive" role="alert">{actionError}<button aria-label="Dismiss error" onClick={() => setActionError('')}><X className="h-4 w-4" /></button></div>}
-    {!connected ? <div className="flex min-h-0 flex-1 overflow-y-auto"><ConnectionForm /></div> : <>
-      {connectionsOpen && <div className="max-h-[60vh] shrink-0 space-y-4 overflow-y-auto border-b bg-muted/20 p-4" aria-label="Messenger connections">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0 text-sm"><p className="break-all font-medium">{snapshot.session?.userId}</p><p className="break-all text-xs text-muted-foreground">{snapshot.session?.homeserver} · Device {snapshot.session?.deviceId}</p></div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={busy} onClick={() => void act(() => store.enableNotifications(!snapshot.notifications), 'Allow notifications in your browser or device settings first.')}><Bell className="mr-2 h-4 w-4" />{snapshot.notifications ? 'Mute' : 'Notify'}</Button>
-            <Button variant="outline" size="sm" disabled={busy} onClick={() => void act(() => store.disconnect(), 'Disconnected locally. If server sign-out failed, revoke the Jait device in your Matrix account.')}><LogOut className="mr-2 h-4 w-4" />Disconnect</Button>
-          </div>
-        </div>
-        <div className="space-y-2"><h2 className="text-sm font-medium">Connect a messaging account</h2><p className="text-xs text-muted-foreground">Install a bridge on your homeserver, then open its setup conversation. Send “help” there to follow the bridge’s login steps. Bot IDs vary by server.</p>
-          <div className="flex flex-wrap gap-2">{BRIDGES.map(([name, bot]) => <Button key={name} variant="outline" size="sm" onClick={() => setRecipient('@' + bot + ':' + snapshot.session!.userId.split(':').slice(1).join(':'))}>{name}</Button>)}</div>
-          <form className="flex gap-2" onSubmit={event => { event.preventDefault(); void act(async () => { const id = await store.openDirect(recipient.trim()); selectRoom(id); setRecipient(''); setConnectionsOpen(false) }) }}>
-            <Input aria-label="Matrix user or bridge bot ID" placeholder="@whatsappbot:your.server" value={recipient} onChange={event => setRecipient(event.target.value)} required />
-            <Button type="submit" disabled={!ready || busy || !recipient.trim()}><Link2 className="mr-2 h-4 w-4" />Open</Button>
-          </form>
-          <p className="text-xs text-muted-foreground">Teams tenant coverage depends on the installed bridge and each organization’s policies.</p>
-        </div>
-        <div className="space-y-2 rounded-md border p-3">
-          <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" checked={snapshot.assistantAccess} disabled={!ready} onChange={event => store.setAssistantAccess(event.target.checked)} />Allow assistant access</label>
-          <p className="text-xs text-muted-foreground">When enabled, tools can read and search messages through the gateway and send with consent. Requested message text is shared with the gateway and your AI provider. Matrix credentials and encryption keys stay on the gateway. Assistant access resets when the gateway restarts or you disconnect.</p>
-        </div>
-        <details className="text-sm"><summary className="cursor-pointer">Recover encrypted history</summary>
-          <form className="mt-2 flex flex-wrap gap-2" onSubmit={event => { event.preventDefault(); const key = recoveryKey; setRecoveryKey(''); void act(async () => { await store.restoreKeys(key); setNotice('Encryption keys restored.') }, 'Could not restore keys. Check the recovery key and that this account has a server key backup.') }}>
-            <Input className="min-w-0 flex-1" aria-label="Matrix recovery key" type="password" value={recoveryKey} onChange={event => setRecoveryKey(event.target.value)} placeholder="Matrix backup recovery key" autoComplete="off" required />
-            <Button type="submit" disabled={!ready || busy}>Restore keys</Button>
-          </form>
-          <p className="mt-2 text-xs text-muted-foreground">Use your Matrix message backup key. Device verification and cross-signing setup currently require another client such as Element.</p>
-        </details>
-        {notice && <p role="status" className="text-sm">{notice}</p>}
-        <p className="text-xs text-muted-foreground">Notifications work while Jait is open. Calls and native service activity feeds are not supported.</p>
-      </div>}
+    {!connected ? <div className="flex min-h-0 flex-1 overflow-y-auto"><ConnectionForm /></div>
+      : optionsOpen ? <MessengerOptions onBack={() => setPane('')} onOpenConversation={id => { selectRoom(id); setPane('') }} />
+      : <>
       <div className="flex min-h-0 flex-1">
         <aside aria-label="Conversations" className={(roomId ? 'hidden md:flex ' : 'flex ') + 'w-full shrink-0 flex-col border-r md:w-72 lg:w-80'}>
-          <div className="space-y-3 border-b p-3">
-            <div className="flex items-center justify-between"><h2 className="text-sm font-medium">Conversations <span className="text-muted-foreground">{snapshot.rooms.length}</span></h2><Button variant="ghost" size="icon" className="h-7 w-7" aria-label="New conversation" onClick={() => setConnectionsOpen(true)}><Plus className="h-4 w-4" /></Button></div>
-            <div className="relative"><Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" /><Input aria-label="Search conversations" placeholder="Search conversations" value={search} onChange={event => setSearch(event.target.value)} className="pl-8" /></div>
-            <select aria-label="Filter by service" value={service} onChange={event => setService(event.target.value === 'All' ? '' : event.target.value)} className="h-8 w-full rounded-md border bg-background px-2 text-xs">{services.map(service => <option key={service}>{service}</option>)}</select>
-          </div>
           <div className="space-y-2 border-b p-3">
-            <Input aria-label="Search loaded messages" placeholder="Search loaded messages" value={messageSearch} onChange={event => setMessageSearch(event.target.value)} />
-            {messageSearch && <p className="text-xs text-muted-foreground">Loaded, decrypted history only. Up to 50 rooms and 50 results.</p>}
+            <div className="flex items-center justify-between"><h2 className="text-sm font-medium">Conversations <span className="text-muted-foreground">{snapshot.rooms.length}</span></h2><Button variant="ghost" size="icon" className="h-7 w-7" aria-label="New conversation" onClick={() => setPane('options')}><Plus className="h-4 w-4" /></Button></div>
+            <div className="flex items-center gap-2">
+              <div className="relative min-w-0 flex-1">
+                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input aria-label="Search conversations and messages" placeholder="Search" value={search} onChange={event => setSearch(event.target.value)} className="h-9 pl-8 pr-8 text-sm" />
+                {search && <button type="button" aria-label="Clear search" onClick={() => setSearch('')} className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"><X className="h-3.5 w-3.5" /></button>}
+              </div>
+              <Select value={service} onValueChange={value => setService(value === 'All' ? '' : value)}>
+                <SelectTrigger aria-label="Filter by service" className="h-9 w-auto max-w-[9rem] shrink-0 gap-1.5 px-2.5 text-xs font-medium"><SelectValue /></SelectTrigger>
+                <SelectContent align="end" className="min-w-[8rem]">{services.map(item => <SelectItem key={item} value={item} className="text-xs">{item}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
-            {messageSearch && <div aria-label="Message search results" className="border-b">
-              {searchResults.filter(item => rooms.some(room => room.id === item.roomId)).map(item => <button key={item.roomId + item.message.id} onClick={() => selectRoom(item.roomId)} className="block w-full space-y-1 border-b p-3 text-left text-sm hover:bg-muted/60"><span className="block truncate font-medium">{item.roomName}</span><span className="line-clamp-2 break-words text-xs text-muted-foreground">{item.message.body.slice(0, 300)}</span></button>)}
-              {!searchResults.some(item => rooms.some(room => room.id === item.roomId)) && <p className="p-3 text-sm text-muted-foreground">No matching loaded messages.</p>}
+            {search && <div aria-label="Message search results" className="border-b">
+              {searchResults.map(item => <button key={item.roomId + item.message.id} onClick={() => selectRoom(item.roomId)} className="block w-full space-y-1 border-b p-3 text-left text-sm hover:bg-muted/60"><span className="block truncate font-medium">{item.roomName}</span><span className="line-clamp-2 break-words text-xs text-muted-foreground">{item.message.body.slice(0, 300)}</span></button>)}
+              {searchResults.length === 0 && <p className="p-3 text-sm text-muted-foreground">No matching loaded messages.</p>}
+              <p className="px-3 py-1.5 text-2xs text-muted-foreground">Loaded, decrypted history only. Up to 50 rooms and 50 results.</p>
             </div>}
-            {rooms.map(item => <div key={item.id} role="group" aria-label={'Conversation ' + item.name} className="group/room flex min-w-0 items-center border-b border-border/50"><button onClick={() => selectRoom(item.id)} aria-pressed={item.id === roomId} className={'flex min-w-0 flex-1 gap-3 p-3 text-left hover:bg-muted/60 ' + (item.id === roomId ? 'bg-secondary' : '')}>
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">{item.name.slice(0, 2).toUpperCase()}</span>
-              <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{item.name}</span>{(item.unread > 0 || item.markedUnread) && <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">{item.unread || <span aria-label="Unread">•</span>}</span>}</span><span className="block truncate text-2xs text-muted-foreground">{item.service}{item.network ? ' · ' + item.network : ''}{item.membership === 'invite' ? ' · Invitation' : ''}</span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{item.preview}</span></span>
-            </button>{roomMenu(item, 'Options for ' + item.name)}</div>)}
-            {rooms.length === 0 && <div className="space-y-2 p-5 text-sm text-muted-foreground"><p>{snapshot.rooms.length ? 'No matching conversations.' : 'Your conversations will appear here as Matrix syncs.'}</p>{!snapshot.rooms.length && <Button variant="outline" size="sm" onClick={() => setConnectionsOpen(true)}>Connect a bridge</Button>}</div>}
+            {[...teams.entries()].map(([name, entry]) => {
+              const unread = entry.channels.reduce((sum, item) => sum + (item.unread || 0) + (item.markedUnread ? 1 : 0), 0)
+              const collapsed = collapsedTeams.has(name)
+              return <div key={'team:' + name} data-team-section={name} className="border-b border-border/50">
+                <button type="button" onClick={() => toggleTeam(name)} aria-expanded={!collapsed} aria-label={'Team ' + name} className="flex w-full min-w-0 items-center gap-3 px-3 py-2 text-left hover:bg-muted/50">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-medium text-primary">{name.slice(0, 2).toUpperCase()}</span>
+                  <span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-semibold">{name}</span><span className="flex items-center gap-2">{unread > 0 && <span className="rounded-full bg-primary px-1.5 text-xs text-primary-foreground">{unread}</span>}<ChevronDown className={'h-4 w-4 text-muted-foreground transition-transform ' + (collapsed ? '-rotate-90' : '')} /></span></span><span className="block truncate text-2xs text-muted-foreground">{entry.hub?.service ?? entry.channels[0]?.service ?? 'Team'} · {entry.channels.length} {entry.channels.length === 1 ? 'channel' : 'channels'}</span></span>
+                </button>
+                {!collapsed && entry.channels.map(channel => roomRow(channel, true))}
+              </div>
+            })}
+            {chatRooms.map(item => roomRow(item))}
+            {rooms.length === 0 && <div className="space-y-2 p-5 text-sm text-muted-foreground"><p>{snapshot.rooms.length ? 'No matching conversations.' : 'Your conversations will appear here as Matrix syncs.'}</p>{!snapshot.rooms.length && <Button variant="outline" size="sm" onClick={() => setPane('options')}>Connect a bridge</Button>}</div>}
           </div>
         </aside>
         <main onPointerDown={() => { if (roomId && document.hasFocus()) void store.markRead(roomId).catch(() => {}) }} onKeyDown={() => { if (roomId && document.hasFocus()) void store.markRead(roomId).catch(() => {}) }} className={(roomId ? 'flex ' : 'hidden md:flex ') + 'min-h-0 min-w-0 flex-1 flex-col'}>
           {!room ? <div className="m-auto max-w-sm space-y-2 p-6 text-center text-muted-foreground"><MessageCircle className="mx-auto h-10 w-10 text-primary/60" /><h2 className="font-medium text-foreground">Your personal inbox</h2><p className="text-sm">{roomId ? 'Waiting for this conversation to sync. Use Back to choose another.' : 'Choose a conversation to read and reply as yourself.'}</p>{roomId && <Button variant="outline" size="sm" onClick={() => selectRoom(null)}>Back to conversations</Button>}</div> : <>
-            <div className="flex h-14 shrink-0 items-center gap-3 border-b px-3"><Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => selectRoom(null)} aria-label="Back to conversations"><ArrowLeft className="h-4 w-4" /></Button><div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold">{room.name}</h2><p className="truncate text-xs text-muted-foreground">{room.service}{room.network ? ' · ' + room.network : ''}</p></div>{roomMenu(room, 'Conversation options')}{room.encrypted && <span title="Encrypted Matrix room"><LockKeyhole className="h-4 w-4 text-muted-foreground" aria-label="Encrypted room" /></span>}</div>
-            {room.membership === 'invite' ? <div className="m-auto space-y-4 p-6 text-center"><p>You have been invited to this conversation.</p><div className="flex justify-center gap-2"><Button disabled={!ready || busy} onClick={() => void act(() => store.join(room.id))}>Accept invitation</Button><Button variant="outline" disabled={!ready || busy} onClick={() => void act(() => store.leave(room.id))}>Decline</Button></div></div> : <>
+            <div className="flex h-14 shrink-0 items-center gap-3 border-b px-3"><Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => selectRoom(null)} aria-label="Back to conversations"><ArrowLeft className="h-4 w-4" /></Button><div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold">{room.kind === 'channel' ? '#' + room.name : room.name}</h2><p className="truncate text-xs text-muted-foreground">{room.kind === 'channel' ? [room.team, room.service].filter(Boolean).join(' · ') : room.service + (room.network ? ' · ' + room.network : '')}</p></div>{roomMenu(room, 'Conversation options')}{room.encrypted && <span title="Encrypted Matrix room"><LockKeyhole className="h-4 w-4 text-muted-foreground" aria-label="Encrypted room" /></span>}</div>
+            {room.kind === 'channel' && room.topic && <p data-channel-topic className="truncate border-b bg-muted/30 px-3 py-1 text-xs text-muted-foreground">{room.topic}</p>}
+            {search && <div role="status" className="flex shrink-0 items-center gap-2 border-b bg-muted/40 px-3 py-1 text-xs text-muted-foreground"><span className="truncate">Showing {messages.length} matching {messages.length === 1 ? 'message' : 'messages'}</span><button type="button" className="ml-auto shrink-0 underline" onClick={() => setSearch('')}>Clear search</button></div>}
+            {room.status ? <MessengerStatusView messages={messages} />
+              : room.membership === 'invite' ? <div className="m-auto space-y-4 p-6 text-center"><p>You have been invited to this conversation.</p><div className="flex justify-center gap-2"><Button disabled={!ready || busy} onClick={() => void act(() => store.join(room.id))}>Accept invitation</Button><Button variant="outline" disabled={!ready || busy} onClick={() => void act(() => store.leave(room.id))}>Decline</Button></div></div> : <>
               <Conversation
                 key={room.id}
                 variant="messenger"
@@ -270,7 +283,10 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
                 hasMore={ready && !loadingHistory && !!snapshot.hasEarlier}
                 onLoadMore={() => void loadEarlier()}
               >
-                {messages.map(message => <MessengerBubble key={message.id} messageId={message.id} message={message} roomId={room.id} disabled={!ready || busy} />)}
+                {messages.map((message, index) => <div key={message.id} className="pb-1">
+                  {needsDayDivider(messages[index - 1]?.timestamp, message.timestamp) && <p data-day-divider className="mx-auto my-2 w-fit rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">{dayDividerLabel(message.timestamp)}</p>}
+                  <MessengerBubble messageId={message.id} message={message} roomId={room.id} disabled={!ready || busy} variant={room.kind === 'channel' ? 'channel' : 'chat'} />
+                </div>)}
               </Conversation>
               {loadingHistory && <p role="status" className="px-3 py-1 text-xs text-muted-foreground">Loading earlier messages…</p>}
               {snapshot.historyLimited && <p role="status" className="px-3 py-1 text-xs text-muted-foreground">10,000 events loaded. Open WhatsApp for older history.</p>}

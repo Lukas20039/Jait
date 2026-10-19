@@ -4,15 +4,18 @@ import { expect, test, type Page } from '@playwright/test'
 test.use({ screenshot: 'off' })
 async function mount(page: Page) {
   const calls: any[] = []
-  const base = { timestamp: 1, encrypted: true, unableToDecrypt: false, pending: false, failed: false }
+  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0)
+  const today = startOfToday.getTime()
+  const yesterday = today - 86_400_000
+  const base = { timestamp: yesterday + 36_000_000, encrypted: true, unableToDecrypt: false, pending: false, failed: false }
   const snapshot = {
     status: 'ready', error: null, notifications: false, assistantAccess: false, hasEarlier: true,
     session: { homeserver: 'https://matrix.test', userId: '@alice:test', deviceId: 'A' },
     rooms: [{ id: '!room:test', name: 'Bob', membership: 'join', unread: 0, encrypted: true, service: 'WhatsApp', network: '', timestamp: 1, preview: 'Hello' }],
     messages: [
-      { ...base, id: '$one', sender: 'Bob', body: 'Incoming message', own: false, reactions: [{ key: '❤️', count: 1, own: false, senders: ['Bob'] }] },
-      { ...base, id: '$two', sender: 'Alice', body: 'My message', own: true, reactions: [] },
-      { ...base, id: '$image', sender: 'Bob', body: 'photo.png', own: false, attachment: { url: 'mxc://test/photo', name: 'photo.png', mime: 'image/png', image: true } },
+      { ...base, id: '$one', sender: 'Bob', body: 'Incoming message', own: false, timestamp: yesterday + 43_200_000, reactions: [{ key: '❤️', count: 1, own: false, senders: ['Bob'] }] },
+      { ...base, id: '$two', sender: 'Alice', body: 'My message', own: true, timestamp: today + 60_000, reactions: [] },
+      { ...base, id: '$image', sender: 'Bob', body: 'photo.png', own: false, timestamp: today + 120_000, attachment: { url: 'mxc://test/photo', name: 'photo.png', mime: 'image/png', image: true } },
     ],
   }
   await page.route('**/api/messenger**', async route => {
@@ -35,7 +38,7 @@ async function mount(page: Page) {
     if (url.pathname.endsWith('/media')) return route.fulfill({ json: { data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aZksAAAAASUVORK5CYII=' } })
     return route.fulfill({ json: { snapshot: { ...snapshot, selectedRoomId: url.searchParams.get('roomId') } } })
   })
-  await page.goto('/src/e2e-fixtures/messenger-gateway.html?roomId=%21room%3Atest')
+  await page.goto('/src/e2e-fixtures/messenger-gateway.html?roomId=%21room%3Atest', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('log', { name: 'Messages' })).toContainText('Incoming message')
   return calls
 }
@@ -59,8 +62,10 @@ for (const width of [1280, 390, 320]) {
 test('React, remove reaction, and edit own message', async ({ page }) => {
   const calls = await mount(page)
   const own = page.locator('[data-message-id="$two"]')
+  // Desktop shows the quick-reaction row on hover, like WhatsApp Web.
+  await own.hover()
   await own.getByRole('button', { name: 'React to message' }).click()
-  await page.getByRole('menuitem', { name: '👍', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'React with 👍' }).click()
   await expect(own.getByRole('button', { name: '👍 1' })).toHaveAttribute('aria-pressed', 'true')
   await own.getByRole('button', { name: '👍 1' }).click()
   await expect(own.getByRole('button', { name: '👍 1' })).toHaveCount(0)
@@ -72,6 +77,38 @@ test('React, remove reaction, and edit own message', async ({ page }) => {
   await expect(own).toContainText('Edited')
   expect(calls.filter(c => c.action === 'react')).toHaveLength(2)
   expect(calls).toContainEqual({ action: 'edit', roomId: '!room:test', eventId: '$two', text: 'Updated message' })
+})
+
+test('Day dividers label today and yesterday', async ({ page }) => {
+  await mount(page)
+  const dividers = page.locator('[data-day-divider]')
+  await expect(dividers).toHaveCount(2)
+  await expect(dividers.first()).toHaveText(/yesterday|gestern/i)
+  await expect(dividers.last()).toHaveText(/today|heute/i)
+  // Same-day messages share one divider.
+  await expect(page.locator('[data-message-id="$image"] [data-day-divider]')).toHaveCount(0)
+})
+
+test('Reaction row appears on hover and on a finger hold', async ({ page }) => {
+  await mount(page)
+  const own = page.locator('[data-message-id="$two"]')
+  const bar = own.locator('[data-reaction-bar]')
+  await expect(bar).toHaveCSS('opacity', '0')
+  await own.hover()
+  await expect(bar).toHaveCSS('opacity', '1')
+  await expect(bar.getByRole('button')).toHaveCount(7)
+  await expect(bar.getByRole('button', { name: 'React with ❤️' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'React to message' })).toBeVisible()
+
+  const incoming = page.locator('[data-message-id="$one"]')
+  const incomingBar = incoming.locator('[data-reaction-bar]')
+  await page.mouse.move(0, 0)
+  await expect(incomingBar).toHaveAttribute('data-open', 'false')
+  // Phones cannot hover, so holding a message opens the same row.
+  await incoming.dispatchEvent('pointerdown', { pointerType: 'touch', isPrimary: true })
+  await expect(incomingBar).toHaveAttribute('data-open', 'true')
+  await page.keyboard.press('Escape')
+  await expect(incomingBar).toHaveAttribute('data-open', 'false')
 })
 
 test('Chat options remove conversation with clear confirmation', async ({ page }) => {
@@ -113,6 +150,6 @@ test('Search messages from the mobile chat menu reveals the search field', async
   await mount(page)
   await page.getByRole('button', { name: 'Conversation options', exact: true }).click()
   await page.getByRole('menuitem', { name: 'Search messages', exact: true }).click()
-  await expect(page.getByRole('textbox', { name: 'Search loaded messages' })).toBeVisible()
-  await expect(page.getByRole('textbox', { name: 'Search loaded messages' })).toBeFocused()
+  await expect(page.getByRole('textbox', { name: 'Search conversations and messages' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Search conversations and messages' })).toBeFocused()
 })

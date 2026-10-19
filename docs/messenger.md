@@ -21,10 +21,37 @@ The included Docker helper runs a small single-user, non-federated Synapse serve
 - “Mark as read” on supported notifications, scoped to the notified event so newer messages stay unread.
 - Dictation through the shared composer microphone control, using Settings → speech-to-text provider. Click **Dictate**, speak, then **Done**; review the draft before sending. A delayed transcript stays with its original conversation.
 - Responsive conversation navigation on narrow screens.
+- WhatsApp-style reactions: hover (pointer) or press and hold (touch) a message for a quick row plus a searchable full emoji panel; reactions toggle off and show sender names.
+- Compact transcript density with day dividers (`Heute`/`Today`, `Gestern`/`Yesterday`, then a short dated label) computed in your browser locale.
+- WhatsApp status/story broadcasts render as a read-only per-contact feed instead of a chat log.
 
 One Matrix account can be connected per Jait user, shared across all signed-in Jait clients. It can aggregate multiple upstream bridge logins if those bridges support them. WhatsApp, Telegram, Signal and Teams require installed/configured bridges and separate account authorization. Service buttons help address setup conversations; they do not claim a service is connected.
 
-Not included: automatic bridge installation, provisioning APIs, simultaneous Matrix accounts, calls, reactions UI, message editing, native Teams activity feeds, guaranteed Teams guest-tenant coverage, push after Jait closes, interactive device verification or cross-signing setup. New direct conversations are encrypted by default. Configure bridge encryption support before opening their setup conversations. Use another Matrix client such as Element for device verification and recovery setup. Bridges requiring verified devices may need that step.
+Not included: automatic bridge installation, provisioning APIs, simultaneous Matrix accounts, calls, reaction threads or custom emoji, native Teams activity feeds, guaranteed Teams guest-tenant coverage, push after Jait closes, interactive device verification or cross-signing setup. New direct conversations are encrypted by default. Configure bridge encryption support before opening their setup conversations. Use another Matrix client such as Element for device verification and recovery setup. Bridges requiring verified devices may need that step.
+
+## Message display
+
+Bubbles use a compact, WhatsApp-like density: tight padding, small type and a narrow footer for time, edited state and read receipts. Your own messages sit on the right, everyone else on the left.
+
+Day dividers split the transcript where the calendar day changes: today and yesterday use localized relative labels, older days use a short weekday/date label with the year only when it differs from the current one. Dividers are computed from event timestamps in the browser locale, so scrolling up stays oriented. They also appear inside status feeds.
+
+### Reactions
+
+Hover a message with a pointer, or press and hold it on a touch screen, to slide out a horizontal row of quick reactions plus a search button. The search button opens a full emoji panel grouped by category with a text search over emoji names and keywords; choosing one applies the reaction immediately. Tap an existing reaction badge to toggle your own reaction. Badge tooltips list who reacted when the homeserver exposes that.
+
+Long-press cancels if the finger moves more than a few pixels, so it does not block scrolling, and the row also dismisses on outside press or `Escape`.
+
+### Status feeds
+
+WhatsApp bridges deliver statuses/stories as ordinary events inside a single "Status Broadcast" pseudo-conversation. Jait detects that room by name or topic and replaces the chat transcript with a read-only feed: statuses are grouped per contact, newest contact first, with a count and the latest timestamp per contact, and media inside a status is shown inline. There is no composer, no read receipts and no reaction bar there, because those actions would post into the broadcast room. Ordinary conversations keep the normal transcript.
+
+### Teams and channels
+
+Team platforms (Slack, Microsoft Teams, Discord, Google Chat, and Matrix spaces) arrive as a team plus one room per channel. Jait detects the shape from room state — a Matrix space is a team, a bridge channel record that is not a direct message (or any room whose parent is a team space) is a channel — and anything it cannot classify stays a plain conversation, so no room is ever hidden.
+
+In the conversation list, teams appear as section headers showing the service and channel count with the channels' unread total; their channels sit underneath with a `#` prefix and can be folded away with the team header. The conversation filter also matches team names.
+
+Opening a channel shows the channel identity instead of a chat header: `#` name, its team and service, and the channel topic as a banner when the room has one. Channel messages use a flat, Slack-style layout — every message keeps its sender line and a single footer row with reactions, time and options — while direct messages keep the WhatsApp-style bubbles. Threads, per-channel notifications and posting as a bot are not modelled here; the bridge relays them as ordinary messages.
 
 ## Assistant tools and shareable searches
 
@@ -38,13 +65,13 @@ Search is literal and case insensitive, over loaded decrypted timelines only: up
 
 Shareable page parameters:
 
-- `q`: conversation name/network filter.
+- `q`: the single search field. It filters conversations by name/network and matches loaded, decrypted message text.
 - `service`: exact service label, such as WhatsApp or Telegram.
-- `messageQ`: search loaded message text and filter the selected room.
+- `messageQ`: legacy alias still restored into the search field when opening older links.
 - `roomId`: selected Matrix conversation.
 - `homeserver` and `username`: private sign-in form prefill, without credentials.
 
-For example: `/messenger?service=WhatsApp&q=Homelab&messageQ=firewall&roomId=%21room%3Aexample.com`. Navigation restores search fields; editing preserves the other parameters. Never put passwords, access tokens or recovery keys in links.
+For example: `/messenger?service=WhatsApp&q=firewall&roomId=%21room%3Aexample.com`. Navigation restores the search field and service filter; editing preserves the other parameters. Never put passwords, access tokens or recovery keys in links.
 
 ## Connect an existing homeserver
 

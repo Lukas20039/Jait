@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bridgeLabel, messengerError, normalizeHomeserver, readSession, sessionKey } from './model'
+import { bridgeLabel, isStatusRoom, messengerError, normalizeHomeserver, readSession, roomKind, sessionKey } from './model'
 
 describe('Matrix account boundaries', () => {
   it('accepts HTTPS and loopback HTTP and rejects secret-bearing or unsafe URLs', () => {
@@ -30,5 +30,31 @@ describe('Matrix account boundaries', () => {
     expect(bridgeLabel(undefined)).toEqual({ service: 'Matrix', network: '' })
     expect(bridgeLabel({ protocol: { id: 'whatsapp' }, network: { displayname: 'Personal' } })).toEqual({ service: 'WhatsApp', network: 'Personal' })
     expect(bridgeLabel({ protocol: { id: 'msteams' }, network: { displayname: 'Tenant A' } })).toEqual({ service: 'Teams', network: 'Tenant A' })
+  })
+  it('recognizes WhatsApp status broadcast rooms by name or topic only', () => {
+    expect(isStatusRoom({ name: 'WhatsApp Status Broadcast' })).toBe(true)
+    expect(isStatusRoom({ name: 'WhatsApp status broadcast' })).toBe(true)
+    expect(isStatusRoom({ name: 'Someone', topic: 'Status updates from your contacts' })).toBe(true)
+    expect(isStatusRoom({ name: 'Bob', topic: '' })).toBe(false)
+    expect(isStatusRoom({ name: 'Status meeting', topic: 'weekly sync' })).toBe(false)
+    expect(isStatusRoom({})).toBe(false)
+    expect(isStatusRoom({ name: null, topic: null })).toBe(false)
+  })
+  it('classifies teams, channels, and plain chats without hiding unknown rooms', () => {
+    // Status wins over every other shape.
+    expect(roomKind({ name: 'WhatsApp Status Broadcast', service: 'WhatsApp', space: true })).toBe('status')
+    expect(roomKind({ status: true, space: true })).toBe('status')
+    // Matrix spaces are team hubs.
+    expect(roomKind({ space: true, service: 'Teams', name: 'Engineering' })).toBe('team')
+    // Bridge channels on team platforms are channels; direct messages stay chats.
+    expect(roomKind({ service: 'Slack', name: 'general', channel: { is_direct: false }, team: 'Acme' })).toBe('channel')
+    expect(roomKind({ service: 'Slack', name: 'Bob', channel: { isDirect: true } })).toBe('chat')
+    // Rooms hung on a team space are channels even without bridge metadata.
+    expect(roomKind({ service: 'Matrix', name: 'standup', team: 'Engineering' })).toBe('channel')
+    // Group chats on personal messengers are chats, not team channels.
+    expect(roomKind({ service: 'WhatsApp', name: 'Family', channel: { is_direct: false } })).toBe('chat')
+    // Unknown shapes stay plain chats so nothing disappears.
+    expect(roomKind({ service: 'Matrix', name: 'Bob' })).toBe('chat')
+    expect(roomKind({})).toBe('chat')
   })
 })

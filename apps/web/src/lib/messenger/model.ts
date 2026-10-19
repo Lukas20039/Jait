@@ -1,7 +1,7 @@
 export const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024
 
-import type { MessengerSession } from '@jait/shared'
-export type { MessengerSession, MessengerMessage, MessengerRoom, MessengerSnapshot, MessengerReadReceipt } from '@jait/shared'
+import type { MessengerSession, MessengerRoomKind } from '@jait/shared'
+export type { MessengerSession, MessengerMessage, MessengerRoom, MessengerRoomKind, MessengerSnapshot, MessengerReadReceipt } from '@jait/shared'
 
 export function normalizeHomeserver(input: string): string {
   const url = new URL(input.trim())
@@ -42,6 +42,42 @@ export function messengerError(error: unknown): string {
   if (code === 'M_LIMIT_EXCEEDED') return 'Your homeserver is rate limiting requests. Wait a moment and try again.'
   // Server messages and request URLs can contain secrets. Do not surface raw SDK errors.
   return 'Matrix could not complete the request. Check the homeserver address, connection, and account permissions.'
+}
+
+/**
+ * Bridged networks expose stories/statuses as one pseudo-chat. Mautrix names it
+ * "WhatsApp Status Broadcast" and topics it "…status updates from your contacts".
+ */
+export function isStatusRoom(room: { name?: string | null; topic?: string | null }): boolean {
+  const name = String(room?.name ?? '')
+  const topic = String(room?.topic ?? '')
+  return /status broadcast/i.test(name) || /status updates from your contacts/i.test(topic)
+}
+
+/** Services whose rooms are organized as teams/workspaces containing channels. */
+export const TEAM_SERVICES = new Set(['Slack', 'Teams', 'Discord', 'Google Chat'])
+
+/**
+ * Team-platform rooms come in two structural shapes. A Matrix space holds the
+ * team itself ("m.space" room type), while channel rooms are the conversations
+ * inside a team — bridges flag them with a channel record that is not a direct
+ * message. Everything unknown stays a plain chat so nothing is ever hidden.
+ */
+export function roomKind(input: {
+  space?: boolean
+  service?: string | null
+  status?: boolean
+  name?: string | null
+  topic?: string | null
+  channel?: { isDirect?: boolean; is_direct?: boolean } | null
+  team?: string | null
+}): MessengerRoomKind {
+  if (input.status || isStatusRoom(input)) return 'status'
+  if (input.space) return 'team'
+  const direct = input.channel?.isDirect === true || input.channel?.is_direct === true
+  const grouped = Boolean(input.channel) || Boolean(input.team)
+  if (grouped && !direct && (input.team || TEAM_SERVICES.has(String(input.service ?? '')))) return 'channel'
+  return 'chat'
 }
 
 export function bridgeLabel(content: Record<string, unknown> | undefined): { service: string; network: string } {

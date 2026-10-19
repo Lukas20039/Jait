@@ -5,7 +5,7 @@ import { latestConfirmedEvent, roomReadReceipts } from './read-state'
 import { messengerReadLink } from './notification-actions'
 import { triggerSystemNotification, revokeSystemNotification } from '@/lib/system-notifications'
 import {
-  MAX_ATTACHMENT_BYTES, bridgeLabel, messengerError, normalizeHomeserver, readSession, sessionKey,
+  MAX_ATTACHMENT_BYTES, bridgeLabel, isStatusRoom, messengerError, normalizeHomeserver, readSession, roomKind, sessionKey,
   type MessengerMessage, type MessengerRoom, type MessengerSession, type MessengerSnapshot,
 } from './model'
 
@@ -231,13 +231,27 @@ export class MessengerStore {
   private refresh() {
     if (!this.client || !this.session) return
     const rooms: MessengerRoom[] = this.client.getRooms()
-      .filter(room => ['join', 'invite'].includes(room.getMyMembership()) && room.currentState.getStateEvents('m.room.create', '')?.getContent().type !== 'm.space')
+      .filter(room => ['join', 'invite'].includes(room.getMyMembership()))
       .map(room => {
         const bridge = [...room.currentState.getStateEvents('m.bridge'), ...room.currentState.getStateEvents('uk.half-shot.bridge')][0]
+        const bridgeContent = bridge?.getContent()
         const messages = room.getLiveTimeline().getEvents().map(event => this.message(event, room)).filter((m): m is MessengerMessage => m !== null)
         const last = messages.at(-1)
+        const topic = room.currentState.getStateEvents('m.room.topic', '')?.getContent().topic
+        // Teams are Matrix spaces; their channels name the space as a parent.
+        const space = room.currentState.getStateEvents('m.room.create', '')?.getContent().type === 'm.space'
+        const team = room.currentState.getStateEvents('m.space.parent').map(event => this.client!.getRoom(event.getStateKey())?.name).find(Boolean)
+        const channel = (bridgeContent?.channel ?? null) as { is_direct?: boolean } | null
+        const kind = roomKind({
+          space, service: bridgeLabel(bridgeContent).service, name: room.name,
+          status: isStatusRoom({ name: room.name, topic: typeof topic === 'string' ? topic : '' }),
+          topic: typeof topic === 'string' ? topic : '',
+          channel, team,
+        })
         return {
-          id: room.roomId, name: room.name, ...bridgeLabel(bridge?.getContent()),
+          id: room.roomId, name: room.name, ...bridgeLabel(bridgeContent),
+          kind, team: team ?? undefined, topic: typeof topic === 'string' && topic ? topic : undefined,
+          status: kind === 'status',
           unread: room.getUnreadNotificationCount(),
           markedUnread: this.unreadOverrides.get(room.roomId) ?? Boolean(room.getAccountData('m.marked_unread')?.getContent().unread), membership: room.getMyMembership(),
           encrypted: !!room.currentState.getStateEvents('m.room.encryption', ''),

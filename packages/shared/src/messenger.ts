@@ -73,6 +73,9 @@ export interface MessengerMessage {
   }
 }
 
+/** Beyond plain chats: WhatsApp stories, and team-platform hubs (spaces) with their channels. */
+export type MessengerRoomKind = 'chat' | 'status' | 'team' | 'channel'
+
 export interface MessengerRoom {
   id: string
   name: string
@@ -84,6 +87,14 @@ export interface MessengerRoom {
   encrypted: boolean
   timestamp: number
   preview: string
+  /** WhatsApp status broadcasts have no real timeline; they get a dedicated read-only view. */
+  status?: boolean
+  /** Structural shape of the room. Absent means a plain chat. */
+  kind?: MessengerRoomKind
+  /** Team/workspace this room belongs to (Slack workspace, Teams team, Discord guild). */
+  team?: string
+  /** Room topic, surfaced on channel headers. */
+  topic?: string
 }
 
 export interface MessengerSnapshot {
