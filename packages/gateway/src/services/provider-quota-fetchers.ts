@@ -141,7 +141,7 @@ function isCodexRateLimitResetCredits(value: unknown): boolean {
   );
 }
 
-function isCodexRateLimitsResponse(value: unknown): value is CodexRateLimitsResponse {
+export function isCodexRateLimitsResponse(value: unknown): value is CodexRateLimitsResponse {
   if (!value || typeof value !== "object") return false;
   const response = value as Record<string, unknown>;
   if (!isCodexRateLimitSnapshot(response.rateLimits)) return false;
@@ -158,7 +158,7 @@ function isCodexRateLimitsResponse(value: unknown): value is CodexRateLimitsResp
 }
 
 /** Some Codex builds only populate `rateLimitsByLimitId`; promote the best snapshot. */
-function normalizeCodexRateLimits(response: CodexRateLimitsResponse): CodexRateLimitsResponse {
+export function normalizeCodexRateLimits(response: CodexRateLimitsResponse): CodexRateLimitsResponse {
   const { rateLimits } = response;
   if (rateLimits.primary || rateLimits.secondary) return response;
   const byLimitId = response.rateLimitsByLimitId ?? {};
