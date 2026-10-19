@@ -101,3 +101,25 @@ test('generated exception constructors use prototype identity for throws and rej
     assert.equal(rows[4].threw, false, file);
   }
 });
+
+// Deep equality and call-argument matchers must distinguish equal-looking
+// functions/signals; top-level toBe metadata cannot preserve nested identity.
+test('nested function and AbortSignal references survive transport', () => {
+  for (const file of fs.readdirSync(directory).filter(file => file.endsWith('.ts'))) {
+    const source = fs.readFileSync(new URL(file, directory), 'utf8');
+    const start = source.indexOf('const __jait_symbols=');
+    const end = source.indexOf('export async function run(', start);
+    const context = { Date, Map, Set, Error, RegExp, ArrayBuffer, DataView, AbortSignal };
+    vm.runInNewContext(ts.transpile(source.slice(start, end)) + '\nglobalThis.box = __jait_boxed;', context);
+    const fn = () => {};
+    const signal = new AbortController().signal;
+    const first = context.box({ fn, signal });
+    const same = context.box({ fn, signal });
+    const different = context.box({ fn: () => {}, signal: new AbortController().signal });
+    for (const key of ['fn', 'signal']) {
+      assert.ok(Number.isInteger(first.value[key].ref) && first.value[key].ref > 0, file);
+      assert.equal(first.value[key].ref, same.value[key].ref, file);
+      assert.notEqual(first.value[key].ref, different.value[key].ref, file);
+    }
+  }
+});

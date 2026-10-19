@@ -140,7 +140,11 @@ fn run() -> Result<bool> {
             "historical database upgrades and mixed-version rollback",
             "cross-platform behavior, resource budgets and full API surface"
         ],
-        "profile_exclusions":if managed {json!([])} else {json!(["persistence.abrupt-restart (runner does not own backend process)"])}
+        "profile_exclusions":if managed {json!([])} else {json!([
+            "persistence.abrupt-restart (runner does not own backend process)",
+            "messenger.encrypted-shared-device-restart: restart assertions omitted",
+            "messenger.encrypted-history-recovery-restart: restart assertions omitted"
+        ])}
     });
     fs::write(&report_path, serde_json::to_vec_pretty(&report)?)?;
     println!(

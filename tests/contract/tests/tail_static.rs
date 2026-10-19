@@ -8879,6 +8879,36 @@ fn tailstatic_packages_gateway_src_routes_providers_subscription_usage_test_ts_6
     );
 }
 
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:58:3: keeps the live quota read when a background row was not persisted
+#[test]
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_58_3() {
+    tail_assertions::check(
+        r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_58_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"status":"rejected","utilization":1}}]"#,
+    );
+}
+
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:70:3: prefers a newer local observation over an older refresh result
+#[test]
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_70_3() {
+    tail_assertions::check(
+        r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_70_3"#,
+        r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"status":"rejected","utilization":1}}]"#,
+    );
+}
+
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:82:3: runs the provider read for every manual refresh instead of serving the cache
+#[test]
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_82_3() {
+    tail_assertions::check(
+        r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_82_3"#,
+        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2}]"#,
+    );
+}
+
 // packages/gateway/src/routes/pull-requests.test.ts:54:3: resolves pull request operations per authenticated user
 #[test]
 fn tailstatic_packages_gateway_src_routes_pull_requests_test_ts_54_3() {
@@ -16465,32 +16495,42 @@ fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_212_3() {
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:249:3: stores Ollama session, weekly and monthly usage metadata
+// packages/gateway/src/services/provider-usage.test.ts:249:3: marks every Codex window as full when workspace credits are depleted
 #[test]
 fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
         r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3"#,
+        r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","utilization":1,"status":"rejected","planType":"team"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.63,"status":"rejected"}}]}}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-usage.test.ts:292:3: stores Ollama session, weekly and monthly usage metadata
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_292_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_292_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":3},{"matcher":"toEqual","negate":false,"expected":["2026-03-11T10:00:00.000Z","2026-03-16T00:00:00.000Z","2026-04-01T00:00:00.000Z"]},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","providerType":"ollama","utilization":0.25,"planType":"pro","models":[{"name":"gpt-oss","requestCount":4}]}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"monthly","utilization":0.6,"activityCost":"3.20"}}]}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:304:3: keeps an observed Ollama rollover instead of re-guessing the next reset
+// packages/gateway/src/services/provider-usage.test.ts:347:3: keeps an observed Ollama rollover instead of re-guessing the next reset
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_304_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_347_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_304_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_347_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"2026-03-11T15:00:00.000Z"}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:341:3: exposes the stored quota reset date for cached Ollama snapshots
+// packages/gateway/src/services/provider-usage.test.ts:384:3: exposes the stored quota reset date for cached Ollama snapshots
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_341_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_384_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_341_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_384_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"resetsAt":"2026-09-20T13:45:00.000Z","updatedAt":"2026-09-20T13:45:00.000Z","utilization":0.25}}]"#,
     );
 }
@@ -19405,23 +19445,23 @@ fn tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_4_1() {
     );
 }
 
-// packages/gateway/src/services/usage-refresh-cache.test.ts:22:1: isolates users and configurations and bounds forced refreshes
+// packages/gateway/src/services/usage-refresh-cache.test.ts:22:1: isolates users and configurations and lets every forced read reload
 #[test]
 fn tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_22_1() {
     tail_assertions::check(
         r#"gateway-src-services-usage-refresh-cache-test-1543353f"#,
         r#"tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_22_1"#,
-        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":3},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":4}]"#,
+        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":4},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":5}]"#,
     );
 }
 
-// packages/gateway/src/services/usage-refresh-cache.test.ts:36:1: backs off failed payloads and thrown errors even for manual refresh
+// packages/gateway/src/services/usage-refresh-cache.test.ts:36:1: backs off automatic refreshes while every manual refresh retries
 #[test]
 fn tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_36_1() {
     tail_assertions::check(
         r#"gateway-src-services-usage-refresh-cache-test-1543353f"#,
         r#"tailstatic_packages_gateway_src_services_usage_refresh_cache_test_ts_36_1"#,
-        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toThrow","negate":false,"expected":"offline"},{"matcher":"toThrow","negate":false,"expected":"offline"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
+        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":3},{"matcher":"toThrow","negate":false,"expected":"offline"},{"matcher":"toThrow","negate":false,"expected":"offline"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toThrow","negate":false,"expected":"offline"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":3}]"#,
     );
 }
 

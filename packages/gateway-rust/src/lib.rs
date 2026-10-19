@@ -20,10 +20,16 @@ pub mod services;
 pub mod state_directory;
 pub mod surfaces;
 mod text;
+pub mod tools;
 pub mod transport;
 
 // Preserve the public API used by the existing native acceptance suite.
 pub use runtime::Gateway;
 pub const VERSION: &str = env!("JAIT_GATEWAY_VERSION");
 
-pub mod tools;
+pub mod time;
+
+pub mod prompts;
+
+pub mod identifiers;
+pub mod plugins;

@@ -4,34 +4,40 @@ Status: parallel Rust implementation and reference-test reconstruction. The init
 
 ## Native implementation checkpoint — 2026-10-18
 
-The focused native component check now passes **8 / 361 components (2.22%)**,
-including health, UUIDv7, state paths, SQLite connection/migrations, authentication,
-ownership and the user repository. This supersedes the initial one-component
-implementation checkpoint, while historical declaration-parity percentages below
-continue to describe a separate prerequisite lane. Equal-weight source-component
-coverage is not an effort estimate or replacement readiness score.
+The source-bound native gate passes **48 / 361 components (13.30%)**.
+This supersedes the earlier 8-component checkpoint. Equal-weight source-component
+coverage is separate from reconstructed test declarations, implementation effort,
+and production replacement readiness.
 
-`bun run test:gateway:rust` checks format, strict native Clippy and four native
-contract targets (42 tests, including duplicated transport-helper tests). It binds
-evidence to source hashes before/after execution and refuses reference drift.
-The manifest is `packages/gateway-rust/native-coverage.json`; the latest report is
-`.jait/artifacts/gateway-rust/native-progress/report.json`. Workspace TypeScript
-checks pass. The inventory was recaptured after reviewing the password fix and
-adding its regression declarations; no reference-test parity credit was inferred
-from implementation work.
+The latest batch adds native list-preview helpers, `session.search` and
+`chat.traces` tool adapters using the native history services. It also fixes
+session metadata key ordering and inherited legacy project UI-state migration.
+Existing state services were consolidated in `services/json_state.rs`; they
+receive no duplicate component credit. The native session HTTP adapter and title
+normalizer are implemented and tested, but remain an **uncredited candidate**
+until their documented compatibility gaps are resolved.
 
-The migration uncovered a corrupt-password-hash defect: malformed hex could
-produce a zero-byte credential comparison. The original TypeScript regression had
-four failures before a strict 64-byte hex check and eight passes afterward; native
-user parity also fails before that reference correction and passes afterward.
-Valid password hashes keep the existing format. Evidence is in
-`.jait/artifacts/gateway-rust/password-before.log` and `password-after.log`.
+`RUST_TEST_THREADS=2 bun run test:gateway:rust` passes format, strict native
+Clippy, native library tests and 27 differential contract targets.
+The gate recorded 318 passing test executions
+(including repeated shared transport-helper tests), with no failed or ignored
+required tests and unchanged source fingerprints. Workspace TypeScript checks
+and artifact-path checks passed. The manifest is
+`packages/gateway-rust/native-coverage.json`; source-bound results are in
+`.jait/artifacts/gateway-rust/native-progress/report.json`.
 
-The standalone binary still exposes only health, with no database or credentials
-opened at startup. New storage/auth/user modules are real native libraries tested
-against disposable databases and the actual TypeScript functions. Next: connect
-these boundaries to authenticated HTTP routes, then owned session APIs. R00–R08
-and full replacement gates remain open; no production cutover has occurred.
+Review and limits: `tests/contract/reviews/native-session-ui.md`. Eight mutations
+caught ownership, preview-budget, state-migration, metadata-order and title-race
+failures; restored implementations passed. The inherited-project-state
+regression failed before the fix and passed afterward. The 76-prefix storage
+comparison now bounds reference fixture generation to eight prefixes per driver
+call, retaining every assertion and the ten-second per-call deadline.
+
+The standalone binary entry point remains unchanged. Session HTTP routes require
+explicit opt-in; live chat, device/WebSocket transport and title generation use
+explicit adapters. Production remains the TypeScript gateway. The 181/361 native
+milestone and full replacement, platform, resource and rollback gates remain
+open; no production cutover or TypeScript removal has occurred.
 
 ## Scope and completion
 
@@ -460,3 +466,50 @@ Acceptance: After all component gates pass, remove replaced TS gateway code/runt
 Source revision: `8f513256f60c73770deb054c9d28960f9412ed71` plus the existing uncommitted Rust acceptance suite. Machine-readable inventory, command logs, results and the durable-todo index belong under `.jait/artifacts/gateway-rust-readiness/`.
 
 At planning time, gateway/shared/API-client typechecks passed. Component and integration outcomes are recorded in `baseline-summary.json` and the companion baseline report, including failures and conditional skips. The baseline is evidence for the existing TypeScript gateway, not proof of an unimplemented Rust gateway.
+
+
+### Native implementation checkpoint — 2026-10-18
+
+The source-bound native gate now passes at **55/361 components (15.24%)**.
+This continuation adds question/secret request lifecycles, completion-notification
+state, notification broadcast/sink dispatch, usage aggregation/refresh caching,
+and the user.ask tool adapter. Reviewed metadata, ownership, timer, ordered
+callback and cache behavior are compared with real TypeScript implementations.
+The gate runs formatting, strict native Clippy, seven native tests and 345
+contract-test executions across thirty targets with unchanged source hashes.
+Eight mutations fail the new assertions and restored implementations pass.
+
+Evidence: `.jait/artifacts/gateway-rust/checkpoints/55-report.json`, the current
+`native-progress/report.json`, and reviews `native-input.md`, `native-feedback.md`
+and `native-user-ask.md` under `tests/contract/reviews/`.
+The **181/361** milestone remains open. Session HTTP remains a candidate with
+Date.parse/framework compatibility gaps. Production tool dispatch, WebSocket
+transport, supported-platform evidence and replacement readiness remain separate
+unmet gates; production startup has not been switched.
+
+
+### Native continuation checkpoint — 2026-10-19
+
+This continuation targets **78/361 components (21.61%)**, with seven new native
+components since the recovered 71-component checkpoint: token estimates, provider
+todo results, provider snapshot caching, Linux OpenCode credential storage,
+question request HTTP, hook HTTP and execution guards. Real TypeScript contracts
+cover output and persisted/lifecycle effects. Thirteen mutations across these
+slices fail their original assertions; restored implementations pass.
+
+The source-bound verification command is
+`python3 packages/gateway-rust/tooling/validate-frozen.py`; its report records
+actual results and identifies any live-source drift. Review files under
+`tests/contract/reviews/` document typed boundaries and remaining gaps. Native
+account storage handles auth/deleted-user checks for question routes, and the
+shared JSON parser now matches recursive prototype-pollution rejection.
+Production startup and provider/agent execution remain unactivated. The
+**181/361** milestone and replacement-readiness gates remain open.
+
+
+The trust-route continuation targets **79/361 components (21.88%)**. The native
+worker preserves trust cache lifetime between database jobs, including failed
+write effects and stale cached rows after external changes. Nine focused tests
+and three restored mutations cover HTTP, storage, auth and shutdown behavior.
+Strict Clippy also passes for all five contract targets added in this continuation.
+The full source-bound gate remains the authority for component credit.

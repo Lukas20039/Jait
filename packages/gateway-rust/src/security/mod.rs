@@ -6,3 +6,8 @@ pub mod request_origin;
 pub mod ssrf_guard;
 pub mod trust_engine;
 pub mod worktree_sandbox;
+
+pub mod assessment_lease;
+pub mod trust_worker;
+
+pub mod path_guard;

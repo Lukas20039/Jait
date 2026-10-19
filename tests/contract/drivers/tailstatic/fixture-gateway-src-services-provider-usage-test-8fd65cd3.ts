@@ -14,6 +14,8 @@ const __jait_require=__jait_createRequire(__jait_original_url);
 const __jait_original_dir=__jait_fileURLToPath(new URL('.',__jait_original_url));
 const __jait_fixture_dir=__jait_fileURLToPath(new URL('../../../../.jait/artifacts/gateway-rust-readiness/tailstatic-fixtures/',import.meta.url));
 const __jait_symbols=new Map<symbol,number>();
+const __jait_nestedRefs=new WeakMap<object,number>();let __jait_nextNestedRef=1;
+function __jait_nestedRef(value:object):number{let id=__jait_nestedRefs.get(value);if(!id){id=__jait_nextNestedRef++;__jait_nestedRefs.set(value,id)}return id;}
 // Fixture transport only. Rust owns all comparison semantics.
 function __jait_boxed(value: any): any {
  const type=typeof value;
@@ -24,7 +26,7 @@ function __jait_boxed(value: any): any {
  if(type==='number'&&!Number.isFinite(value))return {type:'nonfinite',value:String(value)};
  const prototype=type==='object'&&value!==null?(Object.getPrototypeOf(value)?.constructor?.name??null):null;
  if(value instanceof Error)value={...value,name:value.name,message:value.message,...('cause' in value?{cause:value.cause}:{})};
- return JSON.parse(JSON.stringify({type,value,prototype},function(this:any,_key:string,child:any){const original=Object.getOwnPropertyDescriptor(this,_key)?.value;if(original instanceof Date)return {__jait_type:'date',value:Number.isNaN(original.getTime())?'NaN':original.toISOString()};if(typeof child==='string'&&!child.isWellFormed())return {__jait_type:'utf16',units:Array.from({length:child.length},(_,i)=>child.charCodeAt(i))};if(typeof AbortSignal!=='undefined'&&child instanceof AbortSignal)return {__jait_type:'AbortSignal',aborted:child.aborted};if(child instanceof Map)return {__jait_type:'map',entries:[...child]};if(child instanceof Set)return {__jait_type:'set',values:[...child]};if(child instanceof RegExp)return {__jait_type:'regexp',source:child.source,flags:child.flags};if(ArrayBuffer.isView(child)&&!(child instanceof DataView))return {__jait_type:child.constructor.name,values:Array.from(child as any)};if(typeof child==='number'&&!Number.isFinite(child))return {__jait_type:'nonfinite',value:String(child)};return typeof child==='bigint'?{__jait_type:'bigint',value:String(child)}:typeof child==='undefined'?{__jait_type:'undefined'}:typeof child==='function'?{__jait_type:'function'}:child;}));
+ return JSON.parse(JSON.stringify({type,value,prototype},function(this:any,_key:string,child:any){const original=Object.getOwnPropertyDescriptor(this,_key)?.value;if(original instanceof Date)return {__jait_type:'date',value:Number.isNaN(original.getTime())?'NaN':original.toISOString()};if(typeof child==='string'&&!child.isWellFormed())return {__jait_type:'utf16',units:Array.from({length:child.length},(_,i)=>child.charCodeAt(i))};if(typeof AbortSignal!=='undefined'&&child instanceof AbortSignal)return {__jait_type:'AbortSignal',aborted:child.aborted,ref:__jait_nestedRef(child)};if(child instanceof Map)return {__jait_type:'map',entries:[...child]};if(child instanceof Set)return {__jait_type:'set',values:[...child]};if(child instanceof RegExp)return {__jait_type:'regexp',source:child.source,flags:child.flags};if(ArrayBuffer.isView(child)&&!(child instanceof DataView))return {__jait_type:child.constructor.name,values:Array.from(child as any)};if(typeof child==='number'&&!Number.isFinite(child))return {__jait_type:'nonfinite',value:String(child)};return typeof child==='bigint'?{__jait_type:'bigint',value:String(child)}:typeof child==='undefined'?{__jait_type:'undefined'}:typeof child==='function'?{__jait_type:'function',ref:__jait_nestedRef(child)}:child;}));
 }
 
 export async function run(name: string): Promise<unknown> {
@@ -620,6 +622,65 @@ try {
 await (async()=>{
 
     const service = new ProviderUsageService(db);
+    // Shape reported by the live Work (team) account: the workspace blocks
+    // ordinary usage even though only the 5h window sits at 100%.
+    service.recordCodexRateLimits("codex-work", {
+      ordinaryUsageAllowed: false,
+      rateLimits: {
+        primary: {
+          usedPercent: 100,
+          windowDurationMins: 300,
+          resetsAt: 1_792_364_608,
+        },
+        secondary: {
+          usedPercent: 63,
+          windowDurationMins: 10_080,
+          resetsAt: 1_792_500_000,
+        },
+        planType: "team",
+        rateLimitReachedType: "workspace_member_credits_depleted",
+        spendControlReached: false,
+        credits: { hasCredits: false },
+      },
+    });
+
+    const snapshots = service.listForUser(["codex-work"]);
+    __jait_capture(0, (snapshots));
+    __jait_capture(1, (snapshots));
+  
+})();
+
+} finally {
+await __jait_hook_584();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_292_3": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+function makeNotifications() {
+  const warning = vi.fn();
+  return { warning, service: { warning } as unknown as NotificationService };
+}
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+};
+const __jait_hook_584 = () => {
+  sqlite.close();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_434();
+try {
+await (async()=>{
+
+    const service = new ProviderUsageService(db);
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-03-11T09:37:00.000Z"));
     try {
@@ -662,7 +723,7 @@ await __jait_hook_584();
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_304_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_347_3": {
 
 
 let sqlite: SqliteDatabase;
@@ -730,7 +791,7 @@ await __jait_hook_584();
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_341_3": {
+case "tailstatic_packages_gateway_src_services_provider_usage_test_ts_384_3": {
 
 
 let sqlite: SqliteDatabase;

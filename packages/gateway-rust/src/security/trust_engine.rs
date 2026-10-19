@@ -2,6 +2,10 @@
 //! Run this repository inside DatabaseWorker when called from async code.
 use rusqlite::{Connection, OptionalExtension, params};
 use serde::{Deserialize, Serialize};
+use std::sync::{Arc, Mutex};
+
+#[derive(Clone, Default)]
+pub(crate) struct TrustCache(Arc<Mutex<Vec<TrustState>>>);
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -14,7 +18,7 @@ pub struct TrustState {
 pub struct TrustEngine<'a> {
     db: Option<&'a Connection>,
     // Preserve the insertion order of JavaScript Map in memory-only mode.
-    cache: Vec<TrustState>,
+    cache: TrustCache,
 }
 fn from_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<TrustState> {
     let level: f64 = row.get::<_, Option<f64>>(3)?.unwrap_or(0.0);
@@ -37,14 +41,25 @@ impl<'a> TrustEngine<'a> {
     pub fn new(db: Option<&'a Connection>) -> Self {
         Self {
             db,
-            cache: Vec::new(),
+            cache: TrustCache::default(),
         }
+    }
+    /// Only the serialized worker shares caches between short-lived facades.
+    pub(crate) fn with_cache(db: Option<&'a Connection>, cache: TrustCache) -> Self {
+        Self { db, cache }
     }
     pub fn get_level(&mut self, action_type: &str) -> rusqlite::Result<u8> {
         Ok(self.get_state(action_type)?.current_level)
     }
     pub fn get_state(&mut self, action_type: &str) -> rusqlite::Result<TrustState> {
-        if let Some(state) = self.cache.iter().find(|s| s.action_type == action_type) {
+        if let Some(state) = self
+            .cache
+            .0
+            .lock()
+            .unwrap()
+            .iter()
+            .find(|s| s.action_type == action_type)
+        {
             return Ok(state.clone());
         }
         let persisted=match self.db {
@@ -57,18 +72,20 @@ impl<'a> TrustEngine<'a> {
             reverted_count: 0,
             current_level: 0,
         });
-        self.cache.push(state.clone());
+        self.cache.0.lock().unwrap().push(state.clone());
         Ok(state)
     }
     fn persist(&mut self, state: &TrustState) {
-        if let Some(cached) = self
-            .cache
-            .iter_mut()
-            .find(|s| s.action_type == state.action_type)
         {
-            *cached = state.clone();
-        } else {
-            self.cache.push(state.clone());
+            let mut cache = self.cache.0.lock().unwrap();
+            if let Some(cached) = cache
+                .iter_mut()
+                .find(|s| s.action_type == state.action_type)
+            {
+                *cached = state.clone();
+            } else {
+                cache.push(state.clone());
+            }
         }
         if let Some(db) = self.db {
             // The reference retains in-session state on persistence failure.
@@ -125,7 +142,7 @@ impl<'a> TrustEngine<'a> {
     }
     pub fn list_all(&self) -> rusqlite::Result<Vec<TrustState>> {
         match self.db {
-            None=>Ok(self.cache.clone()),
+            None=>Ok(self.cache.0.lock().unwrap().clone()),
             Some(db)=>db.prepare("SELECT action_type,approved_count,reverted_count,current_level FROM trust_levels")?.query_map([],from_row)?.collect(),
         }
     }

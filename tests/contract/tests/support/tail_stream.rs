@@ -9,6 +9,78 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
+// Only the explicitly selected scanner corpus may read this fixture cache.
+fn scoped_trivy_cache(root: &Path, cache: &Path) -> std::io::Result<std::path::PathBuf> {
+    let cache = cache.canonicalize()?;
+    let boundary = root.canonicalize()?.join(".jait");
+    if !cache.starts_with(boundary) || !cache.is_dir() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "scanner fixture cache must be a directory inside the project .jait directory",
+        ));
+    }
+    Ok(cache)
+}
+
+const OLLAMA_FIXTURE_URL: &str = "http://127.0.0.1:11434";
+
+fn validate_local_ollama_model(catalog: &Value, model: &str) -> std::io::Result<()> {
+    let invalid = || {
+        std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "Ollama fixture requires an installed local GGUF model",
+        )
+    };
+    if model.is_empty()
+        || model.len() > 256
+        || !model
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"-_./:".contains(&byte))
+        || model.contains("cloud")
+    {
+        return Err(invalid());
+    }
+    let entry = catalog["models"]
+        .as_array()
+        .and_then(|models| models.iter().find(|entry| entry["name"] == model))
+        .ok_or_else(invalid)?;
+    if !entry["remote_host"].is_null()
+        || !entry["remote_model"].is_null()
+        || entry["details"]["format"] != "gguf"
+        || !entry["size"].as_u64().is_some_and(|size| size > 0)
+    {
+        return Err(invalid());
+    }
+    Ok(())
+}
+
+fn scoped_local_ollama_model() -> std::io::Result<String> {
+    let model = std::env::var("JAIT_TEST_OLLAMA_MODEL").map_err(|_| {
+        std::io::Error::other("set JAIT_TEST_OLLAMA_MODEL to an installed local GGUF model")
+    })?;
+    let client = reqwest::blocking::Client::builder()
+        .no_proxy()
+        .redirect(reqwest::redirect::Policy::none())
+        .timeout(Duration::from_secs(5))
+        .build()
+        .map_err(std::io::Error::other)?;
+    let response = client
+        .get(format!("{OLLAMA_FIXTURE_URL}/api/tags"))
+        .send()
+        .and_then(reqwest::blocking::Response::error_for_status)
+        .map_err(std::io::Error::other)?;
+    let mut bytes = Vec::new();
+    response.take(1_048_577).read_to_end(&mut bytes)?;
+    if bytes.len() > 1_048_576 {
+        return Err(std::io::Error::other(
+            "Ollama model inventory exceeds 1 MiB",
+        ));
+    }
+    let catalog: Value = serde_json::from_slice(&bytes).map_err(std::io::Error::other)?;
+    validate_local_ollama_model(&catalog, &model)?;
+    Ok(model)
+}
+
 const CLEANUP_TIMEOUT: Duration = Duration::from_secs(2);
 /// Per-run scratch sandboxes (fake HOME/TMPDIR, assertion stream, stderr log).
 const RUN_ROOT: &str = ".jait/artifacts/gateway-rust-readiness/tailstatic-runs";
@@ -233,6 +305,8 @@ pub fn run(
     // unless env is supplied explicitly. The original Vitest lifecycle fixture
     // relies on Node's current-environment inheritance to label child sandboxes.
     // Preserve that runtime boundary instead of rewriting the source fixture.
+    let ollama_peer =
+        name.starts_with("tailstatic_packages_gateway_src_routes_chat_ollama_e2e_test_ts_");
     let node_peer = name.contains("routes_browser_devtools_test")
         || name.contains("security_agent_sandbox_lifecycle_integration_test")
         // Preserve the original Node process.execPath input in CLI fixtures.
@@ -252,7 +326,11 @@ pub fn run(
         command
             .arg("--no-env-file")
             .arg("test")
-            .arg("--timeout=120000")
+            .arg(if ollama_peer {
+                "--timeout=330000"
+            } else {
+                "--timeout=120000"
+            })
             .arg(root.join("tests/contract/drivers/tail-peer.test.ts"));
         command
     };
@@ -280,23 +358,21 @@ pub fn run(
     if name.starts_with("tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_")
         && let Some(cache) = std::env::var_os("JAIT_TEST_TRIVY_CACHE")
     {
-        let cache = Path::new(&cache)
-            .canonicalize()
-            .expect("existing scanner fixture cache");
-        let boundary = root
-            .join(".jait")
-            .canonicalize()
-            .expect("project artifact boundary");
-        assert!(
-            cache.starts_with(boundary),
-            "scanner fixture cache must stay inside the project .jait directory"
-        );
+        let cache = scoped_trivy_cache(root, Path::new(&cache))
+            .expect("bounded existing scanner fixture cache");
         command.env("JAIT_TEST_TRIVY_CACHE", cache);
+    }
+    if ollama_peer {
+        let model = scoped_local_ollama_model()
+            .expect("bounded loopback Ollama fixture with a local model");
+        command
+            .env("OLLAMA_E2E_URL", OLLAMA_FIXTURE_URL)
+            .env("OLLAMA_E2E_MODEL", model);
     }
     if let Some(value) = std::env::var_os("SYSTEMROOT") {
         command.env("SYSTEMROOT", value);
     }
-    let deadline = Instant::now() + Duration::from_secs(120);
+    let deadline = Instant::now() + Duration::from_secs(if ollama_peer { 330 } else { 120 });
     let mut child = OwnedChild::spawn(&mut command).expect("start fixture peer");
     let input = FixtureInput::new(&mut child);
     input
@@ -463,4 +539,45 @@ pub fn run(
     drop(stdout_log);
     drop(protocol_log);
     discard_run(&directory);
+}
+
+#[cfg(test)]
+mod local_ollama_tests {
+    use super::*;
+
+    fn catalog() -> Value {
+        json!({"models":[{"name":"fixture:tiny","size":64,"details":{"format":"gguf"}}]})
+    }
+
+    #[test]
+    fn accepts_only_an_installed_local_model() {
+        assert!(validate_local_ollama_model(&catalog(), "fixture:tiny").is_ok());
+        assert!(validate_local_ollama_model(&catalog(), "missing:tiny").is_err());
+        for name in [
+            "",
+            "fixture:cloud",
+            "fixture cloud",
+            "fixture;command",
+            "fixture\ncommand",
+        ] {
+            assert!(validate_local_ollama_model(&catalog(), name).is_err());
+        }
+    }
+
+    #[test]
+    fn rejects_cloud_stubs_and_malformed_catalogs() {
+        for (key, value) in [
+            ("remote_host", json!("https://ollama.com")),
+            ("remote_model", json!("remote")),
+            ("size", json!(0)),
+            ("details", json!({})),
+        ] {
+            let mut cloud = catalog();
+            cloud["models"][0][key] = value;
+            assert!(validate_local_ollama_model(&cloud, "fixture:tiny").is_err());
+        }
+        for malformed in [Value::Null, json!({}), json!({"models":{}})] {
+            assert!(validate_local_ollama_model(&malformed, "fixture:tiny").is_err());
+        }
+    }
 }

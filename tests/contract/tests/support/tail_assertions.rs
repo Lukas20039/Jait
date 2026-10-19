@@ -758,3 +758,35 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+mod nested_reference_tests {
+    use super::matches;
+    use serde_json::json;
+
+    #[test]
+    fn deep_matchers_preserve_function_and_signal_identity() {
+        for kind in ["function", "AbortSignal"] {
+            let same = json!({"__jait_type":kind,"ref":1});
+            let different = json!({"__jait_type":kind,"ref":2});
+            for matcher in ["toEqual", "toStrictEqual", "toMatchObject"] {
+                let mut observation = json!({
+                    "actual":{"type":"object","value":{"nested":same}},
+                    "other":{"type":"object","value":{"nested":same}}
+                });
+                let rule = json!({"matcher":matcher,"dynamic":true});
+                assert!(matches(&observation, &rule), "{kind} {matcher}: same");
+                observation["other"]["value"]["nested"] = different.clone();
+                assert!(!matches(&observation, &rule), "{kind} {matcher}: different");
+            }
+            let mut observation = json!({
+                "actual":{"type":"object","value":[[same]]},
+                "other":{"type":"object","value":[same]}
+            });
+            let rule = json!({"matcher":"toHaveBeenCalledWith","dynamic":true});
+            assert!(matches(&observation, &rule), "{kind}: same argument");
+            observation["other"]["value"][0] = different;
+            assert!(!matches(&observation, &rule), "{kind}: different argument");
+        }
+    }
+}

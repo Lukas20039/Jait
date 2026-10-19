@@ -89,8 +89,7 @@ fn ordered(events: &[Value]) -> Result<()> {
     );
     Ok(())
 }
-#[test]
-fn active_stream_loopback_contract() -> Result<()> {
+fn stream_fixture() -> Result<(PathBuf, fixture::Gateway, Value, String)> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .canonicalize()?;
@@ -98,14 +97,29 @@ fn active_stream_loopback_contract() -> Result<()> {
         .join(".jait/artifacts/rust-continuation/active-stream")
         .join(uuid::Uuid::new_v4().to_string());
     fs::create_dir_all(&directory)?;
-    let argv = json!([
+    let default_argv = json!([
         std::env::var("JAIT_CONTRACT_BUN").unwrap_or("bun".into()),
         "--no-env-file",
         root.join("tests/contract/drivers/active-stream.ts")
     ])
     .to_string();
-    let mut gateway = fixture::Gateway::start_owned_command(&root, &directory, &argv)?;
+    let argv = match std::env::var("JAIT_CONTRACT_ACTIVE_STREAM_ARGV") {
+        Ok(argv) => argv,
+        Err(_) => {
+            ensure!(
+                std::env::var_os("JAIT_CONTRACT_BACKEND_ARGV").is_none(),
+                "active_stream requires JAIT_CONTRACT_ACTIVE_STREAM_ARGV; generic backend selection cannot provision its controls"
+            );
+            default_argv
+        }
+    };
+    let gateway = fixture::Gateway::start_owned_command(&root, &directory, &argv)?;
     let identity: Value = serde_json::from_slice(&fs::read(directory.join("identity.json"))?)?;
+    Ok((directory, gateway, identity, argv))
+}
+#[test]
+fn active_stream_loopback_contract() -> Result<()> {
+    let (directory, mut gateway, identity, argv) = stream_fixture()?;
     let token = identity["token"].as_str().unwrap();
     let session = identity["session"].as_str().unwrap();
     let path = |suffix: &str| format!("/api/sessions/{session}/{suffix}");
@@ -133,12 +147,94 @@ fn active_stream_loopback_contract() -> Result<()> {
     assert_eq!(snapshot["type"], "snapshot");
     assert_eq!(snapshot["streaming"], true);
     assert!(snapshot.to_string().contains("α🙂"));
+    // Open durable replay while the provider is gated, then overlap live emission.
+    let live_client = reqwest::blocking::Client::builder()
+        .no_proxy()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()?;
+    let mut live = Sse::open(
+        live_client
+            .get(format!("{}{}", gateway.api.base, path("events")))
+            .bearer_auth(token)
+            .header("Last-Event-ID", "0")
+            .send()?,
+    );
+    let mut live_events = Vec::new();
+    loop {
+        let (id, event) = live.next()?;
+        let token_seen = event["type"] == "token" && event["content"] == "α🙂";
+        live_events.push(json!({"id":id,"event":event}));
+        ensure!(
+            live_events.len() < 200,
+            "replay did not reach current token"
+        );
+        if token_seen {
+            break;
+        }
+    }
+    gateway.api.json(
+        "POST",
+        &path("steer"),
+        Some(token),
+        Some(json!({"message":"steering-must-reach-provider"})),
+        200,
+    )?;
+    for suffix in ["stream", "events", "trajectory"] {
+        gateway.api.expect("GET", &path(suffix), None, None, 401)?;
+        gateway.api.expect(
+            "GET",
+            &path(suffix),
+            identity["foreignToken"].as_str(),
+            None,
+            404,
+        )?;
+    }
     drop(stream); // transport disconnect must not cancel the active turn
     gateway
         .api
         .json("POST", "/__fixture/release", None, None, 200)?;
     events.extend(resumed.until("done")?);
     ordered(&events)?;
+    loop {
+        let (id, event) = live.next()?;
+        let done = event["type"] == "done";
+        live_events.push(json!({"id":id,"event":event}));
+        ensure!(
+            live_events.len() < 200,
+            "live completion exceeded event bound"
+        );
+        if done {
+            break;
+        }
+    }
+    let ids = live_events
+        .iter()
+        .map(|e| e["id"].as_u64().expect("durable ID"))
+        .collect::<Vec<_>>();
+    ensure!(
+        ids.windows(2).all(|pair| pair[0] < pair[1]),
+        "duplicate/out-of-order replay-live handoff"
+    );
+    ordered(
+        &live_events
+            .iter()
+            .map(|e| e["event"].clone())
+            .collect::<Vec<_>>(),
+    )?;
+    let provider_requests = gateway
+        .api
+        .json("GET", "/__fixture/requests", None, None, 200)?;
+    ensure!(
+        provider_requests["requests"][1]["messages"]
+            .to_string()
+            .contains("steering-must-reach-provider"),
+        "accepted steering never reached the next provider request"
+    );
+    fs::write(
+        directory.join("live-handoff.json"),
+        serde_json::to_vec_pretty(&live_events)?,
+    )?;
+    drop(live);
     fs::write(
         directory.join("events.json"),
         serde_json::to_vec_pretty(&events)?,
@@ -303,7 +399,7 @@ fn active_stream_loopback_contract() -> Result<()> {
     fs::write(
         directory.join("result.json"),
         serde_json::to_vec_pretty(&json!({
-            "status":"passed", "backend":"shipping TS routes + deterministic loopback HTTP provider",
+            "status":"passed", "backend_argv":serde_json::from_str::<Value>(&argv)?,
             "negative_controls":["dropped β rejected", "tool result before start rejected"],
             "restart_completed_replay":true, "restart_active_not_resumed":true
         }))?,
@@ -336,4 +432,208 @@ fn stream_oracle_rejects_duplicate_tool_and_completion_events() {
     ];
     assert!(ordered(&trace).is_ok());
     duplicate_controls(&trace);
+}
+#[test]
+fn provider_failure_and_tool_failure_reach_terminal_events() -> Result<()> {
+    for mode in ["provider-error", "tool-error"] {
+        let (directory, mut gateway, identity, _) = stream_fixture()?;
+        let token = identity["token"].as_str().unwrap();
+        let session = identity["session"].as_str().unwrap();
+        gateway.api.json(
+            "POST",
+            "/__fixture/mode",
+            None,
+            Some(json!({"mode":mode})),
+            200,
+        )?;
+        let mut stream = Sse::open(gateway.api.request(
+            "POST",
+            "/api/chat",
+            Some(token),
+            Some(json!({"sessionId":session,"content":"failure fixture","model":"gpt-4o"})),
+        )?);
+        let mut events = Vec::new();
+        if mode == "tool-error" {
+            events.extend(stream.until("token")?);
+            gateway
+                .api
+                .json("POST", "/__fixture/release", None, None, 200)?;
+        }
+        let terminal = if mode == "provider-error" {
+            "error"
+        } else {
+            "done"
+        };
+        events.extend(stream.until(terminal)?);
+        ensure!(
+            events.iter().filter(|e| e["type"] == terminal).count() == 1,
+            "terminal event cardinality"
+        );
+        if mode == "provider-error" {
+            ensure!(
+                stream
+                    .next()
+                    .unwrap_err()
+                    .to_string()
+                    .contains("premature SSE EOF"),
+                "error terminal did not close stream"
+            );
+            ensure!(
+                !events.iter().any(|e| e["type"] == "done"),
+                "provider failure fabricated success"
+            );
+        } else {
+            ensure!(
+                events
+                    .iter()
+                    .any(|e| e["type"] == "tool_result" && e["ok"] == false),
+                "tool error swallowed"
+            );
+        }
+        fs::write(
+            directory.join(format!("{mode}.json")),
+            serde_json::to_vec_pretty(&events)?,
+        )?;
+        gateway.stop()?;
+    }
+    Ok(())
+}
+#[test]
+fn cold_and_invalid_cursor_subscribers_receive_only_the_new_turn() -> Result<()> {
+    let (_directory, mut gateway, identity, _) = stream_fixture()?;
+    let token = identity["token"].as_str().unwrap();
+    let session = identity["session"].as_str().unwrap();
+    let input = json!({"sessionId":session,"content":"first completed turn","model":"gpt-4o"});
+    let mut initial = Sse::open(gateway.api.request(
+        "POST",
+        "/api/chat",
+        Some(token),
+        Some(input),
+    )?);
+    initial.until("token")?;
+    gateway
+        .api
+        .json("POST", "/__fixture/release", None, None, 200)?;
+    initial.until("done")?;
+    drop(initial);
+    gateway.restart()?;
+    // No snapshot request seeds the counter before these cold subscribers.
+    let client = reqwest::blocking::Client::builder()
+        .no_proxy()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()?;
+    let url = format!("{}/api/sessions/{session}/events", gateway.api.base);
+    let mut cold = Sse::open(client.get(&url).bearer_auth(token).send()?);
+    let mut invalid = Sse::open(
+        client
+            .get(&url)
+            .bearer_auth(token)
+            .header("Last-Event-ID", "invalid-cursor")
+            .send()?,
+    );
+    let mut turn = Sse::open(gateway.api.request(
+        "POST",
+        "/api/chat",
+        Some(token),
+        Some(json!({"sessionId":session,"content":"new turn only","model":"gpt-4o"})),
+    )?);
+    turn.until("token")?;
+    for s in [&mut cold, &mut invalid] {
+        let (_, first) = s.next()?;
+        ensure!(
+            first["type"] == "request" && first["replay"] != true,
+            "cold/invalid cursor replayed stale history: {first}"
+        );
+        let rest = s.until("token")?;
+        ensure!(
+            rest.last().unwrap()["content"] == "α🙂",
+            "new turn token missing"
+        );
+    }
+    gateway.api.json(
+        "POST",
+        &format!("/api/sessions/{session}/cancel"),
+        Some(token),
+        None,
+        200,
+    )?;
+    turn.until("done")?;
+    gateway.stop()?;
+    Ok(())
+}
+#[test]
+fn unread_client_does_not_prevent_bounded_cancellation() -> Result<()> {
+    let (directory, mut gateway, identity, _) = stream_fixture()?;
+    let token = identity["token"].as_str().unwrap();
+    let session = identity["session"].as_str().unwrap();
+    gateway.api.json(
+        "POST",
+        "/__fixture/mode",
+        None,
+        Some(json!({"mode":"flood"})),
+        200,
+    )?;
+    let unread = Sse::open(gateway.api.request(
+        "POST",
+        "/api/chat",
+        Some(token),
+        Some(
+            json!({"sessionId":session,"content":"bounded slow-consumer fixture","model":"gpt-4o"}),
+        ),
+    )?);
+    // The response body is deliberately never consumed. The producer has a hard
+    // 16 MiB ceiling, so a failure cannot run indefinitely or exhaust the host.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(8);
+    loop {
+        let stats = gateway
+            .api
+            .json("GET", "/__fixture/requests", None, None, 200)?;
+        if stats["producedBytes"].as_u64().unwrap() >= 2 * 1024 * 1024 {
+            break;
+        }
+        ensure!(
+            std::time::Instant::now() < deadline,
+            "producer did not reach slow-socket trigger"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    let started = std::time::Instant::now();
+    let cancelled = gateway.api.json(
+        "POST",
+        &format!("/api/sessions/{session}/cancel"),
+        Some(token),
+        None,
+        200,
+    )?;
+    ensure!(
+        cancelled["cancelled"] == true,
+        "slow client blocked cancellation"
+    );
+    let bound = std::time::Duration::from_secs(8);
+    let stats = loop {
+        let stats = gateway
+            .api
+            .json("GET", "/__fixture/requests", None, None, 200)?;
+        if stats["producerCancelled"] == true {
+            break stats;
+        }
+        ensure!(
+            started.elapsed() < bound,
+            "upstream producer did not observe cancellation within eight seconds"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    };
+    ensure!(
+        stats["producedBytes"].as_u64().unwrap() < 16 * 1024 * 1024,
+        "producer hit fixture ceiling before cancellation"
+    );
+    fs::write(
+        directory.join("slow-consumer.json"),
+        serde_json::to_vec_pretty(
+            &json!({"stats":stats,"cancel_ms":started.elapsed().as_millis(),"producer_limit_bytes":16*1024*1024,"not_proven":"unbounded-stream memory/backpressure guarantee"}),
+        )?,
+    )?;
+    drop(unread);
+    gateway.stop()?;
+    Ok(())
 }

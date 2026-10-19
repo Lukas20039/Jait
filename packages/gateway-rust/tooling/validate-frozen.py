@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Run the native gate against a recorded source copy, isolated from concurrent edits.
+
+Source stays in the working checkout. Only ignored/generated verification files
+are created here. Dependency overlays pin installed external packages and route
+workspace aliases to the frozen source. No existing worktree is reset or cleaned.
+"""
+from pathlib import Path
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[3]
+OUTPUT = ROOT / ".jait/artifacts/gateway-rust"
+SNAPSHOT = OUTPUT / "frozen-source"
+RUN_OUTPUT = SNAPSHOT / ".jait/artifacts"
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def link(path, target):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_symlink():
+        if path.resolve() == target.resolve():
+            return
+        path.unlink()
+    elif path.exists():
+        raise RuntimeError(f"refusing to replace existing non-link: {path}")
+    path.symlink_to(target, target_is_directory=target.is_dir())
+
+
+def dependency_target(path):
+    target = path.resolve()
+    try:
+        relative = target.relative_to(ROOT)
+    except ValueError:
+        return target
+    if relative.parts[0] in ("packages", "apps") and "node_modules" not in relative.parts:
+        return SNAPSHOT / relative
+    return target
+
+
+def overlay(source, destination):
+    destination.mkdir(parents=True, exist_ok=True)
+    for child in source.iterdir():
+        if child.name.startswith("@") and child.is_dir():
+            scope = destination / child.name
+            scope.mkdir(parents=True, exist_ok=True)
+            for item in child.iterdir():
+                link(scope / item.name, dependency_target(item))
+        else:
+            link(destination / child.name, dependency_target(child))
+
+
+def main():
+    assert not SNAPSHOT.is_symlink()
+    if RUN_OUTPUT.is_symlink():
+        assert RUN_OUTPUT.resolve() == (OUTPUT / "frozen-output").resolve()
+        RUN_OUTPUT.unlink()
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    SNAPSHOT.mkdir(parents=True, exist_ok=True)
+    RUN_OUTPUT.mkdir(parents=True, exist_ok=True)
+    raw = subprocess.check_output(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT
+    )
+    paths = []
+    for name in raw.decode().split("\0"):
+        if not name:
+            continue
+        relative = Path(name)
+        assert not relative.is_absolute() and ".." not in relative.parts
+        if relative.parts[0] in (".git", ".jait", ".agents", ".codex", ".aws"):
+            continue
+        if relative.name == ".env" or not (ROOT / relative).is_file():
+            continue
+        paths.append(relative)
+    before = {str(p): digest(ROOT / p) for p in paths}
+    previous_manifest = OUTPUT / "frozen-source-manifest.json"
+    if previous_manifest.exists():
+        previous = json.loads(previous_manifest.read_text())["sources"]
+        for name in previous.keys() - before.keys():
+            stale = SNAPSHOT / name
+            assert stale.is_relative_to(SNAPSHOT)
+            if stale.is_file() or stale.is_symlink():
+                stale.unlink()
+    for relative in paths:
+        source, target = ROOT / relative, SNAPSHOT / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.is_symlink():
+            target.unlink()
+        if not target.exists() or digest(target) != before[str(relative)]:
+            shutil.copy2(source, target)
+    copied = {str(p): digest(SNAPSHOT / p) for p in paths}
+    after = {str(p): digest(ROOT / p) for p in paths}
+    assert before == copied == after, "source changed while copying; retry snapshot preparation"
+    modules = [ROOT / "node_modules"]
+    modules += list((ROOT / "packages").glob("*/node_modules"))
+    modules += list((ROOT / "apps").glob("*/node_modules"))
+    for source in modules:
+        if source.is_dir():
+            overlay(source, SNAPSHOT / source.relative_to(ROOT))
+    # Physical fixture paths preserve realpath-sensitive mount assertions. Only
+    # compiler caches are linked; artifacts never link back to a source ancestor.
+    for target in ("gateway-rust-target", "rust-contract-target"):
+        cache = ROOT / ".jait/artifacts" / target
+        if cache.exists():
+            link(RUN_OUTPUT / target, cache)
+    # Workspace import conditions select dist exports. Build these from frozen
+    # source so package aliases never escape to mutable live compiled output.
+    with (OUTPUT / "frozen-workspace-build.log").open("w") as log:
+        for package in ("shared", "screen-share", "api-client", "ui-shared"):
+            built = subprocess.run(["bun", "run", "build"], cwd=SNAPSHOT / "packages" / package,
+                                   stdout=log, stderr=subprocess.STDOUT)
+            assert built.returncode == 0, f"frozen workspace build failed: {package}"
+    # The reference installs its API not-found handler only when built web files
+    # exist. Capture the same runtime assets instead of changing that assertion.
+    runtime_asset_dirs = ("apps/web/dist", "packages/gateway/web-dist")
+    for relative in runtime_asset_dirs:
+        if (ROOT / relative).is_dir():
+            shutil.copytree(ROOT / relative, SNAPSHOT / relative, dirs_exist_ok=True)
+    workspace_outputs = {str(p.relative_to(SNAPSHOT)): digest(p)
+                         for package in ("shared", "screen-share", "api-client", "ui-shared")
+                         for p in (SNAPSHOT / "packages" / package / "dist").rglob("*") if p.is_file()}
+    workspace_outputs.update({str(p.relative_to(SNAPSHOT)): digest(p)
+                              for relative in runtime_asset_dirs
+                              for p in (SNAPSHOT / relative).rglob("*") if p.is_file()})
+    provenance = {
+        "source_root": str(SNAPSHOT),
+        "live_root": str(ROOT),
+        "base_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "sources": copied,
+        "workspace_outputs": workspace_outputs,
+        "external_dependencies": "resolved installed package targets; workspace aliases point into source_root",
+    }
+    previous_manifest.write_text(json.dumps(provenance, indent=2) + "\n")
+    if "--prepare-only" in __import__("sys").argv:
+        print(json.dumps({"prepared": str(SNAPSHOT), "sources": len(copied), "workspace_outputs": len(workspace_outputs)}), flush=True)
+        return
+    report_file = RUN_OUTPUT / "gateway-rust/native-progress/report.json"
+    report_file.unlink(missing_ok=True)
+    with (OUTPUT / "frozen-validation.log").open("w") as log:
+        result = subprocess.run(
+            ["bun", "run", "test:gateway:rust"], cwd=SNAPSHOT,
+            stdout=log, stderr=subprocess.STDOUT,
+            env=os.environ | {"RUST_TEST_THREADS": "2"}
+        )
+    report_file = RUN_OUTPUT / "gateway-rust/native-progress/report.json"
+    if not report_file.exists():
+        raise RuntimeError(f"native gate produced no report; inspect {OUTPUT / 'frozen-validation.log'}")
+    report = json.loads(report_file.read_text())
+    drift = [p for p, h in report["sources"].items()
+             if not (ROOT / p).is_file() or digest(ROOT / p) != h]
+    outputs_stable = all((SNAPSHOT / p).is_file() and digest(SNAPSHOT / p) == h for p, h in workspace_outputs.items())
+    report["workspace_outputs_unchanged"] = outputs_stable
+    report["workspace_output_hashes"] = workspace_outputs
+    if not outputs_stable:
+        report.update(passed=False, verified_components=0, verified_percent=0)
+    report["source_root"] = str(SNAPSHOT)
+    report["source_manifest"] = str(previous_manifest.relative_to(ROOT))
+    report["live_source_drift"] = drift
+    report["live_sources_match"] = not drift
+    canonical = OUTPUT / "native-progress/report.json"
+    canonical.parent.mkdir(parents=True, exist_ok=True)
+    canonical.write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps({key: report[key] for key in (
+        "passed", "sources_unchanged", "verified_components", "verified_percent",
+        "source_root", "live_sources_match", "live_source_drift"
+    )}), flush=True)
+    assert result.returncode == 0 and report["passed"], "frozen gate failed; inspect frozen-validation.log"
+    count = report["verified_components"]
+    checkpoint = OUTPUT / f"checkpoints/{count}-report.json"
+    checkpoint.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(canonical, checkpoint)
+    state_file = OUTPUT / "goal-checkpoint.json"
+    state = json.loads(state_file.read_text()) if state_file.exists() else {}
+    state.update(
+        goal="Reach 181/361 verified native components without replacing the production gateway.",
+        verified_components=count, verified_percent=report["verified_percent"],
+        inventory_total=report["inventory_total"], goal_met=count >= 181,
+        source_root=str(SNAPSHOT), live_sources_match=not drift, live_source_drift=drift,
+        latest_report=str(checkpoint.relative_to(ROOT)),
+        phase="Verified frozen source checkpoint; continue until 181 components",
+    )
+    state_file.write_text(json.dumps(state, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    main()

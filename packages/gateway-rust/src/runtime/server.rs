@@ -53,6 +53,39 @@ impl Gateway {
         ));
         self
     }
+    /// Explicit opt-in user input routes; production mounting is separately gated.
+    pub fn with_user_questions(
+        mut self,
+        routes: routes::user_questions::UserQuestionRoutes,
+    ) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    /// Webhooks retain their independent shared-secret authorization boundary.
+    pub fn with_hooks(mut self, routes: routes::hooks::HookRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    pub fn with_trust(mut self, routes: routes::trust::TrustRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    /// Explicit opt-in secret input and encrypted-secret storage routes.
+    pub fn with_secrets(mut self, routes: routes::secrets::SecretRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    pub fn with_assistant_profiles(
+        mut self,
+        routes: routes::assistant_profiles::AssistantProfileRoutes,
+    ) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    pub fn with_architecture(mut self, routes: routes::architecture::ArchitectureRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
     pub fn local_addr(&self) -> io::Result<SocketAddr> {
         self.listener.local_addr()
     }

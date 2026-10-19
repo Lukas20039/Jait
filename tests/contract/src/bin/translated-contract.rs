@@ -227,13 +227,79 @@ fn chromium_inventory(available: &BTreeSet<String>) -> Result<BTreeSet<String>> 
     Ok(selected)
 }
 
-fn suite(
-    root: &Path,
-    directory: &Path,
-    docker: bool,
-    chromium: bool,
-    scanners: bool,
-) -> Result<(Vec<Value>, bool)> {
+const FILESYSTEM_TESTS: [&str; 1] =
+    ["tailstatic_packages_gateway_src_services_disk_janitor_test_ts_153_3"];
+const OLLAMA_TESTS: [&str; 3] = [
+    "tailstatic_packages_gateway_src_routes_chat_ollama_e2e_test_ts_89_3",
+    "tailstatic_packages_gateway_src_routes_chat_ollama_e2e_test_ts_123_3",
+    "tailstatic_packages_gateway_src_routes_chat_ollama_e2e_test_ts_164_3",
+];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Profile {
+    Enabled,
+    Docker,
+    Chromium,
+    Scanners,
+    Filesystem,
+    Ollama,
+}
+
+impl Profile {
+    fn parse(arguments: &[String]) -> Result<Self> {
+        match arguments {
+            [] => Ok(Self::Enabled),
+            [flag, name] if flag == "--profile" => match name.as_str() {
+                "docker" => Ok(Self::Docker),
+                "chromium" => Ok(Self::Chromium),
+                "scanners" => Ok(Self::Scanners),
+                "filesystem" => Ok(Self::Filesystem),
+                "ollama" => Ok(Self::Ollama),
+                _ => bail!("unknown translated profile: {name}"),
+            },
+            _ => bail!(
+                "Usage: translated-contract [--profile docker|chromium|scanners|filesystem|ollama] (no arbitrary filters)"
+            ),
+        }
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Self::Enabled => "translated-enabled-typescript-reference",
+            Self::Docker => "translated-docker-typescript-reference",
+            Self::Chromium => "translated-chromium-typescript-reference",
+            Self::Scanners => "translated-scanners-typescript-reference",
+            Self::Filesystem => "translated-filesystem-typescript-reference",
+            Self::Ollama => "translated-ollama-typescript-reference",
+        }
+    }
+
+    fn inventory(self, available: &BTreeSet<String>) -> Result<BTreeSet<String>> {
+        match self {
+            Self::Enabled => Ok(available.clone()),
+            Self::Docker => docker_inventory(available),
+            Self::Chromium => chromium_inventory(available),
+            Self::Scanners => scanner_inventory(available),
+            Self::Filesystem | Self::Ollama => {
+                let required: BTreeSet<_> = match self {
+                    Self::Filesystem => FILESYSTEM_TESTS.as_slice(),
+                    _ => OLLAMA_TESTS.as_slice(),
+                }
+                .iter()
+                .map(|id| (*id).to_owned())
+                .collect();
+                ensure!(
+                    required.is_subset(available),
+                    "required {} integration is absent from the compiled inventory",
+                    self.label()
+                );
+                Ok(required)
+            }
+        }
+    }
+}
+
+fn suite(root: &Path, directory: &Path, profile: Profile) -> Result<(Vec<Value>, bool)> {
     let mut build = Command::new(env!("CARGO"));
     build
         .current_dir(root)
@@ -262,20 +328,12 @@ fn suite(
     let (listed, listing) = execute(list, directory, "list", Duration::from_secs(30))?;
     ensure!(listed.success(), "translated test listing failed");
     let available = test_inventory(&listing)?;
-    let expected = if docker {
-        docker_inventory(&available)?
-    } else if chromium {
-        chromium_inventory(&available)?
-    } else if scanners {
-        scanner_inventory(&available)?
-    } else {
-        available
-    };
+    let expected = profile.inventory(&available)?;
     let mut tests = Command::new(executable);
     tests
         .current_dir(root)
         .args(["--format", "pretty", "--color", "never"]);
-    if docker || chromium || scanners {
+    if profile != Profile::Enabled {
         tests
             .args(["--include-ignored", "--exact", "--test-threads=1"])
             .args(&expected);
@@ -288,13 +346,7 @@ fn suite(
 
 fn run() -> Result<bool> {
     let arguments: Vec<_> = std::env::args().skip(1).collect();
-    let docker = arguments == ["--profile", "docker"];
-    let chromium = arguments == ["--profile", "chromium"];
-    let scanners = arguments == ["--profile", "scanners"];
-    ensure!(
-        arguments.is_empty() || docker || chromium || scanners,
-        "Usage: translated-contract [--profile docker|chromium|scanners] (no arbitrary filters)"
-    );
+    let profile = Profile::parse(&arguments)?;
     ctrlc::set_handler(|| CANCELLED.store(true, Ordering::SeqCst))?;
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
@@ -306,15 +358,14 @@ fn run() -> Result<bool> {
     println!("Artifacts: {}", directory.display());
     let source_fingerprints = evidence::snapshot(&root)?;
     let started = Instant::now();
-    let result = suite(&root, &directory, docker, chromium, scanners);
+    let result = suite(&root, &directory, profile);
     let (cases, process_succeeded, error) = match result {
         Ok((cases, succeeded)) => (cases, succeeded, Value::Null),
         Err(error) => (Vec::new(), false, json!(format!("{error:#}"))),
     };
     let sources_unchanged = source_fingerprints == evidence::snapshot(&root)?;
     let success = full_results(&cases, process_succeeded, sources_unchanged)
-        && (!(docker || chromium || scanners)
-            || cases.iter().all(|case| case["status"] == "passed"));
+        && (profile == Profile::Enabled || cases.iter().all(|case| case["status"] == "passed"));
     let passed = cases
         .iter()
         .filter(|case| case["status"] == "passed")
@@ -330,7 +381,7 @@ fn run() -> Result<bool> {
         .collect();
     let report = json!({
         "schema_version":1,"contract_version":env!("CARGO_PKG_VERSION"),
-        "profile":if docker { "translated-docker-typescript-reference" } else if chromium { "translated-chromium-typescript-reference" } else if scanners { "translated-scanners-typescript-reference" } else { "translated-enabled-typescript-reference" },"backend_label":"typescript",
+        "profile":profile.label(),"backend_label":"typescript",
         "success":success,"sources_unchanged":sources_unchanged,"source_fingerprints":source_fingerprints,
         "duration_ms":started.elapsed().as_millis(),"summary":{"passed":passed,"failed":failed,"skipped":skipped.len(),"total":cases.len()},
         "cases":cases,"not_covered":skipped,"error":error,
@@ -548,5 +599,44 @@ mod tests {
         let failed = observed_cases("test one ... ok\ntest two ... FAILED", &expected()).unwrap();
         assert!(!full_results(&failed, true, true));
         assert!(!full_results(&[json!({"status":"skipped"})], true, true));
+    }
+    #[test]
+    fn bounded_profiles_require_the_complete_named_corpus() {
+        for (profile, ids) in [
+            (Profile::Filesystem, FILESYSTEM_TESTS.as_slice()),
+            (Profile::Ollama, OLLAMA_TESTS.as_slice()),
+        ] {
+            let inventory: BTreeSet<String> = ids
+                .iter()
+                .map(|id| (*id).to_owned())
+                .chain(["unrelated-test".to_owned()])
+                .collect();
+            assert_eq!(profile.inventory(&inventory).unwrap().len(), ids.len());
+            for id in ids {
+                let mut missing = inventory.clone();
+                missing.remove(*id);
+                assert!(profile.inventory(&missing).is_err());
+            }
+        }
+    }
+
+    #[test]
+    fn profile_parser_rejects_arbitrary_filters_and_unknown_profiles() {
+        assert_eq!(Profile::parse(&[]).unwrap(), Profile::Enabled);
+        for name in ["docker", "chromium", "scanners", "filesystem", "ollama"] {
+            assert!(Profile::parse(&["--profile".into(), name.into()]).is_ok());
+        }
+        for arguments in [
+            vec!["--profile".into(), "unknown".into()],
+            vec![
+                "--profile".into(),
+                "ollama".into(),
+                "--skip".into(),
+                "cleanup".into(),
+            ],
+            vec!["some-test".into()],
+        ] {
+            assert!(Profile::parse(&arguments).is_err());
+        }
     }
 }

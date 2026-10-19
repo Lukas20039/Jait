@@ -55,7 +55,12 @@ pub fn snapshot(root: &Path) -> Result<Value> {
     let mut files = BTreeMap::new();
     // Root manifests pin the complete workspace dependency resolution. Changes
     // must invalidate reference evidence just like Rust's local Cargo.lock.
-    for relative in ["package.json", "bun.lock"] {
+    for relative in [
+        "package.json",
+        "bun.lock",
+        ".github/workflows/ci.yml",
+        ".github/workflows/release.yml",
+    ] {
         let bytes = fs::read(root.join(relative))?;
         let hash = bytes.iter().fold(0xcbf29ce484222325_u64, |hash, byte| {
             (hash ^ u64::from(*byte)).wrapping_mul(0x100000001b3)

@@ -8,6 +8,104 @@ A small Node launcher locates Cargo and anchors build output to the repository.
 The default fixture starts the current TypeScript gateway through Bun; a different
 backend can be tested through its URL.
 
+
+## Backend-selectable migration scenarios
+
+Run the same Rust-owned behavior assertions against the Bun reference or the
+native candidate:
+
+```sh
+bun run test:gateway:migration:types
+bun run test:gateway:migration --backend bun
+bun run test:gateway:migration --backend rust
+```
+
+This is a supplemental suite, separate from declaration reconstruction and native
+component credit. It currently requires 39 application scenarios on Linux:
+33 boundary/storage/integration scenarios, four streaming scenarios, and two
+process scenarios. Repeated argv helper unit tests and stream-oracle controls do
+not inflate that count. Rust's missing implementations are reported as blocked
+and make the command fail. Actual mismatches are failed. The native streaming
+fixture is explicitly blocked instead of silently starting Bun. There are no
+ignored or expected-failing acceptance cases. `migration-cases.json` pins the
+required scenario IDs; omitting a required test remains blocked instead of
+silently reducing the denominator.
+
+Each invocation saves logs and a source-fingerprinted report under
+`.jait/artifacts/migration-suite/<backend>-<uuid>/`. Dependencies and code are
+fingerprinted before and after execution; concurrent source changes prevent a
+passing verdict. All fixture state remains under project-local `.jait/artifacts/`.
+The default CI run checks Bun; workflow dispatch can measure the Rust candidate
+and retain its failing/blocked verdict. Only verdict JSON is uploaded.
+
+The supplemental scenarios cover:
+
+- All 54 ordinary domain tables with explicit values for every current column:
+  reopen, migration rerun, snapshot restore, rollback, FTS queries/integrity,
+  SQLite FULL via a bounded page ceiling, and rejection of a corrupt snapshot.
+  FTS shadow tables are maintained by SQLite, never seeded directly. These are
+  current-schema raw storage contracts, not archived-release or service tests.
+- Real MCP stdio, SSE and streamable-HTTP peers; discovery schemas, results,
+  error envelopes, failed-list child cleanup, reconnect replacement, and a
+  deterministic remove-during-discovery race.
+- Real ACP launcher/tar extraction with synthetic archives: checksums, unsafe
+  paths/symlinks, stale lock and marker recovery, cached installation, literal
+  argv/env forwarding, download failure cleanup, and SIGTERM forwarding.
+- Real sub-agent SQLite writes, insert/upsert, creation-time retention,
+  empty/null and zero-valued fields, and best-effort write failures.
+- Disposable Git stage/unstage/discard workflows, route authentication and node
+  selection; local forge API behavior and CLI authentication redaction.
+- Real Matrix encryption/recovery, invalid keys, wrong backup key/algorithm,
+  corrupt ciphertext, and the exact 50,000/50,001-session boundary.
+- Real Linux watcher events for distinct case-sensitive paths and ignored files;
+  PTY spawn/write/resize/exit, missing PTYs and pending-RPC shutdown cleanup.
+- Streaming replay/live handoff, steering reaching the next provider request,
+  cross-user denial, cold/invalid cursors, provider/tool terminal failures, and
+  cancellation with an unread client. The producer has a finite 16 MiB ceiling
+  and cancellation has an eight-second deadline. This does not prove a general
+  unbounded-stream memory/backpressure guarantee.
+- Actual entrypoint process restart, fresh readiness and port release, plus
+  graceful shutdown while a client leaves an idle connection open.
+
+The managed fixture recognizes the native binary's structured `gateway.ready`
+stdout announcement as well as the Bun fixture's ready file. Only readiness from
+the current launch is considered. A custom active-stream fixture can be supplied
+through `JAIT_CONTRACT_ACTIVE_STREAM_ARGV` when running the `active_stream` target
+directly; it must provision the same identity, local provider, proof tool and
+control endpoints. The generic backend argv is rejected for that specialized
+fixture rather than ignored. The suite runner also accepts
+`--active-stream-argv '["/absolute/path/to/native-stream-fixture"]'` to enable
+those same scenarios once equivalent native provisioning exists. Caller-supplied
+adapter identity is recorded separately and never grants native component credit.
+Supplying argv does not implement missing Rust chat/provider behavior.
+
+Still separate acceptance work: archived released databases/old-binary restore,
+all historical encodings, Windows ConPTY/macOS runs, complete WebSocket/API and
+assessment-scope matrices, and every startup/failing-disposer combination.
+Native progress and replacement readiness must remain separate from this suite.
+
+## Vector fixture formats
+
+The internal profile reads strict arrays of `{ id, calls, assertions }` vectors.
+`native-feedback.json` and `native-user-ask.json` belong to the dedicated
+`gateway_rust_feedback` and `gateway_rust_user_ask` differential targets instead.
+Their schemas remain owned by those targets and their JSON bytes remain in the
+source fingerprints. Every other JSON file in the vector directory still has to
+satisfy the strict internal-vector schema; unknown or malformed reference inputs
+fail registration.
+
+## Reference declaration checkpoint — 2026-10-19
+
+The reviewed inventory now verifies **2,792 / 2,792 declarations**. All eight
+source-bound reference profiles pass, including real Docker, Chromium, scanner,
+filesystem and local Ollama checks. The `--require-declarations` audit passes.
+
+The stronger `--require-parity` audit still fails: **360 runtime-source reviews**
+remain pending. Native gateway implementation and replacement readiness remain
+separate gates. Saved reports and exact results are indexed in
+`.jait/artifacts/parity-final/final-summary.json`; source-review candidates and
+limits are in the adjacent `source-review-notes.md`.
+
 ## Run
 
 Requires Rust 1.98+, Node, Bun 1.3.10 and installed workspace dependencies.
@@ -98,10 +196,12 @@ Use a fresh test database for each invocation. The runner does not log into or
 reuse an existing owner account. The explicit `--disposable` flag acknowledges
 these writes; omitting it fails before requests are made.
 
-The current external profile registers 91 HTTP/SSE cases. The managed profile adds
+The current external profile registers 92 HTTP/SSE cases. The managed profile adds
 the abrupt-restart case because it owns the process. Reports name the profile
 and explicitly list this exclusion, so external success does not imply restart
-compatibility. Compare stable case IDs and statuses across reports for the same
+compatibility. External runs also omit the restart assertions inside the two
+Messenger restart scenarios; these omissions appear in `profile_exclusions`.
+Compare stable case IDs and statuses across reports for the same
 contract version; IDs, timestamps, credentials and timings are not golden values.
 
 The Rust binary can also be invoked directly after compilation. The Node launcher
@@ -110,9 +210,9 @@ is a convenience, not part of the acceptance assertions. Override `CARGO` or
 
 ## Required scenarios
 
-Contract version 0.2.0 currently registers 92 managed scenarios (91 HTTP/SSE
-scenarios plus abrupt restart), including ten local provider probes and three
-concurrent Messenger cases. The table below describes the original 15 seed
+Contract version 0.2.0 currently registers 93 managed scenarios (92 HTTP/SSE
+scenarios plus abrupt restart), including ten local provider probes and five
+Messenger scenarios. The table below describes the original 15 seed
 scenarios. The executable registrations in `src/main.rs`, `src/scenarios.rs`,
 `src/data_contracts.rs`, `src/security_contracts.rs`, `src/control_contracts.rs`
 `src/edge_contracts.rs`, `src/provider_contracts.rs` and `src/messenger_contracts.rs` define the complete current set.
@@ -484,3 +584,34 @@ This is an initial component suite. The full HTTP/SSE acceptance profile still
 requires APIs the native gateway does not implement; it must continue to fail
 against this partial backend. No full parity or replacement-readiness credit is
 claimed. The existing TypeScript-backed suites remain in place.
+
+## Declaration milestone and explicit reference integrations
+
+`coverage --require-declarations --evidence-dir .jait/artifacts/contracts` requires
+current successful evidence for every reviewed test declaration, including all
+mapped variants. The report exposes `declaration_parity_complete`,
+`pending_declarations` and `pending_source_reviews` separately. The stronger
+`--require-parity` gate retains its existing meaning: both declarations and
+runtime-source coverage reviews must be complete. Neither gate establishes
+native gateway implementation parity.
+
+Two additional opt-in reference profiles retain their original assertions:
+
+```sh
+node tests/contract/run.mjs translated-report --profile filesystem
+JAIT_TEST_OLLAMA_MODEL=gemma4:e4b node tests/contract/run.mjs translated-report --profile ollama
+```
+
+The filesystem profile requires the actual unprivileged permission-failure and
+recovery test. The Ollama profile requires all three real-server declarations,
+including cleanup. It calls only `http://127.0.0.1:11434`, checks the installed
+model inventory with proxies and redirects disabled, and rejects remote/cloud
+stubs or missing GGUF models. Only the selected Ollama peers receive the chosen
+model and fixed loopback URL; other peers retain their cleared environment.
+Model peers have a 330-second transport deadline; all other peers retain their
+120-second limit. Required integration skips cannot count as passing evidence.
+
+Generated observations preserve nested function and AbortSignal identity, so
+deep equality and call-argument checks distinguish equal-looking references.
+Transport regressions exercise both shared and distinct references; reference
+execution still requires a separate source/assertion review before credit.

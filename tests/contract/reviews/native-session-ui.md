@@ -53,3 +53,34 @@ those setup fixtures were corrected before the behavior checks passed.
 Run `RUST_TEST_THREADS=2 bun run test:gateway:rust` for the source-bound gate.
 Production replacement readiness and the 181/361 implementation milestone remain
 open.
+
+## Conversation tools
+
+The native list-preview helpers, session.search adapter and chat.traces adapter
+are new components. Tool names, descriptions, parameter schemas and permission
+metadata are embedded declarative data checked against the actual TypeScript
+constructors. The native implementations call the real ported history services;
+there is no TypeScript runtime dependency. Tests use schema-valid tool inputs,
+real SQLite FTS and migrated records, with context ownership replacing any
+input-supplied owner. Search previews retain full returned data; trace messages
+limit displayed threads to six without truncating data. Shared preview contracts
+check ECMAScript whitespace, UTF-16 surrogate boundaries, default/fractional/
+negative/nonfinite budgets, summaries and memory/reminder suffixes. The three
+components remain separate from tool registry, consent and production dispatch
+integration, which are still pending.
+
+`gateway_rust_conversation_tools` passes 11 tests (including four subprocess
+transport checks). Preview-budget, search-owner and trace-owner mutants fail the
+same assertions; restored sources pass. The contracts inherit the native history
+services' documented finite-JSON and database-timestamp coverage limits.
+
+## Storage gate workload bound
+
+The full candidate gate and the isolated 76-prefix storage test both exceeded the
+unchanged ten-second reference-driver deadline while generating all database
+pairs in one request. Reference fixture generation now uses batches of eight.
+The test verifies that every requested prefix appears exactly once, in order,
+and retains every schema/data/backfill/integrity/foreign-key/idempotence
+assertion. Each subprocess still has its ten-second deadline. The same 76-prefix
+comparison passes after batching (28.62 seconds across the full multi-call test).
+No migration code or timeout was changed. Host resource pressure is not proven.

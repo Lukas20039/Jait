@@ -255,12 +255,19 @@
       ],
       "contracts": [
         "tests/contract/tests/gateway_rust_state.rs",
-        "tests/contract/drivers/nativestate.ts"
+        "tests/contract/drivers/nativestate.ts",
+        "tests/contract/tests/gateway_rust_ui_state.rs",
+        "tests/contract/drivers/nativeuistate.ts",
+        "tests/contract/reviews/native-session-ui.md",
+        "tests/contract/tests/gateway_rust_session_http.rs",
+        "tests/contract/drivers/nativesessionhttp.ts"
       ],
       "targets": [
-        "gateway_rust_state"
+        "gateway_rust_state",
+        "gateway_rust_ui_state",
+        "gateway_rust_session_http"
       ],
-      "review": "Real SQLite reads/upserts/deletes, per-session and optional-key isolation, cross-session key lookup, primitive/nested JSON, empty/invalid/nullable stored JSON and proto-key JSON behavior. Repository boundary has no route authority; HTTP adapters must authorize access."
+      "review": "Real SQLite reads/upserts/deletes, per-session and optional-key isolation, cross-session key lookup, primitive/nested JSON, empty/invalid/nullable stored JSON and proto-key JSON behavior. Repository boundary has no route authority; HTTP adapters must authorize access. Extended exact stored-text, numeric key ordering, inherited legacy state, partial-failure and native database reopening contracts. Canonical implementation consolidated in json_state; no additional component credit."
     },
     {
       "reference": "packages/gateway/src/services/project-state.ts",
@@ -271,12 +278,16 @@
       ],
       "contracts": [
         "tests/contract/tests/gateway_rust_state.rs",
-        "tests/contract/drivers/nativestate.ts"
+        "tests/contract/drivers/nativestate.ts",
+        "tests/contract/tests/gateway_rust_ui_state.rs",
+        "tests/contract/drivers/nativeuistate.ts",
+        "tests/contract/reviews/native-session-ui.md"
       ],
       "targets": [
-        "gateway_rust_state"
+        "gateway_rust_state",
+        "gateway_rust_ui_state"
       ],
-      "review": "Real SQLite project state, filtered reads and writes, fragmented UI-state migration including exact trigger and durable side effects, legacy response retention, empty-filter behavior, nullish layout precedence and truthy existing UI values."
+      "review": "Real SQLite project state, filtered reads and writes, fragmented UI-state migration including exact trigger and durable side effects, legacy response retention, empty-filter behavior, nullish layout precedence and truthy existing UI values. Extended exact stored-text, numeric key ordering, inherited legacy state, partial-failure and native database reopening contracts. Canonical implementation consolidated in json_state; no additional component credit."
     },
     {
       "reference": "packages/gateway/src/lib/command-timeout.ts",
@@ -760,6 +771,1187 @@
         "gateway_rust_assignment"
       ],
       "review": "Real SQLite and filesystem metadata checks; owner and explicit repository checks, idempotent assignment, stale device reconciliation, symlink/file/directory metadata, Git probe/default fallbacks, exact event order and durable effects after storage failure. Git probing and broadcast transport are injected boundaries; those implementations receive no credit. Linux path semantics; supported-platform parity remains open."
+    },
+    {
+      "reference": "packages/gateway/src/tools/list-preview.ts",
+      "reference_sha256": "d6b8360ac436921d5ae8f45fc4e1d7d4085dc5d19b8565a6c47b60413553f5c0",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/list_preview.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_conversation_tools.rs",
+        "tests/contract/drivers/nativeconversationtools.ts",
+        "tests/contract/reviews/native-session-ui.md"
+      ],
+      "targets": [
+        "gateway_rust_conversation_tools"
+      ],
+      "review": "All four preview helpers and both constants; ECMAScript whitespace/UTF-16 truncation, nonfinite/fractional/negative budgets, empty lines, hidden counts, summaries and optional suffixes. Default-budget mutation fails and restored source passes."
+    },
+    {
+      "reference": "packages/gateway/src/tools/session-search-tools.ts",
+      "reference_sha256": "5645be37497947985c01edc56095cb967a6405f4ce8a02fb89e7d762013ec720",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/conversation.rs",
+        "packages/gateway-rust/src/tools/conversation-metadata.json",
+        "packages/gateway-rust/src/tools/list_preview.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_conversation_tools.rs",
+        "tests/contract/drivers/nativeconversationtools.ts",
+        "tests/contract/reviews/native-session-ui.md"
+      ],
+      "targets": [
+        "gateway_rust_conversation_tools"
+      ],
+      "review": "Exact tool metadata and schema-valid execution against real native SQLite FTS; context ownership overrides caller input, search/source/limit filters, previews with complete data, empty titles/queries/results and visible query errors. Dropping context owner fails the same contracts. Registry/consent dispatch integration remains separate."
+    },
+    {
+      "reference": "packages/gateway/src/tools/chat-traces-tools.ts",
+      "reference_sha256": "68c21b83e277a59277ed1d332ba2af83d9962fec2e2d3874f562a6b20df35071",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/conversation.rs",
+        "packages/gateway-rust/src/tools/conversation-metadata.json",
+        "packages/gateway-rust/src/tools/list_preview.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_conversation_tools.rs",
+        "tests/contract/drivers/nativeconversationtools.ts",
+        "tests/contract/reviews/native-session-ui.md"
+      ],
+      "targets": [
+        "gateway_rust_conversation_tools"
+      ],
+      "review": "Exact tool metadata and schema-valid native SQLite trace execution; context owner/missing/unowned filters, inclusion flags/limits, exact counts and first-six-thread previews, empty-model formatting and query failures. Missing context owner mutation fails. Registry/consent dispatch integration remains separate."
+    },
+    {
+      "reference": "packages/gateway/src/routes/sessions.ts",
+      "reference_sha256": "e3573027855f7a8cf4d91c966d80c85445eed5ab922b7a0ccb299bcb8ad15484",
+      "status": "candidate",
+      "native": [
+        "packages/gateway-rust/src/routes/sessions.rs",
+        "packages/gateway-rust/src/services/thread_title.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_session_http.rs",
+        "tests/contract/drivers/nativesessionhttp.ts",
+        "tests/contract/reviews/native-session-ui.md"
+      ],
+      "targets": [
+        "gateway_rust_session_http"
+      ],
+      "review": "Opt-in HTTP candidate. Real storage, audit, events, owner checks and title races pass; full non-ISO Date.parse, optional-route/framework errors and platform parity remain open. Provider/live-runtime transports are explicit injected boundaries. No native component credit."
+    },
+    {
+      "reference": "packages/gateway/src/services/user-questions.ts",
+      "reference_sha256": "597fb05460ffc2145ca72c64c94a2cd5e49b49785c39bfb4393995382535a2e6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/input_requests.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_input.rs",
+        "tests/contract/drivers/nativeinput.ts",
+        "tests/contract/reviews/native-input.md"
+      ],
+      "targets": [
+        "gateway_rust_input"
+      ],
+      "review": "Pending insertion order; ECMAScript title trimming; nullable owners; session/user filtering; owner-checked submit/cancel; one-shot resolution and reentrant metadata callbacks; no expiry."
+    },
+    {
+      "reference": "packages/gateway/src/services/secret-input.ts",
+      "reference_sha256": "df0b6b4a23292efbb23c0902452ca2bc81030982e5243ea2a086e6ac82777c12",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/input_requests.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_input.rs",
+        "tests/contract/drivers/nativeinput.ts",
+        "tests/contract/reviews/native-input.md"
+      ],
+      "targets": [
+        "gateway_rust_input"
+      ],
+      "review": "Typed secret requests with metadata-only callbacks, owner checks, cancellation, one-shot expiry, default/overridden/fractional/nonpositive/overflowing timers, and ECMAScript TimeClip dates including extended years."
+    },
+    {
+      "reference": "packages/gateway/src/services/chat-notifications.ts",
+      "reference_sha256": "bbb89c42828df06dac2c0c5e792793fe38b5dd75c0914c5e774083c7834570be",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/chat_notifications.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_input.rs",
+        "tests/contract/drivers/nativeinput.ts",
+        "tests/contract/reviews/native-input.md"
+      ],
+      "targets": [
+        "gateway_rust_input"
+      ],
+      "review": "Real SQLite state and 2048-entry ordered fallback; owner-filtered listing; exact identifier/read validation and UTF-16 limits; preview stripping; legacy rows and durable serialized metadata."
+    },
+    {
+      "reference": "packages/gateway/src/services/notifications.ts",
+      "reference_sha256": "347d9bb654730c6655a85515574c70773d0ccf28d700a1a6816742cca3fd5427",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/notifications.rs",
+        "packages/gateway-rust/src/time.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_feedback.rs",
+        "tests/contract/drivers/nativefeedback.ts",
+        "tests/contract/vectors/native-feedback.json",
+        "tests/contract/reviews/native-feedback.md"
+      ],
+      "targets": [
+        "gateway_rust_feedback"
+      ],
+      "review": "Explicit broadcast adapter, exact envelopes and convenience levels, broadcast failure propagation, best-effort sink failures, mutable shared payload, duplicate callback identity removal and live-array add/remove reentry."
+    },
+    {
+      "reference": "packages/gateway/src/services/usage-summary.ts",
+      "reference_sha256": "215c70cefe8ad4bd92499af8ce792561d2cf9291b256637366122a614b49b67a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/usage_summary.rs",
+        "packages/gateway-rust/src/time.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_feedback.rs",
+        "tests/contract/drivers/nativefeedback.ts",
+        "tests/contract/vectors/native-feedback.json",
+        "tests/contract/reviews/native-feedback.md"
+      ],
+      "targets": [
+        "gateway_rust_feedback"
+      ],
+      "review": "Ordered account/backend/quota aggregation with provider labels, first truthy plan, location, backend metadata, error precedence and prototype-named JSON-visible legacy properties."
+    },
+    {
+      "reference": "packages/gateway/src/services/usage-refresh-cache.ts",
+      "reference_sha256": "96b0fff1475dbc84757304d1ee1ed0e14d1607fd2f57674508bfb3e86e7f2c73",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/usage_refresh_cache.rs",
+        "packages/gateway-rust/src/time.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_feedback.rs",
+        "tests/contract/drivers/nativefeedback.ts",
+        "tests/contract/vectors/native-feedback.json",
+        "tests/contract/reviews/native-feedback.md"
+      ],
+      "targets": [
+        "gateway_rust_feedback"
+      ],
+      "review": "Shared active work; force bypasses all settled freshness/backoff with no cooldown; automatic backoff and reset, ordered concurrent loader starts, dropped waiters, 1000-key capacity and expired-only eviction. Current source adaptation has fail-then-pass differential evidence."
+    },
+    {
+      "reference": "packages/gateway/src/tools/user-question-tools.ts",
+      "reference_sha256": "9b86a97507ac3d9892dfc1352200ba35c61153ad6dfa740bb09898cb8c9453ee",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/user_ask.rs",
+        "packages/gateway-rust/src/tools/user-ask-metadata.json",
+        "packages/gateway-rust/src/services/input_requests.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_user_ask.rs",
+        "tests/contract/drivers/nativeask.ts",
+        "tests/contract/vectors/native-user-ask.json",
+        "tests/contract/reviews/native-user-ask.md"
+      ],
+      "targets": [
+        "gateway_rust_user_ask"
+      ],
+      "review": "Full metadata/schema parity, native pending-question lifecycle, Unicode input normalization, ordered duplicate errors, authenticated context ownership, answer/cancel results and no-expiry pending behavior."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/claude-prompt.ts",
+      "reference_sha256": "79f500b9ffe2d83f8ad4434cd5e1a47bc977bd8d4a827c29f27027b30d03102e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/deepseek-prompt.ts",
+      "reference_sha256": "8d7340afe952f589f90b22beec22fd2681a27f0a1dc9cc8020731498122ff1e9",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/default-openai-prompt.ts",
+      "reference_sha256": "3ce2870691528e7ced39e22b55af773828a0816128054e57fcb96dd6a8b228d0",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/default-prompt.ts",
+      "reference_sha256": "e02bc1f54b767a1993dc316ee4f36877259608b7591e7b527ec6a36ad65a23bc",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/gemini-prompt.ts",
+      "reference_sha256": "1133f886f94d4376d35ed08495506ca5e158578f9fd66fbc58ef8efb404bf596",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/glm-prompt.ts",
+      "reference_sha256": "c83a6e9fe8e2e7c3e5854b1eb65b977f86ede2df798b4796863ec4a59ce99772",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/gpt5-codex-prompt.ts",
+      "reference_sha256": "2136781288a96dd2dd9cd482cbda273e651448c3fbd97194613b29f753072d1b",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/gpt5-prompt.ts",
+      "reference_sha256": "02f122fdbaf3b0f013cc3d889c97f13edd4267690d1c83c50445a549eed366d6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/gpt51-prompt.ts",
+      "reference_sha256": "55aec1154dbeb3acce90cebc4a35a34a78b4a432fafc13adefc60aaaeb20e446",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/gpt52-prompt.ts",
+      "reference_sha256": "eddbf450322119227f50a1d5fbd5ad146e47afe88d20332f97b4a55d3437dc88",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/index.ts",
+      "reference_sha256": "79169d70643026dc208f589d1d017f083155b8d3e535d1fd9798f9db3b7d32dd",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs",
+        "packages/gateway-rust/tooling/validate-frozen.py"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/ollama-prompt.ts",
+      "reference_sha256": "cab1cb63e49995ef95062248b54602f75468675bee12436a70cdc1994c29fab4",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/prompt-registry.ts",
+      "reference_sha256": "e55454fc8a430e42f51869a97053e9f9a21d90e5f8fa95e7bfade04e62db8e27",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/qwen-prompt.ts",
+      "reference_sha256": "492bb1120c725a2cfa0c1aa425abd3cbbfe1b1c94c25c8795f038b7567e5e30a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/shared-sections.ts",
+      "reference_sha256": "c6a7e740b1f8c37d1a67e6c030db0c06093854e06f57e9fe1ef6f12f84cc0a3b",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/prompts/xai-prompt.ts",
+      "reference_sha256": "26a218f2a4ea9ea4ea3ade2a687355e1cf3cfb7268b582c56c9c3c2290746d57",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/prompts/mod.rs",
+        "packages/gateway-rust/src/prompts/assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_prompts.rs",
+        "tests/contract/drivers/nativeprompts.ts",
+        "tests/contract/reviews/native-prompts.md",
+        "packages/gateway-rust/tooling/extract-prompt-assets.mjs"
+      ],
+      "targets": [
+        "gateway_rust_prompts"
+      ],
+      "review": "Native model/mode selection and context assembly; exact embedded immutable prose, metadata, reminders and shared sections; custom registration order, real file precedence, UTF-8 recovery and UTF-16 truncation. See native-prompts review."
+    },
+    {
+      "reference": "packages/gateway/src/tools/token-estimator.ts",
+      "reference_sha256": "4f230e0d2c8c00f99ff9c896200f685ef494cb4455f9d7a0a8ac36d9591f78fa",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/token_estimator.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_context.rs",
+        "tests/contract/drivers/nativecontext.ts",
+        "tests/contract/reviews/native-context.md"
+      ],
+      "targets": [
+        "gateway_rust_context"
+      ],
+      "review": "Native UTF-16 estimates and provider todo normalization with real TypeScript comparisons and restored mutations; see native-context review. Typed JSON/scalar strings define the native boundary."
+    },
+    {
+      "reference": "packages/gateway/src/providers/todo-result.ts",
+      "reference_sha256": "e6b46a723a38db4b8cf95728e3c207b806650d091a7f8752d31813a0ed9b33fc",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/todo_result.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_context.rs",
+        "tests/contract/drivers/nativecontext.ts",
+        "tests/contract/reviews/native-context.md"
+      ],
+      "targets": [
+        "gateway_rust_context"
+      ],
+      "review": "Native UTF-16 estimates and provider todo normalization with real TypeScript comparisons and restored mutations; see native-context review. Typed JSON/scalar strings define the native boundary."
+    },
+    {
+      "reference": "packages/gateway/src/providers/provider-snapshot.ts",
+      "reference_sha256": "d75d1e29c5c80b8d687e0131dd1a78c7e9b436d583d3b40b718cbf1741a877a7",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/snapshot.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_provider_helpers.rs",
+        "tests/contract/drivers/nativeproviderhelpers.ts",
+        "tests/contract/reviews/native-provider-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_provider_helpers"
+      ],
+      "review": "Native async snapshot cache and Linux credential persistence compared with real TypeScript, controlled deferred probes and exact filesystem effects; restored mutations fail then pass. See native-provider-helpers review. Provider execution remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/providers/opencode-credentials.ts",
+      "reference_sha256": "4d1322dbf0e5e6b26694314f6927a6fb5b8c425da9c38d982ce41253e663ac8d",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/opencode_credentials.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_provider_helpers.rs",
+        "tests/contract/drivers/nativeproviderhelpers.ts",
+        "tests/contract/reviews/native-provider-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_provider_helpers"
+      ],
+      "review": "Native async snapshot cache and Linux credential persistence compared with real TypeScript, controlled deferred probes and exact filesystem effects; restored mutations fail then pass. See native-provider-helpers review. Provider execution remains unported."
+    },
+    {
+      "reference": "packages/gateway/src/routes/user-questions.ts",
+      "reference_sha256": "dca0a85d043a7b6ac4f08ac617f3ee99e7f5a1b11e62439879c34d52c989bfbe",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/user_questions.rs",
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_question_http.rs",
+        "tests/contract/drivers/nativequestionhttp.ts",
+        "tests/contract/reviews/native-question-http.md"
+      ],
+      "targets": [
+        "gateway_rust_question_http"
+      ],
+      "review": "Native HTTP input/hook and execution guard contracts with real TypeScript comparison and restored mutations; see native-question-http. Focused native inputs and runtime boundaries are documented."
+    },
+    {
+      "reference": "packages/gateway/src/routes/hooks.ts",
+      "reference_sha256": "d03f45f8979188db7170c2b82364895f3a8f65572271f61a58475552ff4966b0",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/hooks.rs",
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_question_http.rs",
+        "tests/contract/drivers/nativequestionhttp.ts",
+        "tests/contract/reviews/native-question-http.md"
+      ],
+      "targets": [
+        "gateway_rust_question_http"
+      ],
+      "review": "Native HTTP input/hook and execution guard contracts with real TypeScript comparison and restored mutations; see native-question-http. Focused native inputs and runtime boundaries are documented."
+    },
+    {
+      "reference": "packages/gateway/src/services/execution-guard.ts",
+      "reference_sha256": "8bc99d2bf41ed70cfe4275513b0a6d57e708f41bff1f15d153178f0ded35bac3",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/execution_guard.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_guard.rs",
+        "tests/contract/drivers/nativeguard.ts",
+        "tests/contract/reviews/native-execution-guard.md"
+      ],
+      "targets": [
+        "gateway_rust_guard"
+      ],
+      "review": "Native HTTP input/hook and execution guard contracts with real TypeScript comparison and restored mutations; see native-execution-guard. Focused native inputs and runtime boundaries are documented."
+    },
+    {
+      "reference": "packages/gateway/src/routes/trust.ts",
+      "reference_sha256": "73699483c39a63bc8f6ff099d3a34227e890a198e5c30265bfb00253cb0640a3",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/trust.rs",
+        "packages/gateway-rust/src/security/trust_worker.rs",
+        "packages/gateway-rust/src/security/trust_engine.rs",
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_trust_http.rs",
+        "tests/contract/drivers/nativetrusthttp.ts",
+        "tests/contract/reviews/native-trust-http.md"
+      ],
+      "targets": [
+        "gateway_rust_trust_http"
+      ],
+      "review": "Real HTTP trust list/state/reset contracts in memory and SQLite, serialized persistent cache lifetime, external DB changes and failed write effects, account/origin/parser boundaries, concurrency/shutdown and three restored mutations. See native-trust-http review."
+    },
+    {
+      "reference": "packages/gateway/src/services/user-secrets.ts",
+      "native": [
+        "packages/gateway-rust/src/services/user_secrets.rs"
+      ],
+      "review": "AES-256-GCM encrypted storage matching node:crypto key derivation and base64 layout; cross-implementation decrypt round-trip, owner/type filters, updates, last_used_at marking and validation errors. See native-secrets review.",
+      "reference_sha256": "77f106b2cef6bc65139dfd3835f3d3ec727d457bcc388674fe9b9ddf60b3b752",
+      "status": "verified",
+      "contracts": [
+        "tests/contract/tests/gateway_rust_secrets.rs",
+        "tests/contract/drivers/nativesecrets.ts",
+        "tests/contract/reviews/native-secrets.md"
+      ],
+      "targets": [
+        "gateway_rust_secrets"
+      ]
+    },
+    {
+      "reference": "packages/gateway/src/routes/secrets.ts",
+      "native": [
+        "packages/gateway-rust/src/routes/secrets.rs",
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/runtime/server.rs",
+        "packages/gateway-rust/src/services/input_requests.rs"
+      ],
+      "review": "Authenticated secret request and storage routes with rememberable saves, cookie/bearer auth, origin/parser boundaries and unavailable-store responses. See native-secrets review.",
+      "reference_sha256": "04a0a31fc30877b92af9eba61a1989b61e3a8127960015d2ff82e0278c0c23b8",
+      "status": "verified",
+      "contracts": [
+        "tests/contract/tests/gateway_rust_secrets.rs",
+        "tests/contract/drivers/nativesecrets.ts",
+        "tests/contract/reviews/native-secrets.md"
+      ],
+      "targets": [
+        "gateway_rust_secrets"
+      ]
+    },
+    {
+      "reference": "packages/gateway/src/services/assistant-profiles.ts",
+      "reference_sha256": "73c113215dc824a598fc33e0618f47b3612d487439692cfe98f39694a8661f49",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/assistant_profiles.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_profiles.rs",
+        "tests/contract/drivers/nativeprofiles.ts",
+        "tests/contract/reviews/native-profiles.md"
+      ],
+      "targets": [
+        "gateway_rust_profiles"
+      ],
+      "review": "Native SQLite and real HTTP profile CRUD, owner scopes, default promotion, filtered arrays, nullable patches, legacy JSON and failed-write partial effects; three restored mutations. See native-profiles.md."
+    },
+    {
+      "reference": "packages/gateway/src/routes/assistant-profiles.ts",
+      "reference_sha256": "7bb8c719525ec5d28ebd75046b4995f9ce67acff0a9dbddf033cdb5d96164ff6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/assistant_profiles.rs",
+        "packages/gateway-rust/src/routes/auth.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_profiles.rs",
+        "tests/contract/drivers/nativeprofiles.ts",
+        "tests/contract/reviews/native-profiles.md"
+      ],
+      "targets": [
+        "gateway_rust_profiles"
+      ],
+      "review": "Native SQLite and real HTTP profile CRUD, owner scopes, default promotion, filtered arrays, nullable patches, legacy JSON and failed-write partial effects; three restored mutations. See native-profiles.md."
+    },
+    {
+      "reference": "packages/gateway/src/services/computer-control.ts",
+      "reference_sha256": "dec3d64aa02272589a381e2b105f4e8d3877cebffb1261a9e36385ac392d736c",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/computer_control.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_ephemeral.rs",
+        "tests/contract/drivers/nativeephemeral.ts",
+        "tests/contract/reviews/native-ephemeral.md"
+      ],
+      "targets": [
+        "gateway_rust_ephemeral"
+      ],
+      "review": "Real TypeScript comparisons for transient state lifecycles, ownership/exclusivity, retained message references and bounded inline raster/CID decoding; restored mutation per component. See native-ephemeral.md."
+    },
+    {
+      "reference": "packages/gateway/src/security/assessment-lease.ts",
+      "reference_sha256": "00cc6f8d59c8f822c510f3ea58af55c37ad420a53accd7f4f46e9782ee6026ca",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/assessment_lease.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_ephemeral.rs",
+        "tests/contract/drivers/nativeephemeral.ts",
+        "tests/contract/reviews/native-ephemeral.md"
+      ],
+      "targets": [
+        "gateway_rust_ephemeral"
+      ],
+      "review": "Real TypeScript comparisons for transient state lifecycles, ownership/exclusivity, retained message references and bounded inline raster/CID decoding; restored mutation per component. See native-ephemeral.md."
+    },
+    {
+      "reference": "packages/gateway/src/tools/swarm-mailbox.ts",
+      "reference_sha256": "784edf93aef1e8502916c3fa99ece355c34e1cc7ded7c9c9ae89e2279ae455ff",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/swarm_mailbox.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_ephemeral.rs",
+        "tests/contract/drivers/nativeephemeral.ts",
+        "tests/contract/reviews/native-ephemeral.md"
+      ],
+      "targets": [
+        "gateway_rust_ephemeral"
+      ],
+      "review": "Real TypeScript comparisons for transient state lifecycles, ownership/exclusivity, retained message references and bounded inline raster/CID decoding; restored mutation per component. See native-ephemeral.md."
+    },
+    {
+      "reference": "packages/gateway/src/services/email/inline-images.ts",
+      "reference_sha256": "a9d69ff8f4a07dc65abc9ce1afef9b0a4024dda4ceea055d0390c9117ca6fbd9",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/email/inline_images.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_ephemeral.rs",
+        "tests/contract/drivers/nativeephemeral.ts",
+        "tests/contract/reviews/native-ephemeral.md"
+      ],
+      "targets": [
+        "gateway_rust_ephemeral"
+      ],
+      "review": "Real TypeScript comparisons for transient state lifecycles, ownership/exclusivity, retained message references and bounded inline raster/CID decoding; restored mutation per component. See native-ephemeral.md."
+    },
+    {
+      "reference": "packages/gateway/src/scheduler/cron.ts",
+      "reference_sha256": "7f68336a720de163a1844ba558002223555089026efe442e767f55a89ff55dd2",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/scheduler/cron.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_helpers.rs",
+        "tests/contract/drivers/nativehelpers.ts",
+        "tests/contract/reviews/native-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_helpers"
+      ],
+      "review": "Real TypeScript contracts for cron/manifest validation, UUID actions and continuation selection/callback lifecycles, including deferred callback replacement; five restored mutations. See native-helpers.md."
+    },
+    {
+      "reference": "packages/gateway/src/plugins/manifest.ts",
+      "reference_sha256": "a1647fe90f365e7791134936bf3a27701486ef53bfb5cf4d73787691a5d3b7a6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/plugins/manifest.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_helpers.rs",
+        "tests/contract/drivers/nativehelpers.ts",
+        "tests/contract/reviews/native-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_helpers"
+      ],
+      "review": "Real TypeScript contracts for cron/manifest validation, UUID actions and continuation selection/callback lifecycles, including deferred callback replacement; five restored mutations. See native-helpers.md."
+    },
+    {
+      "reference": "packages/gateway/src/lib/uuidv7.ts",
+      "reference_sha256": "5ef097fc0a11ff88ab37f7a25461e1d13204df5bab3bc764ddf93da2a8b2d313",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/identifiers.rs",
+        "packages/gateway-rust/src/db/identifiers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_helpers.rs",
+        "tests/contract/drivers/nativehelpers.ts",
+        "tests/contract/reviews/native-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_helpers"
+      ],
+      "review": "Real TypeScript contracts for cron/manifest validation, UUID actions and continuation selection/callback lifecycles, including deferred callback replacement; five restored mutations. See native-helpers.md."
+    },
+    {
+      "reference": "packages/gateway/src/services/background-command-continuation.ts",
+      "reference_sha256": "4611e9ba9f168b29a871691a967a09bddb08e4f790b87c22d90e5ea644d21eba",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/background_command_continuation.rs",
+        "packages/gateway-rust/src/services/thread_defaults.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_helpers.rs",
+        "tests/contract/drivers/nativehelpers.ts",
+        "tests/contract/reviews/native-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_helpers"
+      ],
+      "review": "Real TypeScript contracts for cron/manifest validation, UUID actions and continuation selection/callback lifecycles, including deferred callback replacement; five restored mutations. See native-helpers.md."
+    },
+    {
+      "reference": "packages/gateway/src/services/intervention-run-resume.ts",
+      "reference_sha256": "48e85cd712ecd7d20960263e1fb67c292918b7dc80d95f2abf638e15874e1a0c",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/intervention_run_resume.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_helpers.rs",
+        "tests/contract/drivers/nativehelpers.ts",
+        "tests/contract/reviews/native-helpers.md"
+      ],
+      "targets": [
+        "gateway_rust_helpers"
+      ],
+      "review": "Real TypeScript contracts for cron/manifest validation, UUID actions and continuation selection/callback lifecycles, including deferred callback replacement; five restored mutations. See native-helpers.md."
+    },
+    {
+      "reference": "packages/gateway/src/services/provider-reset-windows.ts",
+      "reference_sha256": "38c265ce1902118176cb7a2089a1fe2607c65d34df37ff7695aae62ec515c2c1",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/provider_reset_windows.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_windows.rs",
+        "tests/contract/drivers/nativewindows.ts",
+        "tests/contract/reviews/native-reset-windows.md"
+      ],
+      "targets": [
+        "gateway_rust_windows"
+      ],
+      "review": "UTC quota grids, observed resets, source parsing and descriptions; ISO-date contract and 500-step ceiling preserved."
+    },
+    {
+      "reference": "packages/gateway/src/security/path-guard.ts",
+      "reference_sha256": "e19dd0063837e95c28739cd49c0d267115465344fb7ddb9e58d2065db305d31e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/path_guard.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_diagrams.rs",
+        "tests/contract/drivers/nativediagrams.ts",
+        "tests/contract/reviews/native-diagrams.md"
+      ],
+      "targets": [
+        "gateway_rust_diagrams"
+      ],
+      "review": "Linux path normalization, traversal, denied paths and final-entry symlink behavior including error metadata."
+    },
+    {
+      "reference": "packages/gateway/src/services/architecture-diagrams.ts",
+      "reference_sha256": "83189ae84787a5f1685ee2240f646c1ae36988016ba80e6780af8fd2b6c798c8",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/architecture_diagrams.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_diagrams.rs",
+        "tests/contract/drivers/nativediagrams.ts",
+        "tests/contract/reviews/native-diagrams.md"
+      ],
+      "targets": [
+        "gateway_rust_diagrams"
+      ],
+      "review": "Real file-first storage, SQLite fallback/ownership, update identity and partial effects from failed file/database writes."
+    },
+    {
+      "reference": "packages/gateway/src/tools/architecture-tools.ts",
+      "reference_sha256": "f6a475058b2d854a08e5935476a01a480fb2ffbecd2eebe2a84a89a23b071f29",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/diagrams.rs",
+        "packages/gateway-rust/src/tools/diagrams-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_diagrams.rs",
+        "tests/contract/drivers/nativediagrams.ts",
+        "tests/contract/reviews/native-diagrams.md"
+      ],
+      "targets": [
+        "gateway_rust_diagrams"
+      ],
+      "review": "Full metadata and tool execution, optional storage/UI sink, authenticated ownership, UTF-16 lengths and delivery-failure ordering."
+    },
+    {
+      "reference": "packages/gateway/src/tools/diagram-tools.ts",
+      "reference_sha256": "272e8e97e181dbf5b1b7e97efae4f3d87b38bb2aa12d5c6fb35c4188bdc12f3c",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/diagrams.rs",
+        "packages/gateway-rust/src/tools/diagrams-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_diagrams.rs",
+        "tests/contract/drivers/nativediagrams.ts",
+        "tests/contract/reviews/native-diagrams.md"
+      ],
+      "targets": [
+        "gateway_rust_diagrams"
+      ],
+      "review": "Full metadata and result contract, invalid input, UTF-16 diagram/title ceilings and Unicode trim."
+    },
+    {
+      "reference": "packages/gateway/src/tools/agent-communication.ts",
+      "reference_sha256": "29b46716f2fdc149a1b5f77b7a9afff49d53f3425541893ae3774e2cc7b6deed",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/agent_communication.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Complete intent parsing, render-segment stripping, success classification, descriptions and constants."
+    },
+    {
+      "reference": "packages/gateway/src/tools/agent-message-tool.ts",
+      "reference_sha256": "b6fadedfc1dfa1ec3a41eba477a57dd33740491ef5e67b8fbd17b29e4bcce7be",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/runtime_tools.rs",
+        "packages/gateway-rust/src/tools/runtime-tools-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Metadata and swarm message execution with retained live arrays, sender/count defaults and invalid note behavior."
+    },
+    {
+      "reference": "packages/gateway/src/tools/gateway-tools.ts",
+      "reference_sha256": "410155b8e7f6d3d054c333d5023e7a82000d7c9cd9138edb8be283579cc4a7a5",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/runtime_tools.rs",
+        "packages/gateway-rust/src/tools/runtime-tools-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Metadata and gateway status aggregation with optional services, uptime, enabled filtering and failure ordering."
+    },
+    {
+      "reference": "packages/gateway/src/tools/project-editor-tools.ts",
+      "reference_sha256": "4ab73c5684df0709a230e4bcf31c9826d073fbab0e1d3256d457ee5473d340ec",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/runtime_tools.rs",
+        "packages/gateway-rust/src/tools/runtime-tools-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Metadata, explicit editor-open validation, context authority, trimmed target and optional UI/error handling."
+    },
+    {
+      "reference": "packages/gateway/src/tools/voice-tools.ts",
+      "reference_sha256": "955827f860d9ee1195e5c551adc1184c0540ec520c707882e7b0132ef28c979c",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/runtime_tools.rs",
+        "packages/gateway-rust/src/tools/runtime-tools-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Metadata, speech validation, injected service context/error behavior and UTF-16/MIME result fields."
+    },
+    {
+      "reference": "packages/gateway/src/tools/tool-names.ts",
+      "reference_sha256": "546ccfacb2d144925370a54c344906b006c5fcfaef30aa46f47787049b1118ae",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/tool_names.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_runtime_tools.rs",
+        "tests/contract/drivers/nativeruntime.ts",
+        "tests/contract/reviews/native-runtime-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_runtime_tools"
+      ],
+      "review": "Exhaustive native enum, canonical names, keys, reverse lookup and uniqueness compared to TypeScript."
+    },
+    {
+      "reference": "packages/gateway/src/tools/core/todo.ts",
+      "reference_sha256": "5c507f805af70dc7fed732269aa3d48879b3174cfd260822a00499590f0c5b92",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/session_todos.rs",
+        "packages/gateway-rust/src/tools/session-todos-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_utility_tools.rs",
+        "tests/contract/drivers/nativeutility.ts",
+        "tests/contract/reviews/native-utility-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_utility_tools"
+      ],
+      "review": "Session todos: normalization, counts, live getter/result arrays, list replacement/clear, isolation and failed-update persistence."
+    },
+    {
+      "reference": "packages/gateway/src/tools/link-tools.ts",
+      "reference_sha256": "c86427700dd8291adddc4d81a1de27e0e7fa80de60ebf2734f492b1b023a7fa4",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/links.rs",
+        "packages/gateway-rust/src/tools/link-pages.json",
+        "packages/gateway-rust/src/tools/link-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_utility_tools.rs",
+        "tests/contract/drivers/nativeutility.ts",
+        "tests/contract/reviews/native-utility-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_utility_tools"
+      ],
+      "review": "Internal link validation and search updates, complete metadata, query preservation, WHATWG encoding and UTF-16 length boundaries."
+    },
+    {
+      "reference": "packages/gateway/src/services/calendar/google.ts",
+      "reference_sha256": "3d617c702777c4481414ca5f3fbd3464295ed5822ad1f7714e83d60c00f25dbe",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/calendar/google.rs",
+        "packages/gateway-rust/src/services/calendar/mod.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar.rs",
+        "tests/contract/drivers/nativecalendar.ts",
+        "tests/contract/reviews/native-calendar-client.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar"
+      ],
+      "review": "Google Calendar native HTTP client, exact request URLs, optional mapping/filtering, date/attendee defaults and error paths."
+    },
+    {
+      "reference": "packages/gateway/src/services/calendar/oauth.ts",
+      "reference_sha256": "305567d6f903df7bf324313075fa0a93e36c4d3d1bb9b525215dda7a7a8bfa1a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/calendar/oauth.rs",
+        "packages/gateway-rust/src/services/calendar/mod.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar.rs",
+        "tests/contract/drivers/nativecalendar.ts",
+        "tests/contract/reviews/native-calendar-client.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar"
+      ],
+      "review": "Calendar environment credentials, PKCE, authorize URLs, code/refresh forms, token expiry/defaults and provider errors."
+    },
+    {
+      "reference": "packages/gateway/src/services/email/oauth.ts",
+      "reference_sha256": "24a86bd4406f80ea5af3775f8709817665ca5f718625221d3ce384e852683ee9",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/email/oauth.rs",
+        "packages/gateway-rust/src/services/calendar/mod.rs",
+        "packages/gateway-rust/src/services/calendar/oauth.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar.rs",
+        "tests/contract/drivers/nativeemailoauth.ts",
+        "tests/contract/reviews/native-mail-oauth.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar"
+      ],
+      "review": "Gmail/Outlook native OAuth URLs, PKCE, credentials, token requests and provider-specific/nullish token semantics."
+    },
+    {
+      "reference": "packages/gateway/src/routes/architecture.ts",
+      "reference_sha256": "890e77e5e5c18c95c1e6e810b183b644148c0124b9ef610331c64c2b391db911",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/architecture.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_architecture_http.rs",
+        "tests/contract/drivers/nativearchitecturehttp.ts",
+        "tests/contract/reviews/native-architecture-http.md"
+      ],
+      "targets": [
+        "gateway_rust_architecture_http"
+      ],
+      "review": "Opt-in real authenticated architecture HTTP routes: storage/projection, GET/PUT/HEAD, owner fallback, parser boundaries and partial failed-save effects."
     }
   ]
 }

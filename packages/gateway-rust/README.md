@@ -36,8 +36,8 @@ and compilation is bounded to two jobs.
 
 ## Verified components
 
-`native-coverage.json` maps native implementations to 31 of the 361 gateway
-source components in `tests/contract/coverage.json`: **8.59% focused native component
+`native-coverage.json` maps native implementations to 87 of the 361 gateway
+source components in `tests/contract/coverage.json`: **24.10% focused native component
 coverage**. Components have equal weight; this percentage measures neither effort
 remaining nor readiness to replace production.
 
@@ -139,7 +139,7 @@ storage and credentials. Session HTTP APIs, providers, tools, scheduler, fronten
 serving, WebSocket and SSE remain unported.
 
 The `test:gateway:rust` command checks format, strict native Clippy, native unit
-tests and all twenty-one credited contract targets, then records source hashes before/after execution.
+tests and all thirty credited contract targets, then records source hashes before/after execution.
 All inventoried gateway and shared sources are fingerprinted to bind indirect
 dependencies as well. Reviewed component reference drift fails the check. Reports are saved to
 `.jait/artifacts/gateway-rust/native-progress/report.json`; failed or changing-source
@@ -176,9 +176,9 @@ installed gateway have not been switched over.
 ## Continuing toward 50%
 
 The requested milestone is **181/361 verified native components (50.14%)**.
-The current passing checkpoint is **40/361 (11.08%)**; the milestone remains open.
+The current passing checkpoint is **55/361 (15.24%)**; the milestone remains open.
 The source-bound report covers formatting, strict Clippy, seven native tests and
-221 contract tests across twenty-one targets (including repeated driver checks). Focused cases expand into multiple
+345 contract-test executions across thirty targets (including repeated driver checks). Focused cases expand into multiple
 requests and value matrices; they do not establish full application parity.
 
 The former auth HTTP timeout was fixture teardown: all responses were consumed,
@@ -200,3 +200,46 @@ unconfirmed. The assertion is retained with bind diagnostics, and an additional
 lifecycle test holds a client open through shutdown. The initial Python socket
 experiment used different socket options and does not establish a Rust runtime
 fault. Evidence: `.jait/artifacts/gateway-rust/listener-reproduction/`.
+
+
+The current continuation adds native question/secret request lifecycles,
+completion-notification state, notification broadcast/sink dispatch, usage
+aggregation and refresh caching, and the user.ask tool adapter. The three new
+suites pass 34 tests (including repeated subprocess transport checks). Eight
+reversible mutations fail their intended assertions and restored sources pass.
+Usage-cache force behavior follows the latest reference: after a 30-second
+cooldown, manual refresh bypasses failure backoff. Loader starts preserve run
+order while pending I/O overlaps. Reviews are in
+`tests/contract/reviews/native-input.md`, `native-feedback.md` and
+`native-user-ask.md`; the authoritative passing checkpoint is
+`.jait/artifacts/gateway-rust/checkpoints/55-report.json`.
+
+
+## Latest continuation
+
+The source-bound native gate targets 78/361 components (21.61%). New contracts
+cover context token estimation, provider todo normalization, provider snapshots,
+Linux OpenCode credential storage, user-question HTTP, hook HTTP and the execution
+guard. See reviews native-context.md, native-provider-helpers.md,
+native-question-http.md and native-execution-guard.md in tests/contract/reviews.
+The canonical report and unchanged-source hashes are stored under
+.jait/artifacts/gateway-rust/native-progress. The 181/361 milestone is still open.
+
+Trust-management HTTP now has a bounded native storage worker with a persistent
+cache, including retained state after failed writes and external SQLite changes.
+Its focused review is native-trust-http.md. The next source-bound gate targets
+79/361 components (21.88%); reports remain authoritative for actual verification.
+
+Encrypted user-secret storage (`user-secrets.ts`) and the secret-request/storage
+routes (`secrets.ts`) are now native. AES-256-GCM matches node:crypto's key
+derivation and base64 layout; cross-implementation decrypt round-trips pass in both
+directions. The latest source-bound gate verifies **81/361 components (22.44%)**.
+See tests/contract/reviews/native-secrets.md; reports remain authoritative.
+
+
+Assistant profile storage and HTTP, computer-control leases, the process-wide
+assessment execution lock, transient swarm mailboxes and inline raster/CID image
+handling now have native implementations. Exact TypeScript comparisons and seven
+restored mutations pass. The source-bound gate verifies **87/361 (24.10%)** with
+unchanged sources; checkpoint: .jait/artifacts/gateway-rust/checkpoints/87-report.json.
+The requested **181/361 (50.14%)** milestone remains open.

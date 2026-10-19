@@ -49,13 +49,24 @@ fn validate_required_helper_ids(cases: &[Case]) -> Result<()> {
     Ok(())
 }
 
+// Native differential targets own these two documents and their schemas;
+// they are not declarative internal-driver vectors. Keep the exceptions exact:
+// every other JSON file must still satisfy the reference Case schema.
+fn is_reference_vector(path: &Path) -> bool {
+    path.extension().is_some_and(|ext| ext == "json")
+        && !matches!(
+            path.file_name().and_then(|name| name.to_str()),
+            Some("native-feedback.json" | "native-user-ask.json")
+        )
+}
+
 pub fn cases(root: &Path) -> Result<Vec<Case>> {
     let vectors = root.join("tests/contract/vectors");
     let mut paths: Vec<_> = fs::read_dir(&vectors)
         .with_context(|| format!("read vectors directory {}", vectors.display()))?
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.path())
-        .filter(|path| path.extension().is_some_and(|ext| ext == "json"))
+        .filter(|path| is_reference_vector(path))
         .collect();
     paths.sort();
     let mut cases = Vec::new();
@@ -113,6 +124,37 @@ mod helper_registration_tests {
 
     fn helpers() -> Vec<Case> {
         serde_json::from_str(include_str!("../vectors/tailhelpers.json")).unwrap()
+    }
+
+    #[test]
+    fn only_named_native_documents_bypass_reference_vector_parsing() {
+        assert!(!is_reference_vector(Path::new("native-feedback.json")));
+        assert!(!is_reference_vector(Path::new("native-user-ask.json")));
+        assert!(is_reference_vector(Path::new("fixtures.json")));
+        assert!(is_reference_vector(Path::new("native-other.json")));
+        assert!(!is_reference_vector(Path::new("fixtures.txt")));
+        assert!(serde_json::from_str::<Vec<Case>>(r#"{"unexpected":[]}"#).is_err());
+        assert!(serde_json::from_str::<Vec<Case>>(r#"[{"name":"native-shaped"}]"#).is_err());
+    }
+
+    #[test]
+    fn native_fixture_documents_do_not_break_reference_registration() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        assert!(
+            root.join("tests/contract/vectors/native-feedback.json")
+                .is_file()
+        );
+        assert!(
+            root.join("tests/contract/vectors/native-user-ask.json")
+                .is_file()
+        );
+        let registered = cases(&root).expect("reference vectors must coexist with native fixtures");
+        validate_required_helper_ids(&registered).unwrap();
+        assert!(
+            registered
+                .iter()
+                .all(|case| case.id.starts_with("internal."))
+        );
     }
 
     #[test]

@@ -4,6 +4,7 @@ use crate::client::Api;
 use anyhow::{Context, Result, bail, ensure};
 use std::{
     fs::{self, File, OpenOptions},
+    io::{Read, Seek, SeekFrom},
     path::{Path, PathBuf},
     process::{Child, Command, Stdio},
     thread::sleep,
@@ -90,6 +91,7 @@ impl Gateway {
             .create(true)
             .append(true)
             .open(self.run_dir.join("gateway.log"))?;
+        let log_start = log.metadata()?.len();
         let mut command = self.backend.command();
         command
             .current_dir(self.root.join("packages/gateway"))
@@ -110,6 +112,8 @@ impl Gateway {
             .env("NODE_ENV", "test")
             .env("HOST", "127.0.0.1")
             .env("PORT", "0")
+            .env("JAIT_RUST_HOST", "127.0.0.1")
+            .env("JAIT_RUST_PORT", "0")
             .env("WS_PORT", "0")
             .env("LOG_LEVEL", "error")
             .env("JWT_SECRET", &self.secret)
@@ -150,9 +154,31 @@ impl Gateway {
             if let Some(status) = self.child.as_mut().unwrap().try_wait()? {
                 bail!("disposable gateway exited {status}; inspect gateway.log");
             }
-            if let Ok(text) = fs::read_to_string(&ready)
-                && let Ok(port) = text.parse::<u16>()
-            {
+            let ready_port = fs::read_to_string(&ready)
+                .ok()
+                .and_then(|s| s.parse::<u16>().ok());
+            // Native shipping entrypoints announce structured readiness on stdout.
+            // Read only this launch's bounded log prefix, never an earlier restart.
+            let announced =
+                if ready_port.is_none() && self.backend.profile() == "owned-command-argv" {
+                    let mut file = File::open(self.run_dir.join("gateway.log"))?;
+                    file.seek(SeekFrom::Start(log_start))?;
+                    let mut text = String::new();
+                    file.take(65_536).read_to_string(&mut text)?;
+                    text.lines()
+                        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+                        .find(|v| v["event"] == "gateway.ready")
+                        .and_then(|v| {
+                            v["address"]
+                                .as_str()
+                                .and_then(|s| s.parse::<std::net::SocketAddr>().ok())
+                        })
+                        .filter(|a| a.ip() == std::net::Ipv4Addr::LOCALHOST)
+                        .map(|a| a.port())
+                } else {
+                    None
+                };
+            if let Some(port) = ready_port.or(announced) {
                 ensure!(port > 0, "gateway reported invalid port");
                 self.api = Api::new(&format!("http://127.0.0.1:{port}"))?;
                 self.api.expect("GET", "/health", None, None, 200)?;
@@ -175,6 +201,34 @@ impl Gateway {
         ensure!(self.managed, "restart requires an owned disposable gateway");
         self.stop()?;
         self.launch()
+    }
+
+    /// Ask the owned process to shut down and require it to exit within a bound.
+    /// Drop still kills the process group on failure; this does not mask timeouts.
+    #[cfg(unix)]
+    #[allow(dead_code)]
+    pub fn shutdown(&mut self) -> Result<()> {
+        let child = self
+            .child
+            .as_mut()
+            .context("shutdown requires an owned process")?;
+        let status = Command::new("/bin/kill")
+            .args(["-TERM", &child.id().to_string()])
+            .status()?;
+        ensure!(status.success(), "could not signal owned gateway");
+        let deadline = Instant::now() + Duration::from_secs(8);
+        loop {
+            if let Some(status) = child.try_wait()? {
+                ensure!(status.success(), "gateway shutdown failed: {status}");
+                self.stop()?;
+                return Ok(());
+            }
+            ensure!(
+                Instant::now() < deadline,
+                "gateway graceful shutdown exceeded eight seconds"
+            );
+            sleep(Duration::from_millis(10));
+        }
     }
 
     pub fn stop(&mut self) -> Result<()> {

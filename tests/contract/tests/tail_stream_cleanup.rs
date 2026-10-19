@@ -18,6 +18,82 @@ mod tail_stream {
             path
         }
 
+        fn scanner_cache_fixture() -> PathBuf {
+            let root = directory();
+            fs::create_dir_all(root.join(".jait/cache")).unwrap();
+            fs::create_dir_all(root.join("outside")).unwrap();
+            root
+        }
+
+        #[test]
+        fn scanner_cache_accepts_owned_project_directory() {
+            let root = scanner_cache_fixture();
+            let cache = root.join(".jait/cache");
+            assert_eq!(
+                scoped_trivy_cache(&root, &cache).unwrap(),
+                cache.canonicalize().unwrap()
+            );
+            fs::remove_dir_all(root).unwrap();
+        }
+
+        #[test]
+        fn scanner_cache_rejects_existing_external_directory() {
+            let root = scanner_cache_fixture();
+            assert_eq!(
+                scoped_trivy_cache(&root, &root.join("outside"))
+                    .unwrap_err()
+                    .kind(),
+                std::io::ErrorKind::PermissionDenied
+            );
+            fs::remove_dir_all(root).unwrap();
+        }
+
+        #[test]
+        fn scanner_cache_rejects_files_and_missing_paths() {
+            let root = scanner_cache_fixture();
+            let file = root.join(".jait/file");
+            fs::write(&file, "fixture").unwrap();
+            assert_eq!(
+                scoped_trivy_cache(&root, &file).unwrap_err().kind(),
+                std::io::ErrorKind::PermissionDenied
+            );
+            assert!(scoped_trivy_cache(&root, &root.join(".jait/missing")).is_err());
+            fs::remove_dir_all(root).unwrap();
+        }
+
+        #[cfg(unix)]
+        #[test]
+        fn scanner_cache_rejects_symlink_escapes() {
+            let root = scanner_cache_fixture();
+            let link = root.join(".jait/escape");
+            std::os::unix::fs::symlink(root.join("outside").canonicalize().unwrap(), &link)
+                .unwrap();
+            assert_eq!(
+                scoped_trivy_cache(&root, &link).unwrap_err().kind(),
+                std::io::ErrorKind::PermissionDenied
+            );
+            fs::remove_dir_all(root).unwrap();
+        }
+
+        #[cfg(unix)]
+        #[test]
+        fn scanner_cache_rejects_retargeted_artifact_boundary() {
+            let root = scanner_cache_fixture();
+            fs::remove_dir_all(root.join(".jait")).unwrap();
+            std::os::unix::fs::symlink(
+                root.join("outside").canonicalize().unwrap(),
+                root.join(".jait"),
+            )
+            .unwrap();
+            assert_eq!(
+                scoped_trivy_cache(&root, &root.join(".jait"))
+                    .unwrap_err()
+                    .kind(),
+                std::io::ErrorKind::PermissionDenied
+            );
+            fs::remove_dir_all(root).unwrap();
+        }
+
         fn fixture_command(directory: &Path, role: &str) -> Command {
             let mut command = Command::new(std::env::current_exe().unwrap());
             command

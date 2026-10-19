@@ -21,7 +21,7 @@ CASE_RE = re.compile(
     r"(?P<attrs>(?:#\[[^\]]*\]\n)*)"
     r"fn (?P<fn>tailstatic_[a-z0-9_]+)\(\) \{\n"
     r"\s*tail_assertions::check\(\n"
-    r"\s*(?P<group>\d+),\n"
+    r'\s*(?:(?P<group>\d+)|r(?P<group_hashes>#+)"(?P<group_key>[a-z0-9][a-z0-9-]*)"(?P=group_hashes)),\n'
     r'\s*r(?P<id_hashes>#+)"(?P<id>.*?)"(?P=id_hashes),\n'
     r'\s*r(?P<rules_hashes>#+)"(?P<rules>.*?)"(?P=rules_hashes),\n'
     r"\s*\);\n\}",
@@ -29,16 +29,50 @@ CASE_RE = re.compile(
 )
 
 
-def load_cases(source=None):
+DISPATCH_RE = re.compile(
+    r'''^\s*case (?P<key>\d+|"[a-z0-9-]+"): return await \(await import\((?P<quote>['"])(?P<module>[^'"]+)(?P=quote)\)\)\.run\(call\.name\);$''',
+    re.M,
+)
+
+
+def dispatcher_peers(source):
+    peers = {}
+    matches = list(DISPATCH_RE.finditer(source))
+    if len(matches) != len(re.findall(r"^\s*case\s+", source, re.M)):
+        raise ValueError("unsupported fixture dispatcher registration")
+    for match in matches:
+        key = json.loads(match.group("key"))
+        module = match.group("module")
+        if not re.fullmatch(r"\./tailstatic/fixture(?:[0-9]+|-[a-z0-9-]+)\.ts", module):
+            raise ValueError("fixture dispatcher escapes generated fixture directory")
+        if key in peers:
+            raise ValueError("duplicate fixture dispatcher key")
+        peers[key] = "tests/contract/drivers/" + module[2:]
+    return peers
+
+
+def load_cases(source=None, dispatcher_source=None):
     text = open(CASES, encoding="utf-8").read() if source is None else source
+    if source is None and dispatcher_source is None:
+        dispatcher_source = open(os.path.join(ROOT, "tests/contract/drivers/tailstatic.ts"), encoding="utf-8").read()
+    peers = dispatcher_peers(dispatcher_source) if dispatcher_source is not None else None
     cases = {}
     for match in CASE_RE.finditer(text):
         rules = json.loads(match.group("rules"))
         case_id = match.group("id")
+        if case_id in cases:
+            raise ValueError("duplicate Rust case id: " + case_id)
+        group = int(match.group("group")) if match.group("group") is not None else match.group("group_key")
+        if peers is not None and group not in peers:
+            raise ValueError("Rust case has no fixture dispatcher registration: " + str(group))
+        peer_source = peers[group] if peers is not None else (
+            "tests/contract/drivers/tailstatic/fixture" + (str(group) if isinstance(group, int) else "-" + group) + ".ts"
+        )
         cases[case_id] = {
             "id": case_id,
             "function": match.group("fn"),
-            "group": int(match.group("group")),
+            "group": group,
+            "peer_source": peer_source,
             "original": match.group("original"),
             "name": match.group("name"),
             "ignored": "#[ignore" in match.group("attrs"),
@@ -71,6 +105,8 @@ def translated_variants(declaration_id, cases):
 def main():
     text, cases = load_cases()
     total_functions = len(re.findall(r"^fn tailstatic", text, re.M))
+    if len(cases) != total_functions:
+        raise ValueError("not every generated Rust registration was indexed")
     manifest = json.load(open(MANIFEST, encoding="utf-8"))
 
     rows = []

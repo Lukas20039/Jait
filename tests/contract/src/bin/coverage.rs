@@ -272,18 +272,22 @@ fn current_reports(root: &Path, relative: &str) -> Result<Vec<Value>> {
 
 fn run() -> Result<()> {
     let mut require_parity = false;
+    let mut require_declarations = false;
     let mut evidence_directory = None;
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--require-parity" => require_parity = true,
+            "--require-declarations" => require_declarations = true,
             "--evidence-dir" => {
                 evidence_directory = Some(
                     args.next()
                         .context("--evidence-dir requires a project-relative directory")?,
                 )
             }
-            _ => bail!("Usage: coverage [--require-parity] [--evidence-dir DIRECTORY]"),
+            _ => bail!(
+                "Usage: coverage [--require-parity] [--require-declarations] [--evidence-dir DIRECTORY]"
+            ),
         }
     }
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -311,6 +315,7 @@ fn run() -> Result<()> {
     let mut errors = Vec::<String>::new();
     let mut pending = Vec::<String>::new();
     let mut verified = 0;
+    let mut pending_declarations = 0;
     let test_files = manifest["test_files"]
         .as_array()
         .context("missing test_files")?;
@@ -337,6 +342,7 @@ fn run() -> Result<()> {
         if let Some(cases) = file["cases"].as_array() {
             if cases.is_empty() {
                 pending.push(format!("manual test declaration review: {path}"));
+                pending_declarations += 1;
             }
             for case in cases {
                 let id = case["id"].as_str().context("missing declaration id")?;
@@ -345,7 +351,10 @@ fn run() -> Result<()> {
                     "duplicate test declaration {id}"
                 );
                 match case["status"].as_str().unwrap_or("pending") {
-                    "pending" => pending.push(id.to_owned()),
+                    "pending" => {
+                        pending_declarations += 1;
+                        pending.push(id.to_owned());
+                    }
                     "verified" => {
                         match parity_evidence(&root, case, reports.as_deref(), &mut evidence_cache)
                         {
@@ -384,9 +393,11 @@ fn run() -> Result<()> {
     let output = json!({
         "schema_version":1,"inventory_consistent":errors.is_empty(),
         "parity_complete":errors.is_empty() && pending.is_empty(),
+        "declaration_parity_complete":errors.is_empty() && pending_declarations == 0,
         "test_files":test_files.len(),"retained_test_files":retained.len(),"test_declarations":declarations.len(),
         "source_files":source_files.len(),"verified_declarations":verified,
-        "pending_requirements":pending.len(),"errors":errors,"pending":pending,
+        "pending_requirements":pending.len(),"pending_declarations":pending_declarations,
+        "pending_source_reviews":pending.len().saturating_sub(pending_declarations),"errors":errors,"pending":pending,
         "limits":["Source fingerprints detect drift, not behavior coverage.","Declared verified evidence requires assertion review; this audit cannot prove equivalent assertions.","Parameterized and generated tests require explicit expansion review."]
     });
     let report_dir = root.join(".jait/artifacts/gateway-rust-readiness");
@@ -410,6 +421,10 @@ fn run() -> Result<()> {
     ensure!(
         errors.is_empty(),
         "coverage inventory is stale or contains invalid parity claims"
+    );
+    ensure!(
+        !require_declarations || pending_declarations == 0,
+        "declaration parity gate blocked: {pending_declarations} declarations remain"
     );
     ensure!(
         !require_parity || pending.is_empty(),

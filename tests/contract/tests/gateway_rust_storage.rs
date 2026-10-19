@@ -67,10 +67,29 @@ fn schema(db: &rusqlite::Connection) -> Value {
 #[test]
 fn all_76_current_definition_prefixes_match_typescript_schema_and_preserve_data() {
     let id = uuid::Uuid::new_v4().to_string();
-    let calls = observe(
-        json!([{"op":"nativestorage.prefixes","id":id,"versions":(0..=75).collect::<Vec<_>>()}]),
+    let versions = (0..=75u32).collect::<Vec<_>>();
+    let mut fixtures = Vec::with_capacity(versions.len());
+    // Bound file-backed reference generation per driver call. A single call
+    // for all 76 prefixes can exceed the unchanged ten-second driver deadline.
+    for batch in versions.chunks(8) {
+        let calls = observe(json!([{"op":"nativestorage.prefixes","id":id,"versions":batch}]));
+        let returned = calls[0].as_array().unwrap();
+        assert_eq!(
+            returned.len(),
+            batch.len(),
+            "all requested fixtures returned"
+        );
+        fixtures.extend(returned.iter().cloned());
+    }
+    assert_eq!(
+        fixtures
+            .iter()
+            .map(|f| f["version"].as_u64().unwrap() as u32)
+            .collect::<Vec<_>>(),
+        versions,
+        "every prefix exactly once and in order"
     );
-    for fixture in calls[0].as_array().unwrap() {
+    for fixture in &fixtures {
         let version = fixture["version"].as_u64().unwrap();
         let native = db::open_database(Path::new(fixture["native"].as_str().unwrap())).unwrap();
         let reference =

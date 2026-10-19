@@ -149,6 +149,27 @@ pub(crate) fn response(status: u16, body: Value) -> Response {
     )
         .into_response()
 }
+/// Shared server boundary for explicitly mounted protected routes.
+pub(crate) async fn require_user(
+    state: &AuthState,
+    headers: &HeaderMap,
+) -> Result<AuthUser, Box<Response>> {
+    if !state.origin_allowed(headers) {
+        return Err(Box::new(response(403, json!({"error":"ORIGIN_FORBIDDEN"}))));
+    }
+    let user = state
+        .resolve_user(headers)
+        .ok_or_else(|| Box::new(denied()))?;
+    let owner = user.id.clone();
+    match state
+        .with_database(move |db| Ok(UserService::new(db).find_by_id(&owner)?.is_some()))
+        .await
+    {
+        Ok(true) => Ok(user),
+        Ok(false) => Err(Box::new(denied())),
+        Err(e) => Err(Box::new(database_failure(&e))),
+    }
+}
 pub(crate) fn denied() -> Response {
     response(401, json!({"detail":"login_required"}))
 }
@@ -657,12 +678,21 @@ pub(crate) async fn parse_body(
         };
     }
     if json_type {
-        return serde_json::from_slice(&bytes).map_err(|_| {
+        let invalid = || {
             error(
                 400,
-                json!({"statusCode":400,"error":"Bad Request","message":"Invalid JSON body"}),
+                json!({"statusCode":400,"code":"FST_ERR_CTP_INVALID_JSON_BODY","error":"Bad Request","message":"Body is not valid JSON but content-type is set to 'application/json'"}),
             )
-        });
+        };
+        // Fastify decodes request bytes as UTF-8 with replacement, strips one
+        // leading BOM and rejects prototype/constructor poisoning recursively.
+        let text = String::from_utf8_lossy(&bytes);
+        let text = text.strip_prefix('\u{feff}').unwrap_or(&text);
+        let value: Value = serde_json::from_str(text).map_err(|_| invalid())?;
+        if forbidden_json_property(&value) {
+            return Err(invalid());
+        }
+        return Ok(value);
     }
     if content_type.starts_with("text/plain") {
         return Ok(Value::String(String::from_utf8_lossy(&bytes).into_owned()));
@@ -671,4 +701,18 @@ pub(crate) async fn parse_body(
         415,
         json!({"statusCode":415,"code":"FST_ERR_CTP_INVALID_MEDIA_TYPE","error":"Unsupported Media Type","message":format!("Unsupported Media Type: {content_type}")}),
     ))
+}
+
+fn forbidden_json_property(value: &Value) -> bool {
+    match value {
+        Value::Object(map) => {
+            map.contains_key("__proto__")
+                || map
+                    .get("constructor")
+                    .is_some_and(|c| c.is_object() && c.get("prototype").is_some())
+                || map.values().any(forbidden_json_property)
+        }
+        Value::Array(array) => array.iter().any(forbidden_json_property),
+        _ => false,
+    }
 }
