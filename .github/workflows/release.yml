@@ -961,16 +961,20 @@ jobs:
           LOG="/tmp/npm-install-${{ github.run_id }}.log"
           echo "Installing @jait/gateway@$VERSION into $PREFIX (dependency resolution only)"
           cd /tmp
-          # A freshly published dependency range can 404 (ETARGET) for a few
-          # minutes while the packument propagates, so retry before declaring
-          # the package uninstallable.
-          for attempt in $(seq 1 12); do
-            npm install --global --prefix "$PREFIX" --ignore-scripts --no-audit --no-fund \
+          # A freshly published dependency range can 404 (ETARGET) while the
+          # packument propagates — observed up to ~25 minutes on 2026-10-19
+          # (gateway 0.1.949: 12 attempts were not enough; the version was
+          # installable minutes later). Retry for up to 20 minutes before
+          # declaring the package uninstallable, and use --prefer-online so
+          # each attempt revalidates cached registry metadata instead of
+          # re-serving a packument cached before the publish.
+          for attempt in $(seq 1 40); do
+            npm install --global --prefix "$PREFIX" --ignore-scripts --no-audit --no-fund --prefer-online \
               "@jait/gateway@$VERSION" 2>&1 | tee "$LOG"
             status=${PIPESTATUS[0]}
             [ $status -eq 0 ] && break
             if grep -qi 'ETARGET\|404\|not in this registry\|may take a few minutes' "$LOG"; then
-              echo "⏳ attempt $attempt/12 — dependencies not propagated yet, retrying in 30s"
+              echo "⏳ attempt $attempt/40 — not propagated yet, retrying in 30s"
               rm -rf "$PREFIX"; mkdir -p "$PREFIX"
               sleep 30
             else
