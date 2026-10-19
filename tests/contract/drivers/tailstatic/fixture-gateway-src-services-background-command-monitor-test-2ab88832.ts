@@ -95,7 +95,7 @@ await (async()=>{
     // Listener detached and no longer tracked once complete.
     __jait_capture(6, (surface.listenerCount));
     __jait_capture(7, (backgroundCommandMonitor.activeCount));
-  
+
 })();
 
 } finally {
@@ -145,7 +145,7 @@ await (async()=>{
     __jait_capture(0, (results));
     __jait_capture(1, (results[0]!));
     __jait_capture(2, (backgroundCommandMonitor.activeCount));
-  
+
 })();
 
 } finally {
@@ -193,7 +193,7 @@ await (async()=>{
     await flush();
 
     __jait_capture(0, (results[0]!.exitCode));
-  
+
 })();
 
 } finally {
@@ -245,7 +245,7 @@ await (async()=>{
     __jait_capture(1, (results[0]!));
     __jait_capture(2, (results[0]!.output));
     __jait_capture(3, (backgroundCommandMonitor.activeCount));
-  
+
 })();
 
 } finally {
@@ -300,7 +300,7 @@ await (async()=>{
     backgroundCommandMonitor.stopForSession("s");
 
     __jait_capture(0, (onStop.mock.calls));
-  
+
 })();
 
 } finally {
@@ -347,7 +347,7 @@ await (async()=>{
 
     __jait_capture(0, (handler.mock.calls));
     __jait_capture(1, (backgroundCommandMonitor.activeCount)); // still watching
-  
+
 })();
 
 } finally {
@@ -400,7 +400,7 @@ await (async()=>{
     } finally {
       vi.useRealTimers();
     }
-  
+
 })();
 
 } finally {
@@ -458,7 +458,7 @@ await (async()=>{
 
     __jait_capture(1, (results));
     __jait_capture(2, (results[0]!.exitCode));
-  
+
 })();
 
 } finally {
@@ -515,7 +515,7 @@ await (async()=>{
     } finally {
       vi.useRealTimers();
     }
-  
+
 })();
 
 } finally {
@@ -562,7 +562,7 @@ await (async()=>{
       backgroundCommandMonitor.track({ sessionId: `s${i}`, terminalId: `t${i}`, command: "x", surface: new FakeSurface() });
     }
     __jait_capture(1, (backgroundCommandMonitor.track({ sessionId: "late", terminalId: "late", command: "x", surface: new FakeSurface() })));
-  
+
 })();
 
 } finally {
@@ -608,7 +608,7 @@ await (async()=>{
 
     backgroundCommandMonitor.stopForSession("s1");
     __jait_capture(2, (backgroundCommandMonitor.hasWatcherForTerminal("term-busy")));
-  
+
 })();
 
 } finally {
@@ -657,7 +657,7 @@ await (async()=>{
     __jait_capture(1, (backgroundCommandMonitor.activeCount));
     __jait_capture(2, (a.listenerCount));
     __jait_capture(3, (b.listenerCount));
-  
+
 })();
 
 } finally {
@@ -698,7 +698,7 @@ await (async()=>{
     __jait_capture(1, (out));
     __jait_capture(2, (out));
     __jait_capture(3, (out));
-  
+
 })();
 
 } finally {
@@ -734,7 +734,7 @@ try {
 await (async()=>{
 
     __jait_capture(0, (extractCompletionOutput("\x1b]633;D;0\x07", "ls")));
-  
+
 })();
 
 } finally {
@@ -776,7 +776,7 @@ await (async()=>{
       + `\r\n${token}:0\r\n`
       + "jakob@host:/tmp$ ";
     __jait_capture(0, (extractCompletionOutput(raw, "sleep 1; echo hi", "/bin/bash")));
-  
+
 })();
 
 } finally {
@@ -817,11 +817,125 @@ await (async()=>{
       "/bin/bash",
     );
     __jait_capture(0, (out));
-  
+
 })();
 
 } finally {
 
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each0": {
+
+
+class FakeSurface implements MonitorableSurface {
+  private readonly listeners = new Set<(data: string) => void>();
+  addOutputListener(listener: (data: string) => void): void {
+    this.listeners.add(listener);
+  }
+  removeOutputListener(listener: (data: string) => void): void {
+    this.listeners.delete(listener);
+  }
+  emit(data: string): void {
+    for (const listener of [...this.listeners]) listener(data);
+  }
+  get listenerCount(): number {
+    return this.listeners.size;
+  }
+}
+const oscDone = (code: number): string => `\x1b]633;D;${code}\x07`;
+const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+/*__jait_scope_open__*/{
+const __jait_hook_11177 = () => backgroundCommandMonitor.clearForTests();
+/*__jait_scope_open__*/{
+const completionToken = undefined;
+
+try {
+await (async()=>{
+
+    const surface = new FakeSurface();
+    const complete = vi.fn();
+    const stopped = vi.fn();
+    const notified = vi.fn();
+    backgroundCommandMonitor.setCompletionHandler(notified);
+    backgroundCommandMonitor.track({
+      sessionId: "cancel-during-output", terminalId: "terminal", command: "run", surface,
+      onOutput: () => backgroundCommandMonitor.stopForSession("cancel-during-output"),
+      onComplete: complete, onStop: stopped, completionToken,
+    });
+    surface.emit("run\r\nresult\r\n" + oscDone(0));
+    await Promise.resolve();
+    await Promise.resolve();
+    __jait_capture(0, (complete.mock.calls));
+    __jait_capture(1, (notified.mock.calls));
+    __jait_capture(2, (stopped.mock.calls));
+    __jait_capture(3, (surface.listenerCount));
+    __jait_capture(4, (backgroundCommandMonitor.activeCount));
+
+})();
+
+} finally {
+await __jait_hook_11177();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each1": {
+
+
+class FakeSurface implements MonitorableSurface {
+  private readonly listeners = new Set<(data: string) => void>();
+  addOutputListener(listener: (data: string) => void): void {
+    this.listeners.add(listener);
+  }
+  removeOutputListener(listener: (data: string) => void): void {
+    this.listeners.delete(listener);
+  }
+  emit(data: string): void {
+    for (const listener of [...this.listeners]) listener(data);
+  }
+  get listenerCount(): number {
+    return this.listeners.size;
+  }
+}
+const oscDone = (code: number): string => `\x1b]633;D;${code}\x07`;
+const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+/*__jait_scope_open__*/{
+const __jait_hook_11177 = () => backgroundCommandMonitor.clearForTests();
+/*__jait_scope_open__*/{
+const completionToken = "__JAIT_BACKGROUND_DONE_abc-123__";
+
+try {
+await (async()=>{
+
+    const surface = new FakeSurface();
+    const complete = vi.fn();
+    const stopped = vi.fn();
+    const notified = vi.fn();
+    backgroundCommandMonitor.setCompletionHandler(notified);
+    backgroundCommandMonitor.track({
+      sessionId: "cancel-during-output", terminalId: "terminal", command: "run", surface,
+      onOutput: () => backgroundCommandMonitor.stopForSession("cancel-during-output"),
+      onComplete: complete, onStop: stopped, completionToken,
+    });
+    surface.emit("run\r\nresult\r\n" + oscDone(0));
+    await Promise.resolve();
+    await Promise.resolve();
+    __jait_capture(0, (complete.mock.calls));
+    __jait_capture(1, (notified.mock.calls));
+    __jait_capture(2, (stopped.mock.calls));
+    __jait_capture(3, (surface.listenerCount));
+    __jait_capture(4, (backgroundCommandMonitor.activeCount));
+
+})();
+
+} finally {
+await __jait_hook_11177();
+}
 }
 }
 

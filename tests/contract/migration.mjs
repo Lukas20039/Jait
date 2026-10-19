@@ -1,4 +1,5 @@
 import { completeCases } from './migration-report.mjs'
+import { flowCoverage, flowMarkdown } from './flow-report.mjs'
 // Same contract targets, explicit backend selection, source-bound reviewable results.
 import { spawn } from 'node:child_process'
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
@@ -32,8 +33,8 @@ delete env.JAIT_CONTRACT_BACKEND_ARGV
 delete env.JAIT_CONTRACT_ACTIVE_STREAM_ARGV
 if(streamArgv)env.JAIT_CONTRACT_ACTIVE_STREAM_ARGV=streamArgv
 const sources=[
-  'tests/contract/tests/migration_boundaries.rs','tests/contract/tests/active_stream.rs','tests/contract/tests/migration_process.rs',
-  'tests/contract/src/migration_driver.rs','tests/contract/src/fixture.rs','tests/contract/src/bin/migration-adapter.rs',
+  'tests/contract/tests/migration_boundaries.rs','tests/contract/tests/active_stream.rs','tests/contract/tests/migration_process.rs','tests/contract/tests/chat_flow.rs',
+  'tests/contract/src/migration_driver.rs','tests/contract/src/fixture.rs','tests/contract/src/backend.rs','tests/contract/src/client.rs','tests/contract/src/provider_fixture.rs','tests/contract/src/bin/migration-adapter.rs',
   'tests/contract/corpus/current-payloads.json',
   ...['boundaries','recovery','mcp','mcp-peer','acp','acp-entry','messenger','git','forge','pty','watcher'].map(n=>`tests/contract/drivers/migration-${n}.ts`),
   'tests/contract/drivers/active-stream.ts','packages/gateway/src/tools/mcp-bridge.ts','packages/gateway/src/services/project-watcher.ts',
@@ -45,7 +46,7 @@ function runtimeFiles(directory){
     return entry.isDirectory()?runtimeFiles(path):/\.(ts|mjs|rs|json)$/.test(path)&&!path.endsWith('.test.ts')?[path]:[]
   })
 }
-sources.push('tests/contract/migration.mjs','tests/contract/migration-report.mjs','tests/contract/migration-cases.json','tests/contract/tsconfig.migration.json','tests/contract/Cargo.toml','tests/contract/Cargo.lock','packages/gateway-rust/Cargo.toml','package.json','bun.lock',
+sources.push('tests/contract/flows/chat.json','tests/contract/flow-report.mjs','tests/contract/migration.mjs','tests/contract/migration-report.mjs','tests/contract/migration-cases.json','tests/contract/tsconfig.migration.json','tests/contract/Cargo.toml','tests/contract/Cargo.lock','packages/gateway-rust/Cargo.toml','package.json','bun.lock',
   ...runtimeFiles('packages/gateway/src'),...runtimeFiles('packages/gateway-rust/src'),...runtimeFiles('packages/shared/src'))
 const snapshot=()=>Object.fromEntries([...new Set(sources)].sort().map(p=>[p,createHash('sha256').update(readFileSync(join(root,p))).digest('hex')]))
 const hashes=snapshot()
@@ -75,7 +76,7 @@ try{
   } else {
     env.JAIT_MIGRATION_ADAPTER_ARGV=JSON.stringify([process.env.JAIT_CONTRACT_BUN || 'bun','--no-env-file',join(root,'tests/contract/drivers/migration-boundaries.ts')])
   }
-  for(const test of ['migration_boundaries','migration_process','active_stream']){
+  for(const test of ['migration_boundaries','migration_process','active_stream','chat_flow']){
     if(backend==='rust' && test==='active_stream' && !streamArgv){
       // The selected binary has no provider/tool fixture composition yet. Do not
       // fall back to the Bun adapter or count helper tests as Rust stream evidence.
@@ -95,8 +96,14 @@ try{
   }
 }catch(error){setupError=error.message}
 try { results=completeCases(inventory.cases,results) } catch(error) {setupError=error.message}
+let flow
+try {
+  flow=flowCoverage(JSON.parse(readFileSync(join(root,'tests/contract/flows/chat.json'),'utf8')),inventory.cases,results,path=>readFileSync(join(root,path),'utf8'))
+  writeFileSync(join(directory,'chat-flow.json'),JSON.stringify(flow,null,2)+'\n')
+  writeFileSync(join(directory,'chat-flow.md'),flowMarkdown(flow,backend,root))
+} catch(error) {setupError=error.message}
 const unchanged=JSON.stringify(hashes)===JSON.stringify(snapshot())
-const report={format:1,backend,active_stream_adapter:streamArgv?{selection:'caller-supplied',argv_sha256:createHash('sha256').update(streamArgv).digest('hex')}:backend==='rust'?'unavailable':'bun-reference',generated_at:new Date().toISOString(),sources_unchanged:unchanged,source_sha256:hashes,setup_error:setupError??null,cases:results,summary:Object.fromEntries(['passed','failed','blocked'].map(status=>[status,results.filter(r=>r.status===status).length])),passed:!setupError&&unchanged&&results.length>0&&results.every(r=>r.status==='passed'),not_covered:['Archived released database binaries and historical field encodings','Windows ConPTY/macOS execution','General unbounded-stream memory/backpressure guarantees','Every shipping startup failure and hung-disposer combination','Complete public API/WS and scanner scope matrix']}
+const report={format:1,backend,flow_report:flow?'chat-flow.json':null,active_stream_adapter:streamArgv?{selection:'caller-supplied',argv_sha256:createHash('sha256').update(streamArgv).digest('hex')}:backend==='rust'?'unavailable':'bun-reference',generated_at:new Date().toISOString(),sources_unchanged:unchanged,source_sha256:hashes,setup_error:setupError??null,cases:results,summary:Object.fromEntries(['passed','failed','blocked'].map(status=>[status,results.filter(r=>r.status===status).length])),passed:!setupError&&unchanged&&results.length>0&&results.every(r=>r.status==='passed'),not_covered:['Archived released database binaries and historical field encodings','Windows ConPTY/macOS execution','General unbounded-stream memory/backpressure guarantees','Every shipping startup failure and hung-disposer combination','Complete public API/WS and scanner scope matrix']}
 writeFileSync(join(directory,'report.json'),JSON.stringify(report,null,2)+'\n')
 console.log(JSON.stringify({backend,...report.summary,success:report.passed,report:join(directory,'report.json')}))
 process.exitCode=report.passed?0:1

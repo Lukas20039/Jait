@@ -15,18 +15,34 @@ use std::{
 pub struct Reply {
     status: u16,
     body: String,
+    content_type: &'static str,
 }
 impl Reply {
     pub fn json(status: u16, body: serde_json::Value) -> Self {
         Self {
             status,
             body: body.to_string(),
+            content_type: "application/json",
+        }
+    }
+    #[allow(dead_code)]
+    pub fn sse(chunks: Vec<serde_json::Value>) -> Self {
+        let mut body = chunks
+            .into_iter()
+            .map(|value| format!("data: {value}\n\n"))
+            .collect::<String>();
+        body.push_str("data: [DONE]\n\n");
+        Self {
+            status: 200,
+            body,
+            content_type: "text/event-stream",
         }
     }
     pub fn malformed() -> Self {
         Self {
             status: 200,
             body: "{invalid-json".into(),
+            content_type: "application/json",
         }
     }
 }
@@ -44,10 +60,24 @@ pub struct LocalProvider {
     stop: Arc<AtomicBool>,
     worker: Option<JoinHandle<Result<Vec<RecordedRequest>>>>,
     expected: usize,
+    chat: bool,
 }
 
 impl LocalProvider {
     pub fn start(replies: Vec<Reply>) -> Result<Self> {
+        Self::start_bounded(replies, 49_152, 20, false)
+    }
+    /// Full chat prompts include shipping tool schemas; retain a finite 1 MiB bound.
+    #[allow(dead_code)]
+    pub fn start_chat(replies: Vec<Reply>) -> Result<Self> {
+        Self::start_bounded(replies, 1_048_576, 60, true)
+    }
+    fn start_bounded(
+        replies: Vec<Reply>,
+        request_limit: usize,
+        seconds: u64,
+        chat: bool,
+    ) -> Result<Self> {
         ensure!(replies.len() <= 16, "provider script exceeds 16 requests");
         ensure!(
             replies.iter().all(|r| r.body.len() <= 65_536),
@@ -60,9 +90,10 @@ impl LocalProvider {
         let stop = Arc::new(AtomicBool::new(false));
         let cancelled = stop.clone();
         let worker = thread::spawn(move || {
-            let deadline = Instant::now() + Duration::from_secs(20);
+            let deadline = Instant::now() + Duration::from_secs(seconds);
             let mut replies = replies.into_iter();
             let mut requests = Vec::new();
+            let mut notifications = 0;
             while !cancelled.load(Ordering::SeqCst) && Instant::now() < deadline {
                 crate::fixture::check_cancelled()?;
                 match listener.accept() {
@@ -71,16 +102,36 @@ impl LocalProvider {
                             peer.ip().is_loopback(),
                             "provider accepted non-loopback peer"
                         );
-                        let request = read_request(&mut stream, &cancelled)?;
-                        let reply = replies
-                            .next()
-                            .context("unexpected extra provider request")?;
+                        let request = read_request(&mut stream, &cancelled, request_limit)?;
+                        let body: serde_json::Value =
+                            serde_json::from_slice(&request.body).unwrap_or_default();
+                        let notification = chat
+                            && body["stream"] != true
+                            && body["messages"][0]["content"].as_str().is_some_and(|v| {
+                                v.starts_with("You write the one-line body of a phone notification")
+                            });
+                        let reply = if notification {
+                            notifications += 1;
+                            ensure!(notifications <= 2, "notification request bound exceeded");
+                            Reply::json(
+                                200,
+                                serde_json::json!({"choices":[{"message":{"content":"Fixture chat completed"}}]}),
+                            )
+                        } else {
+                            replies.next().with_context(|| {
+                                format!(
+                                    "unexpected extra provider request: {} {} stream={}",
+                                    request.method, request.path, body["stream"]
+                                )
+                            })?
+                        };
                         requests.push(request);
                         stream.set_write_timeout(Some(Duration::from_secs(2)))?;
                         write!(
                             stream,
-                            "HTTP/1.1 {} Fixture\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                            "HTTP/1.1 {} Fixture\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
                             reply.status,
+                            reply.content_type,
                             reply.body.len(),
                             reply.body
                         )?;
@@ -94,7 +145,7 @@ impl LocalProvider {
             }
             ensure!(
                 cancelled.load(Ordering::SeqCst),
-                "provider fixture exceeded 20 second lifetime"
+                "provider fixture exceeded bounded lifetime"
             );
             Ok(requests)
         });
@@ -103,6 +154,7 @@ impl LocalProvider {
             stop,
             worker: Some(worker),
             expected,
+            chat,
         })
     }
     pub fn base_url(&self) -> &str {
@@ -117,7 +169,14 @@ impl LocalProvider {
             .join()
             .map_err(|_| anyhow::anyhow!("provider worker panicked"))??;
         ensure!(
-            requests.len() == self.expected,
+            requests
+                .iter()
+                .filter(|request| !self.chat
+                    || serde_json::from_slice::<serde_json::Value>(&request.body)
+                        .ok()
+                        .is_some_and(|body| body["stream"] == true))
+                .count()
+                == self.expected,
             "provider request count differs from script"
         );
         Ok(requests)
@@ -132,7 +191,11 @@ impl Drop for LocalProvider {
     }
 }
 
-fn read_request(stream: &mut TcpStream, stop: &AtomicBool) -> Result<RecordedRequest> {
+fn read_request(
+    stream: &mut TcpStream,
+    stop: &AtomicBool,
+    request_limit: usize,
+) -> Result<RecordedRequest> {
     stream.set_read_timeout(Some(Duration::from_millis(100)))?;
     let deadline = Instant::now() + Duration::from_secs(2);
     let mut bytes = Vec::new();
@@ -159,7 +222,10 @@ fn read_request(stream: &mut TcpStream, stop: &AtomicBool) -> Result<RecordedReq
             }
             Err(error) => return Err(error.into()),
         }
-        ensure!(bytes.len() <= 65_536, "provider request exceeds 64 KiB");
+        ensure!(
+            bytes.len() <= request_limit + 16_384,
+            "provider request exceeds bound"
+        );
         if head_end.is_none() {
             head_end = bytes
                 .windows(4)
@@ -187,7 +253,7 @@ fn read_request(stream: &mut TcpStream, stop: &AtomicBool) -> Result<RecordedReq
             }
         }
         if let (Some(end), Some(count)) = (head_end, length) {
-            ensure!(count <= 49_152, "provider body exceeds 48 KiB");
+            ensure!(count <= request_limit, "provider body exceeds bound");
             if bytes.len() >= end + count {
                 ensure!(
                     bytes.len() == end + count,

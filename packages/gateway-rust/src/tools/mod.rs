@@ -1,3 +1,4 @@
+pub mod calendar;
 pub mod conversation;
 pub mod list_preview;
 

@@ -36,9 +36,9 @@ and compilation is bounded to two jobs.
 
 ## Verified components
 
-`native-coverage.json` maps native implementations to 87 of the 361 gateway
-source components in `tests/contract/coverage.json`: **24.10% focused native component
-coverage**. Components have equal weight; this percentage measures neither effort
+The latest passing frozen-source checkpoint covers 116 of the 361 gateway
+source components in `tests/contract/coverage.json`: **32.13% focused native component
+coverage**. The current report records whether that snapshot still matches live sources. Components have equal weight; this percentage measures neither effort
 remaining nor readiness to replace production.
 
 - Health responses: exact schema, provider branches, counts and null/omitted
@@ -173,10 +173,11 @@ released-schema recovery and supported-platform builds remain unverified. The
 current tests establish Linux focused compatibility. Production startup and the
 installed gateway have not been switched over.
 
-## Continuing toward 50%
+## Completion target
 
-The requested milestone is **181/361 verified native components (50.14%)**.
-The current passing checkpoint is **55/361 (15.24%)**; the milestone remains open.
+The requested target is **361/361 verified native components (100%)**.
+The source-bound report and its live-source match flag are authoritative.
+The earlier 55/361 checkpoint described below is historical; the completion target remains open.
 The source-bound report covers formatting, strict Clippy, seven native tests and
 345 contract-test executions across thirty targets (including repeated driver checks). Focused cases expand into multiple
 requests and value matrices; they do not establish full application parity.
@@ -243,3 +244,47 @@ handling now have native implementations. Exact TypeScript comparisons and seven
 restored mutations pass. The source-bound gate verifies **87/361 (24.10%)** with
 unchanged sources; checkpoint: .jait/artifacts/gateway-rust/checkpoints/87-report.json.
 The requested **181/361 (50.14%)** milestone remains open.
+
+
+## Calendar and runtime safety continuation — 2026-10-19
+
+The frozen-source gate passes at **113/361 (31.30%)**. This batch adds the native
+calendar account service and calendar tools, sandbox owner identity/liveness, and
+the disk-space watchdog. Reviews in `tests/contract/reviews/native-calendar-service.md`,
+`native-calendar-tools.md`, `native-sandbox-owner.md`, and `native-disk-watchdog.md`
+document exact boundaries. The four new targets pass 36 test executions, including
+repeated subprocess-driver checks; eleven restored mutations fail their intended
+assertions. Native OAuth futures now finish form encoding before awaiting I/O,
+allowing the calendar tools to use the shared executor. Native Clippy, the four
+TypeScript adapters and artifact-path checks pass.
+
+The target is now all **361 components**, with 248 remaining in the reviewed
+ledger. `.jait/artifacts/gateway-rust/remaining-native-components.json` enumerates
+them without deleting or shrinking source requirements. Production startup,
+full client parity, supported-platform, resource and rollback gates remain open.
+Use `native-progress/report.json` to distinguish a passing frozen snapshot from
+matching live-source evidence; concurrent edits can invalidate freshness.
+
+
+## Calendar HTTP and provider registry continuation — 2026-10-19
+
+The current source-bound gate passes at **116/361 (32.13%)**, with matching live
+source fingerprints. This continuation adds the opt-in calendar HTTP adapter,
+provider registration/ownership/lifecycle, and MCP reference/configuration helpers.
+The three new targets pass 27 test executions (including repeated subprocess
+transport checks); six restored mutations catch owner, snapshot-limit, HTML-escape,
+namespace and unregister failures. Reviews: native-calendar-http.md and
+native-provider-registry.md under tests/contract/reviews.
+
+The same failing assertions now pass for two reproduced mismatches: invalid event
+limits returned two events instead of none, and empty terminal-output ranges
+returned the preceding partial line instead of empty output. Evidence is under
+.jait/artifacts/gateway-rust/{calendar-limit-before,calendar-http-after,terminal-empty-before,terminal-empty-after}.log.
+The terminal reference change was reviewed and its ledger fingerprint refreshed
+only after the native comparison passed. The session HTTP candidate remains
+uncredited.
+
+The 100% goal remains open, with **245 components remaining**. See
+.jait/artifacts/gateway-rust/remaining-native-components.json and
+.jait/artifacts/gateway-rust/next-provider-slice.json. Production startup and
+cutover readiness remain separate.

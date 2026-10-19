@@ -5,6 +5,7 @@ pub mod users;
 pub mod sessions;
 
 pub mod audit;
+pub mod disk_space_watchdog;
 
 pub mod projects;
 
@@ -42,6 +43,7 @@ pub mod user_secrets;
 
 pub mod assistant_profiles;
 pub mod background_command_continuation;
+pub mod background_command_monitor;
 pub mod computer_control;
 pub mod email;
 pub mod intervention_run_resume;

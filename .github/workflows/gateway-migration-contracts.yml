@@ -36,7 +36,7 @@ jobs:
       - name: Validate adapter types and backend selection
         run: |
           bun run test:gateway:migration:types
-          node --test tests/contract/tooling/migration-cli.test.mjs
+          node --test tests/contract/tooling/migration-cli.test.mjs tests/contract/tooling/flow-report.test.mjs
       - name: Run identical migration scenarios against selected backend
         env:
           MIGRATION_BACKEND: ${{ inputs.backend || 'bun' }}
@@ -46,5 +46,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gateway-migration-contracts
-          path: .jait/artifacts/migration-suite/*/report.json
+          path: |
+            .jait/artifacts/migration-suite/*/report.json
+            .jait/artifacts/migration-suite/*/*.log
+            .jait/artifacts/migration-suite/*/chat-flow.json
+            .jait/artifacts/migration-suite/*/chat-flow.md
           retention-days: 7

@@ -250,16 +250,16 @@ fn llm_headers_keep_configuration_identity_and_explicit_conversation_precedence(
         .map(|step| {
             let mut headers = configs[step["config"].as_u64().unwrap() as usize]
                 .headers(step["session"].as_str());
-            if let Some(value) = headers.get_mut("x-opencode-session") {
-                if let Ok(id) = uuid::Uuid::parse_str(value) {
-                    assert_eq!(id.get_version_num(), 4);
-                    assert_eq!(id.get_variant(), uuid::Variant::RFC4122);
-                    let canonical = ids.entry(value.clone()).or_insert_with(|| {
-                        serial += 1;
-                        format!("generated-{serial}")
-                    });
-                    *value = canonical.clone();
-                }
+            if let Some(value) = headers.get_mut("x-opencode-session")
+                && let Ok(id) = uuid::Uuid::parse_str(value)
+            {
+                assert_eq!(id.get_version_num(), 4);
+                assert_eq!(id.get_variant(), uuid::Variant::RFC4122);
+                let canonical = ids.entry(value.clone()).or_insert_with(|| {
+                    serial += 1;
+                    format!("generated-{serial}")
+                });
+                *value = canonical.clone();
             }
             json!(headers)
         })

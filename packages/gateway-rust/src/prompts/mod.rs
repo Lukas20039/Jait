@@ -381,32 +381,12 @@ pub struct PromptSkill {
     pub description: String,
     pub file_path: String,
 }
-fn xml(s: &str) -> String {
-    s.replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-        .replace('"', "&quot;")
-        .replace('\'', "&apos;")
-}
+pub const SKILL_DISCOVERY_INSTRUCTIONS: &str = "Skills are available on demand. Discover skills.search and skills.read with tools.search. Search installed skills when specialized instructions could help; load a selected skill before applying it. Resolve an explicit /skill-id with skills.search, then read it. Resolve relative references against the returned baseDirectory. Do not list every installed skill.";
+
 pub fn format_skills(skills: &[PromptSkill]) -> String {
-    if skills.is_empty() {
-        return String::new();
+    if skills.is_empty() { String::new() } else {
+        format!("\n\n<skillDiscovery>\n{SKILL_DISCOVERY_INSTRUCTIONS}\n</skillDiscovery>")
     }
-    let mut lines=vec!["".into(),"".into(),"The following skills provide specialized instructions for specific tasks.".into(),
-        "Use the file.read tool to load a skill's content when the task matches its description.".into(),
-        "If the user explicitly invokes a skill by typing a slash command like `/skill-id`, treat that as a request to load and follow that skill's instructions for the turn.".into(),
-        "When a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md) and use that absolute path in tool commands.".into(),"".into(),"<available_skills>".into()];
-    for skill in skills {
-        lines.extend([
-            "  <skill>".into(),
-            format!("    <name>{}</name>", xml(&skill.name)),
-            format!("    <description>{}</description>", xml(&skill.description)),
-            format!("    <location>{}</location>", xml(&skill.file_path)),
-            "  </skill>".into(),
-        ]);
-    }
-    lines.push("</available_skills>".into());
-    lines.join("\n")
 }
 /// Explicit file-loading context: never discover credentials or mutate process env.
 pub struct GlobalInstructions {

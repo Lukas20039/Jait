@@ -29,6 +29,7 @@ pub struct Gateway {
     secret: String,
     pub managed: bool,
     backend: backend::BackendCommand,
+    port: u16,
 }
 
 impl Gateway {
@@ -37,7 +38,7 @@ impl Gateway {
             std::env::var("JAIT_CONTRACT_BACKEND_ARGV").ok().as_deref(),
             std::env::var("JAIT_CONTRACT_BUN").unwrap_or_else(|_| "bun".into()),
         )?;
-        Self::start_with_backend(root, run_dir, external, backend)
+        Self::start_with_backend(root, run_dir, external, backend, 0)
     }
 
     // Fixture-specific drivers pass argv directly, without mutating the test
@@ -45,7 +46,17 @@ impl Gateway {
     #[allow(dead_code)]
     pub fn start_owned_command(root: &Path, run_dir: &Path, argv: &str) -> Result<Self> {
         let backend = backend::BackendCommand::from_json(Some(argv), "bun".into())?;
-        Self::start_with_backend(root, run_dir, None, backend)
+        Self::start_with_backend(root, run_dir, None, backend, 0)
+    }
+
+    /// Select a listen port without mutating the parallel test process environment.
+    #[allow(dead_code)]
+    pub fn start_on_port(root: &Path, run_dir: &Path, port: u16) -> Result<Self> {
+        let backend = backend::BackendCommand::from_json(
+            std::env::var("JAIT_CONTRACT_BACKEND_ARGV").ok().as_deref(),
+            std::env::var("JAIT_CONTRACT_BUN").unwrap_or_else(|_| "bun".into()),
+        )?;
+        Self::start_with_backend(root, run_dir, None, backend, port)
     }
 
     fn start_with_backend(
@@ -53,6 +64,7 @@ impl Gateway {
         run_dir: &Path,
         external: Option<&str>,
         backend: backend::BackendCommand,
+        port: u16,
     ) -> Result<Self> {
         let mut gateway = Self {
             child: None,
@@ -62,6 +74,7 @@ impl Gateway {
             secret: uuid::Uuid::new_v4().to_string(),
             managed: external.is_none(),
             backend,
+            port,
         };
         if gateway.managed {
             gateway.launch()?;
@@ -111,9 +124,9 @@ impl Gateway {
             .env("__JAIT_CLI", "1")
             .env("NODE_ENV", "test")
             .env("HOST", "127.0.0.1")
-            .env("PORT", "0")
+            .env("PORT", self.port.to_string())
             .env("JAIT_RUST_HOST", "127.0.0.1")
-            .env("JAIT_RUST_PORT", "0")
+            .env("JAIT_RUST_PORT", self.port.to_string())
             .env("WS_PORT", "0")
             .env("LOG_LEVEL", "error")
             .env("JWT_SECRET", &self.secret)
@@ -152,7 +165,11 @@ impl Gateway {
         while Instant::now() < deadline {
             check_cancelled()?;
             if let Some(status) = self.child.as_mut().unwrap().try_wait()? {
-                bail!("disposable gateway exited {status}; inspect gateway.log");
+                ensure!(
+                    status.success(),
+                    "disposable gateway exited unsuccessfully ({status}); inspect gateway.log"
+                );
+                bail!("disposable gateway exited before readiness ({status}); inspect gateway.log");
             }
             let ready_port = fs::read_to_string(&ready)
                 .ok()

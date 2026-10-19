@@ -21,9 +21,9 @@ bun run test:gateway:migration --backend rust
 ```
 
 This is a supplemental suite, separate from declaration reconstruction and native
-component credit. It currently requires 39 application scenarios on Linux:
-33 boundary/storage/integration scenarios, four streaming scenarios, and two
-process scenarios. Repeated argv helper unit tests and stream-oracle controls do
+component credit. It currently requires 45 application scenarios on Linux:
+33 boundary/storage/integration scenarios, four streaming scenarios, four
+process scenarios, and four production-entrypoint chat-flow scenarios. Repeated argv helper unit tests and stream-oracle controls do
 not inflate that count. Rust's missing implementations are reported as blocked
 and make the command fail. Actual mismatches are failed. The native streaming
 fixture is explicitly blocked instead of silently starting Bun. There are no
@@ -36,7 +36,21 @@ Each invocation saves logs and a source-fingerprinted report under
 fingerprinted before and after execution; concurrent source changes prevent a
 passing verdict. All fixture state remains under project-local `.jait/artifacts/`.
 The default CI run checks Bun; workflow dispatch can measure the Rust candidate
-and retain its failing/blocked verdict. Only verdict JSON is uploaded.
+and retain its failing/blocked verdict. Verdict JSON and target logs are uploaded for failure diagnosis.
+
+Latest supplemental checkpoint (2026-10-19): Bun **45 passed / 0 failed / 0
+blocked**; Rust **7 passed / 3 failed / 35 blocked**. Both runs have unchanged
+source fingerprints. Rust fails raw/compacted tool-history preservation for
+JSON overflow and UTF-16 escapes, and reports readiness without opening the
+configured corrupt database. The standalone native entrypoint does not yet
+compose database startup; this failure is retained as a replacement requirement.
+The four added native chat-flow scenarios are blocked at missing public registration.
+The source-linked flow and coverage matrix are in [reviews/chat-data-flow.md](reviews/chat-data-flow.md),
+with a machine-readable specification in `flows/chat.json`. Each migration run
+checks source-anchor and required-test references and writes `chat-flow.json` and
+`chat-flow.md` beside its verdict. CI retains these reports and logs.
+The detailed local review is `.jait/artifacts/chat-flow-review.md`.
+These results do not change native component credit.
 
 The supplemental scenarios cover:
 
@@ -65,7 +79,9 @@ The supplemental scenarios cover:
   and cancellation has an eight-second deadline. This does not prove a general
   unbounded-stream memory/backpressure guarantee.
 - Actual entrypoint process restart, fresh readiness and port release, plus
-  graceful shutdown while a client leaves an idle connection open.
+  graceful shutdown while a client leaves an idle connection open. Startup with
+  an occupied port or corrupt database must exit unsuccessfully without readiness;
+  a subsequent valid launch must recover, and corrupt input bytes must survive.
 
 The managed fixture recognizes the native binary's structured `gateway.ready`
 stdout announcement as well as the Bun fixture's ready file. Only readiness from
@@ -615,3 +631,27 @@ Generated observations preserve nested function and AbortSignal identity, so
 deep equality and call-argument checks distinguish equal-looking references.
 Transport regressions exercise both shared and distinct references; reference
 execution still requires a separate source/assertion review before credit.
+
+## Reconciled native/reference source reviews
+
+`node tests/contract/tooling/native-source-review.mjs` executes the explicitly
+reviewed source registry in `reviews/native-source-reconciliation.json`. Each
+entry preserves the original component review, scope limits, source SHA-256 and
+exact Rust test IDs. The runner bounds suite concurrency, rejects missing/skipped
+results and source drift, and writes a TypeScript-reference evidence report to
+`.jait/artifacts/contracts/native-review-*/`. It awards no native progress.
+
+After reviewing a successful report, `--apply <report.json>` validates current
+source fingerprints and updates the corresponding source inventory entries.
+This is separate from `tooling/source-review.mjs`, which requires reference
+source mutation/restore controls for its authored runtime vectors. CI runs both
+lanes before auditing current evidence. Neither lane proves production startup,
+all-platform compatibility or complete source branch coverage.
+
+The session HTTP reference explicitly supplies a disposable `JAIT_WEB_DIR` with a
+minimal index page. This selects the existing production SPA fallback, matching
+the native session router's documented response profile, and restores/removes
+the fixture afterward. Without it, a checkout with no web build uses Fastify's
+other 404 envelope and made the suite depend on ambient build output. The
+API-only server fallback is a separate server-composition coverage gap; this
+fixture does not credit that branch or waive any pending source requirement.

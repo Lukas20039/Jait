@@ -1,0 +1,1145 @@
+{
+  "schema_version": 1,
+  "scope": "TypeScript reference source runtime behavior, not native Rust implementation equivalence",
+  "sources": [
+    {
+      "module": "surface",
+      "path": "packages/gateway/src/surfaces/project-ui-sync.ts",
+      "case_ids": [
+        "internal.sourcereview.surface-policy"
+      ],
+      "review": "Both filesystem kinds accept boolean true/false; other kinds short-circuit without snapshot; absent/null/string metadata rejects.",
+      "mutation": {
+        "find": "typeof surface.snapshot().metadata.panelOpen === \"boolean\"",
+        "replace": "typeof surface.snapshot().metadata.panelOpen === \"string\"",
+        "case_id": "internal.sourcereview.surface-policy"
+      }
+    },
+    {
+      "module": "ownership",
+      "path": "packages/gateway/src/security/ownership.ts",
+      "case_ids": [
+        "internal.sourcereview.ownership-policy"
+      ],
+      "review": "Missing resource, missing/null/different owner return false and exact single 404/error payload; same owner returns true without writing reply.",
+      "mutation": {
+        "find": "resource.userId !== userId",
+        "replace": "resource.userId === userId",
+        "case_id": "internal.sourcereview.ownership-policy"
+      }
+    },
+    {
+      "module": "lease",
+      "path": "packages/gateway/src/security/assessment-lease.ts",
+      "case_ids": [
+        "internal.sourcereview.assessment-exclusive-and-stale-release"
+      ],
+      "review": "Acquire blocks concurrent execution; release permits reacquisition; repeated release and stale closure for a different owner cannot clear a newer lease. Same-ID reacquisition semantics intentionally unchanged.",
+      "mutation": {
+        "find": "if (owner === id) owner = null",
+        "replace": "if (owner) owner = null",
+        "case_id": "internal.sourcereview.assessment-exclusive-and-stale-release"
+      }
+    },
+    {
+      "module": "state",
+      "path": "packages/gateway/src/state-directory.ts",
+      "case_ids": [
+        "internal.sourcereview.state-path-policy"
+      ],
+      "review": "Unset/empty/trimmed-empty use home/.jait; relative override rejects; absolute trimmed override preserved (Linux fixture). Platform behavior still requires supported-platform acceptance.",
+      "mutation": {
+        "find": "if (!isAbsolute(configured))",
+        "replace": "if (isAbsolute(configured))",
+        "case_id": "internal.sourcereview.state-path-policy"
+      }
+    },
+    {
+      "module": "crypto",
+      "path": "packages/gateway/src/crypto-polyfill.ts",
+      "case_ids": [
+        "internal.sourcereview.crypto-preserve",
+        "internal.sourcereview.crypto-install"
+      ],
+      "review": "Existing global object preserved by identity; absent crypto filled with node WebCrypto including getRandomValues. Each branch executes in a fresh process.",
+      "mutation": {
+        "find": "typeof globalThis.crypto === \"undefined\"",
+        "replace": "typeof globalThis.crypto !== \"undefined\"",
+        "case_id": "internal.sourcereview.crypto-preserve"
+      }
+    },
+    {
+      "module": "inline",
+      "path": "packages/gateway/src/services/email/inline-images.ts",
+      "case_ids": [
+        "internal.sourcereview.inline-cid-replacement",
+        "internal.sourcereview.inline-image-types-and-base64",
+        "internal.sourcereview.inline-image-size-limits"
+      ],
+      "review": "CID lookup: case-insensitive, percent-decoded, angle-stripped, absent/empty fallback and malformed decode catch. All five accepted MIME types and rejected SVG/parameters; empty/invalid alphabet; base64url canonicalization; encoded length 1,500,000/+1 and decoded 1MiB/+1. The 1,398,101-byte input has an incomplete final sextet and decodes 1,048,575 bytes.",
+      "mutation": {
+        "find": "bytes.length > 1024 * 1024",
+        "replace": "bytes.length >= 1024 * 1024",
+        "case_id": "internal.sourcereview.inline-image-size-limits"
+      }
+    },
+    {
+      "module": "preview",
+      "path": "packages/gateway/src/security/preview-token.ts",
+      "case_ids": [
+        "internal.sourcereview.preview-sign-and-scope",
+        "internal.sourcereview.preview-invalid-claims",
+        "internal.sourcereview.preview-malformed"
+      ],
+      "review": "HS256 signer emits preview purpose/resource/subject and 3600s lifetime; verifier checks resource/purpose/string subject. Signed invalid claims, expired/not-yet-valid JWT, unsupported algorithm, wrong key and malformed token all reject. No real credentials or remote services.",
+      "mutation": {
+        "find": "payload.resource === resource",
+        "replace": "payload.resource !== resource",
+        "case_id": "internal.sourcereview.preview-sign-and-scope"
+      }
+    },
+    {
+      "module": "origin",
+      "path": "packages/gateway/src/security/request-origin.ts",
+      "case_ids": [
+        "internal.sourcereview.request-origin-policy"
+      ],
+      "review": "No/empty Origin and four native app origins accepted. Malformed, opaque, non-HTTP, noncanonical (path/userinfo/case) reject. Exact host+port or trimmed comma CORS entry accept; mismatch/trailing slash reject.",
+      "mutation": {
+        "find": "origin.host === headers.host",
+        "replace": "origin.host !== headers.host",
+        "case_id": "internal.sourcereview.request-origin-policy"
+      }
+    },
+    {
+      "module": "git",
+      "path": "packages/gateway/src/routes/git-node-routing.ts",
+      "case_ids": [
+        "internal.sourcereview.git-node-routing"
+      ],
+      "review": "Explicit trimmed gateway/local/remote/unknown routes; explicit remote overrides local path. Blank ID falls through. Existing local path wins before inference. Skip gateway, restrict Windows drive paths to Windows, choose first remote otherwise, null if none.",
+      "mutation": {
+        "find": "if (pathExistsLocally) return null",
+        "replace": "if (!pathExistsLocally) return null",
+        "case_id": "internal.sourcereview.git-node-routing"
+      }
+    },
+    {
+      "module": "shell",
+      "path": "packages/gateway/src/tools/shell-prompt.ts",
+      "case_ids": [
+        "internal.sourcereview.shell-executable-recognition",
+        "internal.sourcereview.shell-prompt-lines"
+      ],
+      "review": "PowerShell basename/path/case/extension and rejection boundaries. Empty line, PS prompt and non-PS rejection; user@host, absolute/relative/home/drive prompts; simple hostname prompt and ordinary text rejects. Current PS regex accepts suffix after >.",
+      "mutation": {
+        "find": "if (!trimmed) return false",
+        "replace": "if (!trimmed) return true",
+        "case_id": "internal.sourcereview.shell-prompt-lines"
+      }
+    },
+    {
+      "module": "headers",
+      "path": "packages/gateway/src/services/llm-headers.ts",
+      "case_ids": [
+        "internal.sourcereview.llm-header-routing",
+        "internal.sourcereview.llm-header-generated-identity"
+      ],
+      "review": "Standard content/auth headers; Go recognized by backend or exact host+path; invalid URL caught without stripping explicit backend. Explicit > input > cached UUID identity precedence; repeated object reuses UUID; distinct object differs. Prefix false and wrong-host branches covered.",
+      "mutation": {
+        "find": "let id = sessionId || llm.sessionId || sessions.get(llm)",
+        "replace": "let id = llm.sessionId || sessionId || sessions.get(llm)",
+        "case_id": "internal.sourcereview.llm-header-routing"
+      }
+    },
+    {
+      "module": "cron",
+      "path": "packages/gateway/src/scheduler/cron.ts",
+      "case_ids": [
+        "internal.sourcereview.cron-syntax-boundaries"
+      ],
+      "review": "Five fields, length 256/+1, whitespace, wildcard, positive safe integer steps, every numeric field bound, lists, inclusive and equal ranges; malformed/empty/decimal/negative/list/range/step expressions reject. Tests characterize validator syntax, not scheduling semantics.",
+      "mutation": {
+        "find": "step > 0",
+        "replace": "step >= 0",
+        "case_id": "internal.sourcereview.cron-syntax-boundaries"
+      }
+    },
+    {
+      "module": "uuid",
+      "path": "packages/gateway/src/lib/uuidv7.ts",
+      "case_ids": [
+        "internal.sourcereview.uuid-zero-timestamp",
+        "internal.sourcereview.uuid-max-timestamp",
+        "internal.sourcereview.uuid-timestamp-bytes",
+        "internal.sourcereview.uuid-webcrypto-fallback"
+      ],
+      "review": "Deterministic zero/48-bit-max/mixed-byte timestamp, random bytes preserved outside RFC version/variant masks, zero-padded grouping, newActionId wrapper. Library WebCrypto fallback tested separately with format/timestamp invariant; entropy quality and same-ms monotonicity are not promised.",
+      "mutation": {
+        "find": "| 0x70",
+        "replace": "| 0x40",
+        "case_id": "internal.sourcereview.uuid-zero-timestamp"
+      }
+    },
+    {
+      "module": "dbuuid",
+      "path": "packages/gateway/src/db/uuidv7.ts",
+      "case_ids": [
+        "internal.sourcereview.dbuuid-zero-timestamp",
+        "internal.sourcereview.dbuuid-max-timestamp",
+        "internal.sourcereview.dbuuid-timestamp-bytes"
+      ],
+      "review": "Deterministic zero/48-bit-max/mixed-byte timestamp, random bytes preserved outside RFC version/variant masks, zero-padded grouping, newActionId wrapper. Library WebCrypto fallback tested separately with format/timestamp invariant; entropy quality and same-ms monotonicity are not promised.",
+      "mutation": {
+        "find": "| 0x70",
+        "replace": "| 0x40",
+        "case_id": "internal.sourcereview.dbuuid-zero-timestamp"
+      }
+    },
+    {
+      "module": "devices",
+      "path": "packages/gateway/src/services/device-registry.ts",
+      "case_ids": [
+        "internal.sourcereview.device-registry-transitions"
+      ],
+      "review": "Empty list/count; unknown heartbeat null; register deduplicates capabilities; same-ID update preserves connectedAt and updates other fields; heartbeat updates lastSeen; two-record descending sort and unique count. Controlled clock prevents timing flakiness.",
+      "mutation": {
+        "find": "b.lastSeen.localeCompare(a.lastSeen)",
+        "replace": "a.lastSeen.localeCompare(b.lastSeen)",
+        "case_id": "internal.sourcereview.device-registry-transitions"
+      }
+    },
+    {
+      "module": "apiTypes",
+      "path": "packages/gateway/src/api-contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-apitypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-apitypes"
+      }
+    },
+    {
+      "module": "channelTypes",
+      "path": "packages/gateway/src/channels/types.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-channeltypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-channeltypes"
+      }
+    },
+    {
+      "module": "memoryTypes",
+      "path": "packages/gateway/src/memory/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-memorytypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-memorytypes"
+      }
+    },
+    {
+      "module": "osTypes",
+      "path": "packages/gateway/src/os-control/types.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-ostypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-ostypes"
+      }
+    },
+    {
+      "module": "providerTypes",
+      "path": "packages/gateway/src/providers/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-providertypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-providertypes"
+      }
+    },
+    {
+      "module": "schedulerTypes",
+      "path": "packages/gateway/src/scheduler/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-schedulertypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-schedulertypes"
+      }
+    },
+    {
+      "module": "securityTypes",
+      "path": "packages/gateway/src/security/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-securitytypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-securitytypes"
+      }
+    },
+    {
+      "module": "calendarTypes",
+      "path": "packages/gateway/src/services/calendar/types.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-calendartypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-calendartypes"
+      }
+    },
+    {
+      "module": "emailTypes",
+      "path": "packages/gateway/src/services/email/types.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-emailtypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-emailtypes"
+      }
+    },
+    {
+      "module": "sessionTypes",
+      "path": "packages/gateway/src/sessions/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-sessiontypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-sessiontypes"
+      }
+    },
+    {
+      "module": "surfaceTypes",
+      "path": "packages/gateway/src/surfaces/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-surfacetypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-surfacetypes"
+      }
+    },
+    {
+      "module": "toolTypes",
+      "path": "packages/gateway/src/tools/contracts.ts",
+      "case_ids": [
+        "internal.sourcereview.erased-tooltypes"
+      ],
+      "review": "Only type/interface declarations and erased type imports/exports; compiler output is exactly empty ESM and runtime namespace is empty. No runtime branch to reconstruct. This closes source runtime review only; type/schema/API acceptance remains separate.",
+      "mutation": {
+        "find": "",
+        "replace": "\nexport const unexpectedRuntimeValue = true;\n",
+        "case_id": "internal.sourcereview.erased-tooltypes"
+      }
+    },
+    {
+      "module": "voice",
+      "path": "packages/gateway/src/tools/voice-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.voice-input-and-errors"
+      ],
+      "review": "Exact metadata/schema; missing/null/non-string/blank text returns error without service calls; text trims and forwards session; byte field characterizes base64 length, not decoded bytes; service exception propagates.",
+      "mutation": {
+        "find": "input.text.trim()",
+        "replace": "input.text",
+        "case_id": "internal.sourcereview.voice-input-and-errors"
+      }
+    },
+    {
+      "module": "editor",
+      "path": "packages/gateway/src/tools/project-editor-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.editor-context-and-channel"
+      ],
+      "review": "Exact metadata/schema, missing/blank session and project precedence, missing UI channel, trimmed delivery to single session, exact success result; channel exception propagates after attempted send.",
+      "mutation": {
+        "find": "context.sessionId?.trim()",
+        "replace": "context.sessionId",
+        "case_id": "internal.sourcereview.editor-context-and-channel"
+      }
+    },
+    {
+      "module": "lists",
+      "path": "packages/gateway/src/tools/list-preview.ts",
+      "case_ids": [
+        "internal.sourcereview.list-preview-text",
+        "internal.sourcereview.list-preview-limits",
+        "internal.sourcereview.list-preview-composition"
+      ],
+      "review": "Whitespace collapse; empty/nonpositive/exact/truncated lengths and trimEnd; empty lists, zero/negative/fractional/default item limits; hidden count/plural marker; optional preview composition, filtered id/kind and optional suffix; exact exported defaults. Inputs follow declared finite numeric/string types; nonfinite limits remain JS builtin semantics.",
+      "mutation": {
+        "find": "Math.floor(maxItems)",
+        "replace": "Math.ceil(maxItems)",
+        "case_id": "internal.sourcereview.list-preview-limits"
+      }
+    },
+    {
+      "module": "swarm",
+      "path": "packages/gateway/src/tools/swarm-mailbox.ts",
+      "case_ids": [
+        "internal.sourcereview.swarm-round-lifecycle"
+      ],
+      "review": "Missing round peek/count/post fallback; create/count, ordered timestamped posts, independent rounds, replacing a round resets messages/count, ending is idempotent and later messages disappear. Driver snapshots returned live arrays solely for transport, without altering production storage.",
+      "mutation": {
+        "find": "participantCount ?? 0",
+        "replace": "participantCount ?? 1",
+        "case_id": "internal.sourcereview.swarm-round-lifecycle"
+      }
+    },
+    {
+      "module": "control",
+      "path": "packages/gateway/src/security/control-access.ts",
+      "case_ids": [
+        "internal.sourcereview.control-execution-session",
+        "internal.sourcereview.control-session-ownership",
+        "internal.sourcereview.control-surface-ownership",
+        "internal.sourcereview.control-consent-ownership"
+      ],
+      "review": "Default execution session creates owned session only with available callable creator. User required; session ownership before thread fallback. Explicit surface owner wins over session inference; missing registry/surface/session fails closed. Only pending consent for an owned session grants access. Tests substitute service interfaces, preserving policy logic.",
+      "mutation": {
+        "find": "owner === userId",
+        "replace": "owner !== userId",
+        "case_id": "internal.sourcereview.control-surface-ownership"
+      }
+    },
+    {
+      "module": "trust",
+      "path": "packages/gateway/src/routes/trust.ts",
+      "case_ids": [
+        "internal.sourcereview.trust-route-forwarding"
+      ],
+      "review": "All three production route handlers registered on real Fastify, exact HTTP responses, decoded route parameter and service call selection/order. The injected TrustEngine is the external policy boundary; engine semantics and parent auth are separately tested.",
+      "mutation": {
+        "find": "trustEngine.reset(actionType)",
+        "replace": "trustEngine.getState(actionType)",
+        "case_id": "internal.sourcereview.trust-route-forwarding"
+      }
+    },
+    {
+      "module": "hooks",
+      "path": "packages/gateway/src/routes/hooks.ts",
+      "case_ids": [
+        "internal.sourcereview.hook-route-auth-and-delivery"
+      ],
+      "review": "Real Fastify POST routes reject missing/wrong token before side effects; exact token dispatches wake event then callback or original agent body then callback; absent body becomes empty object. Transport-normalized header types follow Fastify; auth comparison is existing hook-secret equality.",
+      "mutation": {
+        "find": "token === deps.hookSecret",
+        "replace": "token !== deps.hookSecret",
+        "case_id": "internal.sourcereview.hook-route-auth-and-delivery"
+      }
+    },
+    {
+      "module": "emailBarrel",
+      "path": "packages/gateway/src/services/email/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-emailbarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "EmailService }",
+        "replace": "EmailService as UnexpectedEmailService }",
+        "case_id": "internal.sourcereview.barrel-emailbarrel"
+      }
+    },
+    {
+      "module": "calendarBarrel",
+      "path": "packages/gateway/src/services/calendar/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-calendarbarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "CalendarService }",
+        "replace": "CalendarService as UnexpectedCalendarService }",
+        "case_id": "internal.sourcereview.barrel-calendarbarrel"
+      }
+    },
+    {
+      "module": "dbBarrel",
+      "path": "packages/gateway/src/db/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-dbbarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "defaultDbPath,",
+        "replace": "defaultDbPath as unexpectedDbPath,",
+        "case_id": "internal.sourcereview.barrel-dbbarrel"
+      }
+    },
+    {
+      "module": "providerBarrel",
+      "path": "packages/gateway/src/providers/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-providerbarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "ProviderRegistry }",
+        "replace": "ProviderRegistry as UnexpectedProviderRegistry }",
+        "case_id": "internal.sourcereview.barrel-providerbarrel"
+      }
+    },
+    {
+      "module": "osBarrel",
+      "path": "packages/gateway/src/os-control/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-osbarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "LinuxDesktopOsControlDriver }",
+        "replace": "LinuxDesktopOsControlDriver as UnexpectedOsDriver }",
+        "case_id": "internal.sourcereview.barrel-osbarrel"
+      }
+    },
+    {
+      "module": "surfaceBarrel",
+      "path": "packages/gateway/src/surfaces/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-surfacebarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "SurfaceRegistry }",
+        "replace": "SurfaceRegistry as UnexpectedSurfaceRegistry }",
+        "case_id": "internal.sourcereview.barrel-surfacebarrel"
+      }
+    },
+    {
+      "module": "securityBarrel",
+      "path": "packages/gateway/src/security/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-securitybarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "PathGuard, PathTraversalError",
+        "replace": "PathGuard as UnexpectedGuard, PathTraversalError",
+        "case_id": "internal.sourcereview.barrel-securitybarrel"
+      }
+    },
+    {
+      "module": "coreBarrel",
+      "path": "packages/gateway/src/tools/core/index.ts",
+      "case_ids": [
+        "internal.sourcereview.barrel-corebarrel"
+      ],
+      "review": "Re-export-only module: exact runtime export names and identity with each independently imported target; no statements beyond export declarations. Type exports erase; namespace/star exports included. Transitive implementations and any dependency initialization behavior remain their own source requirements.",
+      "mutation": {
+        "find": "createReadTool }",
+        "replace": "createReadTool as UnexpectedReadTool }",
+        "case_id": "internal.sourcereview.barrel-corebarrel"
+      }
+    },
+    {
+      "module": "output",
+      "path": "packages/gateway/src/surfaces/terminal-output.ts",
+      "case_ids": [
+        "internal.sourcereview.terminal-output-command-boundaries",
+        "internal.sourcereview.terminal-output-cursor-normalization"
+      ],
+      "review": "Bounded slices preserve all command chunks independent of live tail limit; live views retain their tail; cursors clamp to retained range and truncation; split active lines reassemble across chunks; final OSC marker trims prompts. Finite/NaN/infinite and reversed bounds explicitly exercised.",
+      "mutation": {
+        "find": "const startIndex = boundedSlice ? offsetIndex : Math.max(offsetIndex, endIndex - lines);",
+        "replace": "const startIndex = Math.max(offsetIndex, endIndex - lines);",
+        "case_id": "internal.sourcereview.terminal-output-command-boundaries"
+      }
+    },
+    {
+      "module": "diagram",
+      "path": "packages/gateway/src/tools/diagram-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.diagram-exact-source-limit",
+        "internal.sourcereview.diagram-input-and-title-policy"
+      ],
+      "review": "Diagram tools reject non-string, blank and over-limit source; accept exactly 20,000 characters. Title limit exactly 200; non-string/over-limit rejected; whitespace normalization and default title retained. Metadata compared explicitly.",
+      "mutation": {
+        "find": "input.diagram.length > 20000",
+        "replace": "input.diagram.length >= 20000",
+        "case_id": "internal.sourcereview.diagram-exact-source-limit"
+      }
+    },
+    {
+      "module": "mobile",
+      "path": "packages/gateway/src/tools/mobile-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.mobile-alarm-auth-and-time",
+        "internal.sourcereview.mobile-alarm-delivery"
+      ],
+      "review": "Signed-in user and future parseable time required before service invocation. Exact-time/past/invalid denial, defaults, trimming, ID fallback, positive multi-device delivery and zero-device error checked with a frozen clock and service spy; no push sent.",
+      "mutation": {
+        "find": "if (!context.userId)",
+        "replace": "if (context.userId)",
+        "case_id": "internal.sourcereview.mobile-alarm-auth-and-time"
+      }
+    },
+    {
+      "module": "mount",
+      "path": "packages/gateway/src/security/worktree-sandbox.ts",
+      "case_ids": [
+        "internal.sourcereview.worktree-registration-mount"
+      ],
+      "review": "Real file fixtures cover ordinary checkouts and missing marker, registered worktree read-only common metadata mount, symlink marker, invalid marker, wrong backlink, unregistered admin and colon path rejection. Paths and relative marker targets are resolved by production code.",
+      "mutation": {
+        "find": "return [\"-v\", `${common}:${common}:ro`];",
+        "replace": "return [\"-v\", `${common}:${common}:rw`];",
+        "case_id": "internal.sourcereview.worktree-registration-mount"
+      }
+    },
+    {
+      "module": "ownerRuntime",
+      "path": "packages/gateway/src/security/agent-sandbox-owner.ts",
+      "case_ids": [
+        "internal.sourcereview.sandbox-owner-runtime-identity"
+      ],
+      "review": "Real Linux process identity: live own PID retained; wrong start/boot or dead PID rejected; malformed/unsafe PID owners conservatively retained. Gateway digest stable for trimmed/equivalent state paths, differs across state directories; owner field structure observed. Permission-denied /proc fallback remains a supported-platform limitation.",
+      "mutation": {
+        "find": "if (boot && currentBoot && boot !== currentBoot) return false;",
+        "replace": "if (boot && currentBoot && boot !== currentBoot) return true;",
+        "case_id": "internal.sourcereview.sandbox-owner-runtime-identity"
+      }
+    },
+    {
+      "module": "link",
+      "path": "packages/gateway/src/tools/link-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.link-search-encoding",
+        "internal.sourcereview.link-invalid-boundaries"
+      ],
+      "review": "Jait link inputs require registered internal routes and label. Search encodes Unicode/metacharacters and clears with empty string, rejects unsupported search pages and non-string search; unsupported paths/fragments/external URLs denied. Shared parser itself remains a separate review.",
+      "mutation": {
+        "find": "url.searchParams.set(\"q\", input.search);",
+        "replace": "url.searchParams.set(\"q\", \"mutated\");",
+        "case_id": "internal.sourcereview.link-search-encoding"
+      }
+    },
+    {
+      "module": "usageCache",
+      "path": "packages/gateway/src/services/usage-refresh-cache.ts",
+      "case_ids": [
+        "internal.sourcereview.usage-cache-force-and-inflight",
+        "internal.sourcereview.usage-cache-backoff-cap-and-reset",
+        "internal.sourcereview.usage-cache-capacity-and-expiry"
+      ],
+      "review": "Freshness at 300000ms exact boundary, force bypass, in-flight sharing even when forced, independent keys, sync throw/rejection, failure classifier, exponential 10/20/30 minute cap, success reset, and 1000-entry capacity/expired eviction checked using deterministic clocks and promises.",
+      "mutation": {
+        "find": "if (inFlight || (now < previous.nextAt && !options.force))",
+        "replace": "if (inFlight || (now < previous.nextAt))",
+        "case_id": "internal.sourcereview.usage-cache-force-and-inflight"
+      }
+    },
+    {
+      "module": "mcpConfig",
+      "path": "packages/gateway/src/providers/jait-mcp.ts",
+      "case_ids": [
+        "internal.sourcereview.codex-mcp-default-and-preservation",
+        "internal.sourcereview.codex-mcp-invalid-shapes",
+        "internal.sourcereview.codex-mcp-constants"
+      ],
+      "review": "Valid object configuration preserves unknown root/feature/mode fields and string namespace order, removes non-string entries, deduplicates and appends the core namespace. Blank input builds defaults; invalid JSON and every primitive/array JSON shape return the exact raw bytes unchanged. Constants checked independently; source review only, no CLI execution.",
+      "mutation": {
+        "find": "...new Set([...configuredNamespaces, JAIT_CORE_CODE_MODE_NAMESPACE])",
+        "replace": "...new Set(configuredNamespaces)",
+        "case_id": "internal.sourcereview.codex-mcp-default-and-preservation"
+      }
+    },
+    {
+      "module": "matrixBarrel",
+      "path": "packages/gateway/src/services/messenger-matrix-runtime.ts",
+      "case_ids": [
+        "internal.sourcereview.matrix-runtime-barrel"
+      ],
+      "review": "Exact six runtime SDK export names and identity with the defining SDK module. Re-export-only AST with erased type export. This credits the adapter only; SDK cryptography, runtime lifecycle and bundled native binding behavior remain separate.",
+      "mutation": {
+        "find": "  MatrixClient,",
+        "replace": "  MatrixClient as ChangedClient,",
+        "case_id": "internal.sourcereview.matrix-runtime-barrel"
+      }
+    },
+    {
+      "module": "messenger",
+      "path": "packages/gateway/src/tools/messenger-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.messenger-tool-policy",
+        "internal.sourcereview.messenger-connect-limits",
+        "internal.sourcereview.messenger-command-forwarding",
+        "internal.sourcereview.messenger-command-denials"
+      ],
+      "review": "All seven tool names, risk/consent policy and required fields checked; connect rejects secret/unknown fields, malformed URL and invalid types, allows the exact 512-character username, and returns private sign-in link without bridge calls. Six command wrappers use the actual shared schema, force their own action, retain defaults/normalization and user/signal forwarding to a spy. No real room is read or messaged.",
+      "mutation": {
+        "find": "risk: write ? \"medium\" : \"low\"",
+        "replace": "risk: write ? \"low\" : \"medium\"",
+        "case_id": "internal.sourcereview.messenger-tool-policy"
+      }
+    },
+    {
+      "module": "nodeState",
+      "path": "packages/gateway/src/services/node-state-manager.ts",
+      "case_ids": [
+        "internal.sourcereview.node-client-disconnect-isolation",
+        "internal.sourcereview.node-capabilities-and-protocol",
+        "internal.sourcereview.node-rebind-and-sort"
+      ],
+      "review": "Real NodeStateManager insertion/update/removal: default and explicit protocol, capability fallback and false/empty overrides, connected timestamp preservation and last-seen advancement under an injected clock, client rebinding, gateway exemption, foreign-client isolation, stable name ordering, snapshot protocol/time, disconnect lifecycle and missing IDs. In-memory registry only; transport behavior remains separate.",
+      "mutation": {
+        "find": "if (record.isGateway || record.clientId !== clientId) continue;",
+        "replace": "if (record.clientId !== clientId) continue;",
+        "case_id": "internal.sourcereview.node-client-disconnect-isolation"
+      }
+    },
+    {
+      "module": "transfer",
+      "path": "packages/gateway/src/services/project-transfer.ts",
+      "case_ids": [
+        "internal.sourcereview.project-transfer-literal-arguments",
+        "internal.sourcereview.project-transfer-validation",
+        "internal.sourcereview.project-transfer-failure-order"
+      ],
+      "review": "Runs the real execFile/promisify path against project-local ssh/scp stand-ins: literal option arrays, directory preparation before recursive copy, default/custom boundary ports, quote escaping and source slash normalization, stdout/stderr ordering, validation before launch, prepare failure preventing copy and copy failure propagation. No SSH keys, remote hosts or network used; process timeout and maxBuffer exhaustion are residual checks.",
+      "mutation": {
+        "find": "\"BatchMode=yes\"",
+        "replace": "\"BatchMode=no\"",
+        "case_id": "internal.sourcereview.project-transfer-literal-arguments"
+      }
+    },
+    {
+      "module": "notification",
+      "path": "packages/gateway/src/services/chat-notification.ts",
+      "case_ids": [
+        "internal.sourcereview.notification-normalization-boundaries",
+        "internal.sourcereview.notification-generation-request",
+        "internal.sourcereview.notification-generation-truncation",
+        "internal.sourcereview.notification-generation-empty",
+        "internal.sourcereview.notification-generation-failure"
+      ],
+      "review": "Production normalization covers first nonblank line, CR/LF, labels/list markers/quotes/whitespace/punctuation, empty output, exact 160 limit and word-versus-hard truncation. Generation covers trimmed blank short circuit, exact prompt/options/runtime forwarding, leading 1200 task characters and trailing 4000 response characters, successful normalization and provider failure fallback. Completion boundary is mocked; live model quality and the 12-second timer firing remain separate.",
+      "mutation": {
+        "find": "const DETAIL_MAX_LENGTH = 160;",
+        "replace": "const DETAIL_MAX_LENGTH = 159;",
+        "case_id": "internal.sourcereview.notification-normalization-boundaries"
+      }
+    },
+    {
+      "module": "networkResources",
+      "path": "packages/gateway/src/services/network-resources.ts",
+      "review": "Real container metadata parser and DockerResourceInventory collect/cache policy: exact repository icon matching, sandbox classification, redacted fields, address deduplication, malformed rows, 512 cap and 32-ID argv batches, coalesced work, strict 30-second expiry and failure caching/recovery. Docker calls are an injected spy; default external Docker socket/process selection remains separate. No Docker daemon or network scan is used.",
+      "case_ids": [
+        "internal.sourcereview.network-inventory-cache-expiry",
+        "internal.sourcereview.network-container-metadata",
+        "internal.sourcereview.network-inventory-batch-cap",
+        "internal.sourcereview.network-inventory-json-failure"
+      ],
+      "mutation": {
+        "find": "const TTL_MS = 30_000",
+        "replace": "const TTL_MS = 30_001",
+        "case_id": "internal.sourcereview.network-inventory-cache-expiry"
+      }
+    },
+    {
+      "module": "maintenanceTool",
+      "path": "packages/gateway/src/tools/maintenance-tools.ts",
+      "review": "Maintenance tool execution with service/notification spies: specific and all repositories, pass/failure summaries and plan links, empty inventories, action ID forwarding and deterministic manual ID fallback, optional notifications and service/notification thrown failures. No repository checks run; maintenance service execution and routing remain separate.",
+      "case_ids": [
+        "internal.sourcereview.maintenance-single-repository",
+        "internal.sourcereview.maintenance-all-repositories",
+        "internal.sourcereview.maintenance-error-fallback",
+        "internal.sourcereview.maintenance-without-notifications"
+      ],
+      "mutation": {
+        "find": "const msg = result.allPassed",
+        "replace": "const msg = !result.allPassed",
+        "case_id": "internal.sourcereview.maintenance-single-repository"
+      }
+    },
+    {
+      "module": "ollamaSetup",
+      "path": "packages/gateway/src/services/ollama-usage-setup.ts",
+      "review": "Linux metadata-only setup against isolated artifact files: local readable/missing/directory/unreadable/blocked-parent paths, correctly quoted ACL guidance only for confirmed files, negative remote URL decisions without probing a key, and actual gateway identity metadata. No private-key contents are read, permission commands executed, or device/provider requests sent. Multi-location default search and non-Linux permission behavior remain separate.",
+      "case_ids": [
+        "internal.sourcereview.ollama-setup-local-metadata",
+        "internal.sourcereview.ollama-setup-remote-urls"
+      ],
+      "mutation": {
+        "find": "if (!local) return result;",
+        "replace": "if (local) return result;",
+        "case_id": "internal.sourcereview.ollama-setup-local-metadata"
+      }
+    },
+    {
+      "module": "foundationBarrel",
+      "path": "packages/gateway/src/foundation.ts",
+      "review": "Exact runtime exports and identity with independent defining imports; every AST statement is a re-export. Barrel-only source credit; dependencies and static type compatibility remain separate.",
+      "case_ids": [
+        "internal.sourcereview.foundation-runtime-barrel"
+      ],
+      "mutation": {
+        "find": "export { SurfaceRegistry }",
+        "replace": "export { SurfaceRegistry as ChangedSurfaceRegistry }",
+        "case_id": "internal.sourcereview.foundation-runtime-barrel"
+      }
+    },
+    {
+      "module": "pluginSdk",
+      "path": "packages/gateway/src/plugins/contracts.ts",
+      "review": "All runtime SDK helpers: fresh source metadata, forced source metadata overriding forged input while retaining tool fields and callback identity, setup forwarding, optional no-op disposal, explicit disposal and callback rejections. Static types and plugin orchestration remain separate.",
+      "case_ids": [
+        "internal.sourcereview.plugin-sdk-metadata-and-wrapper",
+        "internal.sourcereview.plugin-sdk-setup-and-dispose",
+        "internal.sourcereview.plugin-sdk-callback-failure"
+      ],
+      "mutation": {
+        "find": "kind: \"plugin\"",
+        "replace": "kind: \"builtin\"",
+        "case_id": "internal.sourcereview.plugin-sdk-metadata-and-wrapper"
+      }
+    },
+    {
+      "module": "agentWrapper",
+      "path": "packages/gateway/src/tools/core/agent.ts",
+      "review": "Delegating wrapper metadata and exact dependency, input, context, result and rejection forwarding through a substituted createAgentSpawnTool boundary. No worker starts; inner authorization and scheduling remain separate.",
+      "case_ids": [
+        "internal.sourcereview.agent-wrapper-exact-forwarding",
+        "internal.sourcereview.agent-wrapper-rejection"
+      ],
+      "mutation": {
+        "find": "return inner.execute(input, context);",
+        "replace": "return inner.execute({}, context);",
+        "case_id": "internal.sourcereview.agent-wrapper-exact-forwarding"
+      }
+    },
+    {
+      "module": "decisionTool",
+      "path": "packages/gateway/src/tools/decision.ts",
+      "review": "Choice/score/noul conversion, empty criteria defaults, exact state/key/signal forwarding and answer serialization, non-array/empty/duplicate IDs and service failure fallback. External decision service is a spy; model/schema validation remains separate.",
+      "case_ids": [
+        "internal.sourcereview.decision-criteria-and-forwarding",
+        "internal.sourcereview.decision-empty-criteria",
+        "internal.sourcereview.decision-invalid-ids",
+        "internal.sourcereview.decision-service-failure"
+      ],
+      "mutation": {
+        "find": "criteria: q.levels ?? []",
+        "replace": "criteria: []",
+        "case_id": "internal.sourcereview.decision-criteria-and-forwarding"
+      }
+    },
+    {
+      "module": "cronTools",
+      "path": "packages/gateway/src/tools/cron-tools.ts",
+      "review": "Four scheduler wrappers: user scoping, string/default handling, first underscore normalization, input preservation, update type filtering, missing/success responses and empty/disabled/25-row list formatting; scheduler rejection propagation. Scheduler spy only; actual scheduling/persistence/authorization remain separate.",
+      "case_ids": [
+        "internal.sourcereview.cron-add-request-policy",
+        "internal.sourcereview.cron-update-remove-scope",
+        "internal.sourcereview.cron-list-shapes",
+        "internal.sourcereview.cron-list-limit",
+        "internal.sourcereview.cron-dependency-rejection"
+      ],
+      "mutation": {
+        "find": "raw.slice(firstUnderscore + 1)",
+        "replace": "raw.slice(firstUnderscore)",
+        "case_id": "internal.sourcereview.cron-add-request-policy"
+      }
+    },
+    {
+      "module": "sqlTool",
+      "path": "packages/gateway/src/tools/session-sql-tools.ts",
+      "review": "Schema/query dispatch, missing/blank SQL refusal before service calls, literal SQL and max_rows forwarding, schema-shaped query results, exact row/truncation messages and service errors. Wrapper-only credit; enforcement and ownership remain separate service contracts.",
+      "case_ids": [
+        "internal.sourcereview.session-sql-schema-branch",
+        "internal.sourcereview.session-sql-query-forwarding",
+        "internal.sourcereview.session-sql-invalid-input"
+      ],
+      "mutation": {
+        "find": "if (input.mode === \"schema\")",
+        "replace": "if (input.mode === \"changed\")",
+        "case_id": "internal.sourcereview.session-sql-schema-branch"
+      }
+    },
+    {
+      "module": "compileCacheScript",
+      "path": "packages/gateway/bin/compile-cache.mjs",
+      "review": "Actual Node imports an unchanged isolated source copy: explicit cache wins, trimmed JAIT_STATE_DIR selects its cache, default HOME path, empty explicit cache fallback and actual enabled-cache location. Cache files stay in the project artifact tree. Node supported-cache path on Linux; older Node without the optional API remains separate.",
+      "case_ids": [
+        "internal.sourcereview.compile-cache-path-precedence"
+      ],
+      "mutation": {
+        "find": "process.env.NODE_COMPILE_CACHE = cacheDir;",
+        "replace": "process.env.NODE_COMPILE_CACHE = cacheDir + \"-changed\";",
+        "case_id": "internal.sourcereview.compile-cache-path-precedence"
+      }
+    },
+    {
+      "module": "bundleWebScript",
+      "path": "packages/gateway/scripts/bundle-web.mjs",
+      "review": "Actual Node executes an isolated script at the real relative repository layout. Missing index leaves the existing bundle intact and exits zero; present index replaces stale files and copies nested assets while preserving the source. No production dist tree is touched.",
+      "case_ids": [
+        "internal.sourcereview.bundle-web-missing-index",
+        "internal.sourcereview.bundle-web-replace-and-copy"
+      ],
+      "mutation": {
+        "find": "if (!existsSync(join(src, 'index.html')))",
+        "replace": "if (false)",
+        "case_id": "internal.sourcereview.bundle-web-missing-index"
+      }
+    },
+    {
+      "module": "bundleMessengerScript",
+      "path": "packages/gateway/scripts/bundle-messenger-runtime.mjs",
+      "review": "Actual Node script resolves gateway-root build paths, explicit/default Bun executable, exact external-binding argv, inherited stdout, nonzero and signal status propagation and missing-executable errors. The builder is a local stub; no dependency build or download runs.",
+      "case_ids": [
+        "internal.sourcereview.bundle-messenger-build-arguments",
+        "internal.sourcereview.bundle-messenger-build-failures"
+      ],
+      "mutation": {
+        "find": "'--target=node'",
+        "replace": "'--target=bun'",
+        "case_id": "internal.sourcereview.bundle-messenger-build-arguments"
+      }
+    },
+    {
+      "module": "installRuntimeScript",
+      "path": "packages/gateway/bin/install-runtime.mjs",
+      "review": "Actual Node script in an isolated package layout: development deferral versus packaged missing-runtime error, dynamic runtime import, progress callback and Error/primitive failure output. Fake ensureGraphifyRuntime is the provisioning boundary; no Python install or network call occurs.",
+      "case_ids": [
+        "internal.sourcereview.install-runtime-missing-layout",
+        "internal.sourcereview.install-runtime-provision-boundary"
+      ],
+      "mutation": {
+        "find": "if (existsSync(sourceTree))",
+        "replace": "if (!existsSync(sourceTree))",
+        "case_id": "internal.sourcereview.install-runtime-missing-layout"
+      }
+    },
+    {
+      "module": "osResolver",
+      "path": "packages/gateway/src/os-control/resolver.ts",
+      "review": "Running-list filtering and connection-port defaults/zero overrides; trimmed explicit selection, stopped/missing errors, last-running fallback and driver construction with exact Windows credentials or Linux manager identity. Constructors and inventory are spies; no desktop, SSH, VM or Docker action occurs.",
+      "case_ids": [
+        "internal.sourcereview.os-resolver-selection",
+        "internal.sourcereview.os-resolver-connection-list",
+        "internal.sourcereview.os-resolver-errors"
+      ],
+      "mutation": {
+        "find": "target = running[running.length - 1];",
+        "replace": "target = running[0];",
+        "case_id": "internal.sourcereview.os-resolver-selection"
+      }
+    },
+    {
+      "module": "surfaceTools",
+      "path": "packages/gateway/src/tools/surface-tools.ts",
+      "review": "List/start/stop wrappers, empty/list preview and session suffix, context/default overrides, generic versus inspected-browser routing, foreign browser-session denial, snapshot/result merging and exact success/missing/error outcomes. Registry, browser inspector and UUID boundaries are spies; actual browser/surface lifecycle remains separate.",
+      "case_ids": [
+        "internal.sourcereview.surface-stop-outcomes",
+        "internal.sourcereview.surface-list-output",
+        "internal.sourcereview.surface-generic-start",
+        "internal.sourcereview.surface-browser-routing",
+        "internal.sourcereview.surface-browser-fallbacks",
+        "internal.sourcereview.surface-start-failures"
+      ],
+      "mutation": {
+        "find": "if (!stopped) {",
+        "replace": "if (stopped) {",
+        "case_id": "internal.sourcereview.surface-stop-outcomes"
+      }
+    },
+    {
+      "module": "smokeProcess",
+      "path": "packages/gateway/scripts/smoke-process.mjs",
+      "review": "Exit-code versus signal detection, already-exited idempotence, subscribe-before-kill with a synchronous exit fixture, and actual local Node child SIGTERM/repeated cleanup. No server or external command is started. The ten-second abort fallback remains a separate timeout check.",
+      "case_ids": [
+        "internal.sourcereview.smoke-process-exit-detection",
+        "internal.sourcereview.smoke-process-synchronous-exit",
+        "internal.sourcereview.smoke-process-real-child"
+      ],
+      "mutation": {
+        "find": "child.signalCode !== null",
+        "replace": "false",
+        "case_id": "internal.sourcereview.smoke-process-exit-detection"
+      }
+    },
+    {
+      "module": "agentControlRoutes",
+      "path": "packages/gateway/src/routes/agent-control.ts",
+      "review": "Real Fastify injection and real signed authentication for read/halt/resume, trimmed/invalid reasons, per-user service arguments, exact audit records, partial runner failure and best-effort audit failure. Service and audit are spies; no real runner is stopped.",
+      "case_ids": [
+        "internal.sourcereview.agent-control-halt-audit",
+        "internal.sourcereview.agent-control-read-resume",
+        "internal.sourcereview.agent-control-auth-and-validation",
+        "internal.sourcereview.agent-control-partial-audit-failure"
+      ],
+      "mutation": {
+        "find": "reason: parsed.data.reason ?? null",
+        "replace": "reason: null",
+        "case_id": "internal.sourcereview.agent-control-halt-audit"
+      }
+    },
+    {
+      "module": "pluginRoutes",
+      "path": "packages/gateway/src/routes/plugins.ts",
+      "review": "Real authenticated Fastify handlers for all plugin routes: config shallow-merge order, read/list/scan, lifecycle success, missing plugin, unauthenticated denial before effects and Error/primitive failure mapping. Plugin manager is a spy; no plugin is installed or activated.",
+      "case_ids": [
+        "internal.sourcereview.plugin-route-config-merge",
+        "internal.sourcereview.plugin-route-lifecycle",
+        "internal.sourcereview.plugin-route-missing-and-auth",
+        "internal.sourcereview.plugin-route-failure-mapping"
+      ],
+      "mutation": {
+        "find": "const merged = { ...current, ...(req.body as Record<string, unknown>) };",
+        "replace": "const merged = { ...(req.body as Record<string, unknown>), ...current };",
+        "case_id": "internal.sourcereview.plugin-route-config-merge"
+      }
+    },
+    {
+      "module": "screenShareRoutes",
+      "path": "packages/gateway/src/routes/screen-share.ts",
+      "review": "Real Fastify handlers with screen-share/WebSocket spies: device coercion and authorization flag, validation, start/control/stop event order, absent stop, state/devices/capture/record, Error and primitive failures. Gateway-wide auth and actual capture/signaling remain separate; no screen or device is accessed.",
+      "case_ids": [
+        "internal.sourcereview.screen-share-device-registration",
+        "internal.sourcereview.screen-share-validation",
+        "internal.sourcereview.screen-share-lifecycle-events",
+        "internal.sourcereview.screen-share-state-and-capture",
+        "internal.sourcereview.screen-share-service-failure"
+      ],
+      "mutation": {
+        "find": "authorized: true",
+        "replace": "authorized: false",
+        "case_id": "internal.sourcereview.screen-share-device-registration"
+      }
+    },
+    {
+      "module": "maintenanceRoutes",
+      "path": "packages/gateway/src/routes/maintenance.ts",
+      "review": "Real Fastify/JWT list/get/run handlers: limit default/clamping/coercion, job filter, missing runs, body validation, ordered run/broadcast/notification effects, failed-check plan response and service error mapping. External service/notifications/WebSocket are spies; no repository checks run.",
+      "case_ids": [
+        "internal.sourcereview.maintenance-route-list-coercion",
+        "internal.sourcereview.maintenance-route-auth-and-input",
+        "internal.sourcereview.maintenance-route-success-effects",
+        "internal.sourcereview.maintenance-route-failure-effects",
+        "internal.sourcereview.maintenance-route-runtime-error"
+      ],
+      "mutation": {
+        "find": "Math.min(200, Math.max(1, Number(query[\"limit\"]) || 50))",
+        "replace": "Math.min(201, Math.max(1, Number(query[\"limit\"]) || 50))",
+        "case_id": "internal.sourcereview.maintenance-route-list-coercion"
+      }
+    },
+    {
+      "module": "messengerBridge",
+      "path": "packages/gateway/src/services/messenger-bridge.ts",
+      "review": "Real request/complete/register/unregister/stop lifecycle: owner and active-tab selection, gateway precedence, validation order, response sender/user/request identity and shape, output bounds, callback errors, replacement/disconnect, abort/timeout and 32-request cap with timer cleanup. Browser sends and gateway handler are local spies; no room or external messaging service is contacted. Arbitrary synchronous callback reentrancy and wire integration remain separate.",
+      "case_ids": [
+        "internal.sourcereview.messenger-bridge-owner-routing",
+        "internal.sourcereview.messenger-bridge-gateway-precedence",
+        "internal.sourcereview.messenger-bridge-validation-order",
+        "internal.sourcereview.messenger-bridge-tab-selection",
+        "internal.sourcereview.messenger-bridge-completion-validation",
+        "internal.sourcereview.messenger-bridge-output-bounds",
+        "internal.sourcereview.messenger-bridge-session-cleanup",
+        "internal.sourcereview.messenger-bridge-pending-cap"
+      ],
+      "mutation": {
+        "find": "client.userId === userId && client.active()",
+        "replace": "client.userId !== userId && client.active()",
+        "case_id": "internal.sourcereview.messenger-bridge-owner-routing"
+      }
+    },
+    {
+      "module": "subscriptionFetchers",
+      "path": "packages/gateway/src/services/subscription-usage-fetchers.ts",
+      "review": "Production cookie normalization, Go status/schema handling and exact request policy, explicit HTML-meter extraction, duplicate/range/missing-meter errors, date normalization, exact 2,000,000-character/byte boundaries and reader cancellation on success/error. Global fetch is a local spy; HTML is parsed by the real parser and never executed. No credentials or external provider requests are used; real transport timeout/redirect execution remains separate.",
+      "case_ids": [
+        "internal.sourcereview.subscription-cookie-normalization",
+        "internal.sourcereview.subscription-cookie-denials",
+        "internal.sourcereview.subscription-settings-parser",
+        "internal.sourcereview.subscription-settings-invalid-meters",
+        "internal.sourcereview.subscription-go-request-and-schema",
+        "internal.sourcereview.subscription-go-http-errors",
+        "internal.sourcereview.subscription-settings-fetch-and-cancel",
+        "internal.sourcereview.subscription-settings-http-denials",
+        "internal.sourcereview.subscription-settings-stream-failures"
+      ],
+      "mutation": {
+        "find": "value.trim().replace(/^__Secure-session=/, \"\")",
+        "replace": "value.trim()",
+        "case_id": "internal.sourcereview.subscription-cookie-normalization"
+      }
+    },
+    {
+      "module": "skills",
+      "path": "packages/gateway/src/skills/index.ts",
+      "review": "Prompt injection stays a fixed discovery instruction: the rendered skills block is independent of catalog size and never lists skill names, descriptions, or filesystem paths; an empty catalog renders nothing.",
+      "case_ids": [
+        "internal.sourcereview.skill-discovery-injection"
+      ],
+      "mutation": {
+        "find": "return skills.length ?",
+        "replace": "return false ?",
+        "case_id": "internal.sourcereview.skill-discovery-injection"
+      }
+    },
+    {
+      "module": "modelResult",
+      "path": "packages/gateway/src/tools/model-result.ts",
+      "review": "Model-bound payloads drop terminal echoes (terminalOutputAnsi always; terminalOutput only when a canonical output exists) while UI data keeps them; oversized envelopes truncate to valid JSON with bounded binary-search previews, intact UTF-16 pairs, and retained execution/evidence scalars; message-deduplicated serialization stays bounded.",
+      "case_ids": [
+        "internal.sourcereview.model-result-projection",
+        "internal.sourcereview.model-result-bounds"
+      ],
+      "mutation": {
+        "find": "serialized.length <= maxChars) return data;",
+        "replace": "serialized.length <= 0) return data;",
+        "case_id": "internal.sourcereview.model-result-bounds"
+      }
+    },
+    {
+      "module": "usage",
+      "path": "packages/gateway/src/providers/usage.ts",
+      "review": "Codex/ACP counters accept nested and snake_case shapes with cache and request counts, reject impossible or unsafe totals, and accumulate cumulative session notifications as baseline deltas only: repeated, older, and resumed-lifetime totals are never double-charged, fresh sessions charge first reports fully, turn-scoped usage replaces per request id, and metrics stay provider-reported with matching totals.",
+      "case_ids": [
+        "internal.sourcereview.usage-parsers-and-rejections",
+        "internal.sourcereview.usage-accumulation-policies",
+        "internal.sourcereview.usage-metrics-labels"
+      ],
+      "mutation": {
+        "find": "usage.inputTokens < previous.inputTokens || usage.outputTokens < previous.outputTokens",
+        "replace": "usage.inputTokens >= previous.inputTokens || usage.outputTokens >= previous.outputTokens",
+        "case_id": "internal.sourcereview.usage-accumulation-policies"
+      }
+    }
+  ]
+}

@@ -86,6 +86,10 @@ impl Gateway {
         self.router = self.router.merge(routes.router());
         self
     }
+    pub fn with_calendar(mut self, routes: routes::calendar::CalendarRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
     pub fn local_addr(&self) -> io::Result<SocketAddr> {
         self.listener.local_addr()
     }

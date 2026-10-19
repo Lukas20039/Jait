@@ -1,6 +1,7 @@
 //! Calendar API adapters with injectable native HTTP transport.
 pub mod google;
 pub mod oauth;
+pub mod service;
 use futures_util::future::BoxFuture;
 use serde::Serialize;
 use serde_json::Value;

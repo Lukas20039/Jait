@@ -187,10 +187,10 @@ fn normalize(value: &mut Value, ids: &BTreeMap<String, String>) {
         }
         Value::Object(map) => {
             for key in ["inputs", "outputs", "sideEffects", "side_effects"] {
-                if let Some(Value::String(raw)) = map.get(key) {
-                    if let Ok(parsed) = serde_json::from_str::<Value>(raw) {
-                        map.insert(key.into(), parsed);
-                    }
+                if let Some(Value::String(raw)) = map.get(key)
+                    && let Ok(parsed) = serde_json::from_str::<Value>(raw)
+                {
+                    map.insert(key.into(), parsed);
                 }
             }
             if let Some(time) = map.get_mut("timestamp") {

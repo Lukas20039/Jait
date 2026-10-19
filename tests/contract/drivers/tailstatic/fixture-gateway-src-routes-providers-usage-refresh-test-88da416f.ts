@@ -46,7 +46,7 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_58_3": {
+case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_59_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 const account = { id: "codex-1", providerType: "codex", label: "Work", nodeId: "gateway" };
@@ -64,6 +64,7 @@ function quota(overrides: Partial<ProviderUsageSnapshot>): ProviderUsageSnapshot
     windowDurationMins: 300,
     resetSource: null,
     credits: null,
+    resetCredits: null,
     models: [],
     activityCost: null,
     accountLabel: null,
@@ -92,7 +93,7 @@ async function setup(reads: ProviderUsageSnapshot[][]) {
   });
   return { app, request, refreshUsage, listForUser };
 }
-const __jait_hook_980 = () => { vi.unstubAllGlobals(); };
+const __jait_hook_1004 = () => { vi.unstubAllGlobals(); };
 /*__jait_scope_open__*/{
 
 try {
@@ -107,17 +108,17 @@ await (async()=>{
       __jait_capture(1, (body.profiles[0].quotas));
       __jait_capture(2, (body.profiles[0].quotas[0]));
     } finally { await app.close(); }
-  
+
 })();
 
 } finally {
-await __jait_hook_980();
+await __jait_hook_1004();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_70_3": {
+case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_71_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 const account = { id: "codex-1", providerType: "codex", label: "Work", nodeId: "gateway" };
@@ -135,6 +136,7 @@ function quota(overrides: Partial<ProviderUsageSnapshot>): ProviderUsageSnapshot
     windowDurationMins: 300,
     resetSource: null,
     credits: null,
+    resetCredits: null,
     models: [],
     activityCost: null,
     accountLabel: null,
@@ -163,7 +165,7 @@ async function setup(reads: ProviderUsageSnapshot[][]) {
   });
   return { app, request, refreshUsage, listForUser };
 }
-const __jait_hook_980 = () => { vi.unstubAllGlobals(); };
+const __jait_hook_1004 = () => { vi.unstubAllGlobals(); };
 /*__jait_scope_open__*/{
 
 try {
@@ -178,17 +180,17 @@ await (async()=>{
       __jait_capture(0, (body.profiles[0].quotas));
       __jait_capture(1, (body.profiles[0].quotas[0]));
     } finally { await app.close(); }
-  
+
 })();
 
 } finally {
-await __jait_hook_980();
+await __jait_hook_1004();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_82_3": {
+case "tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_83_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 const account = { id: "codex-1", providerType: "codex", label: "Work", nodeId: "gateway" };
@@ -206,6 +208,7 @@ function quota(overrides: Partial<ProviderUsageSnapshot>): ProviderUsageSnapshot
     windowDurationMins: 300,
     resetSource: null,
     credits: null,
+    resetCredits: null,
     models: [],
     activityCost: null,
     accountLabel: null,
@@ -234,7 +237,7 @@ async function setup(reads: ProviderUsageSnapshot[][]) {
   });
   return { app, request, refreshUsage, listForUser };
 }
-const __jait_hook_980 = () => { vi.unstubAllGlobals(); };
+const __jait_hook_1004 = () => { vi.unstubAllGlobals(); };
 /*__jait_scope_open__*/{
 
 try {
@@ -246,11 +249,11 @@ await (async()=>{
       await request("force");
       __jait_capture(0, (refreshUsage.mock.calls));
     } finally { await app.close(); }
-  
+
 })();
 
 } finally {
-await __jait_hook_980();
+await __jait_hook_1004();
 }
 }
 

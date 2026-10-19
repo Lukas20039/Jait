@@ -45,6 +45,7 @@ case "gateway-src-providers-acp-provider-attachments-test-ccade643": return awai
 case "gateway-src-providers-acp-provider-errors-test-155d5822": return await (await import('./tailstatic/fixture-gateway-src-providers-acp-provider-errors-test-155d5822.ts')).run(call.name);
 case "gateway-src-providers-acp-provider-test-5043e866": return await (await import('./tailstatic/fixture-gateway-src-providers-acp-provider-test-5043e866.ts')).run(call.name);
 case "gateway-src-providers-acp-registry-test-4827b1fb": return await (await import('./tailstatic/fixture-gateway-src-providers-acp-registry-test-4827b1fb.ts')).run(call.name);
+case "gateway-src-providers-acp-terminal-test-79f55d56": return await (await import('./tailstatic/fixture-gateway-src-providers-acp-terminal-test-79f55d56.ts')).run(call.name);
 case "gateway-src-providers-codex-event-mapper-test-37f48574": return await (await import('./tailstatic/fixture-gateway-src-providers-codex-event-mapper-test-37f48574.ts')).run(call.name);
 case "gateway-src-providers-jait-mcp-test-bf30bd82": return await (await import('./tailstatic/fixture-gateway-src-providers-jait-mcp-test-bf30bd82.ts')).run(call.name);
 case "gateway-src-providers-jait-provider-test-faaee724": return await (await import('./tailstatic/fixture-gateway-src-providers-jait-provider-test-faaee724.ts')).run(call.name);

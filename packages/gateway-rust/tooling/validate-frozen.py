@@ -56,6 +56,29 @@ def overlay(source, destination):
             link(destination / child.name, dependency_target(child))
 
 
+def inventory_review_metadata_only(before, after):
+    """Review annotations grant no native credit; preserve every inventory/runtime input.
+
+    The native ledger independently binds credited implementations, contracts and targets.
+    Allow concurrent reference-review annotations without calling them source drift.
+    Exact frozen and live hashes are still recorded for this generated metadata file.
+    """
+    review_fields = {"status", "gap", "parity_review", "rust_cases"}
+    def strict_inputs(value):
+        if not isinstance(value, dict) or not isinstance(value.get("source_files"), list):
+            raise ValueError("invalid inventory")
+        rows = []
+        for row in value["source_files"]:
+            if not isinstance(row, dict) or not isinstance(row.get("path"), str) or not isinstance(row.get("fingerprint"), str):
+                raise ValueError("invalid source inventory row")
+            rows.append({key: item for key, item in row.items() if key not in review_fields})
+        return value | {"source_files": rows}
+    try:
+        return strict_inputs(before) == strict_inputs(after)
+    except (ValueError, TypeError):
+        return False
+
+
 def main():
     assert not SNAPSHOT.is_symlink()
     if RUN_OUTPUT.is_symlink():
@@ -143,6 +166,11 @@ def main():
     report_file = RUN_OUTPUT / "gateway-rust/native-progress/report.json"
     report_file.unlink(missing_ok=True)
     with (OUTPUT / "frozen-validation.log").open("w") as log:
+        classifier_tests = subprocess.run(
+            ["python3", "-B", "tests/contract/tooling/test_native_inventory_metadata.py"],
+            cwd=SNAPSHOT, stdout=log, stderr=subprocess.STDOUT,
+        )
+        assert classifier_tests.returncode == 0, "inventory metadata classification checks failed"
         result = subprocess.run(
             ["bun", "run", "test:gateway:rust"], cwd=SNAPSHOT,
             stdout=log, stderr=subprocess.STDOUT,
@@ -154,6 +182,26 @@ def main():
     report = json.loads(report_file.read_text())
     drift = [p for p, h in report["sources"].items()
              if not (ROOT / p).is_file() or digest(ROOT / p) != h]
+    metadata_drift = []
+    inventory_path = "tests/contract/coverage.json"
+    if inventory_path in drift:
+        try:
+            frozen_inventory = json.loads((SNAPSHOT / inventory_path).read_text())
+            live_inventory_bytes = (ROOT / inventory_path).read_bytes()
+            live_inventory = json.loads(live_inventory_bytes)
+            if inventory_review_metadata_only(frozen_inventory, live_inventory):
+                metadata_drift.append({
+                    "path": inventory_path,
+                    "frozen_sha256": report["sources"][inventory_path],
+                    "live_sha256": hashlib.sha256(live_inventory_bytes).hexdigest(),
+                    "classification": "reference review annotations only; native credit unchanged",
+                })
+                drift.remove(inventory_path)
+        except (OSError, ValueError):
+            pass
+    report["inventory_metadata_classifier_checked"] = True
+    report["live_validation_metadata_drift"] = metadata_drift
+    report["live_fingerprints_exact_match"] = not drift and not metadata_drift
     outputs_stable = all((SNAPSHOT / p).is_file() and digest(SNAPSHOT / p) == h for p, h in workspace_outputs.items())
     report["workspace_outputs_unchanged"] = outputs_stable
     report["workspace_output_hashes"] = workspace_outputs
@@ -168,7 +216,7 @@ def main():
     canonical.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({key: report[key] for key in (
         "passed", "sources_unchanged", "verified_components", "verified_percent",
-        "source_root", "live_sources_match", "live_source_drift"
+        "source_root", "live_sources_match", "live_source_drift", "live_validation_metadata_drift"
     )}), flush=True)
     assert result.returncode == 0 and report["passed"], "frozen gate failed; inspect frozen-validation.log"
     count = report["verified_components"]
@@ -178,12 +226,13 @@ def main():
     state_file = OUTPUT / "goal-checkpoint.json"
     state = json.loads(state_file.read_text()) if state_file.exists() else {}
     state.update(
-        goal="Reach 181/361 verified native components without replacing the production gateway.",
+        goal="Reach 361/361 verified native components without replacing the production gateway.",
         verified_components=count, verified_percent=report["verified_percent"],
-        inventory_total=report["inventory_total"], goal_met=count >= 181,
+        inventory_total=report["inventory_total"], goal_met=count == report["inventory_total"] and not drift,
         source_root=str(SNAPSHOT), live_sources_match=not drift, live_source_drift=drift,
+        live_validation_metadata_drift=metadata_drift,
         latest_report=str(checkpoint.relative_to(ROOT)),
-        phase="Verified frozen source checkpoint; continue until 181 components",
+        phase="Verified frozen source checkpoint; continue until all inventoried components pass",
     )
     state_file.write_text(json.dumps(state, indent=2) + "\n")
 

@@ -1,5 +1,8 @@
 /** Real Fastify/SQLite route reference. Only external runtime boundaries are fixtures. */
 import { mock } from 'bun:test';
+import { mkdirSync,mkdtempSync,writeFileSync,rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { openDatabase,migrateDatabase } from '../../../packages/gateway/src/db/connection.ts';
 import { SessionService } from '../../../packages/gateway/src/services/sessions.ts';
 import { ProjectService } from '../../../packages/gateway/src/services/projects.ts';
@@ -15,6 +18,12 @@ export async function dispatch(call:any) {
   }
   const log=console.log;console.log=(...a)=>console.error(...a);
   const RealDate=Date; const realFetch=fetch;
+  // Pin the existing production SPA fallback rather than depending on a local build.
+  const fixtureRoot=fileURLToPath(new URL('../../../.jait/artifacts/gateway-rust/reference-web/',import.meta.url));
+  mkdirSync(fixtureRoot,{recursive:true});
+  const webDir=mkdtempSync(join(fixtureRoot,'sessions-'));
+  writeFileSync(join(webDir,'index.html'),'<!doctype html><title>Session route fixture</title>');
+  const previousWebDir=process.env.JAIT_WEB_DIR;process.env.JAIT_WEB_DIR=webDir;
   globalThis.Date=class extends RealDate {constructor(...args:any[]){super(...(args.length?args:[call.now]) as [any]);} static now(){return new RealDate(call.now).getTime();}} as DateConstructor;
   const {db,sqlite}=await openDatabase(':memory:');
   let app:any;
@@ -58,5 +67,5 @@ export async function dispatch(call:any) {
       results.push({status:res.status,body:data});
     }
     return {results,runtime,sessions:sqlite.query('SELECT * FROM sessions ORDER BY rowid').all(),projects:sqlite.query('SELECT * FROM projects ORDER BY rowid').all(),state:sqlite.query('SELECT * FROM session_state ORDER BY rowid').all(),audit:sqlite.query('SELECT * FROM audit_log ORDER BY rowid').all()};
-  }finally{app?.server.closeAllConnections();try{await app?.close();}finally{sqlite.close();console.log=log;globalThis.Date=RealDate;globalThis.fetch=realFetch;}}
+  }finally{app?.server.closeAllConnections();try{await app?.close();}finally{sqlite.close();console.log=log;globalThis.Date=RealDate;globalThis.fetch=realFetch;if(previousWebDir===undefined)delete process.env.JAIT_WEB_DIR;else process.env.JAIT_WEB_DIR=previousWebDir;rmSync(webDir,{recursive:true,force:true});}}
 }

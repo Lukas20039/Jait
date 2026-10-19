@@ -4,7 +4,10 @@ import {
   isOllamaUsageResponse,
   probeOllamaAccount,
   describeOllamaUsageGap,
+  isCodexRateLimitsResponse,
+  normalizeCodexRateLimits,
 } from "../../../../packages/gateway/src/services/provider-quota-fetchers.js";
+import type { CodexRateLimitsResponse, CodexRateLimitSnapshot } from "../../../../packages/gateway/src/services/provider-quota-fetchers.js";
 import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
@@ -46,11 +49,11 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -58,21 +61,21 @@ try {
 await (async()=>{
 
     __jait_capture(0, (isOllamaUsageResponse({ limits: { session: { usage: 0.42, models: [] } }, totals: { request_count: 50 } })));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_19_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -88,21 +91,21 @@ await (async()=>{
     __jait_capture(1, (isOllamaUsageResponse({
         limits: { monthly: { usage: 0.6, models: [] } },
       })));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_35_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -123,21 +126,21 @@ await (async()=>{
     }
     __jait_capture(3, (isOllamaUsageResponse({ ...activity, from: "invalid" })));
     __jait_capture(4, (isOllamaUsageResponse({ ...activity, buckets: [{}] })));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_52_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -148,21 +151,21 @@ await (async()=>{
     __jait_capture(1, (isOllamaUsageResponse({
         limits: { monthly: { usage: "60%", models: [] } },
       })));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_61_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -182,21 +185,21 @@ await (async()=>{
     const probe = await probeOllamaAccount({ baseUrl: "https://ollama.com/", apiKey: "key-1" });
     __jait_capture(2, (probe));
     __jait_capture(3, (fetchMock.mock.calls));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_80_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -207,21 +210,21 @@ await (async()=>{
       JSON.stringify({ Email: "me@example.com", Name: "Me", Plan: "pro" }),
     )));
     await __jait_captureResolved(0, (probeOllamaAccount({ baseUrl: "http://localhost:11434" })));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_90_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -232,21 +235,21 @@ await (async()=>{
 
     const probe = await probeOllamaAccount({ apiKey: "bad" });
     __jait_capture(0, (probe));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_97_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -262,21 +265,21 @@ await (async()=>{
 
     const probe = await probeOllamaAccount({ baseUrl: "http://127.0.0.1:11434" });
     __jait_capture(0, (probe));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_109_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -294,21 +297,21 @@ await (async()=>{
 
     const usage = await fetchOllamaUsageFrom("http://127.0.0.1:11434/");
     __jait_capture(1, (usage.limits.weekly?.usage));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_123_3": {
 
 
 /*__jait_scope_open__*/{
-const __jait_hook_254 = () => {
+const __jait_hook_412 = () => {
     vi.unstubAllGlobals();
   };
 
@@ -318,17 +321,17 @@ await (async()=>{
     vi.stubGlobal("fetch", vi.fn(async () => new Response("unauthorized", { status: 401 })));
 
     await __jait_captureRejected(0, (fetchOllamaUsageFrom("https://ollama.com", "bad")));
-  
+
 })();
 
 } finally {
-await __jait_hook_254();
+await __jait_hook_412();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_133_3": {
 
 
 /*__jait_scope_open__*/{
@@ -342,7 +345,7 @@ await (async()=>{
       probe: { reachable: false, account: null },
     });
     __jait_capture(0, (hint));
-  
+
 })();
 
 } finally {
@@ -352,7 +355,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_144_3": {
 
 
 /*__jait_scope_open__*/{
@@ -366,7 +369,7 @@ await (async()=>{
       probe: { reachable: true, account: null },
     });
     __jait_capture(0, (hint));
-  
+
 })();
 
 } finally {
@@ -376,7 +379,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_153_3": {
 
 
 /*__jait_scope_open__*/{
@@ -390,7 +393,7 @@ await (async()=>{
       probe: { reachable: true, account: null },
     });
     __jait_capture(0, (hint));
-  
+
 })();
 
 } finally {
@@ -400,7 +403,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_164_3": {
 
 
 /*__jait_scope_open__*/{
@@ -418,7 +421,7 @@ await (async()=>{
     });
     __jait_capture(0, (hint));
     __jait_capture(1, (hint));
-  
+
 })();
 
 } finally {
@@ -428,7 +431,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3": {
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_179_3": {
 
 
 /*__jait_scope_open__*/{
@@ -443,7 +446,231 @@ await (async()=>{
     });
     __jait_capture(0, (hint));
     __jait_capture(1, (hint));
-  
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_193_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (isCodexRateLimitsResponse({ rateLimits: { primary: window, secondary: null } })));
+    __jait_capture(1, (isCodexRateLimitsResponse({ rateLimits: { primary: null, secondary: window } })));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_198_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (isCodexRateLimitsResponse(null)));
+    __jait_capture(1, (isCodexRateLimitsResponse("rateLimits")));
+    __jait_capture(2, (isCodexRateLimitsResponse({})));
+    __jait_capture(3, (isCodexRateLimitsResponse({ rateLimits: { primary: { usedPercent: "50" } } })));
+    __jait_capture(4, (isCodexRateLimitsResponse({ rateLimits: { primary: { usedPercent: 50, resetsAt: "soon" } } })));
+    __jait_capture(5, (isCodexRateLimitsResponse({ rateLimits: { primary: { usedPercent: 50, windowDurationMins: "300" } } })));
+    __jait_capture(6, (isCodexRateLimitsResponse({ rateLimits: { secondary: {} } })));
+    __jait_capture(7, (isCodexRateLimitsResponse({ rateLimits: "none" })));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_209_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const response = {
+      rateLimits: { primary: window, secondary: null },
+      rateLimitResetCredits: {
+        availableCount: 2,
+        credits: [
+          { id: "c1", resetType: "codexRateLimits", status: "available", grantedAt: 1_770_000_000, expiresAt: 1_772_000_000, title: "Full reset (Weekly + 5 hr)", description: "…" },
+          { id: "c2", grantedAt: null, expiresAt: null },
+        ],
+      },
+    };
+    __jait_capture(0, (isCodexRateLimitsResponse(response)));
+    __jait_capture(1, (isCodexRateLimitsResponse({ rateLimits: { primary: window }, rateLimitResetCredits: {} })));
+    __jait_capture(2, (isCodexRateLimitsResponse({ rateLimits: { primary: window }, rateLimitResetCredits: { availableCount: 0, credits: [] } })));
+    __jait_capture(3, (isCodexRateLimitsResponse({ rateLimits: { primary: window }, rateLimitResetCredits: null })));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_226_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const base = { rateLimits: { primary: window, secondary: null } };
+    __jait_capture(0, (isCodexRateLimitsResponse({ ...base, rateLimitResetCredits: { availableCount: "2" } })));
+    __jait_capture(1, (isCodexRateLimitsResponse({ ...base, rateLimitResetCredits: { credits: "many" } })));
+    __jait_capture(2, (isCodexRateLimitsResponse({ ...base, rateLimitResetCredits: { credits: [{ grantedAt: "yesterday" }] } })));
+    __jait_capture(3, (isCodexRateLimitsResponse({ ...base, rateLimitResetCredits: { credits: [null] } })));
+    __jait_capture(4, (isCodexRateLimitsResponse({ ...base, rateLimitResetCredits: 7 })));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_235_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const base = { rateLimits: { primary: window, secondary: null } };
+    __jait_capture(0, (isCodexRateLimitsResponse({ ...base, ordinaryUsageAllowed: false })));
+    __jait_capture(1, (isCodexRateLimitsResponse({ ...base, rateLimitsByLimitId: { codex: { primary: window }, extra: { secondary: window } } })));
+    __jait_capture(2, (isCodexRateLimitsResponse({ ...base, rateLimitsByLimitId: {} })));
+    __jait_capture(3, (isCodexRateLimitsResponse({ ...base, ordinaryUsageAllowed: "false" })));
+    __jait_capture(4, (isCodexRateLimitsResponse({ ...base, rateLimitsByLimitId: { codex: { primary: { usedPercent: "?" } } } })));
+    __jait_capture(5, (isCodexRateLimitsResponse({ ...base, rateLimitsByLimitId: 3 })));
+    __jait_capture(6, (isCodexRateLimitsResponse({ ...base, rateLimitsByLimitId: { codex: null } })));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_250_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const response: CodexRateLimitsResponse = {
+      rateLimits: { primary: window, secondary: null, planType: "plus" },
+      rateLimitsByLimitId: { codex: { primary: { usedPercent: 1, windowDurationMins: null, resetsAt: null } } },
+    };
+    __jait_capture(0, (normalizeCodexRateLimits(response)), (response));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_258_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const response: CodexRateLimitsResponse = {
+      rateLimits: { primary: null, secondary: null, planType: "team" },
+      rateLimitsByLimitId: {
+        other: { primary: null, secondary: { usedPercent: 1, windowDurationMins: null, resetsAt: null }, planType: "other" },
+        codex: { primary: window, secondary: null, planType: "codex-plan", credits: { balance: "5" }, rateLimitReachedType: "primary", spendControlReached: true },
+      },
+    };
+    const normalized = normalizeCodexRateLimits(response);
+    __jait_capture(0, (normalized), (response));
+    __jait_capture(1, (normalized.rateLimits.primary), (window));
+    // Root-level account flags win over the promoted snapshot's.
+    __jait_capture(2, (normalized.rateLimits.planType));
+    __jait_capture(3, (normalized.rateLimits.credits));
+    __jait_capture(4, (normalized.rateLimits.rateLimitReachedType));
+    __jait_capture(5, (normalized.rateLimits.spendControlReached));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_276_3": {
+
+
+/*__jait_scope_open__*/{
+const window = { usedPercent: 42.5, windowDurationMins: 300, resetsAt: 1_770_000_000 };
+
+try {
+await (async()=>{
+
+    const only: CodexRateLimitSnapshot = { secondary: window };
+    const normalized = normalizeCodexRateLimits({
+      rateLimits: { primary: null, secondary: null },
+      rateLimitsByLimitId: { first: only },
+    });
+    __jait_capture(0, (normalized.rateLimits.secondary), (window));
+
+    const empty: CodexRateLimitsResponse = {
+      rateLimits: { primary: null, secondary: null },
+      rateLimitsByLimitId: { first: { primary: null, secondary: null } },
+    };
+    __jait_capture(1, (normalizeCodexRateLimits(empty)), (empty));
+    const bare: CodexRateLimitsResponse = { rateLimits: { primary: null, secondary: null } };
+    __jait_capture(2, (normalizeCodexRateLimits(bare)), (bare));
+
 })();
 
 } finally {

@@ -611,7 +611,7 @@
     },
     {
       "reference": "packages/gateway/src/surfaces/terminal-output.ts",
-      "reference_sha256": "f76aca5270d80e217df630b220ccd6d42f379e125d2789da90d2eb71aa02ba3f",
+      "reference_sha256": "3396dd6a59aa36d18af257c322e9543b5dd245c1f89b8fb0100e8eb1a631e2ba",
       "status": "verified",
       "native": [
         "packages/gateway-rust/src/surfaces/terminal_output.rs"
@@ -623,7 +623,7 @@
       "targets": [
         "gateway_rust_terminal"
       ],
-      "review": "Retained-buffer offsets, partial-line prefix recovery, bounded command output bypassing live tail limits, end-marker trimming, empty buffers, fractional/nonfinite offsets and line limits across 223 cases. Removing command end bounds fails the same contract; restoration passes. Chunk-count input is the native nonnegative integer invariant."
+      "review": "Retained-buffer offsets, partial-line prefix recovery, bounded command output bypassing live tail limits, end-marker trimming, empty buffers, fractional/nonfinite offsets and line limits across 223 cases. Removing command end bounds fails the same contract; restoration passes. Chunk-count input is the native nonnegative integer invariant. Current reference empty-range guard ported after the same matrix failed with partial versus empty output; restored suite passes. Evidence: terminal-empty-before.log and terminal-empty-after.log."
     },
     {
       "reference": "packages/gateway/src/tools/shell-prompt.ts",
@@ -1952,6 +1952,207 @@
         "gateway_rust_architecture_http"
       ],
       "review": "Opt-in real authenticated architecture HTTP routes: storage/projection, GET/PUT/HEAD, owner fallback, parser boundaries and partial failed-save effects."
+    },
+    {
+      "reference": "packages/gateway/src/services/calendar/service.ts",
+      "reference_sha256": "e7ac458a88198283f67db1e1b3052c7b7a367071ac70f9258d7aeb3874dee1db",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/calendar/service.rs",
+        "packages/gateway-rust/src/services/calendar/mod.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar_service.rs",
+        "tests/contract/drivers/nativecalendarservice.ts",
+        "tests/contract/reviews/native-calendar-service.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar_service"
+      ],
+      "review": "Opt-in bounded-worker calendar account service; real TypeScript differential checks for ownership, encrypted credentials, OAuth state, device snapshots, token refresh, event aggregation and partial failures. ISO date input boundary documented."
+    },
+    {
+      "reference": "packages/gateway/src/tools/calendar-tools.ts",
+      "reference_sha256": "35aa8def2f7afff6615ddf3bce77351d4024160df0e25052c0d41cc5feb6a198",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/calendar.rs",
+        "packages/gateway-rust/src/tools/calendar-metadata.json",
+        "packages/gateway-rust/src/services/calendar/service.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar_tools.rs",
+        "tests/contract/drivers/nativecalendartools.ts",
+        "tests/contract/reviews/native-calendar-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar_tools"
+      ],
+      "review": "Native calendar list/events tools with exact metadata, context-owned identity, argument forwarding, previews, account projection, service errors, real native service integration and restored ownership/preview mutations."
+    },
+    {
+      "reference": "packages/gateway/src/security/agent-sandbox-owner.ts",
+      "reference_sha256": "1bf32633551384d8f1b7bfa0146775a600453621a7aed061beac51c5f3199737",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/agent_sandbox_owner.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_owner.rs",
+        "tests/contract/drivers/nativeowner.ts",
+        "tests/contract/reviews/native-sandbox-owner.md"
+      ],
+      "targets": [
+        "gateway_rust_owner"
+      ],
+      "review": "Native gateway namespace hash and conservative owner liveness with PID reuse and reboot detection. Real TypeScript OS-fixture comparisons and live native/reaped-process integration; three restored mutations. Linux/Unix boundary documented."
+    },
+    {
+      "reference": "packages/gateway/src/services/disk-space-watchdog.ts",
+      "reference_sha256": "c1c7386a0b579c9632e3f4a59649683d556e95bda0ad452b0115602dfc12e31e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/disk_space_watchdog.rs",
+        "packages/gateway-rust/src/runtime/blocking.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_watchdog.rs",
+        "tests/contract/drivers/nativewatchdog.ts",
+        "tests/contract/reviews/native-disk-watchdog.md"
+      ],
+      "targets": [
+        "gateway_rust_watchdog"
+      ],
+      "review": "Native disk pressure/job pause policy with ordered alert/update effects, real TypeScript comparisons, bounded Unix filesystem sampling and restored threshold/agent-scope/dedup mutations. Production scheduler activation remains separate."
+    },
+    {
+      "reference": "packages/gateway/src/routes/calendar.ts",
+      "reference_sha256": "50ffb532cfddae9b653ae5ffa022ec950d4f01f85170e86be613c9ac5fc69046",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/calendar.rs",
+        "packages/gateway-rust/src/runtime/server.rs",
+        "packages/gateway-rust/src/services/calendar/service.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_calendar_http.rs",
+        "tests/contract/drivers/nativecalendarhttp.ts",
+        "tests/contract/reviews/native-calendar-http.md"
+      ],
+      "targets": [
+        "gateway_rust_calendar_http"
+      ],
+      "review": "Explicit native calendar HTTP API with real Fastify/native loopback comparisons, authenticated account isolation, credential and snapshot validation, callback HTML, OAuth and provider failures, persisted effects, parseInt coercion, fail-then-pass NaN regression and three restored mutations. Focused compatibility boundaries documented."
+    },
+    {
+      "reference": "packages/gateway/src/providers/jait-mcp.ts",
+      "reference_sha256": "5b2545b02b0721eb967da170afbcc624dfe2b18c115e62fe93dd4a80bf48199f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/jait_mcp.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_mcp.rs",
+        "tests/contract/drivers/nativemcp.ts",
+        "tests/contract/reviews/native-provider-registry.md"
+      ],
+      "targets": [
+        "gateway_rust_mcp"
+      ],
+      "review": "Native provider MCP constants and Codex config merge with exact string parity, idempotence, nested preservation, namespace normalization and restored mutation. Focused JSON boundaries documented."
+    },
+    {
+      "reference": "packages/gateway/src/providers/registry.ts",
+      "reference_sha256": "e08a6812b84e57ec4f201e0671e1afe4357edd586c1bbea50bfc0dc71e1a1e88",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/registry.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_registry.rs",
+        "tests/contract/drivers/nativeregistry.ts",
+        "tests/contract/reviews/native-provider-registry.md"
+      ],
+      "targets": [
+        "gateway_rust_registry"
+      ],
+      "review": "Native insertion-ordered provider registry, owner visibility, remove-before-dispose semantics, settled concurrent availability and current-membership races; explicit MCP ref construction and authenticated router opt-in. Two restored mutations; concrete process adapters remain separate."
+    },
+    {
+      "reference": "packages/gateway/src/providers/acp-terminal.ts",
+      "reference_sha256": "f5f7fb1fbce43898e5c172edb97d63f1d9968df6aa70cb436556127f0b4553e1",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/acp_terminal.rs",
+        "packages/gateway-rust/src/execution/completion_output.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_acp_terminal.rs",
+        "tests/contract/drivers/nativeacpterminal.ts",
+        "packages/gateway/src/providers/acp-terminal.test.ts",
+        "tests/contract/reviews/native-acp-terminal.md"
+      ],
+      "targets": [
+        "gateway_rust_acp_terminal"
+      ],
+      "review": "Native captured ACP children with shared admission, literal arguments/cwd/env, exit and signal status, repeated waits, kill/release, UTF-16 suffixes and completion cleanup. Two fail-then-pass reference regressions (failed spawn wait and encoded byte ceiling), actual child comparisons, bounded pipe drain, owner-drop reaping and three restored mutations. Focused Linux boundaries documented; provider dispatch remains separate."
+    },
+    {
+      "reference": "packages/gateway/src/services/background-command-monitor.ts",
+      "reference_sha256": "64bf9d4bb5249ec11e566475d7495496666c4d1640d93482feffcee47a5c7fd6",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/background_command_monitor.rs",
+        "packages/gateway-rust/src/execution/completion_output.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_bg_monitor.rs",
+        "tests/contract/drivers/nativebgmonitor.ts",
+        "packages/gateway/src/services/background-command-monitor.test.ts",
+        "tests/contract/reviews/native-bg-monitor.md"
+      ],
+      "targets": [
+        "gateway_rust_bg_monitor"
+      ],
+      "review": "Native terminal watcher and external completion lifecycle with injectable clock/timers/surface. Differential state transitions, shared admission, handler ownership, expiry and suppression; reproduced and fixed cancellation during output in reference and native. Seven focused monitor tests, four transport checks, three restored mutations and strict Clippy. Provider transport and production wake-up wiring remain separate."
+    },
+    {
+      "reference": "packages/gateway/src/providers/provider-auth.ts",
+      "reference_sha256": "1dc5c7c0e31da8bed1103169027cf19c13dc0e2fdc03308d4f1bc34484a1df2d",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/provider_auth.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_provider_auth.rs",
+        "tests/contract/drivers/nativeproviderauth.ts",
+        "packages/gateway/src/providers/provider-auth.test.ts",
+        "packages/shared/src/provider-auth.ts",
+        "packages/shared/src/provider-auth.test.ts",
+        "tests/contract/reviews/native-provider-auth.md"
+      ],
+      "targets": [
+        "gateway_rust_provider_auth"
+      ],
+      "review": "Native Linux authentication children with literal argument parsing, filtered/ordered environment, bounded UTF-16 output, timeout and device-login state, explicit process ownership, input and overload handling. Real child/reference comparisons, 37 TypeScript tests, ten native executions, strict Clippy and three restored mutations. Windows execution and live provider credential integration remain separate."
+    },
+    {
+      "reference": "packages/gateway/src/providers/pi-mcp-provision.ts",
+      "reference_sha256": "ec19bb8ac1e707d9f212b6af0148eb435b5194c164aef918299da60404dd337a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/providers/pi_mcp_provision.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_pi_mcp.rs",
+        "tests/contract/drivers/nativepimcp.ts",
+        "packages/gateway/src/providers/pi-mcp-provision.test.ts",
+        "tests/contract/reviews/native-pi-mcp.md"
+      ],
+      "targets": [
+        "gateway_rust_pi_mcp"
+      ],
+      "review": "Native owned per-session Pi config/wrappers, provider filtering, HTTP/SSE/stdio maps, private directories and cleanup. Actual wrapper execution with literal arguments, exact config/text comparisons, partial-write cleanup, ten component/transport executions plus a native unit test, gateway TypeScript check, strict Clippy, three restored mutations and three fail-then-pass production reference regressions. Windows wrapper text only; live Pi adapter and provider dispatch remain separate."
     }
   ]
 }

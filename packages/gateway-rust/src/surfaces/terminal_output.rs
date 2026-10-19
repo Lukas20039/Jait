@@ -30,6 +30,10 @@ pub fn terminal_output_slice(
     } else {
         (end_index as f64 - lines).max(offset_index as f64)
     };
+    // Empty command ranges cannot reconnect to a preceding partial line.
+    if start == end_index as f64 {
+        return String::new();
+    }
     // ECMAScript slice truncates fractional indices and treats NaN as zero.
     let start_index = (start as usize).min(buffer.len());
     let mut output = if start_index <= end_index {

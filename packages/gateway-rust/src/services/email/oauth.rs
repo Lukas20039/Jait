@@ -112,10 +112,13 @@ impl EmailOAuthClient {
         body: &[(&str, &str)],
         fallback: Option<&str>,
     ) -> Result<Value, String> {
-        let mut encoded = url::form_urlencoded::Serializer::new(String::new());
-        for (key, value) in body {
-            encoded.append_pair(key, value);
-        }
+        let encoded = {
+            let mut serializer = url::form_urlencoded::Serializer::new(String::new());
+            for (key, value) in body {
+                serializer.append_pair(key, value);
+            }
+            serializer.finish()
+        };
         let response = (self.transport)(Request {
             url: provider.token_url().into(),
             method: "POST".into(),
@@ -123,7 +126,7 @@ impl EmailOAuthClient {
                 .as_object()
                 .unwrap()
                 .clone(),
-            body: Some(encoded.finish()),
+            body: Some(encoded),
         })
         .await?;
         let data = response.data.unwrap_or_else(|_| json!({}));

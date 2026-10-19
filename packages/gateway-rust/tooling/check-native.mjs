@@ -30,7 +30,8 @@ const paths = [...new Set([
   ...known, ...sharedFiles, ...nativeFiles, 'packages/gateway-rust/run.mjs', 'packages/gateway-rust/tooling/check-native.mjs', 'packages/gateway/package.json',
   'tests/contract/coverage.json', 'packages/gateway-rust/native-coverage.json',
   'packages/gateway-rust/Cargo.toml', 'packages/gateway-rust/Cargo.lock',
-  'packages/gateway-rust/build.rs', 'tests/contract/Cargo.toml', 'tests/contract/Cargo.lock',
+  'packages/gateway-rust/build.rs', 'packages/gateway-rust/tooling/validate-frozen.py',
+  'tests/contract/tooling/test_native_inventory_metadata.py', 'tests/contract/Cargo.toml', 'tests/contract/Cargo.lock',
   'tests/contract/src/internal_driver.rs', 'tests/contract/drivers/internals.ts',
   ...credited.flatMap(c => [c.reference, ...c.native, ...c.contracts]),
 ])].sort();

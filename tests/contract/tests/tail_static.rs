@@ -4686,6 +4686,66 @@ fn tailstatic_packages_gateway_src_providers_acp_registry_test_ts_127_3() {
     );
 }
 
+// packages/gateway/src/providers/acp-terminal.test.ts:5:3: settles exit and completion waits when no child process was created
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_5_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_5_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":{"exitCode":null,"signal":null}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toContain","negate":false,"expected":"[terminal error:"},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toMatchObject","negate":false,"expected":{"exitCode":null}}]"#,
+    );
+}
+
+// packages/gateway/src/providers/acp-terminal.test.ts:26:3: retains the correct suffix for limit $limit
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each0() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each0"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBeLessThanOrEqual","negate":false,"conditional":true,"expected":2}]"#,
+    );
+}
+
+// packages/gateway/src/providers/acp-terminal.test.ts:26:3: retains the correct suffix for limit $limit
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each1() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each1"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[56832]},{"matcher":"toBeLessThanOrEqual","negate":false,"conditional":true,"expected":3}]"#,
+    );
+}
+
+// packages/gateway/src/providers/acp-terminal.test.ts:26:3: retains the correct suffix for limit $limit
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each2() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each2"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[55357,56832]},{"matcher":"toBeLessThanOrEqual","negate":false,"conditional":true,"expected":4}]"#,
+    );
+}
+
+// packages/gateway/src/providers/acp-terminal.test.ts:26:3: retains the correct suffix for limit $limit
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[120,55357,56832]},{"matcher":"toBeLessThanOrEqual","negate":false,"conditional":true,"expected":0}]"#,
+    );
+}
+
+// packages/gateway/src/providers/acp-terminal.test.ts:26:3: retains the correct suffix for limit $limit
+#[test]
+fn tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each4() {
+    tail_assertions::check(
+        r#"gateway-src-providers-acp-terminal-test-79f55d56"#,
+        r#"tailstatic_packages_gateway_src_providers_acp_terminal_test_ts_26_3_each4"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[]},{"matcher":"toBeLessThanOrEqual","negate":false,"conditional":true,"expected":-1}]"#,
+    );
+}
+
 // packages/gateway/src/providers/codex-event-mapper.test.ts:5:3: keeps a Codex turn open while the app server retries
 #[test]
 fn tailstatic_packages_gateway_src_providers_codex_event_mapper_test_ts_5_3() {
@@ -8879,32 +8939,32 @@ fn tailstatic_packages_gateway_src_routes_providers_subscription_usage_test_ts_6
     );
 }
 
-// packages/gateway/src/routes/providers-usage-refresh.test.ts:58:3: keeps the live quota read when a background row was not persisted
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:59:3: keeps the live quota read when a background row was not persisted
 #[test]
-fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_58_3() {
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_59_3() {
     tail_assertions::check(
         r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
-        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_58_3"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_59_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":200},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"status":"rejected","utilization":1}}]"#,
     );
 }
 
-// packages/gateway/src/routes/providers-usage-refresh.test.ts:70:3: prefers a newer local observation over an older refresh result
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:71:3: prefers a newer local observation over an older refresh result
 #[test]
-fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_70_3() {
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_71_3() {
     tail_assertions::check(
         r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
-        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_70_3"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_71_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"status":"rejected","utilization":1}}]"#,
     );
 }
 
-// packages/gateway/src/routes/providers-usage-refresh.test.ts:82:3: runs the provider read for every manual refresh instead of serving the cache
+// packages/gateway/src/routes/providers-usage-refresh.test.ts:83:3: runs the provider read for every manual refresh instead of serving the cache
 #[test]
-fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_82_3() {
+fn tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_83_3() {
     tail_assertions::check(
         r#"gateway-src-routes-providers-usage-refresh-test-88da416f"#,
-        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_82_3"#,
+        r#"tailstatic_packages_gateway_src_routes_providers_usage_refresh_test_ts_83_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2}]"#,
     );
 }
@@ -12584,6 +12644,26 @@ fn tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_2
     );
 }
 
+// packages/gateway/src/services/background-command-monitor.test.ts:284:3: does not complete or notify when onOutput cancels the session (token=%s)
+#[test]
+fn tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each0() {
+    tail_assertions::check(
+        r#"gateway-src-services-background-command-monitor-test-2ab88832"#,
+        r#"tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each0"#,
+        r#"[{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":0}]"#,
+    );
+}
+
+// packages/gateway/src/services/background-command-monitor.test.ts:284:3: does not complete or notify when onOutput cancels the session (token=%s)
+#[test]
+fn tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each1() {
+    tail_assertions::check(
+        r#"gateway-src-services-background-command-monitor-test-2ab88832"#,
+        r#"tailstatic_packages_gateway_src_services_background_command_monitor_test_ts_284_3_each1"#,
+        r#"[{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalled","negate":true},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":0},{"matcher":"toBe","negate":false,"expected":0}]"#,
+    );
+}
+
 // packages/gateway/src/services/calendar/google.test.ts:9:3: normalizes visible calendars and ignores hidden calendars
 #[test]
 fn tailstatic_packages_gateway_src_services_calendar_google_test_ts_9_3() {
@@ -16045,153 +16125,233 @@ fn tailstatic_packages_gateway_src_services_provider_accounts_test_ts_169_3() {
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:13:3: accepts a quota response with ancillary totals
-#[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3() {
-    tail_assertions::check(
-        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_13_3"#,
-        r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
-    );
-}
-
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:16:3: accepts current Ollama session/weekly and monthly response variants
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:16:3: accepts a quota response with ancillary totals
 #[test]
 fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
         r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_16_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:19:3: accepts current Ollama session/weekly and monthly response variants
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_19_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_19_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:32:3: accepts Ollama request activity without quota limits
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:35:3: accepts Ollama request activity without quota limits
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_35_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_32_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_35_3"#,
         r#"[{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:49:3: rejects malformed Ollama usage responses
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:52:3: rejects malformed Ollama usage responses
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_52_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_49_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_52_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:58:3: probes the Ollama cloud account and drops the trailing slash
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:61:3: probes the Ollama cloud account and drops the trailing slash
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_61_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_58_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_61_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"https://ollama.com/api/me"},{"matcher":"toBe","negate":false,"optional":true,"expected":"Bearer key-1"},{"matcher":"toEqual","negate":false,"expected":{"reachable":true,"account":{"email":"me@example.com","name":"Me","plan":"pro"}}},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:77:3: normalizes capitalized Ollama account fields
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:80:3: normalizes capitalized Ollama account fields
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_80_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_77_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_80_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"reachable":true,"account":{"email":"me@example.com","name":"Me","plan":"pro"}}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:87:3: treats a rejected credential as reachable but unauthenticated
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:90:3: treats a rejected credential as reachable but unauthenticated
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_90_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_87_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_90_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"reachable":true,"account":null}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:94:3: reports unreachable servers without throwing
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:97:3: reports unreachable servers without throwing
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_97_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_94_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_97_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"reachable":false,"account":null}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:106:3: fetches usage from an explicit Ollama base URL
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:109:3: fetches usage from an explicit Ollama base URL
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_109_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_106_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_109_3"#,
         r#"[{"matcher":"toBe","negate":false,"optional":true,"expected":"http://127.0.0.1:11434/api/usage"},{"matcher":"toBe","negate":false,"expected":0.3}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:120:3: surfaces the HTTP status when a usage request fails
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:123:3: surfaces the HTTP status when a usage request fails
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_123_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_120_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_123_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"rejects":true,"expected":{"status":401}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:130:3: reports an offline server
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:133:3: reports an offline server
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_133_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_130_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_133_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Ollama at http://127.0.0.1:11434 did not respond. Subscription usage needs a running server."}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:141:3: asks for a Cloud key on a Cloud backend
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:144:3: asks for a Cloud key on a Cloud backend
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_144_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_141_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_144_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Add an Ollama Cloud API key to this Jait backend to load subscription usage."}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:150:3: says a self-hosted daemon is not signed in when it has no account
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:153:3: says a self-hosted daemon is not signed in when it has no account
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_153_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_150_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_153_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"This Ollama instance is not signed in to Ollama Cloud, so there is no subscription usage to report."}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:161:3: reports the signed-in account and plan when a self-hosted server exposes no usage
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:164:3: reports the signed-in account and plan when a self-hosted server exposes no usage
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_164_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_161_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_164_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Signed in to Ollama Cloud as jakob@example.com (pro), but this Ollama server does not report subscription usage. Add an Ollama Cloud API key to see quota."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":13,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"t"},{"id":3,"kind":"char","value":" "},{"id":4,"kind":"char","value":"s"},{"id":5,"kind":"char","value":"i"},{"id":6,"kind":"char","value":"g"},{"id":7,"kind":"char","value":"n"},{"id":8,"kind":"char","value":"e"},{"id":9,"kind":"char","value":"d"},{"id":10,"kind":"char","value":" "},{"id":11,"kind":"char","value":"i"},{"id":12,"kind":"char","value":"n"}]},"flags":""}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-quota-fetchers.test.ts:176:3: falls back to the account name when no email is present
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:179:3: falls back to the account name when no email is present
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3() {
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_179_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
-        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_176_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_179_3"#,
         r#"[{"matcher":"toContain","negate":false,"expected":"Signed in to Ollama Cloud as Jakob,"},{"matcher":"toContain","negate":true,"expected":"(null)"}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:193:3: accepts a minimal response with root-level windows
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_193_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_193_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:198:3: rejects malformed windows and non-object responses
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_198_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_198_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:209:3: accepts responses carrying rate-limit reset credits
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_209_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_209_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:226:3: rejects malformed reset credits without rejecting newer fields wholesale
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_226_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_226_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:235:3: accepts account flags and per-limit snapshots, and rejects their malformed forms
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_235_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_235_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":false}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:250:3: leaves responses with root-level windows untouched
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_250_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_250_3"#,
+        r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:258:3: promotes the codex snapshot when only rateLimitsByLimitId carries windows
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_258_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_258_3"#,
+        r#"[{"matcher":"toBe","negate":true,"dynamic":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"team"},{"matcher":"toEqual","negate":false,"expected":{"balance":"5"}},{"matcher":"toBe","negate":false,"expected":"primary"},{"matcher":"toBe","negate":false,"expected":true}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-quota-fetchers.test.ts:276:3: falls back to any snapshot with windows and keeps responses without one
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_276_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-quota-fetchers-test-94bdc7be"#,
+        r#"tailstatic_packages_gateway_src_services_provider_quota_fetchers_test_ts_276_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
 }
 
@@ -16381,7 +16541,7 @@ fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_28_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
         r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_28_3"#,
-        r#"[{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"providerType":"opencode-go","rateLimitType":"five_hour","utilization":0.2,"resetsAt":{"__jait_observed":0}}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.9,"status":"allowed_warning"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"monthly","utilization":1,"status":"rejected"}}]},"hybrid":true},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","resetsAt":{"__jait_observed":0},"resetSource":"provider-reported"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","resetsAt":null,"resetSource":null}}]},"hybrid":true}]"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"providerType":"opencode-go","rateLimitType":"five_hour","utilization":0.2,"resetsAt":{"__jait_observed":0},"resetSource":"provider-reported"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.9,"status":"allowed_warning"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"monthly","utilization":1,"status":"rejected"}}]},"hybrid":true},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","resetsAt":{"__jait_observed":0},"resetSource":"provider-reported"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","resetsAt":null,"resetSource":null}}]},"hybrid":true}]"#,
     );
 }
 
@@ -16491,46 +16651,56 @@ fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_212_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
         r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_212_3"#,
-        r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","utilization":0.12,"planType":"plus"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.34,"credits":{"hasCredits":true,"balance":"7.50"}}}]}}]"#,
+        r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","utilization":0.12,"planType":"plus","resetsAt":{"__jait_observed":0},"resetSource":"provider-reported"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.34,"credits":{"hasCredits":true,"balance":"7.50"},"resetSource":"provider-reported"}}]},"hybrid":true}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:249:3: marks every Codex window as full when workspace credits are depleted
+// packages/gateway/src/services/provider-usage.test.ts:252:3: keeps Codex reset credits available to spend on every window row
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_252_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_249_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_252_3"#,
+        r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":{"availableCount":2,"credits":[{"__jait_matcher":"objectContaining","value":{"title":"Full reset (Weekly + 5 hr)","status":"available"}}]}}]"#,
+    );
+}
+
+// packages/gateway/src/services/provider-usage.test.ts:283:3: marks every Codex window as full when workspace credits are depleted
+#[test]
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_283_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_283_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","utilization":1,"status":"rejected","planType":"team"}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"seven_day","utilization":0.63,"status":"rejected"}}]}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:292:3: stores Ollama session, weekly and monthly usage metadata
+// packages/gateway/src/services/provider-usage.test.ts:326:3: stores Ollama session, weekly and monthly usage metadata
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_292_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_326_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_292_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_326_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":3},{"matcher":"toEqual","negate":false,"expected":["2026-03-11T10:00:00.000Z","2026-03-16T00:00:00.000Z","2026-04-01T00:00:00.000Z"]},{"matcher":"toEqual","negate":false,"expected":{"__jait_matcher":"arrayContaining","value":[{"__jait_matcher":"objectContaining","value":{"rateLimitType":"five_hour","providerType":"ollama","utilization":0.25,"planType":"pro","models":[{"name":"gpt-oss","requestCount":4}]}},{"__jait_matcher":"objectContaining","value":{"rateLimitType":"monthly","utilization":0.6,"activityCost":"3.20"}}]}}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:347:3: keeps an observed Ollama rollover instead of re-guessing the next reset
+// packages/gateway/src/services/provider-usage.test.ts:381:3: keeps an observed Ollama rollover instead of re-guessing the next reset
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_347_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_381_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_347_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_381_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"2026-03-11T15:00:00.000Z"}]"#,
     );
 }
 
-// packages/gateway/src/services/provider-usage.test.ts:384:3: exposes the stored quota reset date for cached Ollama snapshots
+// packages/gateway/src/services/provider-usage.test.ts:418:3: exposes the stored quota reset date for cached Ollama snapshots
 #[test]
-fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_384_3() {
+fn tailstatic_packages_gateway_src_services_provider_usage_test_ts_418_3() {
     tail_assertions::check(
         r#"gateway-src-services-provider-usage-test-8fd65cd3"#,
-        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_384_3"#,
+        r#"tailstatic_packages_gateway_src_services_provider_usage_test_ts_418_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"resetsAt":"2026-09-20T13:45:00.000Z","updatedAt":"2026-09-20T13:45:00.000Z","utilization":0.25}}]"#,
     );
 }
