@@ -92,10 +92,10 @@ export class ProviderAccountService {
     const errors: Record<string, string> = {};
     const codexAccounts = this.list(userId).filter((account) => account.providerType === "codex");
     await Promise.all(codexAccounts.map(async (account) => {
-      if (account.nodeId !== "gateway") {
-        errors[account.id] = "Live quota refresh is not available for accounts on remote nodes yet.";
-        return;
-      }
+      // Remote nodes record their own snapshots. Treating this as a refresh
+      // failure made every auto-refresh cycle "failed", so the gateway backed
+      // off up to 30 minutes and the modal kept showing stale percentages.
+      if (account.nodeId !== "gateway") return;
       try {
         const response = await fetchCodexRateLimits(this.accountHome(account.id));
         this.usageService?.recordCodexRateLimits(account.id, response);

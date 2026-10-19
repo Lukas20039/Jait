@@ -20,8 +20,33 @@ export interface CodexRateLimitSnapshot {
   spendControlReached?: boolean | null;
 }
 
+/**
+ * One "reset button": a free rate-limit reset the provider granted (Codex
+ * hands these out periodically, e.g. "Full reset (Weekly + 5 hr)").
+ */
+export interface CodexRateLimitResetCredit {
+  id?: string | null;
+  resetType?: string | null;
+  status?: string | null;
+  grantedAt?: number | null;
+  expiresAt?: number | null;
+  title?: string | null;
+  description?: string | null;
+}
+
+export interface CodexRateLimitResetCredits {
+  availableCount?: number | null;
+  credits?: CodexRateLimitResetCredit[] | null;
+}
+
 export interface CodexRateLimitsResponse {
   rateLimits: CodexRateLimitSnapshot;
+  /** False when the account itself is out of usage (for example exhausted workspace credits). */
+  ordinaryUsageAllowed?: boolean | null;
+  /** Per-limit snapshots keyed by limit id, for accounts with several limits. */
+  rateLimitsByLimitId?: Record<string, CodexRateLimitSnapshot> | null;
+  /** Unused "reset usage" credits the account can spend to clear its limits now. */
+  rateLimitResetCredits?: CodexRateLimitResetCredits | null;
 }
 
 export interface OllamaUsageLimit {
@@ -91,12 +116,67 @@ function isRateLimitWindow(value: unknown): value is CodexRateLimitWindow {
   );
 }
 
+function isCodexRateLimitSnapshot(value: unknown): value is CodexRateLimitSnapshot {
+  if (!value || typeof value !== "object") return false;
+  const snapshot = value as Record<string, unknown>;
+  return (snapshot.primary == null || isRateLimitWindow(snapshot.primary)) && (snapshot.secondary == null || isRateLimitWindow(snapshot.secondary));
+}
+
+function isCodexRateLimitResetCredit(value: unknown): boolean {
+  if (!value || typeof value !== "object") return false;
+  const credit = value as Record<string, unknown>;
+  return (
+    (credit.grantedAt == null || typeof credit.grantedAt === "number") &&
+    (credit.expiresAt == null || typeof credit.expiresAt === "number")
+  );
+}
+
+function isCodexRateLimitResetCredits(value: unknown): boolean {
+  if (!value || typeof value !== "object") return false;
+  const resetCredits = value as Record<string, unknown>;
+  return (
+    (resetCredits.availableCount == null || typeof resetCredits.availableCount === "number") &&
+    (resetCredits.credits == null ||
+      (Array.isArray(resetCredits.credits) && resetCredits.credits.every(isCodexRateLimitResetCredit)))
+  );
+}
+
 function isCodexRateLimitsResponse(value: unknown): value is CodexRateLimitsResponse {
   if (!value || typeof value !== "object") return false;
-  const rateLimits = (value as { rateLimits?: unknown }).rateLimits;
-  if (!rateLimits || typeof rateLimits !== "object") return false;
-  const snapshot = rateLimits as Record<string, unknown>;
-  return (snapshot.primary == null || isRateLimitWindow(snapshot.primary)) && (snapshot.secondary == null || isRateLimitWindow(snapshot.secondary));
+  const response = value as Record<string, unknown>;
+  if (!isCodexRateLimitSnapshot(response.rateLimits)) return false;
+  // Newer Codex builds add account-level exhaustion flags and per-limit
+  // snapshots. They must not be rejected as an unexpected response.
+  if (response.ordinaryUsageAllowed != null && typeof response.ordinaryUsageAllowed !== "boolean") return false;
+  if (response.rateLimitResetCredits != null && !isCodexRateLimitResetCredits(response.rateLimitResetCredits)) return false;
+  const byLimitId = response.rateLimitsByLimitId;
+  if (byLimitId != null) {
+    if (typeof byLimitId !== "object") return false;
+    if (!Object.values(byLimitId as Record<string, unknown>).every(isCodexRateLimitSnapshot)) return false;
+  }
+  return true;
+}
+
+/** Some Codex builds only populate `rateLimitsByLimitId`; promote the best snapshot. */
+function normalizeCodexRateLimits(response: CodexRateLimitsResponse): CodexRateLimitsResponse {
+  const { rateLimits } = response;
+  if (rateLimits.primary || rateLimits.secondary) return response;
+  const byLimitId = response.rateLimitsByLimitId ?? {};
+  const snapshot = [byLimitId.codex, ...Object.values(byLimitId)]
+    .find((candidate) => candidate?.primary || candidate?.secondary);
+  if (!snapshot) return response;
+  return {
+    ...response,
+    rateLimits: {
+      ...rateLimits,
+      ...snapshot,
+      // Root-level account flags are authoritative when both are present.
+      planType: rateLimits.planType ?? snapshot.planType,
+      credits: rateLimits.credits ?? snapshot.credits,
+      rateLimitReachedType: rateLimits.rateLimitReachedType ?? snapshot.rateLimitReachedType,
+      spendControlReached: rateLimits.spendControlReached ?? snapshot.spendControlReached,
+    },
+  };
 }
 
 /** Read ChatGPT/Codex subscription windows without starting a model turn. */
@@ -152,7 +232,7 @@ export function fetchCodexRateLimits(accountHome: string, options: { command?: s
         child.stdin.write(`${JSON.stringify({ id: 2, method: "account/rateLimits/read", params: {} })}\n`);
       } else if (message.id === 2) {
         if (message.error) finish(new Error(message.error.message || "Codex usage request failed"));
-        else if (isCodexRateLimitsResponse(message.result)) finish(undefined, message.result);
+        else if (isCodexRateLimitsResponse(message.result)) finish(undefined, normalizeCodexRateLimits(message.result));
         else finish(new Error("Codex returned an unexpected usage response"));
       }
     });

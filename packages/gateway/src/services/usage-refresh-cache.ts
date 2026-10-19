@@ -11,11 +11,14 @@ export class UsageRefreshCache<T> {
   } = {}): Promise<T> {
     const previous = this.entries.get(key);
     const now = this.now();
-    // Force bypasses successful freshness only, with a 30s manual cooldown.
-    // It never bypasses an active request or a provider failure's backoff.
-    if (previous && (previous.completedAt === null || now < previous.nextAt
-      && (!options.force || previous.failures > 0 || now - previous.completedAt < 30_000))) {
-      return previous.promise;
+    // A manual refresh bypasses successful freshness and failure backoff. It
+    // still joins a request that is genuinely in flight, because that request
+    // has not produced a result yet. Backoff keeps automatic refreshes from
+    // hammering a failing provider; it must not make the Refresh button replay
+    // an already-settled answer and look dead.
+    if (previous) {
+      const inFlight = previous.completedAt === null;
+      if (inFlight || (now < previous.nextAt && !options.force)) return previous.promise;
     }
     // Do not evict throttled or in-flight entries: eviction could bypass limits.
     if (!previous && this.entries.size >= 1000) {

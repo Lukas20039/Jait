@@ -18,7 +18,7 @@ import { and, eq } from "drizzle-orm";
 import type { JaitDB } from "../db/connection.js";
 import { providerUsage } from "../db/schema.js";
 import type { NotificationService } from "./notifications.js";
-import type { CodexRateLimitsResponse, OllamaUsageResponse } from "./provider-quota-fetchers.js";
+import type { CodexRateLimitResetCredits, CodexRateLimitsResponse, OllamaUsageResponse } from "./provider-quota-fetchers.js";
 import { isOllamaQuotaUsageResponse } from "./provider-quota-fetchers.js";
 import { deriveOllamaResetWindow, parseOllamaResetSource, type OllamaResetSource } from "./provider-reset-windows.js";
 
@@ -54,6 +54,8 @@ export interface ProviderUsageSnapshot {
     unlimited?: boolean;
     balance?: string | null;
   } | null;
+  /** Unused "reset usage" credits (Codex's periodically granted reset buttons). */
+  resetCredits: CodexRateLimitResetCredits | null;
   models: Array<{ name: string; requestCount: number }>;
   activityCost: string | null;
   requestCount?: number | null;
@@ -140,6 +142,13 @@ export class ProviderUsageService {
 
   recordCodexRateLimits(accountId: string, response: CodexRateLimitsResponse): void {
     const { rateLimits } = response;
+    // A team/workspace account can be blocked while its window percentages are
+    // still below 100 (for example when workspace credits run out), so the
+    // account-level flag is authoritative for "full".
+    const accountExhausted = response.ordinaryUsageAllowed === false ||
+      rateLimits.spendControlReached === true ||
+      rateLimits.rateLimitReachedType === "workspace_member_credits_depleted" ||
+      rateLimits.credits?.hasCredits === false;
     const windows = [
       ["primary", rateLimits.primary],
       ["secondary", rateLimits.secondary],
@@ -152,14 +161,18 @@ export class ProviderUsageService {
         accountId,
         rateLimitType,
         providerType: "codex",
-        status: utilization >= 1 ? "rejected" : utilization >= WARNING_THRESHOLD ? "allowed_warning" : "allowed",
+        status: utilization >= 1 || accountExhausted ? "rejected" : utilization >= WARNING_THRESHOLD ? "allowed_warning" : "allowed",
         utilization,
+        // Codex reports epoch seconds (verified against codex-cli 0.163).
         resetsAt: typeof window.resetsAt === "number" ? new Date(window.resetsAt * 1000).toISOString() : null,
         isUsingOverage: false,
         raw: {
           planType: rateLimits.planType ?? null,
+          ordinaryUsageAllowed: response.ordinaryUsageAllowed ?? null,
           windowDurationMins: window.windowDurationMins,
+          resetSource: typeof window.resetsAt === "number" ? "provider-reported" : null,
           credits: rateLimits.credits ?? null,
+          resetCredits: response.rateLimitResetCredits ?? null,
           rateLimitReachedType: rateLimits.rateLimitReachedType ?? null,
           spendControlReached: rateLimits.spendControlReached ?? null,
         },
@@ -258,7 +271,11 @@ export class ProviderUsageService {
       this.recordSnapshot({ accountId, rateLimitType, providerType: "opencode-go",
         status: window.status === "rate-limited" ? "rejected" : window.percent >= 90 ? "allowed_warning" : "allowed",
         utilization: window.percent / 100, resetsAt: window.resetsAt, isUsingOverage: false,
-        raw: { planType: "Go", windowDurationMins },
+        raw: {
+          planType: "Go",
+          windowDurationMins,
+          resetSource: window.resetsAt ? "provider-reported" : null,
+        },
       });
     }
   }
@@ -335,6 +352,7 @@ export class ProviderUsageService {
           windowDurationMins: typeof raw.windowDurationMins === "number" ? raw.windowDurationMins : null,
           resetSource: parseOllamaResetSource(raw.resetSource),
           credits,
+          resetCredits: raw.resetCredits && typeof raw.resetCredits === "object" ? raw.resetCredits as ProviderUsageSnapshot["resetCredits"] : null,
           models,
           quotaRefreshMissing: row.providerType === "ollama" && row.rateLimitType !== "request_activity" && activityAccounts.has(row.accountId),
           requestCount: typeof raw.requestCount === "number" ? raw.requestCount : null,

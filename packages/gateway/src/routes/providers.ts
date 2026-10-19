@@ -26,7 +26,7 @@ import type { ProviderId, ProviderUpdateInfo } from "../providers/contracts.js";
 import { listJaitModels } from "../services/jait-models.js";
 import type { UserService } from "../services/users.js";
 import type { ProviderAccountService } from "../services/provider-accounts.js";
-import type { ProviderUsageService } from "../services/provider-usage.js";
+import type { ProviderUsageService, ProviderUsageSnapshot } from "../services/provider-usage.js";
 import {
   fetchOllamaUsage,
   probeOllamaAccount,
@@ -293,6 +293,29 @@ export function registerProviderRoutes(
     return summary;
   }
 
+  /**
+   * Keep the newest observation of every quota window.
+   *
+   * A cached/local row must never outvote a newer live read (that is how the
+   * modal showed "not full" while the provider was already rejecting work),
+   * and a newer observation from a normal chat must not be replaced by an
+   * older cached refresh result.
+   */
+  function mergeQuotaObservations(
+    current: ProviderUsageSnapshot[],
+    refreshed: ProviderUsageSnapshot[],
+  ): ProviderUsageSnapshot[] {
+    const merged = new Map<string, ProviderUsageSnapshot>();
+    const stamp = (quota: ProviderUsageSnapshot) => new Date(quota.updatedAt).getTime() || 0;
+    for (const quota of refreshed) merged.set(`${quota.accountId}:${quota.rateLimitType}`, quota);
+    for (const quota of current) {
+      const key = `${quota.accountId}:${quota.rateLimitType}`;
+      const existing = merged.get(key);
+      if (!existing || stamp(quota) > stamp(existing)) merged.set(key, quota);
+    }
+    return [...merged.values()];
+  }
+
   app.get("/api/provider-usage/summary", async (request, reply) => {
     const authUser = await requireAuth(request, reply, config.jwtSecret);
     if (!authUser) return;
@@ -311,14 +334,25 @@ export function registerProviderRoutes(
     const refreshed = await usageRefreshCache.run(`${authUser.id}:${fingerprint}`,
       () => readUsageSummary(authUser.id, true), {
         force: mode === "force",
-        failed: summary => summary.profiles.some(profile => Boolean(profile.error)),
+        failed: summary => summary.profiles.some(profile => Boolean(profile.error))
+          // A read that produced no quota window at all is a failed read for
+          // backoff purposes; otherwise every auto refresh retries immediately.
+          || (summary.profiles.length > 0 && summary.profiles.every(profile => profile.quotas.length === 0)),
       });
     // Always rebuild from local observations: normal chats may have supplied
     // newer quotas since the last remote refresh. Preserve refresh diagnostics.
     const current = await readUsageSummary(authUser.id, false);
     return { ...current, generatedAt: refreshed.generatedAt, profiles: current.profiles.map(profile => {
       const cached = refreshed.profiles.find(item => item.id === profile.id);
-      return { ...profile, error: cached?.error ?? profile.error, ollamaSetup: cached?.ollamaSetup };
+      return {
+        ...profile,
+        quotas: mergeQuotaObservations(profile.quotas, cached?.quotas ?? []),
+        planType: cached?.planType ?? profile.planType,
+        // A live refresh is authoritative about failures: it knows whether the
+        // provider rejected the call, whereas a cached row simply has no error.
+        error: cached ? cached.error : profile.error,
+        ollamaSetup: cached?.ollamaSetup,
+      };
     }) };
   });
 

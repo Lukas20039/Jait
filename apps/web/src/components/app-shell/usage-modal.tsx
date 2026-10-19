@@ -8,6 +8,7 @@ import { RefreshCw } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { getAuthToken } from '@/lib/auth-token'
 import { providerIcon } from '@/components/icons/provider-icons'
+import { describeResetCredits, describeUsageReset, quotaLabel, type UsageResetCredits } from '@/lib/usage-resets'
 
 import { getUsageSummary, subscribeUsageSummary, refreshUsageSummary } from '@/lib/usage-summary-store'
 
@@ -18,6 +19,8 @@ interface UsageQuotaSnapshot {
   status: string | null
   utilization: number | null
   resetsAt: string | null
+  /** How the gateway obtained `resetsAt`; Ollama reconstructs, other providers report. */
+  resetSource?: string | null
   isUsingOverage: boolean
   updatedAt: string
   planType: string | null
@@ -27,6 +30,8 @@ interface UsageQuotaSnapshot {
     unlimited?: boolean
     balance?: string | null
   } | null
+  /** Unused "reset buttons" the provider granted (Codex's rate limit reset credits). */
+  resetCredits?: UsageResetCredits | null
   models: Array<{ name: string; requestCount: number }>
   activityCost: string | null
   requestCount?: number | null
@@ -54,19 +59,6 @@ export interface UsageSummary {
   profiles: UsageProfile[]
 }
 
-const QUOTA_LABELS: Record<string, string> = {
-  request_activity: 'Request activity',
-  five_hour: '5-hour limit',
-  seven_day: 'Weekly limit',
-  seven_day_opus: 'Opus weekly limit',
-  seven_day_sonnet: 'Sonnet weekly limit',
-  seven_day_overage_included: 'Weekly extra usage',
-  monthly: 'Monthly limit',
-  overage: 'Extra usage',
-  primary: 'Primary limit',
-  secondary: 'Secondary limit',
-}
-
 function formatDateTime(iso: string | null): string {
   if (!iso) return '—'
   const date = new Date(iso)
@@ -79,31 +71,25 @@ function formatDateTime(iso: string | null): string {
   })
 }
 
-function formatReset(iso: string | null): string | null {
-  if (!iso) return null
-  const formatted = formatDateTime(iso)
-  return formatted === '—' ? null : `Resets ${formatted}`
-}
-
 function UsageBar({ quota }: { quota: UsageQuotaSnapshot }) {
   const percent = quota.utilization == null
     ? null
     : Math.round(Math.min(1, Math.max(0, quota.utilization)) * 100)
-  const reset = quota.quotaRefreshMissing ? null : formatReset(quota.resetsAt)
+  const reset = quota.quotaRefreshMissing ? null : describeUsageReset(quota.resetsAt, quota.resetSource ?? null)
 
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-3 text-sm">
-        <span>{quota.providerType === 'ollama' && quota.rateLimitType === 'five_hour' ? 'Session usage (5-hour limit)' : QUOTA_LABELS[quota.rateLimitType] ?? quota.rateLimitType}</span>
+        <span>{quota.providerType === 'ollama' && quota.rateLimitType === 'five_hour' ? 'Session usage (5-hour limit)' : quotaLabel(quota.rateLimitType)}</span>
         <span className="shrink-0 tabular-nums font-medium">
-          {quota.requestCount != null ? `${quota.requestCount.toLocaleString()} requests` : percent == null ? (quota.status ?? 'Unavailable') : `${percent}% used${quota.quotaRefreshMissing ? ' (last reported)' : ''}`}
+          {quota.requestCount != null ? `${quota.requestCount.toLocaleString()} requests` : percent == null ? (quota.status ?? 'Unavailable') : `${percent}% used${quota.status === 'rejected' && percent < 100 ? ' · limit reached' : ''}${quota.quotaRefreshMissing ? ' (last reported)' : ''}`}
         </span>
       </div>
       {percent != null && (
         <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
             className={`h-full rounded-full transition-all ${
-              percent >= 90 ? 'bg-red-500' : percent >= 75 ? 'bg-amber-500' : 'bg-emerald-500'
+              quota.status === 'rejected' || percent >= 90 ? 'bg-red-500' : percent >= 75 ? 'bg-amber-500' : 'bg-emerald-500'
             }`}
             style={{ width: `${percent}%` }}
           />
@@ -111,7 +97,12 @@ function UsageBar({ quota }: { quota: UsageQuotaSnapshot }) {
       )}
       <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
         {quota.usagePeriod && <span>{formatDateTime(quota.usagePeriod.from)} – {formatDateTime(quota.usagePeriod.until)}</span>}
-        {reset && <span>{reset}</span>}
+        {reset && (
+          <span title={reset.title}>
+            {reset.text}
+            {reset.estimated ? ' · est.' : ''}
+          </span>
+        )}
         <span>Updated {formatDateTime(quota.updatedAt)}</span>
         {quota.activityCost && <span>Cost {quota.activityCost}</span>}
       </div>
@@ -133,6 +124,7 @@ function UsageBar({ quota }: { quota: UsageQuotaSnapshot }) {
 function ProfileUsage({ profile, retry, loading }: { profile: UsageProfile; retry: () => Promise<void>; loading: boolean }) {
   const plan = profile.planType ?? profile.quotas.find((quota) => quota.planType)?.planType
   const credits = profile.quotas.find((quota) => quota.credits)?.credits
+  const resetCredits = describeResetCredits(profile.quotas.find((quota) => quota.resetCredits)?.resetCredits)
 
   return (
     <div className="space-y-4">
@@ -144,6 +136,14 @@ function ProfileUsage({ profile, retry, loading }: { profile: UsageProfile; retr
           </p>
           {profile.accountLabel && (
             <p className="truncate text-xs text-muted-foreground">{profile.accountLabel}</p>
+          )}
+          {resetCredits && (
+            <p
+              title={`${resetCredits.title}\nSpend a reset in the provider's app to clear your limits immediately.`}
+              className="text-xs text-emerald-600 dark:text-emerald-400"
+            >
+              ↺ {resetCredits.text}
+            </p>
           )}
         </div>
         {plan && (
@@ -362,6 +362,9 @@ export function UsageModal({ open, onOpenChange }: { open: boolean; onOpenChange
                     .map((quota) => quota.utilization)
                     .filter((value): value is number => value != null),
                 )
+                // A workspace can be blocked while its windows are below 100%
+                // (e.g. exhausted credits), so the stored status is authoritative.
+                const exhausted = profile.quotas.some((quota) => quota.status === 'rejected')
                 return (
                   <button
                     type="button"
@@ -376,7 +379,11 @@ export function UsageModal({ open, onOpenChange }: { open: boolean; onOpenChange
                       <span className="block truncate text-sm font-medium">{profile.providerLabel}</span>
                       <span className="block truncate text-xs text-muted-foreground">{profile.profileLabel}</span>
                     </span>
-                    {bestPercent >= 0 && (
+                    {exhausted ? (
+                      <span className="shrink-0 rounded-full bg-red-500/10 px-1.5 py-0.5 text-xs font-medium text-red-600 dark:text-red-400">
+                        Full
+                      </span>
+                    ) : bestPercent >= 0 && (
                       <span className="text-xs tabular-nums text-muted-foreground">
                         {Math.round(bestPercent * 100)}%
                       </span>

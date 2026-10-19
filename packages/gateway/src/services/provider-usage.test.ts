@@ -30,7 +30,7 @@ describe("ProviderUsageService", () => {
     const window = { status: "ok" as const, percent: 20, resetsAt: "2026-10-09T12:00:00Z" };
     service.recordOpenCodeGoUsage("go", { usage: { rolling: window, weekly: { ...window, percent: 90 }, monthly: { ...window, status: "rate-limited", percent: 100 } } });
     expect(service.listForUser(["go"])).toEqual(expect.arrayContaining([
-      expect.objectContaining({ providerType: "opencode-go", rateLimitType: "five_hour", utilization: 0.2, resetsAt: window.resetsAt }),
+      expect.objectContaining({ providerType: "opencode-go", rateLimitType: "five_hour", utilization: 0.2, resetsAt: window.resetsAt, resetSource: "provider-reported" }),
       expect.objectContaining({ rateLimitType: "seven_day", utilization: 0.9, status: "allowed_warning" }),
       expect.objectContaining({ rateLimitType: "monthly", utilization: 1, status: "rejected" }),
     ]));
@@ -236,11 +236,88 @@ describe("ProviderUsageService", () => {
           rateLimitType: "five_hour",
           utilization: 0.12,
           planType: "plus",
+          resetsAt: new Date(1_700_000_000 * 1000).toISOString(),
+          resetSource: "provider-reported",
         }),
         expect.objectContaining({
           rateLimitType: "seven_day",
           utilization: 0.34,
           credits: { hasCredits: true, balance: "7.50" },
+          resetSource: "provider-reported",
+        }),
+      ]),
+    );
+  });
+
+  it("keeps Codex reset credits available to spend on every window row", () => {
+    const service = new ProviderUsageService(db);
+    service.recordCodexRateLimits("codex-account", {
+      rateLimits: {
+        primary: { usedPercent: 12, windowDurationMins: 300, resetsAt: 1_700_000_000 },
+      },
+      rateLimitResetCredits: {
+        availableCount: 2,
+        credits: [
+          {
+            id: "RateLimitResetCredit_1",
+            resetType: "codexRateLimits",
+            status: "available",
+            grantedAt: 1_700_000_000,
+            expiresAt: 1_702_000_000,
+            title: "Full reset (Weekly + 5 hr)",
+          },
+        ],
+      },
+    });
+
+    const snapshots = service.listForUser(["codex-account"]);
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0]?.resetCredits).toEqual({
+      availableCount: 2,
+      credits: [
+        expect.objectContaining({ title: "Full reset (Weekly + 5 hr)", status: "available" }),
+      ],
+    });
+  });
+
+  it("marks every Codex window as full when workspace credits are depleted", () => {
+    const service = new ProviderUsageService(db);
+    // Shape reported by the live Work (team) account: the workspace blocks
+    // ordinary usage even though only the 5h window sits at 100%.
+    service.recordCodexRateLimits("codex-work", {
+      ordinaryUsageAllowed: false,
+      rateLimits: {
+        primary: {
+          usedPercent: 100,
+          windowDurationMins: 300,
+          resetsAt: 1_792_364_608,
+        },
+        secondary: {
+          usedPercent: 63,
+          windowDurationMins: 10_080,
+          resetsAt: 1_792_500_000,
+        },
+        planType: "team",
+        rateLimitReachedType: "workspace_member_credits_depleted",
+        spendControlReached: false,
+        credits: { hasCredits: false },
+      },
+    });
+
+    const snapshots = service.listForUser(["codex-work"]);
+    expect(snapshots).toHaveLength(2);
+    expect(snapshots).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          rateLimitType: "five_hour",
+          utilization: 1,
+          status: "rejected",
+          planType: "team",
+        }),
+        expect.objectContaining({
+          rateLimitType: "seven_day",
+          utilization: 0.63,
+          status: "rejected",
         }),
       ]),
     );
