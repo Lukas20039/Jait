@@ -1,5 +1,5 @@
 import { MoreHorizontal } from 'lucide-react'
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -12,52 +12,33 @@ interface OverflowSidebarNavigationProps {
   collapsed: boolean
   renderItem: (item: ModeSidebarItem) => ReactNode
   separated?: boolean
+  /**
+   * How many items fit inline. Decided centrally by ModeSidebar via
+   * allocateRailSections so both sections share the rail's real height —
+   * this section never hides items another section has room for.
+   * Defaults to showing everything before the rail has been measured.
+   */
+  visibleCount?: number
 }
 
-export function OverflowSidebarNavigation({ label, moreLabel, items, collapsed, renderItem, separated = false }: OverflowSidebarNavigationProps) {
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [space, setSpace] = useState<{ height: number; rem: number } | null>(null)
-
-  useLayoutEffect(() => {
-    const content = contentRef.current
-    if (!content) return
-    const measure = () => {
-      const next = { height: content.getBoundingClientRect().height, rem: parseFloat(getComputedStyle(document.documentElement).fontSize) }
-      setSpace(previous => previous?.height === next.height && previous.rem === next.rem ? previous : next)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(content)
-    return () => observer.disconnect()
-  }, [])
-
-  // Keep the flex basis at the full list's height, even when some items move to
-  // the menu. Otherwise hiding items would change allocation between the lists.
-  const heights = items.map(item => !collapsed && item.description ? 3 : 2.25)
-  const fullHeight = heights.reduce((sum, height) => sum + height, 0) + Math.max(0, items.length - 1) * 0.25
-  let visibleCount = items.length
-  if (space && fullHeight * space.rem > space.height + 0.5) {
-    visibleCount = 0
-    let used = 2.25 // Reserve the three-dot button.
-    for (const height of heights) {
-      if ((used + height + 0.25) * space.rem > space.height + 0.5) break
-      used += height + 0.25
-      visibleCount++
-    }
-  }
+/**
+ * One vertical rail section: the first `visibleCount` items inline, the rest
+ * behind a three-dot button. The vertical slot allocation lives in
+ * rail-allocation.ts; this component only renders the decision.
+ */
+export function OverflowSidebarNavigation({ label, moreLabel, items, collapsed, renderItem, separated = false, visibleCount = items.length }: OverflowSidebarNavigationProps) {
+  const shownItems = items.slice(0, visibleCount)
   const hiddenItems = items.slice(visibleCount)
   const hasActiveItem = hiddenItems.some(item => item.active)
   const badge = hiddenItems.reduce((sum, item) => sum + (item.badge || 0), 0)
-  const padding = separated ? 0.75 : 1.5
 
   return (
     <nav
       aria-label={label}
       className={separated ? 'flex flex-col border-b pb-3' : 'flex flex-col py-3'}
-      style={{ flexBasis: `calc(${fullHeight + padding}rem + ${separated ? 1 : 0}px)`, minHeight: `calc(${2.25 + padding}rem + ${separated ? 1 : 0}px)` }}
     >
-      <div ref={contentRef} className="flex min-h-0 flex-1 flex-col gap-1 overflow-hidden">
-        {items.slice(0, visibleCount).map(renderItem)}
+      <div className="flex min-h-0 flex-col gap-1 overflow-hidden">
+        {shownItems.map(renderItem)}
         {hiddenItems.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

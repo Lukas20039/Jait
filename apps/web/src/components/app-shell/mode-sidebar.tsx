@@ -1,11 +1,12 @@
 import { BarChart3, LogIn, LogOut, Monitor, Moon, PanelLeftClose, PanelLeftOpen, Settings, Sun, Network, type LucideIcon } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { OverflowSidebarNavigation } from './overflow-sidebar-navigation'
+import { allocateRailSections } from './rail-allocation'
 import { UsageModal } from '@/components/app-shell/usage-modal'
 import { CatalogueModal } from '@/components/app-shell/catalogue-modal'
 import { JaitIcon } from '@/components/icons/model-icons'
@@ -51,6 +52,61 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
   useEffect(() => {
     window.localStorage.setItem('jait.navigationSidebarCollapsed', String(collapsed))
   }, [collapsed])
+
+  // Both overflow sections share one measured rail area. The shared allocator
+  // (rail-allocation.ts) deals the real pixel height between them, so a
+  // three-dot button only appears when its section's items genuinely cannot
+  // fit — never while the rail still has room for more buttons.
+  const railRef = useRef<HTMLDivElement>(null)
+  const [railHeight, setRailHeight] = useState<number | null>(null)
+
+  useLayoutEffect(() => {
+    const rail = railRef.current
+    if (!rail) return
+    const measure = () => setRailHeight(rail.getBoundingClientRect().height)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(rail)
+    return () => observer.disconnect()
+  }, [])
+
+  // Rail buttons get their height from CSS (the ui Button size variants can
+  // override the item's h-* class), so the fit calculation must not assume a
+  // fixed size. The off-screen sample renders plain and description items
+  // through renderItem — the exact markup the sections use — and is measured
+  // the same way the rail is.
+  const sampleRef = useRef<HTMLDivElement>(null)
+  const [buttonHeights, setButtonHeights] = useState<{ regular: number; description: number } | null>(null)
+
+  useLayoutEffect(() => {
+    const sample = sampleRef.current
+    if (!sample) return
+    const measure = () => {
+      const [regularEl, descriptionEl] = Array.from(sample.children) as HTMLElement[]
+      if (!regularEl) return
+      const regular = regularEl.getBoundingClientRect().height
+      const description = descriptionEl ? descriptionEl.getBoundingClientRect().height : regular
+      setButtonHeights(previous => previous?.regular === regular && previous.description === description ? previous : { regular, description })
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(sample)
+    return () => observer.disconnect()
+  }, [collapsed])
+
+  const heightFor = (item: ModeSidebarItem) =>
+    buttonHeights === null ? 36 : (!collapsed && item.description ? buttonHeights.description : buttonHeights.regular)
+  const navigationHeights = navigationItems.map(heightFor)
+  const toolsHeights = items.map(heightFor)
+  // Wrapper chrome around each section's content: the separated nav adds
+  // pb-3 + border-b (13px), the plain nav py-3 (24px).
+  const wrapperChrome = (navigationItems.length > 0 ? 13 : 0) + (items.length > 0 ? 24 : 0)
+  const availableContent = railHeight === null ? Number.POSITIVE_INFINITY : Math.max(0, railHeight - wrapperChrome)
+  const [navigationAllocation, toolsAllocation] = allocateRailSections(
+    [{ itemHeights: navigationHeights }, { itemHeights: toolsHeights }],
+    availableContent,
+    buttonHeights?.regular ?? 36,
+  )
 
   const renderItem = (item: ModeSidebarItem) => {
     const Icon = item.icon
@@ -104,9 +160,10 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
         <JaitIcon size={22} className="shrink-0" />
       </div>
       {header && <div className={collapsed ? 'flex shrink-0 flex-col items-center gap-1 pb-3' : 'shrink-0 px-1 pb-3'}>{header(collapsed)}</div>}
-      {navigationItems.length > 0 && <OverflowSidebarNavigation label="Main navigation" moreLabel="More navigation options" items={navigationItems} collapsed={collapsed} renderItem={renderItem} separated />}
-      {items.length > 0 && <OverflowSidebarNavigation label="Workspace tools" moreLabel="More workspace tools" items={items} collapsed={collapsed} renderItem={renderItem} />}
-      <div className="flex-1" />
+      <div ref={railRef} className="flex min-h-0 flex-1 flex-col">
+        {navigationItems.length > 0 && <OverflowSidebarNavigation label="Main navigation" moreLabel="More navigation options" items={navigationItems} collapsed={collapsed} renderItem={renderItem} visibleCount={navigationAllocation.visibleCount} separated />}
+        {items.length > 0 && <OverflowSidebarNavigation label="Workspace tools" moreLabel="More workspace tools" items={items} collapsed={collapsed} renderItem={renderItem} visibleCount={toolsAllocation.visibleCount} />}
+      </div>
       <div className="flex shrink-0 flex-col gap-1 border-t pt-2">
         {account?.updateControl?.(collapsed)}
         {bottomItems.map(renderItem)}
@@ -151,6 +208,11 @@ export function ModeSidebar({ items, navigationItems = [], bottomItems = [], hea
         ) : (
           <Button variant="ghost" className={`h-10 w-full ${collapsed ? 'justify-center px-0' : 'justify-start px-3'}`} onClick={account.onLogin} aria-label="Sign in">{collapsed ? <LogIn className="h-4 w-4" /> : 'Sign in'}</Button>
         ))}
+      </div>
+      {/* Off-screen sample used to measure real rail button heights. */}
+      <div ref={sampleRef} aria-hidden="true" className="pointer-events-none absolute left-[-9999px] top-0 flex flex-col gap-1">
+        {renderItem({ id: 'rail-measure-regular', label: 'Measure', icon: Sun, onSelect: () => {} })}
+        {renderItem({ id: 'rail-measure-description', label: 'Measure', description: 'Measure', icon: Sun, onSelect: () => {} })}
       </div>
       <UsageModal open={usageModalOpen} onOpenChange={setUsageModalOpen} />
       <CatalogueModal open={catalogueModalOpen} onOpenChange={setCatalogueModalOpen} />
