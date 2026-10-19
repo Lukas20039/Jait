@@ -5,6 +5,7 @@
  * Codex sessions proxied via WS.
  */
 
+import { parseCodexUsage } from "./usage.js";
 import type { ProviderEvent } from "./contracts.js";
 
 // ── Public API ───────────────────────────────────────────────────────
@@ -222,9 +223,13 @@ export function mapCodexNotification(
     case "item/plan/delta":
     case "turn/plan/updated":
     case "turn/diff/updated":
-    case "thread/tokenUsage/updated":
-    case "codex/event/token_count":
       return [];
+
+    case "thread/tokenUsage/updated":
+    case "codex/event/token_count": {
+      const usage = parseCodexUsage(params);
+      return usage ? [{ type: "usage", sessionId, usage }] : [];
+    }
 
     // ── Known lifecycle / status notifications → emit as activity ──
     case "thread/started":

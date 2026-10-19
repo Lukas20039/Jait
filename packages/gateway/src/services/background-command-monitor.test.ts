@@ -277,3 +277,28 @@ describe("extractCompletionOutput", () => {
     expect(out).toBe("one\ntwo");
   });
 });
+
+
+describe("BackgroundCommandMonitor cancellation during output delivery", () => {
+  afterEach(() => backgroundCommandMonitor.clearForTests());
+  it.each([undefined, "__JAIT_BACKGROUND_DONE_abc-123__"])("does not complete or notify when onOutput cancels the session (token=%s)", async (completionToken) => {
+    const surface = new FakeSurface();
+    const complete = vi.fn();
+    const stopped = vi.fn();
+    const notified = vi.fn();
+    backgroundCommandMonitor.setCompletionHandler(notified);
+    backgroundCommandMonitor.track({
+      sessionId: "cancel-during-output", terminalId: "terminal", command: "run", surface,
+      onOutput: () => backgroundCommandMonitor.stopForSession("cancel-during-output"),
+      onComplete: complete, onStop: stopped, completionToken,
+    });
+    surface.emit("run\r\nresult\r\n" + oscDone(0));
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(complete).not.toHaveBeenCalled();
+    expect(notified).not.toHaveBeenCalled();
+    expect(stopped).toHaveBeenCalledTimes(1);
+    expect(surface.listenerCount).toBe(0);
+    expect(backgroundCommandMonitor.activeCount).toBe(0);
+  });
+});

@@ -1,3 +1,4 @@
+import { serializeToolResultForModel } from "./model-result.js";
 import { fetchJaitLlm } from "../services/opencode-go-fetch.js";
 import { llmRequestHeaders } from "../services/llm-headers.js";
 import { evaluateDecision, systemOneEnabled, SYSTEM_ONE_PROMPT } from "../services/system-one.js";
@@ -90,6 +91,7 @@ export interface LlmContextFlowRound {
 
 /** Per-round performance and token metrics. */
 export interface RoundMetrics {
+  requestCount?: number;
   /** Wall-clock duration of the LLM request in ms. */
   durationMs: number;
   /** Provider-reported token usage (when available). */
@@ -1344,8 +1346,8 @@ export function buildTieredToolSchemas(
 
   for (const name of options?.activatedToolNames ?? []) includeTool(registry.get(name));
   if (options?.query?.trim()) {
-    const selectionLimit = options.selectionLimit ?? (options.ollamaEssentials ? 5 : 10);
-    for (const tool of registry.selectForLLM(options.query, disabledTools, selectionLimit)) includeTool(tool);
+    const selectionLimit = options.selectionLimit ?? 0;
+    if (selectionLimit > 0) for (const tool of registry.selectForLLM(options.query, disabledTools, selectionLimit)) includeTool(tool);
   }
 
   registerOpenAINameMappings(tools.map((t) => t.name));
@@ -1357,7 +1359,7 @@ export async function buildSystemOneToolSchemas(
   registry: ToolRegistry, disabledTools?: Set<string>,
   options?: Parameters<typeof buildTieredToolSchemas>[2] & { allowedTools?: Set<string> }, apiKeys?: Record<string, string>,
 ): Promise<OpenAIToolSchema[]> {
-  if (!systemOneEnabled(apiKeys)) return buildTieredToolSchemas(registry, disabledTools, options);
+  if (!systemOneEnabled(apiKeys) || !options?.selectionLimit) return buildTieredToolSchemas(registry, disabledTools, options);
   const selected = options?.query?.trim() ? await registry.rankSearchWithSystemOne(options.query, {
     disabledTools, limit: options.selectionLimit ?? (options.ollamaEssentials ? 5 : 10),
     candidates: registry.list().filter(tool => (tool.tier ?? "standard") !== "core" && (!options.allowedTools || options.allowedTools.has(tool.name))),
@@ -2028,67 +2030,7 @@ export type ToolExecutor = (
 
 const DEFAULT_MAX_RETRIES = 2;
 /** Max characters for a single tool result message before truncation (~8k tokens). */
-const TOOL_RESULT_MAX_CHARS = 30_000;
-
-/**
- * Caps a tool result's structured `data` payload the same way `message` is capped above.
- * Without this, a single call whose bulk content lives in `data` (e.g. `chat.traces` on a
- * large session, or any tool returning megabytes of structured output) can inject an
- * uncapped multi-megabyte blob straight into the model's conversation history — `message`
- * stays a short summary, so the truncation above never fires. That single oversized entry
- * would otherwise sit in history verbatim until the Codex-style compaction trigger fires,
- * wasting a large share of the window and forcing an early summarization of everything.
- */
-function capToolResultData(data: unknown): unknown {
-  if (data === undefined || data === null) return data;
-  const serialized = JSON.stringify(data);
-  if (serialized === undefined || serialized.length <= TOOL_RESULT_MAX_CHARS) return data;
-  return {
-    truncated: true,
-    originalChars: serialized.length,
-    preview: serialized.slice(0, TOOL_RESULT_MAX_CHARS),
-  };
-}
-
-/**
- * Result `data` keys that exist purely for the chat UI and must never reach the
- * model.
- *
- * `terminalOutputAnsi` is the ANSI-preserving replay of a command's PTY output
- * that tool-call-card.tsx feeds to xterm so a settled card looks like the live
- * view. Escape sequences are pure noise in a conversation: they cost tokens,
- * break readability, and some providers mangle or reject them. The plain
- * `terminalOutput`/`output` strings remain available to the model.
- */
-const UI_ONLY_TOOL_RESULT_KEYS = ["terminalOutputAnsi"] as const;
-
-function stripUiOnlyToolResultFields(data: unknown): unknown {
-  if (!data || typeof data !== "object" || Array.isArray(data)) return data;
-  const clone: Record<string, unknown> = { ...(data as Record<string, unknown>) };
-  for (const key of UI_ONLY_TOOL_RESULT_KEYS) delete clone[key];
-  return clone;
-}
-
-/** Serialize the model-facing result once, omitting data fields that repeat its message. */
-export function serializeToolResultForModel(
-  result: Pick<ToolResult, "ok" | "message" | "data">,
-): string {
-  const message = result.message.length > TOOL_RESULT_MAX_CHARS
-    ? result.message.slice(0, TOOL_RESULT_MAX_CHARS)
-      + `\n\n[truncated — ${result.message.length} chars total, showing first ${TOOL_RESULT_MAX_CHARS}]`
-    : result.message;
-  let data = capToolResultData(stripUiOnlyToolResultFields(result.data));
-  if (data && typeof data === "object" && !Array.isArray(data)) {
-    const compactData = Object.fromEntries(
-      Object.entries(data as Record<string, unknown>)
-        .filter(([, value]) => value !== result.message),
-    );
-    data = Object.keys(compactData).length > 0 ? compactData : undefined;
-  }
-  return JSON.stringify(data === undefined
-    ? { ok: result.ok, message }
-    : { ok: result.ok, message, data });
-}
+export { serializeToolResultForModel } from "./model-result.js";
 /** Max times we re-prompt when detecting plain-text tool calls in content. */
 const MAX_PLAIN_TEXT_RETRIES = 2;
 /** Max times we re-prompt when a provider ends a round without text or tool calls. */
@@ -3605,7 +3547,7 @@ export async function runAgentLoop(
 
       // Attach metrics to the round now that streaming is complete
       const durationMs = Date.now() - llmStartTime;
-      const metrics: RoundMetrics = { durationMs };
+      const metrics: RoundMetrics = { requestCount: 1, durationMs };
       if (parsed.usage) {
         metrics.promptTokens = parsed.usage.prompt_tokens;
         metrics.cachedPromptTokens = parsed.usage.cached_tokens;

@@ -1,3 +1,4 @@
+import { parseAcpUsage } from "./usage.js";
 import { spawn, execFile, type ChildProcess } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { createRequire } from "node:module";
@@ -1076,6 +1077,8 @@ export class AcpProvider implements CliProviderAdapter {
         sessionId: state.acpSessionId,
         prompt,
       });
+      const usage = parseAcpUsage(result.usage, uuidv7());
+      if (usage) this.emitEvent({ type: "usage", sessionId, usage });
       const failure = state.turnError ?? readAcpSessionFailure(result._meta);
       if (failure) throw new Error(failure);
       if (result.stopReason === "cancelled") {

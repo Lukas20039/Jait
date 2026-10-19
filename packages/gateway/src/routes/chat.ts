@@ -1,3 +1,4 @@
+import { TurnUsageAccumulator, summarizeUsage } from "../providers/usage.js";
 import { agentHaltedBody, type AgentControlService, type AgentStopResult } from "../services/agent-control.js";
 import type { TeamChatService } from "../services/team-chat.js";
 import { rankSystemOne, systemOneEnabled, SYSTEM_ONE_PROMPT } from "../services/system-one.js";
@@ -107,6 +108,7 @@ interface LlmContextFlow {
   provider: string;
   model?: string;
   rounds: LlmContextFlowRound[];
+  usageSummary?: import("@jait/shared").UsageSummary;
   note?: string;
   memory?: LlmContextFlowMemory;
 }
@@ -155,6 +157,7 @@ function compactContextMemory(memory: LlmContextFlowMemory | undefined, severe =
 }
 
 function serializePersistedContextFlow(flow: LlmContextFlow): string {
+  flow = { ...flow, usageSummary: "truncatedRounds" in flow || "truncated" in flow ? flow.usageSummary ?? summarizeUsage(flow.rounds) : summarizeUsage(flow.rounds) };
   let json = JSON.stringify(flow);
   if (Buffer.byteLength(json, "utf8") <= MAX_PERSISTED_CONTEXT_FLOW_BYTES) return json;
 
@@ -3745,7 +3748,7 @@ export function registerChatRoutes(
     const promptCtx: PromptContext = {
       systemOne: systemOneEnabled(userApiKeys) && !userSettings?.disabledTools?.includes("decision.evaluate"),
       projectRoot: wsRoot,
-      skills: await rankSystemOne(userApiKeys, content, availableSkills, skill => `${skill.name}: ${skill.description}`, "skill for the system prompt"),
+      skills: availableSkills,
       architectureGraph,
       responseStyle,
       ...((projectInstructions || teamInstructions) ? { projectInstructions: [projectInstructions, teamInstructions].filter(Boolean).join("\n\n") } : {}),
@@ -4361,6 +4364,12 @@ export function registerChatRoutes(
           }
         };
 
+        const usageKey = "chat.providerUsage";
+        const savedUsage = sessionStateService?.get(sessionId, [usageKey])[usageKey] as { providerSessionId?: string; baseline?: import("@jait/shared").ModelUsage } | undefined;
+        const usageAccumulator = new TurnUsageAccumulator(
+          savedUsage?.providerSessionId === providerSessionId ? savedUsage.baseline : undefined,
+          isNewCliSession,
+        );
         activeCliTurns.add(sessionId);
         cliEventUnsubscribe = cliProvider.onEvent((event: ProviderEvent) => {
           if (event.sessionId !== providerSessionId) {
@@ -4369,6 +4378,12 @@ export function registerChatRoutes(
 
           // Map provider events to SSE events the frontend understands
           switch (event.type) {
+            case "usage":
+              usageAccumulator.add(event.usage);
+              if (usageAccumulator.baseline) sessionStateService?.set(sessionId, {
+                [usageKey]: { providerSessionId, baseline: usageAccumulator.baseline },
+              });
+              break;
             case "token":
               // If there's a pending tool group, flush it first
               flushToolGroup();
@@ -4815,7 +4830,10 @@ export function registerChatRoutes(
         if (contextFlowJson) {
           try {
             const flow = JSON.parse(contextFlowJson) as LlmContextFlow;
-            attachCliTurnMetrics(flow, fullContent, cliToolCalls, Date.now() - turnStartedAt);
+            const measuredUsage = usageAccumulator.metrics(Date.now() - turnStartedAt);
+            if (measuredUsage && flow.rounds[0]) flow.rounds[0].metrics = measuredUsage;
+            else attachCliTurnMetrics(flow, fullContent, cliToolCalls, Date.now() - turnStartedAt);
+            flow.usageSummary = summarizeUsage(flow.rounds);
             contextFlowJson = serializePersistedContextFlow(flow);
             const usage = flow.rounds[0]?.metrics?.contextUsage;
             if (usage) {

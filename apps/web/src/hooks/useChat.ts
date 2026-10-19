@@ -336,6 +336,7 @@ export interface LlmContextFlowRound {
 
 /** Per-round performance and token metrics. */
 export interface RoundMetrics {
+  requestCount?: number;
   durationMs: number
   promptTokens?: number
   cachedPromptTokens?: number
@@ -356,6 +357,7 @@ export interface RoundMetrics {
 }
 
 export interface LlmContextFlow {
+  usageSummary?: import("@jait/shared").UsageSummary;
   provider: string
   model?: string
   rounds: LlmContextFlowRound[]

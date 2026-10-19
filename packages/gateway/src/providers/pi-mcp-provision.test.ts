@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { existsSync, readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { dirname, join, resolve } from "node:path";
+import { describe, expect, it, vi } from "vitest";
 import { isPiBasedProvider, provisionPiMcp } from "./pi-mcp-provision.js";
 import { JAIT_CORE_MCP_SERVER_NAME, JAIT_DEFERRED_MCP_SERVER_NAME } from "./jait-mcp.js";
 import type { McpServerRef } from "./contracts.js";
@@ -89,5 +90,55 @@ describe("pi-mcp-provision", () => {
     expect(existsSync(dir)).toBe(false);
     // idempotent
     provision.cleanup();
+  });
+});
+
+
+const reproRoot = resolve(import.meta.dirname, "../../../../.jait/artifacts/gateway-rust/pi-provision-repro");
+function restoreTmpdir(previous: string | undefined) {
+  if (previous === undefined) delete process.env.TMPDIR;
+  else process.env.TMPDIR = previous;
+}
+describe("pi provisioning regressions", () => {
+  it.skipIf(process.platform === "win32")("preserves literal shell characters in command and config paths", () => {
+    mkdirSync(reproRoot, { recursive: true });
+    const fixture = mkdtempSync(join(reproRoot, 'paths "$JAIT_PI_MARKER"-'));
+    const realPi = join(fixture, 'pi "$JAIT_PI_MARKER"');
+    writeFileSync(realPi, "#!/usr/bin/env node\nprocess.stdout.write(JSON.stringify(process.argv.slice(2)));\n", { mode: 0o755 });
+    const previous = process.env.TMPDIR;
+    process.env.TMPDIR = fixture;
+    const provision = provisionPiMcp("pi", httpRefs, { sessionId: "literal", realPiCommand: realPi })!;
+    try {
+      const args = ["literal $arg", "two words", "; &"];
+      const child = spawnSync(provision.env.PI_ACP_PI_COMMAND!, args, { encoding: "utf8", env: { ...process.env, JAIT_PI_MARKER: "expanded" } });
+      expect(child.status, child.stderr).toBe(0);
+      expect(JSON.parse(child.stdout)).toEqual(["--mcp-config", join(dirname(provision.env.PI_ACP_PI_COMMAND!), "mcp.json"), ...args]);
+    } finally {
+      provision.cleanup(); restoreTmpdir(previous); rmSync(fixture, { recursive: true, force: true });
+    }
+  });
+
+  it("returns null when the provisioning root cannot contain a directory", () => {
+    mkdirSync(reproRoot, { recursive: true });
+    const fixture = mkdtempSync(join(reproRoot, "root-error-"));
+    const blocked = join(fixture, "not-a-directory");
+    writeFileSync(blocked, "fixture");
+    const previous = process.env.TMPDIR; process.env.TMPDIR = blocked;
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      let result: ReturnType<typeof provisionPiMcp> | undefined;
+      expect(() => { result = provisionPiMcp("pi", httpRefs, { sessionId: "root-error" }); }).not.toThrow();
+      expect(result).toBeNull(); expect(warning).toHaveBeenCalledTimes(1);
+    } finally { restoreTmpdir(previous); warning.mockRestore(); rmSync(fixture, { recursive: true, force: true }); }
+  });
+
+  it("retains a server literally named __proto__", () => {
+    const refs: McpServerRef[] = [{ name: "__proto__", transport: "http", url: "http://example.test/mcp" }];
+    const provision = provisionPiMcp("pi", refs, { sessionId: "prototype" })!;
+    try {
+      const config = JSON.parse(readFileSync(join(dirname(provision.env.PI_ACP_PI_COMMAND!), "mcp.json"), "utf8"));
+      expect(Object.hasOwn(config.mcpServers, "__proto__")).toBe(true);
+      expect(config.mcpServers.__proto__).toEqual({ url: "http://example.test/mcp", lifecycle: "lazy" });
+    } finally { provision.cleanup(); }
   });
 });

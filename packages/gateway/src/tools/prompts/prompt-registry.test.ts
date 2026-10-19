@@ -165,10 +165,15 @@ describe("buildSystemPrompt", () => {
       skills,
     });
 
-    expect(prompt).toContain("<available_skills>");
-    expect(prompt).toContain("<name>Word / DOCX</name>");
-    expect(prompt).toContain("<location>C:/skills/word-docx/SKILL.md</location>");
-    expect(prompt).toContain("Use the file.read tool to load a skill's content");
+    // Discovery-first contract: enabled skills contribute the lazy
+    // <skillDiscovery> instruction, never an eager catalog with names,
+    // descriptions and file paths (that was ~19k chars of per-request overhead).
+    expect(prompt).toContain("<skillDiscovery>");
+    expect(prompt).toContain("skills.search");
+    expect(prompt).toContain("skills.read");
+    expect(prompt).not.toContain("<available_skills>");
+    expect(prompt).not.toContain("C:/skills/word-docx/SKILL.md");
+    expect(prompt).not.toContain("<name>Word / DOCX</name>");
   });
 
   it("injects response style instructions when requested", () => {

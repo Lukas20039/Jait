@@ -274,6 +274,8 @@ class BackgroundCommandMonitor {
     const cleanup = () => {
       if (stopped) return;
       stopped = true;
+      // Cancellation/expiry also ends in-flight output delivery.
+      finished = true;
       if (timer) clearTimeout(timer);
       if (graceTimer) clearTimeout(graceTimer);
       try {
@@ -311,6 +313,8 @@ class BackgroundCommandMonitor {
       if (finished) return;
       raw += data;
       options.onOutput?.(raw);
+      // onOutput can synchronously cancel this watcher.
+      if (finished) return;
 
       // The sentinel echoes `$?` for the command itself, so it beats the OSC
       // marker whenever both are available.

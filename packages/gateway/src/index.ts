@@ -1083,6 +1083,8 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
   // because the plugin manager itself depends on the tool registry).
   const { createSkillsManageTool, createExtensionsManageTool } = await import("./tools/index.js");
   toolRegistry.register(createSkillsManageTool({ skillRegistry, clawhub: clawhubClient }));
+  const { createSkillDiscoveryTools } = await import("./tools/skill-discovery-tools.js");
+  for (const tool of createSkillDiscoveryTools(skillRegistry)) toolRegistry.register(tool);
   toolRegistry.register(createExtensionsManageTool({ pluginManager, clawhub: clawhubClient }));
 
   // Voice assistant (OpenAI Realtime — global session, not project-scoped)

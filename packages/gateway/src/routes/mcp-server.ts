@@ -1,3 +1,4 @@
+import { projectModelData, boundModelData } from "../tools/model-result.js";
 /**
  * MCP HTTP Server — exposes Jait's tool registry as MCP-compatible endpoints.
  *
@@ -82,7 +83,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
-export function mcpContentForToolResult(result: ToolResult): McpToolContent[] {
+export function mcpContentForToolResult(uiResult: ToolResult): McpToolContent[] {
+  const result = { ...uiResult, data: projectModelData(uiResult.data) };
   if (typeof result.data === "string") return [{ type: "text", text: capMcpToolResultText(result.data) }];
 
   if (isRecord(result.data) && isRecord(result.data.screenshot)) {
@@ -94,7 +96,7 @@ export function mcpContentForToolResult(result: ToolResult): McpToolContent[] {
       return [
         {
           type: "text",
-          text: capMcpToolResultText(result.message + (Object.keys(sanitizedData).length > 0 ? `\n${JSON.stringify(sanitizedData)}` : "")),
+          text: capMcpToolResultText(result.message + (Object.keys(sanitizedData).length > 0 ? `\n${JSON.stringify(boundModelData(sanitizedData, MAX_MCP_TOOL_RESULT_TEXT_CHARS - Math.min(result.message.length, 1000) - 1))}` : "")),
         },
         { type: "image", data: pngBase64, mimeType: "image/png" },
       ];
@@ -103,7 +105,7 @@ export function mcpContentForToolResult(result: ToolResult): McpToolContent[] {
 
   return [{
     type: "text",
-    text: capMcpToolResultText(result.message + (result.data ? `\n${JSON.stringify(result.data)}` : "")),
+    text: result.message.slice(0, 1000) + (result.data !== undefined ? `\n${JSON.stringify(boundModelData(result.data, MAX_MCP_TOOL_RESULT_TEXT_CHARS - 1001))}` : ""),
   }];
 }
 

@@ -464,7 +464,7 @@ export class ToolRegistry {
       // Only core tools in the initial payload (~10 tools)
       // Standard tools are discovered via tools.search / tools.list
       // External (MCP) tools must also be discovered via tools.search
-      return tier === "core";
+      return tier === "core" && !t.name.startsWith("os.");
     });
   }
 

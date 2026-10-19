@@ -862,9 +862,15 @@ describe("thread routes", () => {
     expect(response.statusCode).toBe(200);
     await waitFor(() => provider.sendTurn.mock.calls.length >= 1);
     const turnMessage = provider.sendTurn.mock.calls.at(-1)?.[1] as string;
-    expect(turnMessage).toContain("<available_skills>");
-    expect(turnMessage).toContain("<name>Word / DOCX</name>");
+    // Discovery-first contract: no eager <available_skills> catalog with file
+    // paths — just the lazy <skillDiscovery> instruction, with the auto-matched
+    // skill named in the routing summary.
+    expect(turnMessage).toContain("<skillDiscovery>");
+    expect(turnMessage).toContain("skills.search");
+    expect(turnMessage).toContain("Word / DOCX");
     expect(turnMessage).toContain("Inspect the DOCX template");
+    expect(turnMessage).not.toContain("<available_skills>");
+    expect(turnMessage).not.toContain("C:/skills/word-docx/SKILL.md");
 
     await app.close();
     sqlite.close();
@@ -923,8 +929,12 @@ describe("thread routes", () => {
     expect(response.statusCode).toBe(200);
     await waitFor(() => provider.sendTurn.mock.calls.length >= 1);
     const turnMessage = provider.sendTurn.mock.calls.at(-1)?.[1] as string;
-    expect(turnMessage).toContain("<name>Word / DOCX</name>");
-    expect(turnMessage).not.toContain("<name>Browser Research</name>");
+    // Only the pinned skill is auto-activated; the unpinned one is not named,
+    // and neither leaks its file path — skills are discovered lazily.
+    expect(turnMessage).toContain("<skillDiscovery>");
+    expect(turnMessage).toContain("Word / DOCX");
+    expect(turnMessage).not.toContain("Browser Research");
+    expect(turnMessage).not.toContain("C:/skills/");
 
     await app.close();
     sqlite.close();

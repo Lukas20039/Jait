@@ -37,7 +37,10 @@ describe("buildCliProviderSystemPrompt", () => {
 
     expect(prompt).toContain("always use `jait.terminal`");
     expect(prompt).toContain("/work/project");
-    expect(prompt).toContain("/skills/debugging/SKILL.md");
+    // Skills are lazy-discovered now: the prompt carries the discovery
+    // instruction, not the skill's file path.
+    expect(prompt).toContain("<skillDiscovery>");
+    expect(prompt).not.toContain("/skills/debugging/SKILL.md");
     expect(prompt).toContain("Use the repository conventions.");
     expect(prompt).not.toContain("graph TD");
     expect(prompt).not.toContain("## Preambles and progress updates");

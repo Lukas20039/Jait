@@ -56,6 +56,7 @@ export interface ProviderSession {
 // ── Events emitted by CLI providers ──────────────────────────────────
 
 export type ProviderEvent =
+  | { type: "usage"; sessionId: string; usage: import("@jait/shared").ModelUsage }
   | { type: "session.started"; sessionId: string }
   | { type: "session.completed"; sessionId: string }
   | { type: "session.error"; sessionId: string; error: string }
