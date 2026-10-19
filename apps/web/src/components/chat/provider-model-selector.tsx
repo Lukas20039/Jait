@@ -1008,8 +1008,8 @@ export function ProviderModelSelector({
         ? 'grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]'
         : 'grid-cols-[minmax(9.5rem,0.8fr)_minmax(13rem,1.45fr)]',
     )}>
-      <section className="flex min-h-0 min-w-0 flex-col border-r" aria-labelledby="provider-selector-heading">
-      <div className={cn('flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2', isMobile && 'min-h-10')}>
+      <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-r" aria-labelledby="provider-selector-heading">
+      <div className={cn('flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2', isMobile && 'min-h-10 pr-12')}>
         <div id="provider-selector-heading" className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">Providers</div>
         {locationLabel && (
           <TooltipHint side="left" content={locationLabel}>
@@ -1056,7 +1056,7 @@ export function ProviderModelSelector({
               onRefresh={() => { void runProviderAction(entry, 'refresh') }}
               onLogout={() => { void runProviderAction(entry, 'logout') }}
             >
-              <div className="flex min-w-0 items-start gap-1.5">
+              <div className={cn('relative flex min-w-0 items-start gap-1.5', isMobile && 'gap-0')}>
                 <TooltipHint side="left" content={!entry.isAvailable && entry.reason ? entry.reason : entry.description}>
                 <button
                   type="button"
@@ -1066,6 +1066,8 @@ export function ProviderModelSelector({
                   aria-disabled={!entry.isAvailable}
                   className={cn(
                     'flex min-w-0 flex-1 items-start gap-2.5 rounded-sm px-2 py-2 text-left transition-colors',
+                    isMobile && 'gap-1.5 px-1.5 py-1.5',
+                    isMobile && (showUpdateAction || showLoginAction) && 'pr-[3.75rem]',
                     'hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
                     !entry.isAvailable && 'cursor-not-allowed opacity-60',
                   )}
@@ -1074,7 +1076,7 @@ export function ProviderModelSelector({
                     ? <RemoteProviderLogo url={entry.iconUrl} className="mt-0.5 h-4 w-4" />
                     : <Icon className="mt-0.5 h-4 w-4 shrink-0" />}
                   <div className="min-w-0 flex-1">
-                    <div className="flex min-w-0 items-center gap-1.5 text-sm font-medium">
+                    <div className={cn('flex min-w-0 items-center gap-1.5 font-medium', isMobile ? 'text-xs' : 'text-sm')}>
                       <span className="min-w-0 truncate">{entry.label}</span>
                       {!entry.isAvailable && (
                         <span className="flex min-w-0 items-center gap-0.5 truncate text-2xs text-destructive/80">
@@ -1088,6 +1090,10 @@ export function ProviderModelSelector({
                   {active && <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />}
                 </button>
                 </TooltipHint>
+                <div className={cn(
+                  'flex shrink-0 items-start',
+                  isMobile && 'absolute right-1 top-1/2 z-[1] -translate-y-1/2 flex-row items-center gap-0.5',
+                )}>
                 {showUpdateAction && (
                   <TooltipHint side="left" content={updating
                     ? `Updating ${entry.label} to ${entry.update?.latestVersion}…`
@@ -1104,12 +1110,13 @@ export function ProviderModelSelector({
                     disabled={Boolean(authBusyProvider || providerActionBusy)}
                     className={cn(
                       'relative mr-1 mt-2 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary transition-colors hover:bg-primary/20',
+                      isMobile && 'mr-0 mt-0 h-6 w-6',
                       !updating && 'disabled:opacity-50',
                     )}
                   >
                     {updating
-                      ? <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
-                      : <Download className="h-3.5 w-3.5" />}
+                      ? <Loader2 aria-hidden="true" className={cn('animate-spin motion-reduce:animate-none', isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5')} />
+                      : <Download className={isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'} />}
                   </button>
                   </TooltipHint>
                 )}
@@ -1124,12 +1131,16 @@ export function ProviderModelSelector({
                       void startLogin(entry.value, entry.label)
                     }}
                     disabled={Boolean(authBusyProvider || providerActionBusy)}
-                    className="mr-1 mt-2 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50"
+                    className={cn(
+                      'mr-1 mt-2 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50',
+                      isMobile && 'mr-0 mt-0 h-6 w-6',
+                    )}
                   >
-                    {loginBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />}
+                    {loginBusy ? <Loader2 className={cn('animate-spin', isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5')} /> : <LogIn className={isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'} />}
                   </button>
                   </TooltipHint>
                 )}
+                </div>
               </div>
             </ProviderActionsMenu>
           )
@@ -1157,9 +1168,18 @@ export function ProviderModelSelector({
 
       </section>
 
-      <section className="flex min-h-0 min-w-0 flex-col" aria-labelledby="model-selector-heading">
-      <div className={cn('shrink-0 border-b px-3 py-2', isMobile && 'flex min-h-10 items-center pr-12')}>
-        <div id="model-selector-heading" className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">Models</div>
+      <section className="flex min-h-0 min-w-0 flex-col overflow-hidden" aria-labelledby="model-selector-heading">
+      <div className={cn('flex min-w-0 shrink-0 items-center gap-2 border-b px-3 py-2', isMobile && 'min-h-10 pr-12')}>
+        <div id="model-selector-heading" className="shrink-0 text-2xs font-medium uppercase tracking-wider text-muted-foreground">Models</div>
+        {/* The active provider lives here once, so individual model rows do not repeat it. */}
+        <span className="flex min-w-0 items-center gap-1 rounded-sm bg-muted/60 px-1.5 py-0.5 text-2xs font-medium text-foreground/90">
+          <span aria-hidden="true" className="flex shrink-0 items-center">
+            {currentProvider.iconUrl
+              ? <RemoteProviderLogo url={currentProvider.iconUrl} className="h-3 w-3 shrink-0" />
+              : <CurrentIcon className="h-3 w-3 shrink-0" />}
+          </span>
+          <span className="min-w-0 truncate">{currentProvider.label}</span>
+        </span>
       </div>
       {currentGroupLabel && (
         <div className="flex shrink-0 items-center gap-1.5 border-b bg-muted/40 px-3 py-1.5">
@@ -1247,9 +1267,6 @@ export function ProviderModelSelector({
                   >
                     <ModelRow
                       model={row.model}
-                      instanceLabel={row.instance.label}
-                      instanceIcon={row.instance.icon}
-                      instanceIconUrl={row.instance.iconUrl}
                       selected={model === row.model.id && provider === row.providerId}
                       onSelect={handleModelSelect}
                       onToggleFavorite={toggleFavoriteModel}
@@ -1465,9 +1482,6 @@ export function ProviderModelSelector({
 
 interface ModelRowProps {
   model: ModelDef
-  instanceLabel: string
-  instanceIcon: ComponentType<{ className?: string }>
-  instanceIconUrl?: string
   selected: boolean
   onSelect: (id: string) => void
   onToggleFavorite: ((model: ModelDef) => void) | null
@@ -1480,9 +1494,6 @@ interface ModelRowProps {
 
 function ModelRow({
   model,
-  instanceLabel,
-  instanceIcon: InstanceIcon,
-  instanceIconUrl,
   selected,
   onSelect,
   onToggleFavorite,
@@ -1523,11 +1534,11 @@ function ModelRow({
           <span className={mobile ? 'min-w-0 [overflow-wrap:anywhere]' : 'truncate'}>{formatModelDisplayLabel(model.name)}</span>
           {model.isDefault && <span className="shrink-0 text-2xs font-normal text-muted-foreground">(default)</span>}
         </div>
-        <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[0.6875rem] leading-snug text-muted-foreground/70">
-          {instanceIconUrl ? <RemoteProviderLogo url={instanceIconUrl} className="h-3 w-3" /> : <InstanceIcon className="h-3 w-3" />}
-          <span className="truncate">{instanceLabel}</span>
-          {model.description && <span className="hidden truncate opacity-80 sm:inline">· {model.description}</span>}
-        </div>
+        {model.description && (
+          <div className="mt-0.5 flex min-w-0 items-center text-[0.6875rem] leading-snug text-muted-foreground/70">
+            <span className="min-w-0 truncate">{model.description}</span>
+          </div>
+        )}
       </div>
       <span className="flex shrink-0 items-center gap-0.5">
         {selected && <Check className="h-3.5 w-3.5 text-primary" />}

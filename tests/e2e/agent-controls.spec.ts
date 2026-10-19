@@ -205,14 +205,19 @@ test.describe('mobile header spacing', () => {
       const referenceGap = avatar.x - updateBox.x - updateBox.width
       expect(referenceGap).toBe(8)
       expect(menuIcon.x - avatar.x - avatar.width).toBeCloseTo(referenceGap, 0)
+      // The agent control's leading edge sits one reference gap after the mic icon. The avatar
+      // stack is centred inside that fixed-width button, so assert the control gap and that the
+      // decoration stays contained instead of pinning the decoration's own x.
       const agentFaces = (await header.locator('[data-agent-control] > span').first().boundingBox())!
-      expect(Math.abs(agentFaces.x - micIcon.x - micIcon.width - referenceGap)).toBeLessThanOrEqual(2)
       const logo = header.locator('div').first().locator(':scope > span')
       if (await logo.isVisible()) {
         const logoIcon = (await logo.locator('svg').boundingBox())!
         expect(micIcon.x - logoIcon.x - logoIcon.width).toBeCloseTo(referenceGap, 0)
       }
       const agentBox = (await header.locator('[data-agent-control]').boundingBox())!
+      expect(agentBox.x - micIcon.x - micIcon.width).toBeCloseTo(referenceGap, 0)
+      expect(agentFaces.x).toBeGreaterThanOrEqual(agentBox.x)
+      expect(agentFaces.x + agentFaces.width).toBeLessThanOrEqual(agentBox.x + agentBox.width)
       const tabs = (await header.getByRole('tablist').boundingBox())!
       expect(tabs.x).toBeGreaterThanOrEqual(agentBox.x + agentBox.width)
       expect(tabs.x + tabs.width).toBeLessThanOrEqual(accountBox.x)

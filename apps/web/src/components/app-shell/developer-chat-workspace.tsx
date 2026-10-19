@@ -19,6 +19,15 @@ import {
   shouldShowChatContextIndicator,
   shouldShowNormalChatComposer,
 } from '@/components/chat/message-edit-layout'
+import {
+  clampRevealDeltaToHeader,
+  getComposerRevealDelta,
+  getKeyboardBottomInset,
+  getNewChatColumnClassName,
+  getNewChatStackClassName,
+  getVisibleViewportBottom,
+  shouldPlaceControlRowAboveComposer,
+} from '@/components/chat/new-chat-composer-layout'
 import { GitDiffIndicator } from '@/components/chat/git-diff-indicator'
 import { PlanReview } from '@/components/chat/plan-review'
 import { ConsentQueue } from '@/components/consent'
@@ -310,6 +319,83 @@ export function DeveloperChatWorkspace({
     observer.observe(el)
     return () => observer.disconnect()
   }, [gitDiffIndicatorElement])
+  // ── Mobile new-chat composer visibility ────────────────────────────────
+  // The empty state is one centered column. On a phone the soft keyboard
+  // shrinks the viewport below the column height, which used to clip the
+  // composer behind the mobile nav bar. The column scrolls on mobile and we
+  // nudge it up by exactly the hidden amount so the input stays fully usable.
+  const newChatScrollRef = useRef<HTMLDivElement | null>(null)
+  const newChatStackRef = useRef<HTMLDivElement | null>(null)
+  const [keyboardInset, setKeyboardInset] = useState(0)
+  const setNewChatScrollElement = useCallback(
+    (node: HTMLDivElement | null) => {
+      newChatScrollRef.current = node
+      setChatPanelElement(node)
+    },
+    [setChatPanelElement],
+  )
+  useEffect(() => {
+    if (!isMobile) {
+      setKeyboardInset(0)
+      return
+    }
+    const viewport = window.visualViewport
+    if (!viewport) return
+    // iOS keeps the layout viewport at full height while the keyboard is open,
+    // so nothing inside the column resizes and the reveal observer would never
+    // fire. The covered height therefore both triggers the reveal and reserves
+    // a scroll band at the bottom of the column; the reveal itself measures the
+    // visible band from the visual viewport so the keyboard is subtracted once.
+    const update = () => {
+      const next = getKeyboardBottomInset(window.innerHeight, viewport)
+      setKeyboardInset((prev) => (prev === next ? prev : next))
+    }
+    update()
+    viewport.addEventListener('resize', update)
+    viewport.addEventListener('scroll', update)
+    return () => {
+      viewport.removeEventListener('resize', update)
+      viewport.removeEventListener('scroll', update)
+    }
+  }, [isMobile])
+  useEffect(() => {
+    if (!isMobile || hasMessages) return
+    const scroller = newChatScrollRef.current
+    const stack = newChatStackRef.current
+    if (!scroller || !stack) return
+    const revealComposer = () => {
+      const scrollerRect = scroller.getBoundingClientRect()
+      // Only the part of the column above the keyboard is usable. Measuring the
+      // band from `visualViewport` (instead of from the column and the keyboard
+      // inset separately) keeps the nudge exact on both platforms: the column
+      // has already shrunk where the layout viewport resizes, and on iOS the
+      // visual viewport is the only thing that knows the keyboard is up.
+      const visibleBottom = Math.min(
+        scrollerRect.bottom,
+        getVisibleViewportBottom(window.visualViewport, window.innerHeight),
+      )
+      const rawDelta = getComposerRevealDelta(
+        stack.getBoundingClientRect().bottom,
+        scrollerRect.top,
+        visibleBottom - scrollerRect.top,
+      )
+      // The nudge scrolls content up, so it must never tuck the composer under
+      // the header: cap it at the room that keeps the composer top clear.
+      const composer = stack.querySelector<HTMLElement>('[data-testid="chat-composer"]')
+      const composerTop = composer ? composer.getBoundingClientRect().top : stack.getBoundingClientRect().top
+      const header = document.querySelector('header, [role="banner"]')
+      const headerBottom = header ? header.getBoundingClientRect().bottom : scrollerRect.top
+      const delta = clampRevealDeltaToHeader(rawDelta, composerTop, headerBottom)
+      if (delta > 0) scroller.scrollTop += delta
+    }
+    revealComposer()
+    if (typeof ResizeObserver === 'undefined') return
+    // Re-check whenever the viewport shrinks (keyboard) or the composer grows.
+    const observer = new ResizeObserver(revealComposer)
+    observer.observe(scroller)
+    observer.observe(stack)
+    return () => observer.disconnect()
+  }, [isMobile, hasMessages, keyboardInset])
   const showGitDiffIndicator =
     chatPanelWidth === 0 ||
     gitDiffIndicatorWidth === 0 ||
@@ -377,15 +463,23 @@ export function DeveloperChatWorkspace({
     cacheSessionRef.current = activeSessionId
   }
 
+  // With the mobile soft keyboard open the composer card must be the stack's
+  // bottom element so the reveal can dock it just above the keyboard; the
+  // control row moves above it for as long as the keyboard is up.
+  const controlRowAboveComposer = shouldPlaceControlRowAboveComposer(isMobile, keyboardInset)
+
   if (!hasMessages) {
     return (
       <div
-        ref={setChatPanelElement}
-        className={`relative flex-1 min-w-0 flex flex-col items-center justify-center overflow-hidden ${chatCollapsed ? '' : 'px-4'} ${isMobile ? 'pt-12' : ''}`}
-        style={developerChatPanelStyle}
+        ref={setNewChatScrollElement}
+        className={getNewChatColumnClassName(isMobile, !chatCollapsed)}
+        // Reserve the covered band so the column can scroll far enough, while
+        // the reveal below measures the *visible* band so the keyboard is only
+        // subtracted once. Padding alone lifted the composer under the header.
+        style={keyboardInset > 0 ? { ...developerChatPanelStyle, paddingBottom: keyboardInset } : developerChatPanelStyle}
       >
         {panelHideButton}
-        <div className="w-full max-w-4xl space-y-8">
+        <div ref={newChatStackRef} className={getNewChatStackClassName(isMobile)}>
           <div className="text-center">
             <h1 className="text-3xl font-semibold tracking-tight">Jait</h1>
             <p className="text-base text-muted-foreground mt-1">Just Another Intelligent Tool</p>
@@ -407,6 +501,7 @@ export function DeveloperChatWorkspace({
               <TodoList items={todoList} onClear={onClearTodoList} merged />
             )}
             {inlinePrompts}
+            {controlRowAboveComposer && developerComposerControlRow}
             <ErrorBoundary name="Chat composer" variant="section" resetKeys={[activeSessionId, inputVersion, sendTarget]}>
               <PromptInput
                 ref={promptInputRef}
@@ -458,7 +553,7 @@ export function DeveloperChatWorkspace({
                 projectId={activeProjectId}
               />
             </ErrorBoundary>
-            {developerComposerControlRow}
+            {!controlRowAboveComposer && developerComposerControlRow}
           </div>
         </div>
       </div>

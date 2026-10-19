@@ -252,13 +252,17 @@ export function AppHeader(props: AppHeaderProps) {
               activeProjectTitle={activeProjectTitle}
             />
           ) : !sidebarOwnsNavigation ? (
-            <div ref={selectorRef} className={isMobile ? "flex min-w-0 flex-1 justify-center z-10" : "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
+            /* Absolutely centered on the header itself: as a flex child the
+               switch would be centered only in the space left over by the
+               unequal left/right clusters, which sits off the true center. */
+            <div ref={selectorRef} className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2" style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
               <ViewModeSelector mode={viewMode} onChange={setViewMode} compact={isMobile} className={isMobile ? "[&_[role=tab]]:w-8" : undefined} />
             </div>
           ) : null}
 
-          {/* Spacer */}
-          <div className={`${isMobile && voiceOverlayOpen ? 'flex-1' : 'hidden'} min-w-0`} />
+          {/* Spacer — on mobile this absorbs the gap so the right cluster stays
+              pinned to the trailing edge under the absolutely centered switch. */}
+          <div className={`${isMobile ? 'flex-1' : 'hidden'} min-w-0`} />
 
           {/* Right: Context + Model + Account */}
           <div ref={rightRef} className={`flex items-center gap-2 sm:gap-1.5 shrink-0 ${isMobile ? 'py-0.5 h-10' : ''}`} style={isDesktop ? { WebkitAppRegion: 'no-drag' } as React.CSSProperties : undefined}>
@@ -307,7 +311,7 @@ export function AppHeader(props: AppHeaderProps) {
                       <button aria-label="Account menu" className="inline-flex h-10 w-8 !min-w-8 shrink-0 items-center justify-center rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                         <Avatar className="h-8 w-8">
                           <AvatarFallback className="text-sm font-medium leading-none tracking-normal">
-                            <span className="relative -top-px">{userInitial}</span>
+                            {userInitial}
                           </AvatarFallback>
                         </Avatar>
                       </button>

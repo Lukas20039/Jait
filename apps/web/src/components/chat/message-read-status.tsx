@@ -2,11 +2,11 @@ import { CheckCheck } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import type { MessengerReadReceipt } from '@/lib/messenger/model'
 
-export function MessageReadStatus({ readers }: { readers: MessengerReadReceipt[] }) {
-  if (!readers.length) return <span className="block pt-1 text-right text-2xs text-muted-foreground" title="Accepted by Matrix. No public read receipt received.">Sent</span>
+export function MessageReadStatus({ readers, inline = false }: { readers: MessengerReadReceipt[]; inline?: boolean }) {
+  if (!readers.length) return <span className={(inline ? 'whitespace-nowrap' : 'block pt-1 text-right') + ' text-2xs text-muted-foreground'} title="Accepted by Matrix. No public read receipt received.">Sent</span>
   return <Popover>
     <PopoverTrigger asChild>
-      <button type="button" aria-label="Read receipts" className="ml-auto flex items-center gap-1 pt-1 text-2xs text-muted-foreground hover:text-foreground" data-no-message-edit>
+      <button type="button" aria-label="Read receipts" className={(inline ? '' : 'ml-auto pt-1 ') + 'flex items-center gap-1 text-2xs text-muted-foreground hover:text-foreground'} data-no-message-edit>
         <CheckCheck className="h-3.5 w-3.5" />{readers.length === 1 ? 'Seen' : `Seen by ${readers.length}`}
       </button>
     </PopoverTrigger>
