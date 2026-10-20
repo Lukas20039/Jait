@@ -101,7 +101,10 @@ impl SystemCatalogueHttp {
             if let Some(value) = request.authorization {
                 call = call.header(reqwest::header::AUTHORIZATION, value);
             }
-            let response = call.send().await.map_err(|e| CatalogueError(e.to_string()))?;
+            let response = call
+                .send()
+                .await
+                .map_err(|e| CatalogueError(e.to_string()))?;
             let status = response.status().as_u16();
             // A rejected status never consumes JSON in the reference.
             let body = if (200..300).contains(&status) {
@@ -222,9 +225,9 @@ impl ModelFetchers {
                 REMOTE_CACHE_TTL_MS
             };
             let expired = options.force
-                || cached
-                    .as_ref()
-                    .is_none_or(|entry| (self.inner.clock)().saturating_sub(entry.fetched_at) >= ttl);
+                || cached.as_ref().is_none_or(|entry| {
+                    (self.inner.clock)().saturating_sub(entry.fetched_at) >= ttl
+                });
             if expired && !cache.inflight.contains_key(&key) {
                 let (send, receive) = watch::channel(None);
                 cache.inflight.insert(key.clone(), receive);
@@ -379,7 +382,8 @@ impl Inner {
             return false;
         }
         let text = String::from_utf8_lossy(&response.body);
-        let Ok(data) = serde_json::from_str::<Value>(text.strip_prefix('\u{feff}').unwrap_or(&text))
+        let Ok(data) =
+            serde_json::from_str::<Value>(text.strip_prefix('\u{feff}').unwrap_or(&text))
         else {
             return false;
         };
@@ -886,8 +890,11 @@ mod tests {
         assert_eq!(ids(&models), vec!["llama3.2:latest".to_string()]);
         assert_eq!(http.count(OLLAMA_CLOUD_CATALOGUE_URL), 0);
         // The account probe still ran, so the daemon answer is trusted.
-        assert!(http.calls().iter().any(|(method, url)| method == "POST"
-            && url.ends_with("/api/me")));
+        assert!(
+            http.calls()
+                .iter()
+                .any(|(method, url)| method == "POST" && url.ends_with("/api/me"))
+        );
     }
 
     #[tokio::test]
@@ -968,11 +975,13 @@ mod tests {
 
     #[test]
     fn cloud_rows_describe_themselves_without_parameters() {
-        let models =
-            map_ollama_cloud_catalogue(&serde_json::from_str(CLOUD_TAGS).unwrap()).expect("catalogue");
+        let models = map_ollama_cloud_catalogue(&serde_json::from_str(CLOUD_TAGS).unwrap())
+            .expect("catalogue");
         let qwen = models
             .iter()
-            .find(|model| model.id.as_ref().and_then(Value::as_str) == Some("qwen3-coder:480b-cloud"))
+            .find(|model| {
+                model.id.as_ref().and_then(Value::as_str) == Some("qwen3-coder:480b-cloud")
+            })
             .expect("cloud row");
         let description = text(qwen.description.as_ref().expect("description"));
         assert_eq!(description, "tools");
