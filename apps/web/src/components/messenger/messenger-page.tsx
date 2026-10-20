@@ -188,11 +188,16 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
     const target = roomId
     const text = draft
     const composer = composerRef.current
-    void act(async () => {
-      await store.send(target, text)
-      composer?.reset()
-      setDrafts(current => ({ ...current, [target]: current[target] === text ? '' : current[target] }))
-    }, 'Message was not sent. Your draft has been kept; try again when connected.')
+    // Clear the composer right away: the pending message is rendered from the
+    // store's local echo, so waiting for the gateway would only look laggy.
+    const sending = store.send(target, text)
+    composer?.reset()
+    setActionError('')
+    setDrafts(current => ({ ...current, [target]: current[target] === text ? '' : current[target] }))
+    void sending.catch(error => {
+      setActionError(messengerError(error))
+      setDrafts(current => ({ ...current, [target]: current[target] || text }))
+    })
   }
 
   const loadEarlier = async () => {
@@ -310,10 +315,18 @@ export default function MessengerPage({ token = null, sttProvider = 'whisper' }:
                     voiceLevels={voiceLevels}
                     onFilesSelected={files => {
                       if (!ready || busy) return
-                      void act(async () => {
-                        if (files.some(file => file.size > MAX_ATTACHMENT_BYTES)) throw new Error('Attachment exceeds 20 MB.')
-                        for (const file of files) await store.sendAttachment(room.id, file)
-                      }, 'Could not send attachment. Check the connection and the 20 MB size limit.')
+                      if (files.some(file => file.size > MAX_ATTACHMENT_BYTES)) {
+                        setActionError('Attachment exceeds 20 MB.')
+                        return
+                      }
+                      // Upload without the global busy lock: the store renders
+                      // each file as a pending message, so the composer stays
+                      // usable while the bytes are in flight.
+                      setActionError('')
+                      void (async () => {
+                        try { for (const file of files) await store.sendAttachment(room.id, file) }
+                        catch (error) { setActionError(messengerError(error)) }
+                      })()
                     }}
                   />
                 </div>

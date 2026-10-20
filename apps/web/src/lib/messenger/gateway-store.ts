@@ -5,6 +5,9 @@ import { triggerSystemNotification } from '@/lib/system-notifications';
 import { messengerReadLink } from './notification-actions';
 import type { MessengerSnapshot, MessengerMessage } from './model';
 
+/** Id prefix for messages that only exist locally until the gateway confirms. */
+const LOCAL_ECHO_PREFIX = '~local:';
+
 /** Thin authenticated view of a gateway-owned Matrix device. Disposing a view never logs Matrix out. */
 export class GatewayMessengerStore implements MessengerStoreApi {
   private remoteSnapshot: MessengerSnapshot = {
@@ -27,6 +30,16 @@ export class GatewayMessengerStore implements MessengerStoreApi {
   private loaded = false;
   private pausedReads = new Set<string>();
   private activeSearch = '';
+  /**
+   * Messages shown before the gateway confirms them. The gateway snapshot only
+   * contains confirmed timeline events, so without this overlay an outgoing
+   * message stays invisible for a full round trip (send + sync + poll).
+   */
+  private optimistic = new Map<
+    string,
+    { roomId: string; message: MessengerMessage }
+  >();
+  private optimisticIds = 0;
   private searchResults: Array<{
     roomId: string;
     roomName: string;
@@ -53,6 +66,93 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     if (this.stopped) return;
     this.remoteSnapshot = { ...this.remoteSnapshot, ...patch };
     this.remoteListeners.forEach((listener) => listener());
+  }
+  /** Server messages plus local echoes the gateway has not delivered yet. */
+  private withOptimistic(roomId: string, messages: MessengerMessage[]) {
+    const known = new Set(messages.map((message) => message.id));
+    const merged = [...messages];
+    for (const [id, entry] of this.optimistic) {
+      if (entry.roomId !== roomId) continue;
+      if (known.has(entry.message.id)) {
+        // The gateway reports the real event now, so drop the local copy.
+        this.optimistic.delete(id);
+        continue;
+      }
+      let index = merged.length;
+      while (index > 0 && merged[index - 1]!.timestamp > entry.message.timestamp)
+        index--;
+      merged.splice(index, 0, entry.message);
+    }
+    return merged;
+  }
+  private publishMessages(roomId: string) {
+    if (this.remoteSnapshot.selectedRoomId !== roomId) return;
+    // Fall back to what is on screen when the room cache is still empty (for
+    // example right after selecting a room), ignoring other local echoes so
+    // withOptimistic() does not see them twice.
+    const base =
+      this.roomCache.get(roomId) ??
+      this.remoteSnapshot.messages.filter(
+        (message) => !message.id.startsWith(LOCAL_ECHO_PREFIX),
+      );
+    this.publish({ messages: this.withOptimistic(roomId, base) });
+  }
+  /**
+   * Show an outgoing message immediately, then swap its local id for the
+   * gateway event id once the send resolves. Failures drop the local echo so
+   * the caller can restore the draft.
+   */
+  private async sendOptimistic(
+    roomId: string,
+    body: string,
+    request: () => Promise<{ eventId?: string }>,
+  ) {
+    const localId =
+      LOCAL_ECHO_PREFIX + roomId + ':' + ++this.optimisticIds + ':' + Date.now();
+    this.optimistic.set(localId, {
+      roomId,
+      message: {
+        id: localId,
+        sender: this.remoteSnapshot.session?.userId ?? 'You',
+        body,
+        timestamp: Date.now(),
+        own: true,
+        encrypted: false,
+        unableToDecrypt: false,
+        pending: true,
+        failed: false,
+      },
+    });
+    this.publishMessages(roomId);
+    let eventId: string | undefined;
+    try {
+      eventId = (await request()).eventId;
+    } catch (error) {
+      this.dropOptimistic(localId);
+      throw error;
+    }
+    const current = this.optimistic.get(localId);
+    if (current) {
+      if (eventId)
+        this.optimistic.set(localId, {
+          roomId,
+          message: { ...current.message, id: eventId, pending: false },
+        });
+      else this.optimistic.delete(localId);
+      this.publishMessages(roomId);
+    }
+    void this.refreshRemote().catch(() => {});
+  }
+  private dropOptimistic(localId: string) {
+    const entry = this.optimistic.get(localId);
+    if (!entry) return;
+    this.optimistic.delete(localId);
+    this.publishMessages(entry.roomId);
+  }
+  private forgetRoom(roomId: string) {
+    for (const [id, entry] of this.optimistic)
+      if (entry.roomId === roomId) this.optimistic.delete(id);
+    this.roomCache.delete(roomId);
   }
   private async request(path: string, method = 'GET', body?: unknown) {
     const token = getAuthToken();
@@ -118,6 +218,9 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     if (roomId) this.roomCache.set(roomId, snapshot.messages);
     this.publish({
       ...snapshot,
+      messages: roomId
+        ? this.withOptimistic(roomId, snapshot.messages)
+        : snapshot.messages,
       selectedRoomId: roomId,
       notifications: this.remoteSnapshot.notifications,
     });
@@ -162,12 +265,16 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     if (id) this.pausedReads.delete(id);
     this.publish({
       selectedRoomId: id,
-      messages: id ? (this.roomCache.get(id) ?? []) : [],
+      messages: id ? this.withOptimistic(id, this.roomCache.get(id) ?? []) : [],
     });
     void this.refreshRemote().catch(() => {});
   }
   async send(roomId: string, text: string) {
-    if (text.trim()) await this.action({ action: 'send', roomId, text });
+    const body = text.trim();
+    if (!body) return;
+    await this.sendOptimistic(roomId, body, () =>
+      this.request('/command', 'POST', { action: 'send', roomId, text: body }),
+    );
   }
   async edit(roomId: string, eventId: string, text: string) {
     await this.action({ action: 'edit', roomId, eventId, text });
@@ -177,7 +284,7 @@ export class GatewayMessengerStore implements MessengerStoreApi {
   }
   async remove(roomId: string) {
     await this.request('/command', 'POST', { action: 'remove', roomId });
-    this.roomCache.delete(roomId);
+    this.forgetRoom(roomId);
     if (this.remoteSnapshot.selectedRoomId === roomId) this.selectRoom(null);
     await this.refreshRemote();
   }
@@ -186,6 +293,7 @@ export class GatewayMessengerStore implements MessengerStoreApi {
   }
   async leave(roomId: string) {
     await this.action({ action: 'leave', roomId });
+    this.forgetRoom(roomId);
   }
   async openDirect(userId: string, select = true) {
     const result = await this.action({ action: 'open', userId });
@@ -251,18 +359,20 @@ export class GatewayMessengerStore implements MessengerStoreApi {
   async sendAttachment(roomId: string, file: File) {
     if (file.size > 20 * 1024 * 1024)
       throw new Error('Attachments must be 20 MB or smaller.');
-    const data = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result).split(',')[1]!);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-    await this.action({
-      action: 'attachment',
-      roomId,
-      data,
-      name: file.name,
-      mime: file.type,
+    await this.sendOptimistic(roomId, file.name, async () => {
+      const data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1]!);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      return this.request('/command', 'POST', {
+        action: 'attachment',
+        roomId,
+        data,
+        name: file.name,
+        mime: file.type,
+      });
     });
   }
   async attachmentBlob(
@@ -283,6 +393,7 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     ++this.requestGeneration;
     await this.request('', 'DELETE');
     this.roomCache.clear();
+    this.optimistic.clear();
     await this.refreshRemote();
   }
   dispose() {
@@ -290,6 +401,7 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     ++this.requestGeneration;
     clearTimeout(this.pollTimer);
     this.roomCache.clear();
+    this.optimistic.clear();
     this.remoteListeners.clear();
   }
 }
