@@ -572,6 +572,14 @@ export function toOpenAIName(name: string): string {
 
 /** Names that no inverse heuristic can reconstruct and that are not always advertised. */
 const EXPLICIT_OPENAI_ALIASES: Record<string, string> = {
+  // `file.write` is a standard-tier tool, so it is absent from the initial
+  // payload and the mapping is never registered before the model asks for it.
+  // Providers that keep calling the provider-safe form must still reach it.
+  file_write: "file.write",
+  file_read: "file.read",
+  file_patch: "file.patch",
+  file_list: "file.list",
+  file_stat: "file.stat",
   browser_sandbox_start: "browser.sandbox.start",
   windows_sandbox_start: "windows.sandbox.start",
   windows_sandbox_stop: "windows.sandbox.stop",

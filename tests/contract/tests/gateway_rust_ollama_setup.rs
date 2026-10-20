@@ -259,7 +259,7 @@ fn real_filesystem_metadata_follows_links_and_does_not_read_or_change_key_materi
         paths.push(link);
         let blocked = work.join("blocked");
         std::fs::write(&blocked, b"fixture").unwrap();
-        std::fs::set_permissions(&blocked, std::fs::Permissions::from_mode(0)).unwrap();
+        std::fs::set_permissions(&blocked, std::fs::Permissions::from_mode(0o000)).unwrap();
         paths.push(blocked);
     }
     let calls: Vec<_> = paths

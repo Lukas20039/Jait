@@ -283,10 +283,7 @@ async fn run_scenario(steps: &Value) -> Value {
                 for _ in 0..16 {
                     tokio::task::yield_now().await;
                 }
-                let applied = match step.get("then") {
-                    Some(action) => Some(apply(&service, &ids, action)),
-                    None => None,
-                };
+                let applied = step.get("then").map(|action| apply(&service, &ids, action));
                 for _ in 0..4 {
                     tokio::task::yield_now().await;
                 }

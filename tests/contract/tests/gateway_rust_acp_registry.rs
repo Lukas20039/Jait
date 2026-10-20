@@ -337,7 +337,7 @@ fn mode(metadata: &fs::Metadata) -> u64 {
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        return metadata.permissions().mode() as u64 & 0o777;
+        metadata.permissions().mode() as u64 & 0o777
     }
     #[cfg(not(unix))]
     {
@@ -420,10 +420,11 @@ fn comparable(observation: &Value) -> Value {
         object.remove("cachePath");
         if let Some(results) = object.get_mut("results").and_then(Value::as_array_mut) {
             for entry in results {
-                if let Some(map) = entry.as_object_mut() {
-                    if map.contains_key("error") {
-                        map.insert("error".to_string(), Value::String("<error>".to_string()));
-                    }
+                let Some(map) = entry.as_object_mut() else {
+                    continue;
+                };
+                if map.contains_key("error") {
+                    map.insert("error".to_string(), Value::String("<error>".to_string()));
                 }
             }
         }
@@ -1308,11 +1309,13 @@ fn binary_distributions_require_a_configured_launcher() {
         "distribution": {"binary": Value::Object(binary)}
     }]});
 
-    let mut runtime = RegistryRuntime::default();
-    runtime.home = PathBuf::from("/nonexistent-home");
-    runtime.state_dir_env = Some("/nonexistent-state".to_string());
-    runtime.platform = "linux".to_string();
-    runtime.architecture = Some("x64".to_string());
+    let runtime = RegistryRuntime {
+        home: PathBuf::from("/nonexistent-home"),
+        state_dir_env: Some("/nonexistent-state".to_string()),
+        platform: "linux".to_string(),
+        architecture: Some("x64".to_string()),
+        ..RegistryRuntime::default()
+    };
 
     let outcome = parse_acp_registry_reporting(&value, &runtime, &AcpCollation::default()).unwrap();
     assert!(

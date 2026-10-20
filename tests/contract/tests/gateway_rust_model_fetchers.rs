@@ -42,9 +42,11 @@ impl Peer {
             .notify_one();
     }
 }
-impl CatalogueHttp for Peer {
-    fn get(&self, request: HttpRequest) -> HttpFuture {
-        self.requests.lock().unwrap().push(json!(request));
+impl Peer {
+    fn respond(&self, method: &str, request: HttpRequest) -> HttpFuture {
+        let mut recorded = json!(request);
+        recorded["method"] = json!(method);
+        self.requests.lock().unwrap().push(recorded);
         let script = self
             .scripts
             .lock()
@@ -77,6 +79,14 @@ impl CatalogueHttp for Peer {
         })
     }
 }
+impl CatalogueHttp for Peer {
+    fn get(&self, request: HttpRequest) -> HttpFuture {
+        self.respond("GET", request)
+    }
+    fn post(&self, request: HttpRequest) -> HttpFuture {
+        self.respond("POST", request)
+    }
+}
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
@@ -100,10 +110,14 @@ fn wire(result: ModelsResult) -> Value {
 }
 async fn fetch(fetchers: &ModelFetchers, step: &Value) -> ModelsResult {
     fetchers
-        .fetch(
+        .fetch_with(
             kind(step),
             step["key"].as_str().unwrap_or(""),
             step["url"].as_str().unwrap_or("http://models.fixture/v1"),
+            FetchOptions {
+                force: step["force"] == true,
+                include_cloud: step["includeCloud"] == true,
+            },
         )
         .await
 }
@@ -535,4 +549,169 @@ async fn nullable_ids_in_compatible_catalogue_sort_like_reference() {
         let data: Vec<_> = ids.iter().map(|id| json!({"id":id})).collect();
         scenario(json!({"responses":[{"json":{"data":data}}],"steps":[{"kind":"openai"}]})).await;
     }
+}
+
+#[tokio::test]
+async fn cloud_options_do_not_contaminate_the_local_cache() {
+    let local = json!({"json":{"models":[{"name":"local"}]}});
+    let signed = json!({"json":{"plan":"pro"}});
+    let cloud =
+        json!({"json":{"models":[{"name":"remote-cloud","capabilities":["completion","tools"]}]}});
+    scenario(
+        json!({"responses":[local.clone(),signed.clone(),cloud.clone()], "steps":[
+            {"kind":"ollama"},{"kind":"ollama","includeCloud":true},{"kind":"ollama"},
+            {"kind":"ollama","includeCloud":true}
+        ]}),
+    )
+    .await;
+}
+#[tokio::test]
+async fn cloud_probe_runs_after_a_non_ok_local_catalogue() {
+    scenario(json!({"responses":[{"status":503},{"json":{"plan":"pro"}},
+        {"json":{"models":[{"model":" hosted:cloud "}]}}],"steps":[{"kind":"ollama","includeCloud":true}]})).await;
+}
+#[tokio::test]
+async fn cloud_mapping_matches_permissive_reference_values() {
+    for tags in [
+        json!([null,{}, {"name":" "},{"model":" fallback "},{"name":"fallback"}]),
+        json!([{"name":false}]),
+        json!([{"name":"cap","capabilities":[0,1,true,"completion",null,{},["tools"]]}]),
+        json!([{"name":"empty","details":{"family":[],"parameter_size":[]},"capabilities":["tools"]}]),
+        json!([{"name":"bad","capabilities":{}}]),
+        json!([{"name":"x","details":null}]),
+    ] {
+        let expected = internal_driver::call(
+            &root(),
+            &root()
+                .join(".jait/artifacts/gateway-rust/model-fetchers")
+                .join(uuid::Uuid::new_v4().to_string()),
+            json!({"version":1,"calls":[{"op":"nativemodelfetch.cloudmap","tags":tags.clone()}]}),
+            &|| false,
+        )
+        .unwrap()[0]
+            .clone();
+        assert_eq!(
+            wire(map_ollama_cloud_catalogue(&json!({"models":tags.clone()}))),
+            expected,
+            "tags {tags}"
+        );
+    }
+}
+
+#[tokio::test]
+async fn cloud_cache_expires_independently_of_local_refresh() {
+    scenario(json!({"responses":[
+        {"json":{"models":[{"name":"local"}]}},{"json":{"plan":"pro"}},{"json":{"models":[{"name":"cloud"}]}},
+        {"json":{"models":[{"name":"new-local"}]}},
+        {"json":{"models":[{"name":"latest-local"}]}},{"status":401}
+    ],"steps":[{"kind":"ollama","includeCloud":true},
+        {"action":"tick","now":1030000},{"kind":"ollama","includeCloud":true},
+        {"action":"tick","now":1300000},{"kind":"ollama","includeCloud":true},
+        {"kind":"ollama"}]})).await;
+}
+#[tokio::test]
+async fn forced_cloud_refresh_uses_fallback_then_caches_signed_out() {
+    scenario(json!({"responses":[
+        {"json":{"models":[{"name":"local"}]}},{"json":{"plan":"pro"}},{"json":{"models":[{"name":"cloud"}]}},
+        {"status":503},{"json":{"plan":"pro"}},{"status":503},
+        {"json":{"models":[]}},{"error":"account offline"}
+    ],"steps":[{"kind":"ollama","includeCloud":true},
+        {"kind":"ollama","force":true,"includeCloud":true},
+        {"kind":"ollama","force":true,"includeCloud":true},{"kind":"ollama","includeCloud":true}]})).await;
+}
+#[tokio::test]
+async fn cloud_account_malformed_and_catalogue_failure_rules_match() {
+    for account in [
+        json!({}),
+        json!({"plan":""}),
+        json!({"plan":4}),
+        json!(null),
+        json!({"plan":" "}),
+    ] {
+        scenario(
+            json!({"responses":[{"json":{"models":[]}},{"json":account},{"body":"invalid"}],
+            "steps":[{"kind":"ollama","includeCloud":true},{"kind":"ollama"}]}),
+        )
+        .await;
+    }
+}
+#[tokio::test]
+async fn default_fetch_does_not_probe_cloud() {
+    let peer = Arc::new(Peer::new(vec![
+        json!({"json":{"models":[{"name":"local"}]}}),
+    ]));
+    let fetchers = ModelFetchers::new(peer.clone(), None);
+    assert_eq!(
+        fetchers
+            .fetch(CatalogueKind::Ollama, "", "http://models.fixture")
+            .await
+            .unwrap()
+            .len(),
+        1
+    );
+    assert_eq!(peer.requests.lock().unwrap().len(), 1);
+}
+
+#[tokio::test(start_paused = true)]
+async fn cloud_account_and_catalogue_share_one_deadline() {
+    struct SlowCloud {
+        elapsed: Arc<Mutex<Vec<String>>>,
+    }
+    impl CatalogueHttp for SlowCloud {
+        fn get(&self, request: HttpRequest) -> HttpFuture {
+            let cloud = request.url == OLLAMA_CLOUD_CATALOGUE_URL;
+            let elapsed = self.elapsed.clone();
+            Box::pin(async move {
+                if cloud {
+                    tokio::time::sleep(Duration::from_millis(3000)).await;
+                }
+                elapsed.lock().unwrap().push(request.url);
+                Ok(HttpResponse {
+                    status: 200,
+                    body: br#"{"models":[{"name":"slow"}]}"#.to_vec(),
+                })
+            })
+        }
+        fn post(&self, request: HttpRequest) -> HttpFuture {
+            let elapsed = self.elapsed.clone();
+            Box::pin(async move {
+                tokio::time::sleep(Duration::from_millis(3000)).await;
+                elapsed.lock().unwrap().push(request.url);
+                Ok(HttpResponse {
+                    status: 200,
+                    body: br#"{"plan":"pro"}"#.to_vec(),
+                })
+            })
+        }
+    }
+    let elapsed = Arc::new(Mutex::new(Vec::new()));
+    let fetchers = ModelFetchers::new(
+        Arc::new(SlowCloud {
+            elapsed: elapsed.clone(),
+        }),
+        None,
+    );
+    let start = tokio::time::Instant::now();
+    let models = fetchers
+        .fetch_with(
+            CatalogueKind::Ollama,
+            "",
+            "http://models.fixture",
+            FetchOptions {
+                force: false,
+                include_cloud: true,
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        tokio::time::Instant::now() - start,
+        Duration::from_millis(4000)
+    );
+    assert_eq!(models.len(), 1);
+    assert_eq!(
+        elapsed.lock().unwrap().len(),
+        2,
+        "catalogue must be cancelled before finishing"
+    );
 }

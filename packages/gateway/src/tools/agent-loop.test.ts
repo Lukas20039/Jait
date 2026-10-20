@@ -1719,7 +1719,14 @@ describe("runAgentLoop persistence", () => {
       { type: "steering", content: "Adjust the answer now" },
       { type: "text", content: " Steered follow-up." },
     ]);
-    expect(events).toContainEqual({ type: "steering", message: "Adjust the answer now" });
+    // The steer arrived mid-response, so it is only injected at the round
+    // boundary; the event is marked deferred and carries no queuedMessageId
+    // because it was not submitted through the HTTP steer route.
+    expect(events).toContainEqual({
+      type: "steering",
+      message: "Adjust the answer now",
+      deferred: true,
+    });
   });
 
   it("calls onPersist exactly once and reports persisted=true on normal completion", async () => {

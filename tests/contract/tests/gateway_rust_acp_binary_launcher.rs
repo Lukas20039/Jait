@@ -170,18 +170,16 @@ impl LauncherIo for FakeIo {
         self.clock.get()
     }
 
-    fn sleep(&self, duration: Duration) -> impl Future<Output = ()> {
-        async move { self.advance(duration) }
+    async fn sleep(&self, duration: Duration) {
+        self.advance(duration);
     }
 
-    fn lock_mtime_ms(&self, _path: &Path) -> impl Future<Output = Option<f64>> {
-        async move {
-            let mut script = self.lock_mtimes.borrow_mut();
-            match script.len() {
-                0 => None,
-                1 => script[0],
-                _ => script.remove(0),
-            }
+    async fn lock_mtime_ms(&self, _path: &Path) -> Option<f64> {
+        let mut script = self.lock_mtimes.borrow_mut();
+        match script.len() {
+            0 => None,
+            1 => script[0],
+            _ => script.remove(0),
         }
     }
 
@@ -301,7 +299,7 @@ impl LauncherProcess for FakeProcess {
             env: env.to_vec(),
             forward_signals,
         });
-        let outcome = self.outcome.clone();
+        let outcome = self.outcome;
         async move { Ok(outcome) }
     }
 }
@@ -1035,11 +1033,11 @@ async fn cancelling_a_run_terminates_the_child() {
         tokio::spawn(async move { SystemProcess.run_child(&sleeper, &args, &[], true).await });
     let mut pid = None;
     for _ in 0..400 {
-        if let Ok(text) = std::fs::read_to_string(&pidfile) {
-            if let Ok(parsed) = text.trim().parse::<u32>() {
-                pid = Some(parsed);
-                break;
-            }
+        if let Ok(text) = std::fs::read_to_string(&pidfile)
+            && let Ok(parsed) = text.trim().parse::<u32>()
+        {
+            pid = Some(parsed);
+            break;
         }
         tokio::time::sleep(Duration::from_millis(10)).await;
     }
@@ -1284,26 +1282,27 @@ async fn run_orders_arguments_forwards_signals_and_maps_exit_status() {
         "preinstalled run must not download"
     );
 
-    let spawned = process.spawned.borrow();
-    assert_eq!(spawned.len(), 1);
-    assert_eq!(spawned[0].command, install_dir.join("bin/agent"));
-    assert_eq!(
-        spawned[0].args,
-        vec![
-            "--flag".to_string(),
-            "value".to_string(),
-            "--forwarded".to_string(),
-            "x".to_string()
+    {
+        let spawned = process.spawned.borrow();
+        assert_eq!(spawned.len(), 1);
+        assert_eq!(spawned[0].command, install_dir.join("bin/agent"));
+        assert_eq!(
+            spawned[0].args,
+            vec![
+                "--flag".to_string(),
+                "value".to_string(),
+                "--forwarded".to_string(),
+                "x".to_string()
+            ]
+        );
+        assert!(spawned[0].forward_signals);
+        let expected_env: Vec<(String, String)> = [
+            ("JAIT_AGENT_EXIT".to_string(), "7".to_string()),
+            ("SHARED".to_string(), "spec".to_string()),
         ]
-    );
-    assert!(spawned[0].forward_signals);
-    let expected_env: Vec<(String, String)> = [
-        ("JAIT_AGENT_EXIT".to_string(), "7".to_string()),
-        ("SHARED".to_string(), "spec".to_string()),
-    ]
-    .to_vec();
-    assert_eq!(spawned[0].env, expected_env);
-    drop(spawned);
+        .to_vec();
+        assert_eq!(spawned[0].env, expected_env);
+    }
 
     // Plain exit codes pass through unchanged.
     let process = FakeProcess::exiting(7);
@@ -1432,15 +1431,14 @@ async fn differential_matches_the_typescript_launcher() {
             };
             let home = lane.join("native-home");
             std::fs::create_dir_all(&home).expect("home");
-            let outcome = run(
+            run(
                 &["acp-binary-launcher".to_string(), encoded],
                 &env,
                 &home,
                 &io,
                 &process,
             )
-            .await;
-            outcome
+            .await
         } else {
             let io = FakeIo::new(b"", GOOD_LISTING, &[]);
             let process = FakeProcess::exiting(0);
@@ -1769,10 +1767,10 @@ async fn cancelling_archive_tool_terminates_its_process() {
         tokio::spawn(async move { SystemLauncher::new().unwrap().run_tool(invocation).await });
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     let pid = loop {
-        if let Ok(text) = std::fs::read_to_string(&pidfile) {
-            if let Ok(pid) = text.trim().parse::<u32>() {
-                break pid;
-            }
+        if let Ok(text) = std::fs::read_to_string(&pidfile)
+            && let Ok(pid) = text.trim().parse::<u32>()
+        {
+            break pid;
         }
         assert!(tokio::time::Instant::now() < deadline, "tool did not start");
         tokio::time::sleep(Duration::from_millis(5)).await;

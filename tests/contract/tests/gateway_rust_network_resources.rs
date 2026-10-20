@@ -410,7 +410,7 @@ async fn endpoint_guard_and_invocation_plan_match_typescript() {
         probes: usize,
     }
 
-    let cases = vec![
+    let cases = [
         Case {
             label: "linux default socket",
             docker_host: None,
@@ -655,7 +655,7 @@ async fn endpoint_guard_and_invocation_plan_match_typescript() {
 
 #[tokio::test]
 async fn listing_filter_and_inspect_batches_match_typescript() {
-    let ids = vec![
+    let ids = [
         FULL_ID.to_string(),
         String::new(),
         SHORT_ID.to_string(),
@@ -1005,10 +1005,12 @@ fn limits_and_projection_match_the_typescript_source() {
     );
     let projection = r#"{"id":{{json .Id}},"name":{{json .Name}},"image":{{json .Config.Image}},"state":{{json .State.Status}},"created":{{json .Created}},"networks":{{json .NetworkSettings.Networks}}}"#;
     assert_eq!(INSPECT_FORMAT, projection);
-    assert!(
-        MAX_CONTAINERS >= 1 && 32 * 16 == MAX_CONTAINERS,
-        "batch size 32 must divide the cap evenly"
-    );
+    const {
+        assert!(
+            MAX_CONTAINERS >= 1 && 32 * 16 == MAX_CONTAINERS,
+            "batch size 32 must divide the cap evenly"
+        );
+    }
 
     let source =
         fs::read_to_string(repo_root().join("packages/gateway/src/services/network-resources.ts"))
@@ -1027,7 +1029,7 @@ fn limits_and_projection_match_the_typescript_source() {
 
 #[test]
 fn exact_utf16_wire_and_legacy_icon_keys_match_reference() {
-    let rows = vec![
+    let rows = [
         json!({"id":FULL_ID,"name":format!("/{}😀","n".repeat(255)),"image":format!("{}😀","x".repeat(511)),"state":"running"}),
         json!({"id":FULL_ID,"name":"plain","image":"constructor:latest","state":"running"}),
         json!({"id":FULL_ID,"name":"plain","image":"__proto__","state":"running"}),
