@@ -75,7 +75,7 @@ export async function generateTitleViaTurn(
 export async function generateTitleViaApi(options: GenerateThreadTitleOptions): Promise<string> {
   const raw = await callLlm(options);
   const title = normalizeGeneratedThreadTitle(raw, "");
-  if (!title) throw new Error("Title generation returned empty result");
+  if (!title) throw new Error("Title generation returned no usable title");
   return title;
 }
 
@@ -95,7 +95,10 @@ export function normalizeGeneratedThreadTitle(raw: string, fallback: string): st
 
   title = title.replace(/[.:;\-–\s]+$/g, "").trim();
 
-  if (!title) return fallback;
+  // Some models emit tool protocol instead of a title. Reject the whole
+  // response rather than using a later payload line as a chat name.
+  const isToolProtocol = /^(?:<(?:\/|\|)?(?:tool_calls?|function_calls?|tool_use)(?=[\s/>|]|$)|\[TOOL_CALLS?\])/i.test(title);
+  if (!title || isToolProtocol) return fallback;
   if (title.length <= TITLE_MAX_LENGTH) return title;
 
   const truncated = title.slice(0, TITLE_MAX_LENGTH + 1);

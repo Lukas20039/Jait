@@ -34,7 +34,8 @@ const SYSTEM_LABELS: Record<string, string> = {
   spam: "SPAM", trash: "TRASH", starred: "STARRED", important: "IMPORTANT", unread: "UNREAD",
 };
 function normalizeLabelId(folder: string): string {
-  return SYSTEM_LABELS[folder.toLowerCase()] ?? folder;
+  const normalized = folder.toLowerCase();
+  return Object.hasOwn(SYSTEM_LABELS, normalized) ? SYSTEM_LABELS[normalized]! : folder;
 }
 
 function header(headers: GmailHeader[] | undefined, name: string): string {
@@ -63,7 +64,7 @@ export class GmailClient implements MailboxClient {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         ...(init?.body ? { "Content-Type": "application/json" } : {}),
-        ...(init?.headers ?? {}),
+        ...init?.headers,
       },
     });
     const text = await res.text();

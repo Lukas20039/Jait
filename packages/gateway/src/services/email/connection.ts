@@ -32,12 +32,15 @@ export const sendEmailSchema = z.object({
 }).strict().refine(value => Boolean(value.to.trim() || value.replyToMessageId), "A recipient or reply message is required");
 
 /** Resolve once, reject every private result, and connect to the pinned IP. */
-export async function publicMailServer(config: MailServerConfig): Promise<MailServerConfig & { servername: string }> {
+export async function publicMailServer(
+  config: MailServerConfig,
+  resolveAddresses: (hostname: string, options: { all: true }) => Promise<Array<{ address: string; family: number }>> = lookup,
+): Promise<MailServerConfig & { servername: string }> {
   const guard = new SSRFGuard();
   guard.validate(`https://${isIP(config.host) === 6 ? '[' + config.host + ']' : config.host}/`);
   let timeout: ReturnType<typeof setTimeout> | undefined;
   const addresses = await Promise.race([
-    lookup(config.host, { all: true }),
+    resolveAddresses(config.host, { all: true }),
     new Promise<never>((_resolve, reject) => { timeout = setTimeout(() => reject(new Error("Mail server DNS timed out")), 8000); }),
   ]).finally(() => { if (timeout) clearTimeout(timeout); });
   if (!addresses.length) throw new Error("Mail server did not resolve");

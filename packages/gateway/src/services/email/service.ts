@@ -136,8 +136,10 @@ export class EmailService {
 
   async completeConnect(params: { code: string; state: string }): Promise<EmailAccount> {
     const pending = this.pending.get(params.state);
-    if (!pending) throw new Error("OAuth state is invalid or expired. Please retry connecting.");
     this.pending.delete(params.state);
+    if (!pending || pending.createdAt < Date.now() - 10 * 60_000) {
+      throw new Error("OAuth state is invalid or expired. Please retry connecting.");
+    }
 
     const credentials = this.resolveCredentials(pending.provider, pending.userId);
     if (!credentials) throw new Error(`${pending.provider} OAuth credentials are no longer configured.`);

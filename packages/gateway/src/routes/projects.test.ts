@@ -218,6 +218,38 @@ describe("project routes", () => {
     }
   });
 
+  it.each([
+    "<tool_call>",
+    '<tool_call>\n{"name":"terminal","arguments":{}}\n</tool_call>',
+  ])("falls back to the first message for a tool-protocol title: %s", async (content) => {
+    const user = userService.createUser("protocol-title-user", "password123");
+    userService.updateSettings(user.id, { apiKeys: { OPENAI_API_KEY: "test-key" } });
+    const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({
+      choices: [{ message: { content } }]
+    }), { status: 200, headers: { "Content-Type": "application/json" } }));
+
+    try {
+      const createRes = await app.inject({ method: "POST", url: "/api/sessions", headers, payload: {} });
+      const session = createRes.json() as { id: string };
+      const prompt = "Help investigate intermittent desktop crashes";
+      const titleRes = await app.inject({
+        method: "POST",
+        url: `/api/sessions/${session.id}/generate-title`,
+        headers,
+        payload: { prompt }
+      });
+      expect(titleRes.statusCode).toBe(200);
+      expect(titleRes.json()).toMatchObject({ generated: false, session: { name: prompt } });
+
+      const savedRes = await app.inject({ method: "GET", url: `/api/sessions/${session.id}`, headers });
+      expect(savedRes.statusCode).toBe(200);
+      expect(savedRes.json()).toMatchObject({ name: prompt });
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  });
+
   it("returns last-active project and supports project-scoped state", async () => {
     const user = userService.createUser("state-user", "password123");
     const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);

@@ -159,3 +159,44 @@ it("rejects header injection and malformed send flags before provider access", a
   await expect(service.sendMessage("u1", account.id, { to: "person@example.com", subject: "Hello", body: "Text", html: "true" as unknown as boolean })).rejects.toThrow();
   expect(send).not.toHaveBeenCalled();
 });
+
+it("rejects expired OAuth state before exchanging tokens and consumes it", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_expired_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", "gmail", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", provider: "gmail", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000 + 1));
+    await expect(service.completeConnect({ code: "synthetic-code", state })).rejects.toThrow(/invalid or expired/i);
+    vi.setSystemTime(started);
+    await expect(service.completeConnect({ code: "synthetic-code", state })).rejects.toThrow(/invalid or expired/i);
+    expect(fetchMock).not.toHaveBeenCalled();
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+});
+
+it("preserves the OAuth expiry boundary and rejects a repeated callback", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_boundary_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", "gmail", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", provider: "gmail", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000));
+    await expect(service.completeConnect({ code: "synthetic-code", state })).rejects.toThrow("OAuth token request failed: synthetic_boundary_fixture");
+    await expect(service.completeConnect({ code: "synthetic-code", state })).rejects.toThrow(/invalid or expired/i);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+});

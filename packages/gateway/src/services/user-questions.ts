@@ -48,7 +48,28 @@ export interface UserQuestionServiceOptions {
   onResolved?: (request: UserQuestionRequest) => void;
 }
 
+export type UserQuestionWaitResult =
+  | { status: "pending" }
+  | { status: "missing" }
+  | { status: "answered"; result: UserQuestionResult | null };
+
+type UserQuestionInput = {
+  sessionId: string;
+  userId?: string | null;
+  requestedBy?: string | null;
+  title?: string;
+  attention?: "normal" | "urgent";
+  questions: UserQuestion[];
+};
+
 export class UserQuestionService {
+  // MCP clients impose per-call deadlines. Keep the answer until the same
+  // owner/session collects it, even if it arrives between wait calls.
+  private readonly resumable = new Map<string, {
+    sessionId: string;
+    userId: string | null;
+    result: Promise<UserQuestionResult | null>;
+  }>();
   private readonly pending = new Map<string, PendingUserQuestion>();
   private readonly onRequest?: (request: UserQuestionRequest) => void;
   private readonly onResolved?: (request: UserQuestionRequest) => void;
@@ -58,14 +79,42 @@ export class UserQuestionService {
     this.onResolved = options.onResolved;
   }
 
-  ask(input: {
-    sessionId: string;
-    userId?: string | null;
-    requestedBy?: string | null;
-    title?: string;
-    attention?: "normal" | "urgent";
-    questions: UserQuestion[];
-  }): Promise<UserQuestionResult | null> {
+  ask(input: UserQuestionInput): Promise<UserQuestionResult | null> {
+    return this.createRequest(input).result;
+  }
+
+  startResumable(input: UserQuestionInput): string {
+    const { request, result } = this.createRequest(input);
+    this.resumable.set(request.id, {
+      sessionId: request.sessionId, userId: request.userId, result,
+    });
+    return request.id;
+  }
+
+  async waitForAnswer(requestId: string, sessionId: string, userId?: string | null): Promise<UserQuestionWaitResult> {
+    const entry = this.resumable.get(requestId);
+    if (!entry || entry.sessionId !== sessionId || entry.userId !== (userId ?? null)) {
+      return { status: "missing" };
+    }
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const outcome = await Promise.race([
+        entry.result.then(result => ({ status: "answered" as const, result })),
+        new Promise<{ status: "pending" }>(resolve => {
+          timer = setTimeout(() => resolve({ status: "pending" }), 60_000);
+        }),
+      ]);
+      if (outcome.status === "answered") this.resumable.delete(requestId);
+      return outcome;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  private createRequest(input: UserQuestionInput): {
+    request: UserQuestionRequest;
+    result: Promise<UserQuestionResult | null>;
+  } {
     const now = new Date();
     const request: UserQuestionRequest = {
       id: uuidv7(),
@@ -80,10 +129,11 @@ export class UserQuestionService {
       status: "pending",
     };
 
-    return new Promise((resolve) => {
+    const result = new Promise<UserQuestionResult | null>((resolve) => {
       this.pending.set(request.id, { request, resolve });
       this.onRequest?.(request);
     });
+    return { request, result };
   }
 
   listPending(sessionId?: string, userId?: string | null): UserQuestionRequest[] {

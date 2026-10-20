@@ -10,6 +10,8 @@ import { TeamChatService } from "../services/team-chat.js";
 import { createTeamChatTool } from "../tools/team-chat-tools.js";
 import type { AppConfig } from "../config.js";
 import type { ToolContext } from "../tools/contracts.js";
+import { UserQuestionService } from "../services/user-questions.js";
+import { createUserAskTool } from "../tools/user-question-tools.js";
 import { createTodoTool } from "../tools/core/todo.js";
 import { ToolRegistry } from "../tools/registry.js";
 import {
@@ -27,6 +29,34 @@ afterEach(async () => {
 });
 
 describe("mcp-server", () => {
+  it("keeps a user question resumable across MCP call deadlines", async () => {
+    vi.useFakeTimers();
+    try {
+      const service = new UserQuestionService();
+      const registry = new ToolRegistry();
+      registry.register(createUserAskTool(service));
+      const call = (args: unknown) => handleMcpRequest({
+        jsonrpc: "2.0", id: 1, method: "tools/call",
+        params: { name: "user_ask", arguments: args },
+      }, registry, undefined, { sessionId: "session-1", userId: "user-1" });
+      const first = call({ questions: [{ id: "choice", header: "Choice", question: "Which one?" }] });
+      await vi.advanceTimersByTimeAsync(60_000);
+      const response = await first;
+      expect(response).toMatchObject({ result: { isError: false } });
+      const [request] = service.listPending();
+      expect(JSON.stringify(response)).toContain(request!.id);
+      await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000);
+      expect(service.submit(request!.id, { answers: { choice: { selected: ["yes"], freeText: null, skipped: false } } }, "user-1")).toBe(true);
+      const answer = await call({ requestId: request!.id });
+      expect(answer).toMatchObject({ result: { isError: false } });
+      expect(JSON.stringify(answer)).toContain("yes");
+      expect(service.listPending()).toHaveLength(0);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("keeps essential tools in a dedicated core MCP catalog", async () => {
     const registry = new ToolRegistry();
     for (const [name, tier] of [

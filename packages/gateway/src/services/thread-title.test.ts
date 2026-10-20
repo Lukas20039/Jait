@@ -32,6 +32,27 @@ describe("thread-title helpers", () => {
     expect(normalizeGeneratedThreadTitle(" \n ", "Fallback title")).toBe("Fallback title");
   });
 
+  it.each([
+    "<tool_call>",
+    '<tool_call>\n{"name":"terminal","arguments":{}}\n</tool_call>',
+    "</tool_call>",
+    "<tool_calls />",
+    '<function_call name="terminal">',
+    'Title: "<TOOL_CALL>"',
+    "- `<tool_call>`",
+    "<|tool_call|>",
+    "[TOOL_CALLS]",
+  ])("rejects tool-protocol output as a title: %s", (raw) => {
+    expect(normalizeGeneratedThreadTitle(raw, "Fallback title")).toBe("Fallback title");
+    expect(normalizeGeneratedThreadTitle(raw, "")).toBe("");
+  });
+
+  it("preserves titles discussing tool-call markers", () => {
+    expect(normalizeGeneratedThreadTitle("Fix <tool_call> chat titles", "Fallback")).toBe(
+      "Fix <tool_call> chat titles",
+    );
+  });
+
   it("uses the selected Jait backend for title generation", async () => {
     const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
       expect(String(input)).toBe("https://openrouter.ai/api/v1/chat/completions");

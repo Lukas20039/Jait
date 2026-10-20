@@ -25,6 +25,7 @@ export function startSandboxBackgroundProcess(
   containerName: string,
   timeoutMs: number,
   removeContainer: boolean,
+  runtime: { spawn: typeof spawn } = { spawn },
 ): SandboxBackgroundExecution {
   if (activeProcesses >= MAX_BACKGROUND_PROCESSES) throw new Error("Too many background sandbox commands");
   const marker = `__JAIT_SANDBOX_PID_${randomUUID()}__`;
@@ -34,7 +35,7 @@ export function startSandboxBackgroundProcess(
     ...invocation.slice(1, -3), "setsid", "--wait", "bash", "-c", wrapper, "jait-background",
     `${Math.max(1000, timeoutMs) / 1000}s`, command,
   ];
-  const child = spawn(invocation[0]!, args, { stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
+  const child = runtime.spawn(invocation[0]!, args, { stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
   activeProcesses++;
   let output = "";
   let prefix = "";
@@ -51,14 +52,14 @@ export function startSandboxBackgroundProcess(
     if (!groupPid) return Promise.resolve();
     // Only the validated numeric PID from the wrapper is interpolated.
     return runCleanup([invocation[0]!, "exec", containerName, "bash", "-c",
-      `kill -${signal} -- -${groupPid} 2>/dev/null || true`]);
+      `kill -${signal} -- -${groupPid} 2>/dev/null || true`], runtime.spawn);
   };
   const stop = () => {
     if (finished) return Promise.resolve();
     stopped = true;
     stopping ??= (async () => {
       if (removeContainer) {
-        await runCleanup([invocation[0]!, "rm", "-f", containerName]);
+        await runCleanup([invocation[0]!, "rm", "-f", containerName], runtime.spawn);
       } else {
         await signalGroup("TERM");
         if (!finished) {
@@ -114,9 +115,9 @@ export function startSandboxBackgroundProcess(
   };
 }
 
-function runCleanup(args: string[]): Promise<void> {
+function runCleanup(args: string[], launch: typeof spawn): Promise<void> {
   return new Promise(resolve => {
-    const child = spawn(args[0]!, args.slice(1), { stdio: "ignore", windowsHide: true });
+    const child = launch(args[0]!, args.slice(1), { stdio: "ignore", windowsHide: true });
     const timer = setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 5000);
     const done = () => { clearTimeout(timer); resolve(); };
     child.once("error", done);
