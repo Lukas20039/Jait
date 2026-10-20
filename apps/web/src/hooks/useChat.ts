@@ -11,7 +11,12 @@ import { getToolFilePath } from '@/lib/tool-call-body'
 import { parseContextFlowEvent } from '@/lib/context-flow'
 import { normalizeTodoStateValue, recoverTodoListFromMessages } from '@/lib/todo-state'
 import type { RuntimeMode } from '@/lib/agents-api'
-import { createOptimisticAssistantPlaceholder, mergeSnapshotMessagesWithOptimisticUsers } from '@/lib/optimistic-chat-messages'
+import {
+  createOptimisticAssistantPlaceholder,
+  createOptimisticMessageId,
+  mergeSnapshotMessagesWithOptimisticUsers,
+} from '@/lib/optimistic-chat-messages'
+import { transcriptBeforeEditTarget } from '@/lib/edit-resend'
 import {
   deleteCachedChatHistory,
   getChatCacheScope,
@@ -63,13 +68,6 @@ const LOCAL_SEND_TURN_START_TOLERANCE_MS = 60_000
 function authHeaders(token?: string | null): Record<string, string> {
   if (!token) return {}
   return { Authorization: `Bearer ${token}` }
-}
-
-function createOptimisticMessageId(prefix: 'user' | 'assistant'): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return `${prefix}-${crypto.randomUUID()}`
-  }
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
 export function getVisibleChangedFiles(changedFiles: ChangedFile[], isSwitchingSession: boolean): ChangedFile[] {
@@ -394,6 +392,12 @@ export interface ChatMessage {
   kind?: 'system-notice'
   /** Local-only user message awaiting confirmation from a server snapshot. */
   optimistic?: boolean
+  /**
+   * Delivery state of a locally inserted user message: `sending` until the
+   * turn is accepted (or the restart round-trip lands), `sent` afterwards.
+   * Absent on rows restored from history — those are settled by definition.
+   */
+  sendState?: 'sending' | 'sent'
   /** Injected into a running agent turn via steering rather than sent as a normal turn. */
   steered?: boolean
   /** Clean display text for user messages (without appended file contents) */
@@ -656,6 +660,18 @@ interface SendMessageOptions {
    * positional index that can drift from a locally stale message list.
    */
   expectedContent?: string
+  /**
+   * ID of an optimistic user bubble that is already on screen (edit-and-resend
+   * renders it before the restart round-trip). The send adopts that row — it
+   * moves to `sent` instead of appending a second copy of the same prompt.
+   */
+  reuseOptimisticMessageId?: string
+  /**
+   * ID of an optimistic assistant placeholder that is already on screen (the
+   * edit-and-resend flow renders one while the restart round-trips). The send
+   * fills that row in instead of appending a second "thinking" row.
+   */
+  reuseOptimisticAssistantId?: string
 }
 
 interface QueuedChatMessage extends QueuedMessage {
@@ -698,6 +714,15 @@ export function useChat(
     hasMore: false,
     totalMessages: 0,
   })
+
+  /**
+   * Synchronous mirror of the rendered transcript. Edit-and-resend has to read
+   * the current list to snapshot it for rollback and to truncate it, and both
+   * must happen inside a single commit — `state.messages` in a callback closure
+   * is one render behind by the time the optimistic bubble is inserted.
+   */
+  const messagesRef = useRef<ChatMessage[]>([])
+  messagesRef.current = state.messages
 
   const [pendingPlan, setPendingPlan] = useState<PlanData | null>(null)
   const [todoList, setTodoList] = useState<TodoItem[]>([])
@@ -1630,26 +1655,37 @@ export function useChat(
     const notifyLoginRequired = requestLoginRequired ?? onLoginRequired
     let requestSessionId = explicitSessionId ?? sessionId // prefer explicit override
     const outboundAttachments = mergeChatAttachments(options.attachments, attachmentsFromSegments(options.displaySegments))
-    const assistantId = createOptimisticMessageId('assistant')
-
+    const reuseAssistantMessageId = options.reuseOptimisticAssistantId
+    const assistantId = reuseAssistantMessageId ?? createOptimisticMessageId('assistant')
+    // Edit-and-resend already put the edited prompt on screen while the
+    // restart round-tripped; reuse that row so the user sees one bubble that
+    // flips to "sent" rather than a second, freshly appended copy.
+    const reuseUserMessageId = options.reuseOptimisticMessageId
     const userMessage: ChatMessage = {
-      id: createOptimisticMessageId('user'),
+      id: reuseUserMessageId ?? createOptimisticMessageId('user'),
       role: 'user',
       content,
       optimistic: true,
+      sendState: 'sending',
       ...(options.displayContent ? { displayContent: options.displayContent } : {}),
       ...(options.referencedFiles?.length ? { referencedFiles: options.referencedFiles } : {}),
       ...(options.displaySegments?.length ? { displaySegments: options.displaySegments } : {}),
       ...(outboundAttachments?.length ? { attachments: outboundAttachments } : {}),
     }
 
-    setState(prev => ({
-      ...prev,
-      messages: [...prev.messages, userMessage, createOptimisticAssistantPlaceholder(assistantId)],
-      isLoading: true,
-      error: null,
-      hitMaxRounds: false,
-    }))
+    setState(prev => {
+      const hasPlaceholder = reuseAssistantMessageId
+        ? prev.messages.some(message => message.id === reuseAssistantMessageId)
+        : false
+      const withUser = reuseUserMessageId ? prev.messages : [...prev.messages, userMessage]
+      return {
+        ...prev,
+        messages: hasPlaceholder ? withUser : [...withUser, createOptimisticAssistantPlaceholder(assistantId)],
+        isLoading: true,
+        error: null,
+        hitMaxRounds: false,
+      }
+    })
 
     // Clear the todo list for the new turn. Keep changed files so pending
     // review state survives across follow-up prompts until the user decides.
@@ -1795,6 +1831,14 @@ export function useChat(
       // client-side queue drain): the optimistic user bubble is already on
       // screen, so the turn-start event must not append another one.
       localPendingSendRef.current = { content, at: Date.now() }
+      // The prompt is durably accepted: retire its "sending" indicator. The
+      // subscription owns the assistant bubble from here on.
+      setState(prev => ({
+        ...prev,
+        messages: prev.messages.map(m =>
+          m.id === userMessage.id && m.sendState === 'sending' ? { ...m, sendState: 'sent' as const } : m
+        ),
+      }))
       return 'sent'
     } catch (error) {
       const transientConnectionError = isTransientConnectionError(error)
@@ -1807,7 +1851,18 @@ export function useChat(
       // turn *did* start, and its own terminal event owns the outcome.
       const owned = releasePlaceholder()
       setState(prev => {
-        if (!owned) return { ...prev, isLoading: false, error: errorMessage }
+        if (!owned) {
+          return {
+            ...prev,
+            isLoading: false,
+            error: errorMessage,
+            // This bubble will never reach "sent" — clear the pending marker so
+            // a failed send does not spin forever next to the error banner.
+            messages: prev.messages.map(m =>
+              m.id === userMessage.id && m.sendState ? { ...m, sendState: undefined } : m
+            ),
+          }
+        }
         // A transient failure keeps no partial turn worth marking up, and a
         // queued-drain send owns neither bubble.
         const dropPair = transientConnectionError || options.queued === true
@@ -2159,8 +2214,45 @@ export function useChat(
     const effectiveToken = token ?? authToken
     const notifyLoginRequired = requestLoginRequired ?? onLoginRequired
     const requestSessionId = explicitSessionId ?? sessionId
-    if (!requestSessionId || !editedContent.trim() || restartInFlightRef.current) return false
+    const trimmedContent = editedContent.trim()
+    if (!requestSessionId || !trimmedContent || restartInFlightRef.current) return false
     restartInFlightRef.current = true
+
+    // Show the edited turn before touching the network. The gateway needs its
+    // own turn stopped first (cancel + streaming poll, up to ~8s), and holding
+    // the UI back until that finished is what made an edit look like nothing
+    // happened: the old message stayed put and only the composer greyed out.
+    const previousMessages = messagesRef.current
+    const optimisticUserMessageId = createOptimisticMessageId('user')
+    // The assistant placeholder goes up with the user bubble so the transcript
+    // shows the turn already in flight; `sendMessage` adopts this row once the
+    // restart lands instead of appending a second one.
+    const optimisticAssistantMessageId = createOptimisticMessageId('assistant')
+    setState(prev => ({
+      ...prev,
+      messages: [
+        ...transcriptBeforeEditTarget(prev.messages, { messageId, messageIndex, messageFromEnd }),
+        {
+          id: optimisticUserMessageId,
+          role: 'user',
+          content: trimmedContent,
+          optimistic: true,
+          sendState: 'sending',
+          ...(options.displayContent ? { displayContent: options.displayContent } : {}),
+          ...(options.displaySegments?.length ? { displaySegments: options.displaySegments } : {}),
+        } as ChatMessage,
+        createOptimisticAssistantPlaceholder(optimisticAssistantMessageId) as ChatMessage,
+      ],
+      isLoading: true,
+      error: null,
+      hitMaxRounds: false,
+    }))
+
+    // The edit may still be rejected (missing message, cancelled login, dead
+    // connection), in which case the pre-edit transcript has to come back.
+    const rollbackOptimisticEdit = () => {
+      setState(prev => ({ ...prev, messages: previousMessages, isLoading: false }))
+    }
 
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
@@ -2208,6 +2300,7 @@ export function useChat(
       if (res.status === 401) {
         const data = await res.json().catch(() => ({})) as { detail?: string }
         if (data.detail === 'login_required') notifyLoginRequired?.()
+        rollbackOptimisticEdit()
         return false
       }
 
@@ -2227,15 +2320,18 @@ export function useChat(
         const totalMessages = data.total ?? messages.length
         return {
           ...prev,
-          messages,
-          isLoading: false,
+          // The snapshot is the truncated transcript: everything from the
+          // edited message onwards is gone server-side. Merge instead of
+          // replacing so the optimistic bubble just rendered survives the swap.
+          messages: mergeSnapshotMessagesWithOptimisticUsers(messages, prev.messages),
+          isLoading: true,
           error: null,
           hasMore: data.hasMore ?? messages.length < totalMessages,
           totalMessages,
         }
       })
 
-      const sendResult = await sendMessage(editedContent.trim(), {
+      const sendResult = await sendMessage(trimmedContent, {
         token: effectiveToken,
         sessionId: requestSessionId,
         mode: options.mode,
@@ -2243,16 +2339,29 @@ export function useChat(
         runtimeMode: options.runtimeMode,
         model: options.model,
         reasoningEffort: options.reasoningEffort,
-        displayContent: options.displayContent ?? editedContent.trim(),
+        displayContent: options.displayContent ?? trimmedContent,
         referencedFiles: options.referencedFiles,
         displaySegments: options.displaySegments,
         onLoginRequired: notifyLoginRequired,
+        reuseOptimisticMessageId: optimisticUserMessageId,
+        reuseOptimisticAssistantId: optimisticAssistantMessageId,
       })
-      return sendResult === 'sent' || sendResult === 'queued'
-    } catch (error) {
+      if (sendResult === 'sent' || sendResult === 'queued') return true
+      // History was rewritten but the new turn never started; the prompt on
+      // screen belongs to no server row, so drop it rather than leave a bubble
+      // that silently never gets answered.
       setState(prev => ({
         ...prev,
+        messages: prev.messages.filter(
+          m => m.id !== optimisticUserMessageId && m.id !== optimisticAssistantMessageId,
+        ),
         isLoading: false,
+      }))
+      return false
+    } catch (error) {
+      rollbackOptimisticEdit()
+      setState(prev => ({
+        ...prev,
         error: error instanceof Error ? error.message : 'Failed to restart from message',
       }))
       return false

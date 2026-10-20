@@ -432,6 +432,16 @@ export function DeveloperChatWorkspace({
     setEditingMessageId(null)
   }, [activeSessionId])
 
+  // An edit-and-resend replaces the edited row with a locally rendered user
+  // turn whose id the old row never owned, so its unmount cannot release edit
+  // ownership. Without this, `editingMessageId` would keep pointing at a gone
+  // message and the mobile composer would stay hidden after the resend.
+  useEffect(() => {
+    if (!editingMessageId) return
+    if (messages.some((message) => message.id === editingMessageId)) return
+    setEditingMessageId(null)
+  }, [editingMessageId, messages])
+
   // These hooks must stay above the empty-chat return. A chat commonly renders
   // once without messages while history loads and then renders with messages;
   // placing transcript-only hooks below that return changes the hook count on
@@ -611,6 +621,7 @@ export function DeveloperChatWorkspace({
         msg.persona,
         msg.content,
         msg.steered,
+        msg.sendState,
         msg.contextFlow,
         msg.hasContextFlow,
         msg.hasMemoryProvenance,
@@ -640,6 +651,7 @@ export function DeveloperChatWorkspace({
           persona={msg.persona}
           content={msg.content}
           steered={msg.steered}
+          sendState={msg.sendState}
           contextFlow={msg.contextFlow}
           hasContextFlow={msg.hasContextFlow}
           hasMemoryProvenance={msg.hasMemoryProvenance}

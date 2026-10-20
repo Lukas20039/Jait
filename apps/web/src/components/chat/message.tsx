@@ -84,6 +84,12 @@ interface MessageProps {
   content: string
   /** Injected into a running agent turn via steering rather than sent as a normal turn. */
   steered?: boolean
+  /**
+   * Delivery state of a freshly sent or edited user turn: `sending` shows a
+   * spinner beside the bubble, `sent` flashes a short acknowledgement before
+   * the indicator disappears. Absent for ordinary history rows.
+   */
+  sendState?: 'sending' | 'sent'
   contextFlow?: LlmContextFlow
   /** Lightweight badge: a contextFlow payload exists on the server (lazy-loaded). */
   hasContextFlow?: boolean
@@ -188,6 +194,7 @@ function MessageInner({
   kind,
   content,
   steered,
+  sendState,
   contextFlow,
   hasContextFlow,
   hasMemoryProvenance,
@@ -294,6 +301,18 @@ function MessageInner({
   }, [messageId, onEditingChange])
   const [showEditComposer, setShowEditComposer] = useState(false)
   const [isSavingEdit, setIsSavingEdit] = useState(false)
+  // "Sending…" holds until the server confirms; "Sent" then flashes briefly
+  // instead of vanishing, so an edited resend visibly completes.
+  const [showSentAck, setShowSentAck] = useState(false)
+  useEffect(() => {
+    if (sendState !== 'sent') {
+      setShowSentAck(false)
+      return
+    }
+    setShowSentAck(true)
+    const timer = window.setTimeout(() => setShowSentAck(false), 2000)
+    return () => window.clearTimeout(timer)
+  }, [sendState])
   const [contextOpen, setContextOpen] = useState(false)
   const [memoryExpanded, setMemoryExpanded] = useState(false)
   const [memoryFeedbackState, setMemoryFeedbackState] = useState<{
@@ -475,7 +494,7 @@ function MessageInner({
       window.removeEventListener('resize', update)
     }
   }, [isEditing, isMobile])
-  const canEdit = !messenger && isUser && !!messageId && !!onEditMessage
+  const canEdit = !messenger && isUser && !!messageId && !!onEditMessage && sendState !== 'sending'
   const canRetry = canEdit
   const showStreamingIndicator = isStreaming && !thinking && !(typeof content === 'string' ? content : '').trim()
   const hasCopyableMessage = buildCopyText().length > 0
@@ -965,6 +984,26 @@ function MessageInner({
                         <ArrowRight className="h-3 w-3" />
                         Steered into running turn
                       </span>
+                    )}
+                    {isUser && (sendState === 'sending' || showSentAck) && (
+                      <div
+                        className="mb-1 flex items-center gap-1.5 text-2xs font-medium text-muted-foreground"
+                        aria-live="polite"
+                        data-testid="user-message-send-status"
+                        data-send-state={sendState === 'sending' ? 'sending' : 'sent'}
+                      >
+                        {showSentAck ? (
+                          <>
+                            <Check className="h-3 w-3 text-primary" />
+                            <span>Sent</span>
+                          </>
+                        ) : (
+                          <>
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            <span>Sending…</span>
+                          </>
+                        )}
+                      </div>
                     )}
                     <TooltipHint content={canEdit && !isEditing ? 'Click to edit message' : undefined}>
                     <AIMessageContent

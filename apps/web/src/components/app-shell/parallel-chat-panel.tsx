@@ -435,6 +435,7 @@ function ParallelChatPanelImpl({
             kind={message.kind}
             content={message.content}
             steered={message.steered}
+            sendState={message.sendState}
             contextFlow={message.contextFlow}
             hasContextFlow={message.hasContextFlow}
             hasMemoryProvenance={message.hasMemoryProvenance}

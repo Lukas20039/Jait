@@ -1,5 +1,12 @@
 import type { UserMessageSegment } from '@/lib/user-message-segments'
 
+export function createOptimisticMessageId(prefix: 'user' | 'assistant'): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `${prefix}-${crypto.randomUUID()}`
+  }
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
 export interface OptimisticUserMessageLike {
   id: string
   /** Stable UI identity across optimistic-to-persisted reconciliation. */
