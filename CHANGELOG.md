@@ -4,6 +4,34 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.954](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.954) — 2026-10-20
+
+- feat(gateway-rust,gateway,web,shared): port consent, tool profiles and session waits natively — 5abe77b7
+- fix(ci): restore component coverage and stop the active-stream fixture race — 5b52b410
+- fix(ci): rustfmt model_fetchers and stop the vitest compile-cache teardown race — 71768981
+- fix(ci): format steering tests and retry vitest state teardown — 80b417ad
+- fix(ci): repair rust contracts, clippy, chat_flow tool alias, Windows smoke — 46f50ac8
+- fix(messenger): render outgoing messages immediately — d01a66e0
+
+The Rust port picks up the consent manager, the tool permission ladder, tool
+profiles with their extracted asset table, session waits, sub-agent history,
+the messenger bridge, code-graph retrieval and the maintenance tool, each with
+its own contract suite, plus an ECMAScript-compatible JSON module the rest of
+the port reuses. The TypeScript gateway feeds the same payloads through the
+messenger service, preview surface, browser/terminal/screenshot tools and the
+websocket layer, and the web client adds conversation-browser and session-wait
+helpers, a messenger peer view and reworked chat and settings surfaces.
+
+The pipeline is green again. The active-stream contract fixture installed its
+release gate after a fixed sleep, so a fast client could release the stream
+before the callback existed and the test hung; the gate is now installed before
+the first token is sent. Component coverage, which had drifted below the frozen
+baseline since 4f4be0bb, is restored with real tests for tool profiles, terminal
+tool metadata, ACP catalogue mapping, pi MCP provisioning, the Gmail client,
+offline jait-models fallback, the skills bin cache, terminal output slicing and
+chat context-flow serialization rather than by re-baselining. Vitest state
+teardown and rustfmt/clippy drift on `model_fetchers.rs` are fixed as well.
+
 ## [v0.1.953](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.953) — 2026-10-20
 
 - feat(gateway,web,gateway-rust): queue mid-loop steers until the tool round ends — 8691640c
