@@ -522,6 +522,19 @@ export class MessengerStore {
     return new Blob([data], { type: attachment.mime })
   }
 
+  /** Avatars are public-ish profile images: ask the homeserver for a small thumbnail. */
+  async avatarBlob(mxcUrl: string): Promise<Blob> {
+    if (!this.client || !this.session) throw new Error('Connect to Matrix first.')
+    // Always go through the configured homeserver; never fetch an event-supplied origin.
+    const url = this.client.mxcUrlToHttp(mxcUrl, 96, 96, 'crop', false, false, true)
+    if (!url || new URL(url).origin !== new URL(this.session.homeserver).origin) throw new Error('Invalid avatar URL.')
+    const response = await fetch(url, { headers: { Authorization: 'Bearer ' + this.session.accessToken }, redirect: 'error', signal: AbortSignal.timeout(20_000) })
+    if (!response.ok) throw new Error('Could not load avatar.')
+    const bytes = await response.arrayBuffer()
+    if (bytes.byteLength > 2 * 1024 * 1024) throw new Error('Avatar exceeds the preview limit.')
+    return new Blob([bytes])
+  }
+
   async join(roomId: string) { const { client } = this.connected(); await client.joinRoom(roomId); this.refresh() }
   async leave(roomId: string) { const { client } = this.connected(); await client.leave(roomId); this.refresh() }
   async openDirect(userId: string, select = true) {

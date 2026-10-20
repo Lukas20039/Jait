@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join, resolve, win32 } from "node:path";
+import { resolve, win32 } from "node:path";
 import type { WsControlPlane } from "../ws.js";
 import { parseJaitBackendInstances, type JaitBackend } from "@jait/shared";
 import type { SurfaceRegistry } from "../surfaces/registry.js";
@@ -521,8 +521,10 @@ export function createBrowserInteractionTools(
           input.path?.trim() || `.jait/shots/browser-${randomUUID()}.png`);
         const screenshotPath = await surface.screenshot(outputPath, context.signal);
         const extension = /\.(png|jpe?g|webp|gif)$/i.exec(screenshotPath)?.[0].toLowerCase() ?? ".png";
-        const displayDir = resolve(process.cwd(), ".jait", "shots");
-        const displayPath = join(displayDir, `browser-${randomUUID()}${extension}`);
+        // The image route only serves paths inside the chat's project root, so
+        // the display cache must be project-scoped rather than cwd-scoped.
+        const displayDir = projectPath.resolve(context.projectRoot, ".jait", "shots");
+        const displayPath = projectPath.resolve(displayDir, `browser-${randomUUID()}${extension}`);
         let bytes: Buffer;
         try {
           bytes = await readFile(screenshotPath);

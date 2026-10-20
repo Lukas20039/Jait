@@ -2,14 +2,14 @@
   "review_scope": "parity-calls bounded source and semantics review",
   "declarations": [
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:240:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:259:3",
       "status": "verified",
-      "parity_review": "Reviewed omits the Authorization header when no key is configured. Original body, lexical setup, imports, lifecycle, enclosing function bindings and every actual and expected operand match the bounded completion audit. Last-call and nth-call assertions preserve mock call history and their complete expected argument vectors, including the ordinal for nth-call checks. Five structural controls reject changed ordinals, call kind, arguments and receiver. Thirty-two ordering verdicts agree across real Vitest and Rust for positive/negative last/nth predicates. Partial-object call expectations guard every compared property while permitting functions and uncustomized AbortSignals only in omitted fields; nine domain controls reject unsupported compared or serialized values. Other predicates retain plain-data checks. Every observation and an opposing counterexample agree between real Vitest and the Rust comparator. Detailed per-site bindings, inputs, observation counts, skipped-helper proofs and hashes: .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-calls/combined-selected.json. The passing full translated report and internal/managed profiles are bound to the unchanged frozen source checkpoint. Live candidate sources, fixtures, Rust rules and transport hashes match that checkpoint. This is preservation of the reference tests for the exercised domains, not native-runtime or complete security assurance.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_240_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },

@@ -79,6 +79,22 @@ def inventory_review_metadata_only(before, after):
         return False
 
 
+def prepare_compiler_caches():
+    # Native tests embed CARGO_MANIFEST_DIR. Reusing a live binary through a
+    # target-directory symlink executes its live source root, defeating freezing.
+    # Keep the native target physical. Contract runner targets include a source
+    # root key and can therefore share their parent cache safely.
+    for target in ("gateway-rust-target", "rust-contract-target"):
+        cache = ROOT / ".jait/artifacts" / target
+        destination = RUN_OUTPUT / target
+        if target == "gateway-rust-target":
+            if destination.is_symlink():
+                destination.unlink()
+            destination.mkdir(parents=True, exist_ok=True)
+        elif cache.exists():
+            link(destination, cache)
+
+
 def main():
     assert not SNAPSHOT.is_symlink()
     if RUN_OUTPUT.is_symlink():
@@ -126,12 +142,7 @@ def main():
     for source in modules:
         if source.is_dir():
             overlay(source, SNAPSHOT / source.relative_to(ROOT))
-    # Physical fixture paths preserve realpath-sensitive mount assertions. Only
-    # compiler caches are linked; artifacts never link back to a source ancestor.
-    for target in ("gateway-rust-target", "rust-contract-target"):
-        cache = ROOT / ".jait/artifacts" / target
-        if cache.exists():
-            link(RUN_OUTPUT / target, cache)
+    prepare_compiler_caches()
     # Workspace import conditions select dist exports. Build these from frozen
     # source so package aliases never escape to mutable live compiled output.
     with (OUTPUT / "frozen-workspace-build.log").open("w") as log:
@@ -226,7 +237,7 @@ def main():
     state_file = OUTPUT / "goal-checkpoint.json"
     state = json.loads(state_file.read_text()) if state_file.exists() else {}
     state.update(
-        goal="Reach 364/364 verified native components without replacing the production gateway.",
+        goal=f"Reach {report['inventory_total']}/{report['inventory_total']} verified native components without replacing the production gateway.",
         verified_components=count, verified_percent=report["verified_percent"],
         inventory_total=report["inventory_total"], goal_met=count == report["inventory_total"] and report["live_fingerprints_exact_match"],
         source_root=str(SNAPSHOT), live_sources_match=not drift, live_source_drift=drift,
@@ -240,6 +251,8 @@ def main():
         next=("Final component checks met; evaluate broader replacement-readiness gates." if count == report["inventory_total"] and report["live_fingerprints_exact_match"]
               else "Continue unported components from remaining-native-components.json; refresh the inventory after each credited batch."),
         phase="Verified frozen source checkpoint; continue until all inventoried components pass",
+        pending_full_gate=[],
+        current_live_validation=("Exact live fingerprints match the completed gate." if report["live_fingerprints_exact_match"] else "Completed frozen gate; live drift remains in the report."),
     )
     state_file.write_text(json.dumps(state, indent=2) + "\n")
 

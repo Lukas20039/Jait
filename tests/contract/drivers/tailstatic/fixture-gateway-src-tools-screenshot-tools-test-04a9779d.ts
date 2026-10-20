@@ -1,6 +1,10 @@
 // Translated fixture from packages/gateway/src/tools/screenshot-tools.test.ts; expected literals are in tail_static.rs.
-import { resolve, sep } from "node:path";
-import { resolveOutPath } from "../../../../packages/gateway/src/tools/screenshot-tools.js";
+
+
+
+
+import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
@@ -41,9 +45,110 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3": {
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_54_3": {
+await vi.mock(Bun.resolveSync("playwright", __jait_original_dir), () => ({ chromium: { launch: async () => ({ close: async () => undefined }) } }));
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/surfaces/browser.ts",import.meta.url)), () => ({
+  launchLocalBrowser: async () => ({
+    newContext: async () => ({
+      newPage: async () => ({
+        goto: async () => undefined,
+        waitForSelector: async () => undefined,
+        locator: () => ({
+          first: () => ({ click: async () => undefined, fill: async () => undefined, waitFor: async () => undefined }),
+        }),
+        waitForTimeout: async () => undefined,
+        screenshot: async ({ path }: { path: string }) => {
+          const { writeFile } = await import("node:fs/promises");
+          await writeFile(path, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=", "base64"));
+        },
+      }),
+    }),
+    close: async () => undefined,
+  }),
+}));
+const { existsSync } = await import("node:fs");
+const { mkdir, mkdtemp, readFile, rm } = await import("node:fs/promises");
+const { join, resolve, sep } = await import("node:path");
+const { createScreenshotCaptureTool, resolveOutPath } = await import("../../../../packages/gateway/src/tools/screenshot-tools.js");
+const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts");
+const PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=";
+const png = Buffer.from(PNG_BASE64, "base64");
+/*__jait_scope_open__*/{
+let root: string;
+let project: string;
+let gatewayCwd: string;
+const __jait_hook_1758 = async () => {
+    await mkdir(artifacts, { recursive: true });
+    root = await mkdtemp(join(artifacts, "screenshot-display-"));
+    project = join(root, "project");
+    gatewayCwd = join(root, "gateway");
+    await mkdir(join(project, ".jait/shots"), { recursive: true });
+    await mkdir(gatewayCwd, { recursive: true });
+  };
+const __jait_hook_2101 = async () => {
+    if (root) await rm(root, { recursive: true, force: true });
+  };
+await __jait_hook_1758();
+try {
+await (async()=>{
 
+    const cwd = vi.spyOn(process, "cwd").mockReturnValue(gatewayCwd);
+    try {
+      const result = await createScreenshotCaptureTool().execute(
+        { target: "https://example.com", fullPage: false },
+        { projectRoot: project, sessionId: "display-copy-chat" } as unknown as ToolContext,
+      );
+      __jait_capture(0, (result.ok));
 
+      const data = result.data as { path: string; capturePath: string };
+      const displayDir = resolve(project, ".jait", "shots");
+      // The chat image route only serves paths inside the chat's project root,
+      // so a cwd-relative display copy makes every screenshot unservable.
+      __jait_capture(1, (data.path.startsWith(displayDir + sep)));
+      __jait_capture(2, (existsSync(data.path)));
+      __jait_capture(3, (await readFile(data.path)), (png));
+      __jait_capture(4, (existsSync(join(gatewayCwd, ".jait"))));
+    } finally {
+      cwd.mockRestore();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_2101();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_79_3": {
+await vi.mock(Bun.resolveSync("playwright", __jait_original_dir), () => ({ chromium: { launch: async () => ({ close: async () => undefined }) } }));
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/surfaces/browser.ts",import.meta.url)), () => ({
+  launchLocalBrowser: async () => ({
+    newContext: async () => ({
+      newPage: async () => ({
+        goto: async () => undefined,
+        waitForSelector: async () => undefined,
+        locator: () => ({
+          first: () => ({ click: async () => undefined, fill: async () => undefined, waitFor: async () => undefined }),
+        }),
+        waitForTimeout: async () => undefined,
+        screenshot: async ({ path }: { path: string }) => {
+          const { writeFile } = await import("node:fs/promises");
+          await writeFile(path, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=", "base64"));
+        },
+      }),
+    }),
+    close: async () => undefined,
+  }),
+}));
+const { existsSync } = await import("node:fs");
+const { mkdir, mkdtemp, readFile, rm } = await import("node:fs/promises");
+const { join, resolve, sep } = await import("node:path");
+const { createScreenshotCaptureTool, resolveOutPath } = await import("../../../../packages/gateway/src/tools/screenshot-tools.js");
+const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts");
+const PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=";
+const png = Buffer.from(PNG_BASE64, "base64");
 /*__jait_scope_open__*/{
 const projectRoot = resolve("other-project");
 
@@ -61,9 +166,34 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3": {
-
-
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_82_3": {
+await vi.mock(Bun.resolveSync("playwright", __jait_original_dir), () => ({ chromium: { launch: async () => ({ close: async () => undefined }) } }));
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/surfaces/browser.ts",import.meta.url)), () => ({
+  launchLocalBrowser: async () => ({
+    newContext: async () => ({
+      newPage: async () => ({
+        goto: async () => undefined,
+        waitForSelector: async () => undefined,
+        locator: () => ({
+          first: () => ({ click: async () => undefined, fill: async () => undefined, waitFor: async () => undefined }),
+        }),
+        waitForTimeout: async () => undefined,
+        screenshot: async ({ path }: { path: string }) => {
+          const { writeFile } = await import("node:fs/promises");
+          await writeFile(path, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=", "base64"));
+        },
+      }),
+    }),
+    close: async () => undefined,
+  }),
+}));
+const { existsSync } = await import("node:fs");
+const { mkdir, mkdtemp, readFile, rm } = await import("node:fs/promises");
+const { join, resolve, sep } = await import("node:path");
+const { createScreenshotCaptureTool, resolveOutPath } = await import("../../../../packages/gateway/src/tools/screenshot-tools.js");
+const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts");
+const PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=";
+const png = Buffer.from(PNG_BASE64, "base64");
 /*__jait_scope_open__*/{
 const projectRoot = resolve("other-project");
 
@@ -81,9 +211,34 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3": {
-
-
+case "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_85_3": {
+await vi.mock(Bun.resolveSync("playwright", __jait_original_dir), () => ({ chromium: { launch: async () => ({ close: async () => undefined }) } }));
+await vi.mock(__jait_fileURLToPath(new URL("../../../../packages/gateway/src/surfaces/browser.ts",import.meta.url)), () => ({
+  launchLocalBrowser: async () => ({
+    newContext: async () => ({
+      newPage: async () => ({
+        goto: async () => undefined,
+        waitForSelector: async () => undefined,
+        locator: () => ({
+          first: () => ({ click: async () => undefined, fill: async () => undefined, waitFor: async () => undefined }),
+        }),
+        waitForTimeout: async () => undefined,
+        screenshot: async ({ path }: { path: string }) => {
+          const { writeFile } = await import("node:fs/promises");
+          await writeFile(path, Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=", "base64"));
+        },
+      }),
+    }),
+    close: async () => undefined,
+  }),
+}));
+const { existsSync } = await import("node:fs");
+const { mkdir, mkdtemp, readFile, rm } = await import("node:fs/promises");
+const { join, resolve, sep } = await import("node:path");
+const { createScreenshotCaptureTool, resolveOutPath } = await import("../../../../packages/gateway/src/tools/screenshot-tools.js");
+const artifacts = resolve(__jait_original_dir, "../../../../.jait/artifacts");
+const PNG_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=";
+const png = Buffer.from(PNG_BASE64, "base64");
 /*__jait_scope_open__*/{
 const projectRoot = resolve("other-project");
 

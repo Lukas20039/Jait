@@ -14,7 +14,7 @@ import { SessionStateService } from "./services/session-state.js";
 import { ProjectStateService } from "./services/project-state.js";
 import { AuditWriter } from "./services/audit.js";
 import { SurfaceRegistry, TerminalSurfaceFactory, FileSystemSurfaceFactory, RemoteFileSystemSurfaceFactory, BrowserSurfaceFactory, BrowserSurface, RemoteTerminalSurface } from "./surfaces/index.js";
-import { getPersonalChatNodeId, mergeSavedProjectLayout, resolveProjectPanelOpen, type SurfaceRegistrySnapshot } from "@jait/shared";
+import { attentionKey, getPersonalChatNodeId, mergeSavedProjectLayout, resolveProjectPanelOpen, type SurfaceRegistrySnapshot } from "@jait/shared";
 import { shouldSyncProjectSurfaceUi } from "./surfaces/project-ui-sync.js";
 import { createToolRegistry, type ToolRegistryDeps } from "./tools/index.js";
 import { notifySessionsOfGatewayRestart } from "./routes/chat.js";
@@ -70,6 +70,7 @@ import {
   CONSENT_ATTENTION_ACTIONS,
 } from "./services/attention.js";
 import { PreviewService } from "./services/preview.js";
+import { sessionWaits, terminalWaitKey } from "./services/session-waits.js";
 import { setSecurityWorkbenchDb } from "./security/workbench.js";
 import { setAssessmentDb } from "./security/assessment.js";
 import { setNetworkScanDb } from "./tools/network-tools.js";
@@ -267,6 +268,20 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
     raised: (item) => mobilePush.sendAttention(item),
     cleared: (event) => mobilePush.sendAttentionCleared(event),
   });
+
+  // Per-chat waiting state — the reason a chat is stopped (question, consent,
+  // secret, browser takeover, interactive terminal) or which background command
+  // it is waiting on. Every raise/clear broadcasts the session's full list so
+  // clients can replace rather than accumulate.
+  sessionWaits.setBroadcaster(({ sessionId, waits }) => {
+    ws.broadcastAll({
+      type: "session-wait.updated",
+      sessionId,
+      timestamp: new Date().toISOString(),
+      payload: { sessionId, waits },
+    });
+  });
+  ws.getSessionWaits = () => sessionWaits.snapshot();
 
   // Project file watcher — uses @parcel/watcher (same as VS Code) for
   // native recursive watching with event coalescing.
@@ -533,6 +548,12 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         payload: request,
       });
       console.log(`Secret requested: ${request.title} (${request.id})`);
+      sessionWaits.raise({
+        key: attentionKey("question", request.id),
+        kind: "secret",
+        sessionId: request.sessionId,
+        detail: request.title,
+      });
     },
     onResolved: (request) => {
       ws.broadcastAll({
@@ -541,6 +562,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         timestamp: new Date().toISOString(),
         payload: { id: request.id, sessionId: request.sessionId, status: request.status },
       });
+      sessionWaits.clear(attentionKey("question", request.id));
       console.log(`Secret request ${request.status}: ${request.id}`);
     },
   });
@@ -553,6 +575,12 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         payload: request,
       });
       console.log(`User question requested: ${request.title} (${request.id})`);
+      sessionWaits.raise({
+        key: attentionKey("question", request.id),
+        kind: "question",
+        sessionId: request.sessionId,
+        detail: request.questions[0]?.question ?? request.title,
+      });
       attention.raise({
         kind: "question",
         requestId: request.id,
@@ -574,6 +602,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         timestamp: new Date().toISOString(),
         payload: { id: request.id, sessionId: request.sessionId, status: request.status },
       });
+      sessionWaits.clear(attentionKey("question", request.id));
       attention.clear("question", request.id, request.status === "submitted"
         ? "answered"
         : "cancelled");
@@ -611,6 +640,12 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         detail: request as unknown as Record<string, unknown>,
         expiresAt: request.expiresAt,
       });
+      sessionWaits.raise({
+        key: attentionKey("consent", request.id),
+        kind: "consent",
+        sessionId: request.sessionId,
+        detail: request.toolName,
+      });
       console.log(`Consent required: ${request.toolName} (${request.id})`);
     },
     onDecision: (decision) => {
@@ -621,6 +656,7 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
         payload: decision,
       });
       channelConsentDecisionBridge?.(decision);
+      sessionWaits.clear(attentionKey("consent", decision.requestId));
       attention.clear(
         "consent",
         decision.requestId,
@@ -1168,6 +1204,9 @@ async function main(options: { evaluation?: boolean; onReady?: (port: number) =>
       const surface = surfaceRegistry.getSurface(terminalId);
       if (surface && surface.type === "terminal" && "write" in surface) {
         (surface as import("./surfaces/terminal.js").TerminalSurface).write(data);
+        // Someone typed into the terminal: whatever interactive prompt was
+        // holding this chat has been answered, so drop the wait marker.
+        sessionWaits.clear(terminalWaitKey(terminalId));
       }
     } catch (err) {
       console.error(`Terminal write error (${terminalId}):`, err);

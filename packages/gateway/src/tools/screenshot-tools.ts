@@ -167,9 +167,11 @@ export function createScreenshotCaptureTool(): ToolDefinition<ScreenshotCaptureI
           await page.screenshot({ path: outPath, fullPage });
         }
 
-        // The image route serves only gateway-local files. Keep a display
-        // cache there without relocating the original project artifact.
-        const displayDir = resolve(process.cwd(), ".jait", "shots");
+        // The image route serves only files inside the chat's project root, so
+        // the display cache must live there too. Never use process.cwd(): the
+        // gateway is often launched from a different directory than the chat's
+        // project, which makes every capture unservable (403 PATH_FORBIDDEN).
+        const displayDir = resolve(context.projectRoot, ".jait", "shots");
         mkdirSync(displayDir, { recursive: true });
         const displayPath = join(displayDir, `screenshot-display-${randomUUID()}.png`);
         copyFileSync(outPath, displayPath);

@@ -35,8 +35,10 @@ export type {
   FsChangeEvent,
   FsChangesPayload,
   AttentionKind,
+  SessionWait,
+  SessionWaitKind,
 } from "./message.js";
-export { attentionKey } from "./message.js";
+export { attentionKey, sessionWaitLabel, BLOCKING_SESSION_WAIT_KINDS } from "./message.js";
 export type { GatewayStatus, DeviceInfo, FsNode, FsBrowseEntry, FsBrowseResponse, FsRootsResponse } from "./gateway.js";
 export type {
   NodePlatform,

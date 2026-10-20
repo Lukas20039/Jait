@@ -5,6 +5,7 @@ mod evidence;
 
 use anyhow::{Context, Result, bail, ensure};
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File},
@@ -299,14 +300,21 @@ impl Profile {
     }
 }
 
-fn suite(root: &Path, directory: &Path, profile: Profile) -> Result<(Vec<Value>, bool)> {
+fn translated_build_target(root: &Path) -> PathBuf {
+    let mut identity = root.to_string_lossy().into_owned();
+    if !identity.ends_with(std::path::MAIN_SEPARATOR) {
+        identity.push(std::path::MAIN_SEPARATOR);
+    }
+    let key = hex::encode(Sha256::digest(identity.as_bytes()));
+    root.join(".jait/artifacts/rust-contract-target")
+        .join(format!("contracts-{}", &key[..16]))
+}
+
+fn translated_build_command(root: &Path) -> Command {
     let mut build = Command::new(env!("CARGO"));
     build
         .current_dir(root)
-        .env(
-            "CARGO_TARGET_DIR",
-            root.join(".jait/artifacts/rust-contract-target"),
-        )
+        .env("CARGO_TARGET_DIR", translated_build_target(root))
         .args([
             "test",
             "--locked",
@@ -317,6 +325,11 @@ fn suite(root: &Path, directory: &Path, profile: Profile) -> Result<(Vec<Value>,
             "--no-run",
             "--message-format=json",
         ]);
+    build
+}
+
+fn suite(root: &Path, directory: &Path, profile: Profile) -> Result<(Vec<Value>, bool)> {
+    let build = translated_build_command(root);
     let (built, output) = execute(build, directory, "build", Duration::from_secs(300))?;
     ensure!(
         built.success(),
@@ -473,6 +486,38 @@ mod tests {
         second["executable"] = json!("/another/tests");
         assert!(compiled_test(&format!("{artifact}\n{second}")).is_err());
     }
+    #[test]
+    #[cfg(unix)]
+    fn inner_builds_do_not_reuse_a_different_source_roots_test_binary() {
+        let project = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let base = project
+            .join(".jait/artifacts/translated-build-root-tests")
+            .join(uuid::Uuid::new_v4().to_string());
+        let cache = base.join("shared-cache");
+        fs::create_dir_all(&cache).unwrap();
+        let mut physical = Vec::new();
+        for name in ["first", "second"] {
+            let root = base.join(name);
+            fs::create_dir_all(root.join(".jait/artifacts")).unwrap();
+            std::os::unix::fs::symlink(&cache, root.join(".jait/artifacts/rust-contract-target"))
+                .unwrap();
+            let command = translated_build_command(&root);
+            let target = command
+                .get_envs()
+                .find(|(name, _)| *name == "CARGO_TARGET_DIR")
+                .and_then(|(_, value)| value)
+                .unwrap();
+            fs::create_dir_all(target).unwrap();
+            physical.push(fs::canonicalize(target).unwrap());
+            assert_eq!(translated_build_target(&root), PathBuf::from(target));
+        }
+        assert_ne!(
+            physical[0], physical[1],
+            "embedded source roots cannot share an inner build"
+        );
+        fs::remove_dir_all(base).unwrap();
+    }
+
     #[test]
     fn listing_rejects_duplicates_and_empty_suites() {
         assert_eq!(

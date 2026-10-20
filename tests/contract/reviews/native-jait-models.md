@@ -28,3 +28,17 @@ No live provider traffic, transport-engine credit or production wiring. Rust str
 lone UTF-16 surrogates; JS encodeURIComponent throws for those inputs, so callers must reject
 invalid text at their boundary. Native static data cannot reproduce a failing lazy module import.
 The fetch seam is dropped with the caller; the reference specifies no cancellation protocol.
+
+
+## 2026-10-20 cloud catalogue parity refresh
+
+The live service gained `includeCloud` (defaults true) and preserves hosted model groups.
+The native public option carries explicit false as well as the default; configured and
+legacy fetch seams forward that option. Legacy models preserve even an empty group (nullish
+fallback), whereas configured groups use truthiness before prefixing the instance name.
+The real reference driver now records the second fetch argument. Added default/false
+vectors for both branches and hosted/empty subgroups. A before run lost `Ollama Cloud`
+and empty headings; after that correction, the same test exposed ignored explicit false.
+Both are fixed; all 24 checks pass. Evidence: `cloud-groups-before.log`,
+`cloud-option-before.log`, `cloud-catalogue-final.log` under the gateway-rust artifact root.
+This refresh does not claim a new component or provider HTTP activation.

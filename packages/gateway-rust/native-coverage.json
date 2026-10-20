@@ -1,7 +1,7 @@
 {
   "format": 1,
   "inventory": "tests/contract/coverage.json",
-  "inventory_total": 364,
+  "inventory_total": 365,
   "metric": "Equal weight per inventoried gateway source component with native implementation and reviewed focused contracts; not an estimate of effort or cutover readiness.",
   "components": [
     {
@@ -2488,7 +2488,7 @@
     },
     {
       "reference": "packages/gateway/src/services/jait-models.ts",
-      "reference_sha256": "72363bb2d9f29f1c068245b06bfb93fcc3a2e39dea67478749766ea056a83137",
+      "reference_sha256": "9b8a22cc99c8309558b4c6d67fdddb98913e61ce426fff03c759d479ec88054a",
       "status": "verified",
       "native": [
         "packages/gateway-rust/src/services/jait_models.rs"
@@ -2541,7 +2541,7 @@
     },
     {
       "reference": "packages/gateway/src/providers/model-fetchers.ts",
-      "reference_sha256": "f394cda2d4507d4dbec277240e7dc3dacc0c4a3ead93c52c599f87eca37fd8ef",
+      "reference_sha256": "9cae80fd9a89c6fcc82d5115676c2477ad5245ffe35e914ef52721a6da23a6f7",
       "status": "verified",
       "native": [
         "packages/gateway-rust/src/providers/model_fetchers.rs",
@@ -2685,6 +2685,144 @@
         "gateway_rust_chat_modes"
       ],
       "review": "Full source-export policy/prompt comparisons, native roster formatting/dispatch, TypeScript-compiler-bound plan declarations and four caught/restored mutations. Policy enforcement in the agent loop receives no duplicate credit; native runtime has no JS worker."
+    },
+    {
+      "reference": "packages/gateway/src/security/tool-permissions.ts",
+      "reference_sha256": "5e3375a5562e654af275bac3206b4829b4830630f9e178386780ef7ad324c887",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/tool_permissions.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_tool_permissions.rs",
+        "tests/contract/drivers/nativepermission.ts",
+        "tests/contract/reviews/native-tool-permissions.md"
+      ],
+      "targets": [
+        "gateway_rust_tool_permissions"
+      ],
+      "review": "All exported policy/consent/command/path behavior, real TypeScript differential vectors, UTF-16 and legacy case-folding repro, two caught/restored consent and denial mutations. Full gate controls credit; executor/scope activation is separate."
+    },
+    {
+      "reference": "packages/gateway/src/security/consent-manager.ts",
+      "reference_sha256": "e3c47827bb5a6b8d2234ad1f5c4d13b48f89a939cfb0fe7f5204557b7fbbd649",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/consent_manager.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_consent_manager.rs",
+        "tests/contract/drivers/nativeconsent.ts",
+        "tests/contract/reviews/native-consent-manager.md"
+      ],
+      "targets": [
+        "gateway_rust_consent_manager"
+      ],
+      "review": "All queue, timer, callback, persistence and session-override exports; real TS/SQLite comparisons, concurrent decision and abandoned-waiter lifecycle checks, two caught/restored mutations. Full gate controls credit; production executor/routing activation is separate."
+    },
+    {
+      "reference": "packages/gateway/src/security/tool-profiles.ts",
+      "reference_sha256": "54e9514c362e6ae49b49bec1a1bc56e14d984792fd54b2dc90d5fc801f5b90bc",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/security/tool_profiles.rs",
+        "packages/gateway-rust/src/security/tool-profile-assets.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_tool_profiles.rs",
+        "tests/contract/drivers/nativetoolprofiles.ts",
+        "tests/contract/reviews/native-tool-profiles.md"
+      ],
+      "targets": [
+        "gateway_rust_tool_profiles"
+      ],
+      "review": "Complete profile data and all four exports, ordered overrides and shared permission identity; actual source comparisons and two caught/restored policy/identity mutations. No duplicate permission-engine credit."
+    },
+    {
+      "reference": "packages/gateway/src/lib/sub-agent-persistence.ts",
+      "reference_sha256": "2ec0c53ecf001c6b5e1954e795fcfade2529d73030e8a3903c47102f7bd3e15e",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/sub_agent_history.rs",
+        "packages/gateway-rust/src/contracts/ecmascript_json.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_sub_agent_history.rs",
+        "tests/contract/drivers/nativehistorypayload.ts",
+        "tests/contract/reviews/native-sub-agent-history.md"
+      ],
+      "targets": [
+        "gateway_rust_sub_agent_history"
+      ],
+      "review": "Full extraction, message stubs and SQLite persistence; iterative ECMAScript JSON domain, source-compatible UTF-16 binding bytes, raw hex and row comparisons, depth/partial-failure coverage and two caught/restored data-retention/timestamp mutations. Full gate controls credit; production message wiring is separate."
+    },
+    {
+      "reference": "packages/gateway/src/services/session-waits.ts",
+      "reference_sha256": "d5d579b56a959e67398a33581ae0d18fb83875569ab6d3e41e4be2b144a27757",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/session_waits.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_session_waits.rs",
+        "tests/contract/drivers/nativewaits.ts",
+        "tests/contract/reviews/native-session-waits.md"
+      ],
+      "targets": [
+        "gateway_rust_session_waits"
+      ],
+      "review": "All typed wait-registry behavior and shared labels/keys; six actual TypeScript differential scenarios, three native lifecycle/identity/UTF-16 tests, and three isolated caught/restored mutations. Callback errors and reentry preserve committed state; exact Linux host collation is compared. Full source-bound gate controls credit; native event-loop ownership and production WebSocket wiring remain separate."
+    },
+    {
+      "reference": "packages/gateway/src/tools/maintenance-tools.ts",
+      "reference_sha256": "489f76459a720536e8f5de4064959723f88e4c58946b020bf9875fee372ec63f",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/maintenance.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_maintenance_tool.rs",
+        "tests/contract/drivers/nativemaintenancetool.ts",
+        "tests/contract/reviews/native-maintenance-tool.md"
+      ],
+      "targets": [
+        "gateway_rust_maintenance_tool"
+      ],
+      "review": "Complete tool metadata, dispatch and job identity, summaries, notifications, async ordering and error behavior. Real source comparisons, real native notification integration and two caught/restored mutations. Runner and scheduler earn no duplicate credit; full gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/services/code-graph/graphrag-adapter.ts",
+      "reference_sha256": "d4a6a1c8753fca1572a93c314fe3d598e391939a54de5f21b3dcd6366a6b6ec7",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/code_graph/graphrag.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_graphrag.rs",
+        "tests/contract/drivers/nativegraphrag.ts",
+        "tests/contract/reviews/native-graphrag-adapter.md"
+      ],
+      "targets": [
+        "gateway_rust_graphrag"
+      ],
+      "review": "Both exports: complete projection, UTF-16 order/token counts, exact JSONL/manifest file comparisons and concurrent sibling write attempts; actual source bridge and two caught/restored mutations. No Graphify/runtime/route credit. Full gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/services/messenger-bridge.ts",
+      "reference_sha256": "0e5b54ce8efcdec92fadc58241ef69294dfdf1c2b419c0b57b7ed9a6ab32ca3c",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/messenger_bridge.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_messenger_bridge.rs",
+        "tests/contract/drivers/nativebridge.ts",
+        "tests/contract/reviews/native-messenger-bridge.md"
+      ],
+      "targets": [
+        "gateway_rust_messenger_bridge"
+      ],
+      "review": "Strict shared commands and complete owner-bound dispatch lifecycle; seven real TypeScript comparisons, five native lifetime/timer/output/cancellation checks, three caught/restored mutations, and fail/pass synchronous-send/deep-JSON regressions. No live messages or external services. Full gate controls credit; authenticated WS registration and native Matrix handler activation remain separate."
     }
   ]
 }

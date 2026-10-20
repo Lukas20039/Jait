@@ -119,6 +119,23 @@ it('drops the local echo and reports the failure when sending fails', async () =
   expect(store.getSnapshot().messages.map(entry => entry.id)).toEqual(['$old'])
 })
 
+it('decodes a Matrix avatar through the gateway media route', async () => {
+  const { gateway, store } = await openStore([message()])
+  const calls: Send[] = []
+  vi.stubGlobal('fetch', vi.fn(async (input: unknown, init: RequestInit = {}) => {
+    const body = init.body ? JSON.parse(String(init.body)) as Record<string, unknown> : undefined
+    calls.push({ url: String(input), body })
+    if (String(input).endsWith('/api/messenger/media')) return json({ data: btoa('avatar-bytes') })
+    return json({ snapshot: snapshot([message()]) })
+  }))
+
+  const blob = await store.avatarBlob('mxc://matrix.test/avatar')
+
+  expect(await blob.text()).toBe('avatar-bytes')
+  expect(calls).toEqual([{ url: 'http://gateway.test:8000/api/messenger/media', body: { url: 'mxc://matrix.test/avatar' } }])
+  expect(gateway.sends.some(send => send.url.endsWith('/media'))).toBe(false)
+})
+
 it('never uses a local echo id when marking the room read', async () => {
   const { gateway, store } = await openStore([message()])
 

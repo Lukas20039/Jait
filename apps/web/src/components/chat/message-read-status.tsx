@@ -1,8 +1,9 @@
 import { CheckCheck } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import type { MessengerReadReceipt } from '@/lib/messenger/model'
+import { uniqueReaders, type MessengerReadReceipt } from '@/lib/messenger/model'
 
-export function MessageReadStatus({ readers, inline = false }: { readers: MessengerReadReceipt[]; inline?: boolean }) {
+export function MessageReadStatus({ readers: rawReaders, inline = false }: { readers: MessengerReadReceipt[]; inline?: boolean }) {
+  const readers = uniqueReaders(rawReaders)
   if (!readers.length) return <span className={(inline ? 'whitespace-nowrap' : 'block pt-1 text-right') + ' text-2xs text-muted-foreground'} title="Accepted by Matrix. No public read receipt received.">Sent</span>
   return <Popover>
     <PopoverTrigger asChild>

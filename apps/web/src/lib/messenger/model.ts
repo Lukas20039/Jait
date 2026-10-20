@@ -1,7 +1,7 @@
 export const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024
 
-import type { MessengerSession, MessengerRoomKind } from '@jait/shared'
-export type { MessengerSession, MessengerMessage, MessengerRoom, MessengerRoomKind, MessengerSnapshot, MessengerReadReceipt } from '@jait/shared'
+import type { MessengerSession, MessengerPresence, MessengerReadReceipt, MessengerRoomKind } from '@jait/shared'
+export type { MessengerSession, MessengerMessage, MessengerPresence, MessengerRoom, MessengerRoomKind, MessengerRoomPeer, MessengerSnapshot, MessengerReadReceipt } from '@jait/shared'
 
 export function normalizeHomeserver(input: string): string {
   const url = new URL(input.trim())
@@ -93,4 +93,41 @@ export function bridgeLabel(content: Record<string, unknown> | undefined): { ser
     service: known[raw] ?? (typeof protocol?.displayname === 'string' ? protocol.displayname.slice(0, 80) : 'Matrix'),
     network: typeof network?.displayname === 'string' ? network.displayname.slice(0, 120) : '',
   }
+}
+
+/**
+ * Header label for a peer's Matrix presence. Bridged contacts usually report
+ * `unknown` — the homeserver keeps no presence for them — so callers fall back
+ * to the room's service line instead of showing a state.
+ */
+export function presenceLabel(presence?: MessengerPresence, lastActiveAgo?: number): string {
+  if (presence === 'online') return 'Online'
+  if (presence === 'unavailable') return 'Away'
+  if (presence !== 'offline') return ''
+  if (typeof lastActiveAgo !== 'number' || !Number.isFinite(lastActiveAgo) || lastActiveAgo < 0) return 'Offline'
+  const minutes = Math.floor(lastActiveAgo / 60_000)
+  if (minutes < 1) return 'Last seen just now'
+  if (minutes < 60) return `Last seen ${minutes} min ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `Last seen ${hours} h ago`
+  return `Last seen ${Math.floor(hours / 24)} d ago`
+}
+
+/**
+ * One row per person. Matrix stores receipts per event, so a reader can be
+ * mentioned once per message they acknowledged; keep their furthest (latest)
+ * receipt so the popover never lists the same account repeatedly.
+ */
+export function uniqueReaders(readers: MessengerReadReceipt[]): MessengerReadReceipt[] {
+  const byUser = new Map<string, MessengerReadReceipt>()
+  for (const reader of readers) {
+    const current = byUser.get(reader.userId)
+    if (!current) {
+      byUser.set(reader.userId, reader)
+      continue
+    }
+    const latest = (reader.timestamp ?? 0) >= (current.timestamp ?? 0) ? reader : current
+    byUser.set(reader.userId, { ...latest, exact: current.exact || reader.exact })
+  }
+  return [...byUser.values()]
 }

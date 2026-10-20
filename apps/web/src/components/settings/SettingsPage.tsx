@@ -33,10 +33,10 @@ import type { JaitBackend } from '@/hooks/useAuth'
 import { getApiUrl } from '@/lib/gateway-url'
 import { cn } from '@/lib/utils'
 import { highlightSearchMatchHtml } from './settings-search-highlight'
-import { shouldShowProviderLoginAction } from './provider-account-actions'
+import { getGatewayProviderAccounts, shouldShowProviderLoginAction } from './provider-account-actions'
 import { getVsCodeThemeSearchTerms } from '@/lib/vscode-theme'
 import { importVsCodeThemeFromText, removeVsCodeTheme, setActiveVsCodeTheme, useVsCodeThemeStore } from '@/lib/vscode-theme-store'
-import { agentsApi, type ProviderAccount, type ProviderAccountType, type ProviderId, type ProviderInfo } from '@/lib/agents-api'
+import { agentsApi, type ProviderAccount, type ProviderAccountType, type ProviderId } from '@/lib/agents-api'
 import { copyTextToClipboard } from '@/lib/clipboard'
 import {
   JAIT_BACKEND_DEFAULT_URLS,
@@ -408,12 +408,6 @@ const PROVIDER_LABELS: Record<string, string> = {
   'claude-code': 'Claude Code',
 }
 
-function isProviderAccount(provider: ProviderInfo): boolean {
-  const auth = provider.auth
-  if (provider.id === 'jait' || !auth) return false
-  return auth.login || auth.logout || auth.authenticated !== null
-}
-
 export interface UpdateInfo {
   currentVersion: string
   latestVersion: string
@@ -541,12 +535,12 @@ export function SettingsPage({
   const { providers: allProviders, remoteProviders: remoteProviderNodes, refresh: refreshProviderSnapshot } = useProviders()
   // Device accounts are rendered from `remoteProviderNodes` further down, so the
   // gateway list must exclude them to avoid listing the same account twice.
-  const providerAccounts = useMemo(
-    () => allProviders.filter((provider) => (provider.nodeId ?? 'gateway') === 'gateway' && isProviderAccount(provider)),
-    [allProviders],
-  )
   const [configuredProviderAccounts, setConfiguredProviderAccounts] = useState<ProviderAccount[]>([])
   const [providerAccountTypes, setProviderAccountTypes] = useState<ProviderAccountType[]>([])
+  const providerAccounts = useMemo(
+    () => getGatewayProviderAccounts(allProviders, configuredProviderAccounts, providerAccountTypes),
+    [allProviders, configuredProviderAccounts, providerAccountTypes],
+  )
   const [newProviderAccountType, setNewProviderAccountType] = useState('')
   const [newProviderAccountNodeId, setNewProviderAccountNodeId] = useState('gateway')
   const [newProviderAccountLabel, setNewProviderAccountLabel] = useState('')
@@ -1471,8 +1465,8 @@ const providerAccountsCard = (
               {isSignedIn && auth?.username && (
                 <p className="mt-1 text-xs text-muted-foreground">Signed in as {auth.username}</p>
               )}
-              {auth?.detail && (
-                <p className="mt-1 text-xs text-muted-foreground">{auth.detail}</p>
+              {(provider.unavailableReason || auth?.detail) && (
+                <p className="mt-1 text-xs text-muted-foreground">{provider.unavailableReason ?? auth?.detail}</p>
               )}
               {isOpenCode && <OpenCodeGoConnection accountId={providerId} onConnected={loadProviderAccounts} />}
               {loginInstructions && (

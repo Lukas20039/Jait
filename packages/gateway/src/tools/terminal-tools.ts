@@ -24,6 +24,7 @@ import type { WsControlPlane } from "../ws.js";
 import type { TerminalExecutionPayload } from "@jait/shared";
 import type { SecretInputService } from "../services/secret-input.js";
 import { backgroundCommandMonitor, extractCompletionOutput } from "../services/background-command-monitor.js";
+import { backgroundWaitKey, sessionWaits, terminalWaitKey } from "../services/session-waits.js";
 import { isShellPromptLine } from "./shell-prompt.js";
 import {
   commandOutputFilteringEnabled,
@@ -1370,6 +1371,7 @@ export function createTerminalRunTool(
         if (isBackground) {
           // Like Copilot async mode, keep the tool pending through startup.
           // An idle snapshot releases the tool, but is never called "ready".
+          clearTerminalWaits(context.sessionId);
           let startupPending = true;
           let startupCancelled = false;
           let scriptFile: string | null = null;
@@ -1407,6 +1409,7 @@ export function createTerminalRunTool(
               idleTimer = setTimeout(releaseStartup, 500);
             },
             onComplete: ({ exitCode, output }) => {
+              sessionWaits.clear(backgroundWaitKey(terminalId));
               if (startupPending) {
                 startupCompletion = { exitCode, output };
                 releaseStartup();
@@ -1422,11 +1425,19 @@ export function createTerminalRunTool(
               );
             },
             onStop: () => {
+              sessionWaits.clear(backgroundWaitKey(terminalId));
               if (scriptFile) { try { unlinkSync(scriptFile); } catch { /* already gone */ } }
               clearManagedTerminalExecution(terminalId, context.actionId, context, ws);
             },
           });
           setManagedTerminalExecution(terminalId, context, command, outputOffset, true, watched, ws);
+          sessionWaits.raise({
+            key: backgroundWaitKey(terminalId),
+            kind: "background",
+            sessionId: context.sessionId,
+            label: "Background command running",
+            detail: watched ? `Watching terminal ${terminalId} for completion` : terminalId,
+          });
           // Multi-line commands must reach the shell as a *single* command.
           // Written raw, each line completes separately and the completion
           // marker for line 1 was mistaken for the whole command finishing —
@@ -1498,6 +1509,7 @@ export function createTerminalRunTool(
         }
 
         // 3. Execute the command (sentinel-based)
+        clearTerminalWaits(context.sessionId);
         setManagedTerminalExecution(terminalId, context, command, outputOffset, false, null, ws);
         let result: Awaited<ReturnType<typeof executeInTerminal>>;
         let outputEndOffset: number | null = null;
@@ -1532,18 +1544,29 @@ export function createTerminalRunTool(
               movedToBackground = backgroundCommandMonitor.track({
                 sessionId: context.sessionId, terminalId, command, surface,
                 initialOutput: raw, startedAt, completionToken, shell,
-                onComplete: ({ output }) => completeManagedTerminalExecution(
-                  terminalId, context.actionId,
-                  getTerminalCommandDoneEndOffset(surface, outputOffset) ?? getTerminalOutputOffset(surface),
-                  output, context, ws,
-                ),
+                onComplete: ({ output }) => {
+                  sessionWaits.clear(backgroundWaitKey(terminalId));
+                  completeManagedTerminalExecution(
+                    terminalId, context.actionId,
+                    getTerminalCommandDoneEndOffset(surface, outputOffset) ?? getTerminalOutputOffset(surface),
+                    output, context, ws,
+                  );
+                },
                 onStop: () => {
+                  sessionWaits.clear(backgroundWaitKey(terminalId));
                   cleanup();
                   clearManagedTerminalExecution(terminalId, context.actionId, context, ws);
                 },
               });
               if (movedToBackground) {
                 setManagedTerminalExecution(terminalId, context, command, outputOffset, true, true, ws);
+                sessionWaits.raise({
+                  key: backgroundWaitKey(terminalId),
+                  kind: "background",
+                  sessionId: context.sessionId,
+                  label: "Background command running",
+                  detail: `Waiting for terminal ${terminalId} to finish`,
+                });
               }
               return movedToBackground;
             },
@@ -1648,6 +1671,17 @@ export function createTerminalRunTool(
             },
             context.sessionId,
           );
+          sessionWaits.raise({
+            key: terminalWaitKey(terminalId),
+            kind: "terminal",
+            sessionId: context.sessionId,
+            label: "Waiting for terminal input",
+            detail: pagerDetected
+              ? `A pager is holding terminal ${terminalId}`
+              : `Terminal ${terminalId} is blocked on an interactive prompt`,
+          });
+        } else {
+          sessionWaits.clear(terminalWaitKey(terminalId));
         }
 
         console.log(
@@ -1682,6 +1716,16 @@ export function createTerminalRunTool(
       }
     },
   };
+}
+
+/**
+ * A new command means this chat is no longer stuck on an old interactive prompt
+ * (sudo password, `read`, pager escape, …), so the chat-row wait must go.
+ */
+function clearTerminalWaits(sessionId: string): void {
+  for (const wait of sessionWaits.list(sessionId)) {
+    if (wait.kind === "terminal") sessionWaits.clear(wait.key);
+  }
 }
 
 export function createJaitTerminalTool(

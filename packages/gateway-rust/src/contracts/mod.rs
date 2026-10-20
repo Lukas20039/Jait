@@ -3,3 +3,5 @@
 //! No transport, storage or execution dependencies. Domain contracts remain unported.
 
 pub mod bounded_json;
+
+pub mod ecmascript_json;

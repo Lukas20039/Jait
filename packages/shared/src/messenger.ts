@@ -50,6 +50,23 @@ export interface MessengerReadReceipt {
   exact: boolean
 }
 
+/**
+ * Matrix presence of a single user. `unknown` means the homeserver exposes no
+ * presence for that user, which is the normal case for bridged contacts.
+ */
+export type MessengerPresence = 'online' | 'unavailable' | 'offline' | 'unknown'
+
+/** The single other participant of a direct Matrix conversation. */
+export interface MessengerRoomPeer {
+  userId: string
+  name: string
+  /** Matrix `mxc://` avatar, resolved through the gateway media route. */
+  avatarUrl?: string
+  presence: MessengerPresence
+  /** Milliseconds since the peer was last active, when the homeserver reports it. */
+  lastActiveAgo?: number
+}
+
 export interface MessengerMessage {
   id: string
   sender: string
@@ -95,6 +112,10 @@ export interface MessengerRoom {
   team?: string
   /** Room topic, surfaced on channel headers. */
   topic?: string
+  /** Room avatar, or the counterpart's avatar for direct chats (`mxc://`). */
+  avatarUrl?: string
+  /** Set for direct conversations with exactly one other participant. */
+  peer?: MessengerRoomPeer
 }
 
 export interface MessengerSnapshot {

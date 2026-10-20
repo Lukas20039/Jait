@@ -11,6 +11,8 @@ name = "gateway-native"
 path = "../../packages/gateway-rust/src/main.rs"
 
 [dependencies]
+hex = "0.4"
+sha2 = "0.10"
 axum = { version = "0.8.9", default-features = false, features = ["http1", "tokio"] }
 rusqlite = { version = "0.40.2", features = ["bundled", "backup"] }
 jait-gateway = { path = "../../packages/gateway-rust" }
@@ -29,5 +31,3 @@ debug = 0
 futures-util = "0.3"
 chrono = { version = "0.4", default-features = false, features = ["std"] }
 tokio = { version = "1.0", features = ["test-util"] }
-hex = "0.4"
-sha2 = "0.10"

@@ -23,6 +23,7 @@ import type { SessionInfo } from '@/hooks/useChat'
 import type { FsNode } from '@jait/shared'
 import { buildChatDragPayload, buildProjectDragPayload, JAIT_CHAT_REF_MIME, JAIT_PROJECT_REF_MIME, setDragImageChip } from '@/lib/jait-dnd'
 import type { AutomationRepository } from '@/lib/automation-repositories'
+import { primarySessionWaits, type SessionWaitMap } from '@/lib/session-waits'
 import { getLatestProjectSessionId } from '@/lib/project-sessions'
 import { getProjectRepository } from '@/lib/project-repositories'
 import { SessionRow, isSessionUnread } from '@/components/chat/session-row'
@@ -89,6 +90,11 @@ interface SessionSelectorProps {
   approvalSessionIds?: ReadonlySet<string>
   /** IDs of sessions with an open `user.ask` question awaiting an answer. */
   questionSessionIds?: ReadonlySet<string>
+  /**
+   * Every reason a chat is currently stopped (question, consent, browser control,
+   * terminal prompt, running background command), keyed by wait key.
+   */
+  sessionWaits?: SessionWaitMap
   sessionInfo?: SessionInfo | null
   nodes?: FsNode[]
   repositories?: AutomationRepository[]
@@ -211,12 +217,17 @@ export function SessionSelector({
   streamingSessionIds,
   approvalSessionIds,
   questionSessionIds,
+  sessionWaits,
   sessionInfo,
   nodes = [],
   repositories = [],
 }: SessionSelectorProps) {
   const detectedMobile = useIsMobile()
   const isMobile = isMobileProp ?? detectedMobile
+  const waitBySessionId = useMemo(
+    () => (sessionWaits ? primarySessionWaits(sessionWaits) : null),
+    [sessionWaits],
+  )
   const showProjects = view !== 'chats'
   const showPersonalChats = view !== 'projects'
   const searchLabel = view === 'projects' ? 'Search projects' : view === 'chats' ? 'Search personal chats' : 'Search chats and projects'
@@ -1022,6 +1033,7 @@ export function SessionSelector({
                               isStreaming={isStreaming}
                               isWaitingForApproval={approvalSessionIds?.has(session.id)}
                               isAwaitingAnswer={questionSessionIds?.has(session.id)}
+                              wait={waitBySessionId?.get(session.id)}
                               dragProps={{
                                 draggable: true,
                                 onDragStart: (e) => {
@@ -1191,6 +1203,7 @@ export function SessionSelector({
                       isStreaming={isStreaming}
                       isWaitingForApproval={approvalSessionIds?.has(session.id)}
                       isAwaitingAnswer={questionSessionIds?.has(session.id)}
+                      wait={waitBySessionId?.get(session.id)}
                       fallbackLabel="Personal chat"
                       dragProps={{
                         draggable: true,

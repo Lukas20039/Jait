@@ -1,3 +1,5 @@
+import type { SessionWait, SessionWaitKind } from '@jait/shared'
+import { sessionWaitLabel } from '@jait/shared'
 import type { HTMLAttributes } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -161,5 +163,64 @@ describe('SessionRow', () => {
     })
     expect(html).toContain('draggable="true"')
     expect(html).toContain('data-longpress="true"')
+  })
+})
+
+describe('SessionRow wait reasons', () => {
+  const wait = (kind: SessionWaitKind, overrides: Partial<SessionWait> = {}): SessionWait => ({
+    key: `${kind}:1`,
+    kind,
+    sessionId: 'chat-1',
+    label: sessionWaitLabel(kind),
+    blocking: true,
+    ...overrides,
+  })
+
+  it('shows one icon per wait reason instead of a single Q&A badge', () => {
+    for (const kind of ['question', 'consent', 'secret', 'browser', 'terminal', 'background'] as const) {
+      const html = renderRow({ wait: wait(kind) })
+      expect(html).toContain(`data-testid="session-row-wait-${kind}"`)
+      expect(html).toContain(`aria-label="${sessionWaitLabel(kind)}"`)
+      // Exactly one status icon, never the plain chat icon as well.
+      expect(html.match(/session-row-wait-/g)).toHaveLength(1)
+    }
+  })
+
+  it('takes precedence over approval, streaming and legacy question flags', () => {
+    const html = renderRow({
+      wait: wait('browser'),
+      isAwaitingAnswer: true,
+      isWaitingForApproval: true,
+      isStreaming: true,
+    })
+    expect(html).toContain('data-testid="session-row-wait-browser"')
+    expect(html).toContain('aria-label="Paused — you have browser control"')
+    expect(html).not.toContain('data-testid="session-row-question"')
+    expect(html).not.toContain('lucide-shield-question')
+    expect(html).not.toContain('animate-spin')
+  })
+
+  it('appends detail to the tooltip when the wait has some', () => {
+    expect(renderRow({ wait: wait('terminal', { detail: 'bun run dev' }) }))
+      .toContain('aria-label="Waiting for terminal input — bun run dev"')
+  })
+
+  it('pulses a background wait but never spins it like streaming', () => {
+    const html = renderRow({ wait: wait('background', { blocking: false }) })
+    expect(html).toContain('data-testid="session-row-wait-background"')
+    expect(html).toContain('animate-pulse')
+    expect(html).not.toContain('animate-spin')
+    expect(html).toContain('text-muted-foreground')
+  })
+
+  it('keeps blocking waits steady and amber', () => {
+    const html = renderRow({ wait: wait('terminal') })
+    expect(html).toContain('text-amber-500')
+    expect(html).not.toContain('animate-pulse')
+  })
+
+  it('falls back to the legacy Q&A badge when no wait is passed', () => {
+    expect(renderRow({ isAwaitingAnswer: true, wait: undefined }))
+      .toContain('data-testid="session-row-question"')
   })
 })

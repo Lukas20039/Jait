@@ -73,4 +73,14 @@ pub mod network_resources;
 
 pub mod jait_models;
 
+pub mod messenger_history;
+
 pub mod subscription_usage_fetchers;
+
+pub mod sub_agent_history;
+
+pub mod session_waits;
+
+pub mod code_graph;
+
+pub mod messenger_bridge;

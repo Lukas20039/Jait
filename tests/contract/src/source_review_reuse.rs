@@ -243,6 +243,14 @@ mod tests {
                 ".slice(0, 12)",
                 ".slice(0, 1)",
             ),
+            (
+                "packages/gateway/src/surfaces/filesystem.ts",
+                "packages/gateway/src/sprint3.test.ts",
+                "gateway-src-sprint3-test-cfd617fc",
+                "tailstatic_packages_gateway_src_sprint3_test_ts_136_3",
+                "const patched = original.replace(search, replace);",
+                "const patched = original;",
+            ),
         ] {
             let directory = project
                 .join(".jait/artifacts/source-review")

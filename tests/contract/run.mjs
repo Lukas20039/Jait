@@ -3,6 +3,7 @@ import { existsSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { resolve, join } from 'node:path'
 import { homedir } from 'node:os'
+import { createHash } from 'node:crypto'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const artifacts = resolve(root, '.jait/artifacts/rust-contract-target')
@@ -16,6 +17,11 @@ if (!['run', 'internal', 'coverage', 'test', 'translated', 'translated-report', 
 // alter its build while reference assertions and mutation controls are executing.
 const sourceReview = mode === 'source-review' || (mode === 'test' && args[0] === '--test'
   && args[1] === 'source_review' && !args.slice(2).includes('--test'))
+// Cargo embeds CARGO_MANIFEST_DIR in the test binary. Distinct source copies
+// must not reuse that binary through a shared target-directory symlink.
+const buildArtifacts = sourceReview
+  ? join(artifacts, `source-review-${createHash('sha256').update(root).digest('hex').slice(0, 16)}`)
+  : join(artifacts, `contracts-${createHash('sha256').update(root).digest('hex').slice(0, 16)}`)
 const manifest = fileURLToPath(new URL(sourceReview ? '../source-review/Cargo.toml' : './Cargo.toml', import.meta.url))
 // Four peers retain subprocess isolation without saturating the host.
 const cargoArgs = sourceReview
@@ -31,7 +37,7 @@ const cargoArgs = sourceReview
 const child = spawn(cargo, cargoArgs, {
   cwd: root,
   stdio: 'inherit',
-  env: { ...process.env, CARGO_TARGET_DIR: artifacts, CARGO_BUILD_JOBS: '2', CARGO_TERM_PROGRESS_WHEN: 'never', CARGO_TERM_COLOR: 'never' },
+  env: { ...process.env, CARGO_TARGET_DIR: buildArtifacts, CARGO_BUILD_JOBS: '2', CARGO_TERM_PROGRESS_WHEN: 'never', CARGO_TERM_COLOR: 'never' },
 })
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal))
 child.on('error', error => { console.error(error.message); process.exitCode = 1 })

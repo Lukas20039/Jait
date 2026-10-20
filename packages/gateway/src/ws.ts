@@ -2,7 +2,7 @@ import { WebSocketServer, type WebSocket } from "ws";
 import { MessengerBridge } from "./services/messenger-bridge.js";
 import { ChatNotificationsService } from "./services/chat-notifications.js";
 import type { MessengerToolResponse } from "@jait/shared";
-import type { WsEvent, ChatNotificationState, NotificationContext } from "@jait/shared";
+import type { WsEvent, ChatNotificationState, NotificationContext, SessionWait } from "@jait/shared";
 import type { UICommandPayload } from "@jait/shared";
 import type {
   ScreenShareOffer,
@@ -217,6 +217,12 @@ export class WsControlPlane {
   getPendingConsents?: () => Array<{ id: string; sessionId: string }>;
   /** Pending `user.ask` questions, so a reconnecting client can badge chats that still need an answer. */
   getPendingQuestions?: () => Array<{ id: string; sessionId: string }>;
+  /**
+   * Every outstanding "this chat is stopped, here is why" state, so a
+   * reconnecting client can restore reason-aware chat icons (question, consent,
+   * secret, browser takeover, interactive terminal, background command).
+   */
+  getSessionWaits?: () => SessionWait[];
   getAgentControlState?: (userId: string) => import("./services/agent-control.js").AgentControlState;
   getStreamingSessionIds?: (userId: string) => string[];
   getSurfaceSnapshot?: (userId?: string | null) => { serverTime: string; surfaces: unknown[] };
@@ -592,6 +598,18 @@ export class WsControlPlane {
             sessionId: "",
             timestamp: new Date().toISOString(),
             payload: { requests },
+          });
+          return;
+        }
+        if (resource === "root:/session-wait") {
+          const waits = (this.getSessionWaits?.() ?? []).filter((wait) =>
+            !this.canAccessSession || this.canAccessSession(wait.sessionId, client.userId),
+          );
+          this.send(client.ws, {
+            type: "session-wait.snapshot",
+            sessionId: "",
+            timestamp: new Date().toISOString(),
+            payload: { waits },
           });
           return;
         }

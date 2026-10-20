@@ -735,6 +735,8 @@ export function DeveloperChatWorkspace({
             <ErrorBoundary name="Chat transcript" variant="section" className={getChatTranscriptBoundaryClassName()} resetKeys={[activeSessionId, messages.length, messageQueue.length, showDesktopProject]}>
               <Conversation
                 key={activeSessionId ?? 'developer-empty'}
+                sessionId={activeSessionId}
+                authToken={token}
                 onLatestContentViewed={onLatestContentViewed}
                 className={getChatTranscriptBoundaryClassName()}
                 compact={showDesktopProject}

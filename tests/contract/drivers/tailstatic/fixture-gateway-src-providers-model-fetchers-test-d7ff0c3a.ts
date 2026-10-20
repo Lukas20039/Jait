@@ -48,7 +48,7 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each0": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each0": {
 
 
 const originalFetch = globalThis.fetch;
@@ -61,10 +61,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -73,7 +86,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "gpt-4o";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -82,14 +95,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each1": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each1": {
 
 
 const originalFetch = globalThis.fetch;
@@ -102,10 +115,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -114,7 +140,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "gpt-4o-mini";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -123,14 +149,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each2": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each2": {
 
 
 const originalFetch = globalThis.fetch;
@@ -143,10 +169,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -155,7 +194,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "o1-preview";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -164,14 +203,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -184,10 +223,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -196,7 +248,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "o3-mini";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -205,14 +257,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each4": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each4": {
 
 
 const originalFetch = globalThis.fetch;
@@ -225,10 +277,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -237,7 +302,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "o4-mini";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -246,14 +311,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each5": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each5": {
 
 
 const originalFetch = globalThis.fetch;
@@ -266,10 +331,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -278,7 +356,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 const id = "chatgpt-4o-latest";
 const expected = true;
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -287,14 +365,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each0": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each0": {
 
 
 const originalFetch = globalThis.fetch;
@@ -307,10 +385,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -318,7 +409,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "text-embedding-3-large";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -327,14 +418,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each1": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each1": {
 
 
 const originalFetch = globalThis.fetch;
@@ -347,10 +438,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -358,7 +462,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "dall-e-3";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -367,14 +471,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each2": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each2": {
 
 
 const originalFetch = globalThis.fetch;
@@ -387,10 +491,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -398,7 +515,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "whisper-1";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -407,14 +524,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -427,10 +544,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -438,7 +568,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "tts-1";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -447,14 +577,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each4": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each4": {
 
 
 const originalFetch = globalThis.fetch;
@@ -467,10 +597,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -478,7 +621,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "gpt-4o-realtime-preview";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -487,14 +630,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each5": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each5": {
 
 
 const originalFetch = globalThis.fetch;
@@ -507,10 +650,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -518,7 +674,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "gpt-4o-audio-preview";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -527,14 +683,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each6": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each6": {
 
 
 const originalFetch = globalThis.fetch;
@@ -547,10 +703,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -558,7 +727,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "gpt-4o-transcribe";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -567,14 +736,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each7": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each7": {
 
 
 const originalFetch = globalThis.fetch;
@@ -587,10 +756,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -598,7 +780,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "gpt-image-1";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -607,14 +789,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each8": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each8": {
 
 
 const originalFetch = globalThis.fetch;
@@ -627,10 +809,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -638,7 +833,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "gpt-3.5-turbo:ft-acme";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -647,14 +842,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each9": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each9": {
 
 
 const originalFetch = globalThis.fetch;
@@ -667,10 +862,23 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
@@ -678,7 +886,7 @@ const __jait_hook_774 = () => {
 /*__jait_scope_open__*/{
 /*__jait_scope_open__*/{
 const id = "";
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -687,14 +895,14 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_62_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_81_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -707,16 +915,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -743,13 +964,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_84_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_103_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -762,16 +983,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -781,13 +1015,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_89_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_108_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -800,16 +1034,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -820,13 +1067,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_98_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_117_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -839,16 +1086,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -860,13 +1120,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_105_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_124_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -879,16 +1139,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -902,13 +1175,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_114_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_133_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -921,16 +1194,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -941,13 +1227,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_120_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_139_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -960,16 +1246,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -995,13 +1294,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_143_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_162_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1014,16 +1313,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1045,13 +1357,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_160_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_179_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1064,16 +1376,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1087,13 +1412,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_169_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_188_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1106,16 +1431,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1125,13 +1463,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_174_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_193_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1144,16 +1482,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1165,13 +1516,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_183_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_202_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1184,16 +1535,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1217,13 +1581,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_206_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_225_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1236,16 +1600,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1258,13 +1635,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_214_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_233_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1277,16 +1654,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1297,13 +1687,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_220_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_239_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1316,16 +1706,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1340,13 +1743,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_230_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_249_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1359,16 +1762,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1383,125 +1799,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_240_3": {
-
-
-const originalFetch = globalThis.fetch;
-function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
-  const response = new Response(JSON.stringify(body), {
-    status: init.status ?? (init.ok === false ? 500 : 200),
-    headers: { "content-type": "application/json" },
-  });
-  const fetchMock = vi.fn(async () => response);
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
-  return fetchMock;
-}
-const __jait_hook_721 = () => {
-  resetModelFetcherCaches();
-};
-const __jait_hook_774 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-  vi.unstubAllEnvs();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_721();
-try {
-await (async()=>{
-
-    // OmniRoute works keyless against its free-tier providers.
-    const fetchMock = mockFetchOnce({ data: [] });
-    await fetchOmniRouteModels("", "http://localhost:20128/v1/");
-    __jait_capture(0, (fetchMock.mock.calls));
-  
-})();
-
-} finally {
-await __jait_hook_774();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_247_3": {
-
-
-const originalFetch = globalThis.fetch;
-function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
-  const response = new Response(JSON.stringify(body), {
-    status: init.status ?? (init.ok === false ? 500 : 200),
-    headers: { "content-type": "application/json" },
-  });
-  const fetchMock = vi.fn(async () => response);
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
-  return fetchMock;
-}
-const __jait_hook_721 = () => {
-  resetModelFetcherCaches();
-};
-const __jait_hook_774 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-  vi.unstubAllEnvs();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_721();
-try {
-await (async()=>{
-
-    globalThis.fetch = vi.fn(async () => {
-      throw new Error("ECONNREFUSED");
-    }) as unknown as typeof fetch;
-    await __jait_captureResolved(0, (fetchOmniRouteModels("k", "http://localhost:20128/v1")));
-  
-})();
-
-} finally {
-await __jait_hook_774();
-}
-}
-
-break;
-}
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_254_3": {
-
-
-const originalFetch = globalThis.fetch;
-function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
-  const response = new Response(JSON.stringify(body), {
-    status: init.status ?? (init.ok === false ? 500 : 200),
-    headers: { "content-type": "application/json" },
-  });
-  const fetchMock = vi.fn(async () => response);
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
-  return fetchMock;
-}
-const __jait_hook_721 = () => {
-  resetModelFetcherCaches();
-};
-const __jait_hook_774 = () => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-  vi.unstubAllEnvs();
-};
-/*__jait_scope_open__*/{
-await __jait_hook_721();
-try {
-await (async()=>{
-
-    mockFetchOnce({}, { status: 503 });
-    await __jait_captureResolved(0, (fetchOmniRouteModels("k", "http://localhost:20128/v1")));
-  
-})();
-
-} finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
@@ -1520,33 +1818,94 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
-    const fetchMock1 = mockFetchOnce({ data: [{ id: "vendor/a" }] });
-    await fetchOmniRouteModels("k", "http://localhost:20128/v1");
-    await fetchOmniRouteModels("k", "http://localhost:20128/v1");
-    __jait_capture(0, (fetchMock1.mock.calls));
-
-    const fetchMock2 = mockFetchOnce({ data: [{ id: "vendor/b" }] });
-    const result = await fetchOmniRouteModels("k", "http://nas:20128/v1");
-    __jait_capture(1, (fetchMock2.mock.calls));
-    __jait_capture(2, (result.map((m) => m.id)));
+    // OmniRoute works keyless against its free-tier providers.
+    const fetchMock = mockFetchOnce({ data: [] });
+    await fetchOmniRouteModels("", "http://localhost:20128/v1/");
+    __jait_capture(0, (fetchMock.mock.calls));
   
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_266_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    globalThis.fetch = vi.fn(async () => {
+      throw new Error("ECONNREFUSED");
+    }) as unknown as typeof fetch;
+    await __jait_captureResolved(0, (fetchOmniRouteModels("k", "http://localhost:20128/v1")));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
 }
 }
 
@@ -1565,16 +1924,138 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    mockFetchOnce({}, { status: 503 });
+    await __jait_captureResolved(0, (fetchOmniRouteModels("k", "http://localhost:20128/v1")));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    const fetchMock1 = mockFetchOnce({ data: [{ id: "vendor/a" }] });
+    await fetchOmniRouteModels("k", "http://localhost:20128/v1");
+    await fetchOmniRouteModels("k", "http://localhost:20128/v1");
+    __jait_capture(0, (fetchMock1.mock.calls));
+
+    const fetchMock2 = mockFetchOnce({ data: [{ id: "vendor/b" }] });
+    const result = await fetchOmniRouteModels("k", "http://nas:20128/v1");
+    __jait_capture(1, (fetchMock2.mock.calls));
+    __jait_capture(2, (result.map((m) => m.id)));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1596,13 +2077,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_290_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_309_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1615,16 +2096,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1634,13 +2128,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_295_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_314_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1653,16 +2147,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1673,13 +2180,13 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_304_3": {
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_323_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -1692,16 +2199,29 @@ function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = 
   globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
-const __jait_hook_721 = () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
   resetModelFetcherCaches();
 };
-const __jait_hook_774 = () => {
+const __jait_hook_1418 = () => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.unstubAllEnvs();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_721();
+await __jait_hook_1365();
 try {
 await (async()=>{
 
@@ -1717,7 +2237,325 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_774();
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_334_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    mockFetchRoutes((url) => {
+      if (url.endsWith("/api/me")) return jsonResponse({ plan: "pro", email: "a@b.c" });
+      if (url === "https://ollama.com/api/tags") {
+        return jsonResponse({
+          models: [
+            { name: "llama3:8b-cloud", capabilities: ["completion", "tools"] },
+            { name: "gpt-oss:120b", capabilities: ["completion"] },
+            { name: "kimi-k2:1t-cloud", capabilities: ["completion", "thinking"] },
+          ],
+        });
+      }
+      return jsonResponse({
+        models: [{ name: "llama3:8b", details: { family: "llama", parameter_size: "8B" } }],
+      });
+    });
+
+    const models = await fetchOllamaModels("http://localhost:11434", { includeCloud: true });
+    const ids = models.map((m) => m.id);
+
+    __jait_capture(0, (ids[0]));
+    // The locally pulled cloud tag suppresses the bare hosted duplicate.
+    __jait_capture(1, (ids));
+    __jait_capture(2, (ids));
+    __jait_captureType(3, (models[0].group));
+    __jait_capture(4, (models[1]));
+    __jait_capture(5, (models[2].description));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_363_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    const fetchMock = mockFetchRoutes((url) => {
+      if (url.endsWith("/api/me")) return jsonResponse({ error: "unauthorized" }, 401);
+      if (url === "https://ollama.com/api/tags") throw new Error("must not be called");
+      return jsonResponse({ models: [{ name: "llama3:8b" }] });
+    });
+
+    const models = await fetchOllamaModels("http://localhost:11434", { includeCloud: true });
+
+    __jait_capture(0, (models.map((m) => m.id)));
+    __jait_capture(1, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_376_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    const fetchMock = mockFetchRoutes((url) => {
+      if (url === "https://ollama.com/api/tags") throw new Error("must not be called");
+      if (url.endsWith("/api/me")) throw new Error("must not be called");
+      return jsonResponse({ models: [{ name: "llama3:8b" }] });
+    });
+
+    await fetchOllamaModels("http://localhost:11434");
+
+    __jait_capture(0, (fetchMock.mock.calls));
+    __jait_capture(1, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_389_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    let cloudCalls = 0;
+    const fetchMock = mockFetchRoutes((url) => {
+      if (url.endsWith("/api/me")) return jsonResponse({ plan: "pro" });
+      if (url === "https://ollama.com/api/tags") {
+        cloudCalls += 1;
+        return jsonResponse({ models: [{ name: "gpt-oss:120b" }] });
+      }
+      return jsonResponse({ models: [{ name: "llama3:8b" }] });
+    });
+
+    await fetchOllamaModels("http://localhost:11434", { includeCloud: true });
+    await fetchOllamaModels("http://localhost:11434", { includeCloud: true });
+    __jait_capture(0, (cloudCalls));
+
+    const forced = await fetchOllamaModels("http://localhost:11434", { includeCloud: true, force: true });
+    __jait_capture(1, (cloudCalls));
+    __jait_capture(2, (forced.map((m) => m.id)));
+    __jait_capture(3, (fetchMock.mock.calls));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_410_3": {
+
+
+const originalFetch = globalThis.fetch;
+function mockFetchOnce(body: unknown, init: { ok?: boolean; status?: number } = {}): ReturnType<typeof vi.fn> {
+  const response = new Response(JSON.stringify(body), {
+    status: init.status ?? (init.ok === false ? 500 : 200),
+    headers: { "content-type": "application/json" },
+  });
+  const fetchMock = vi.fn(async () => response);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+function mockFetchRoutes(
+  handler: (url: string, init?: RequestInit) => Response,
+): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown, init?: RequestInit) => handler(String(input), init));
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+const __jait_hook_1365 = () => {
+  resetModelFetcherCaches();
+};
+const __jait_hook_1418 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+};
+/*__jait_scope_open__*/{
+await __jait_hook_1365();
+try {
+await (async()=>{
+
+    mockFetchRoutes((url) => {
+      if (url.endsWith("/api/me")) return jsonResponse({ plan: "pro" });
+      if (url === "https://ollama.com/api/tags") return jsonResponse({ error: "boom" }, 503);
+      return jsonResponse({ models: [{ name: "llama3:8b" }] });
+    });
+
+    const models = await fetchOllamaModels("http://localhost:11434", { includeCloud: true });
+
+    __jait_capture(0, (models.map((m) => m.id)));
+  
+})();
+
+} finally {
+await __jait_hook_1418();
 }
 }
 

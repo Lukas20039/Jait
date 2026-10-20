@@ -53,6 +53,27 @@ describe('Messenger message actions and history', () => {
     await c.command({ action: 'react', roomId: '!room:test', eventId: '$one', key: '👍' });
     expect(c.client.redactEvent).toHaveBeenCalledWith('!room:test', '$reaction');
   });
+  it('lists each reader once no matter how many messages they acknowledged', () => {
+    const { c, room, message } = setup();
+    room.events = [message('$one'), message('$two'), message('$three')];
+    room.receipts = {
+      '$one': { '@bob:test': { ts: 100 } },
+      '$two': { '@bob:test': { ts: 200 } },
+      '$three': { '@bob:test': { ts: 300 } },
+    } as any;
+    const messages = c.messages('!room:test');
+    expect(messages[0].readBy).toHaveLength(1);
+    expect(messages[2].readBy).toEqual([{ userId: '@bob:test', name: '@bob:test', timestamp: 300, exact: true }]);
+  });
+  it('keeps receipt positions stable when an earlier message is redacted', () => {
+    const { c, room, message } = setup();
+    room.events = [message('$one'), message('$two'), message('$three')];
+    room.events.push({ event_id: '$redact', type: 'm.room.redaction', content: { redacts: '$one' } } as any);
+    room.receipts = { '$three': { '@bob:test': { ts: 300 } } } as any;
+    const messages = c.messages('!room:test');
+    expect(messages.map((m: any) => m.id)).toEqual(['$two', '$three']);
+    expect(messages[0].readBy).toEqual([{ userId: '@bob:test', name: '@bob:test', timestamp: 300, exact: false }]);
+  });
   it('removes a conversation after leaving and forgetting', async () => {
     const { c } = setup();
     await c.command({ action: 'remove', roomId: '!room:test' });

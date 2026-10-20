@@ -4007,7 +4007,7 @@ function ToolCallCardInner({
     ? getTodoToolListItems(normalizedArgs, resultData)
     : []
   const effectiveOpen = hasInlineSecretPrompt ? true : open
-  const { sessionId, authToken } = useContext(SubAgentAuthContext)
+  const { authToken } = useContext(SubAgentAuthContext)
   const terminalSurfaceState = useToolTerminalSurface({
     enabled: isPersistentTerminal && (effectiveOpen || isBackgroundCall || call.status === 'running' || call.status === 'pending'),
     terminalId: structuredTerminalId,
@@ -4326,7 +4326,7 @@ function ToolCallCardInner({
       </div>
     </div>
   ) : bodyKind === 'browserActivity' ? (
-    <BrowserActivityView tool={displayTool} args={normalizedArgs} data={resultData} status={call.status} output={displayOutput} sessionId={sessionId} authToken={authToken}>
+    <BrowserActivityView tool={displayTool} args={normalizedArgs} data={resultData} status={call.status} output={displayOutput}>
       {screenshotPath ? <BrowserScreenshotView key={screenshotPath} path={screenshotPath} /> : null}
     </BrowserActivityView>
   ) : bodyKind === 'browserSnapshot' && snapshotText ? (
@@ -4521,8 +4521,10 @@ function ToolCallCardInner({
           className={cn('tool-call-collapsible', streamingMounted && 'tool-call-collapsible-streaming')}
         >
           <div className={cn(
-            'ml-8 mr-3 mb-2 rounded-md',
-            bodyKind === 'terminal' ? 'bg-transparent p-0' : cn('px-3 py-2', stateClasses.body),
+            'ml-8 mr-3 mb-2',
+            ['terminal', 'pending', 'editDiff', 'runningHint'].includes(bodyKind)
+              ? 'bg-transparent p-0'
+              : cn('rounded-md px-3 py-2', stateClasses.body),
           )}>
             {bodyContent}
           </div>
@@ -4534,57 +4536,53 @@ function ToolCallCardInner({
         </div>
       )}
       {isApprovalPending && (
-        <div className="ml-6 mr-1.5 mb-2 rounded-md bg-amber-500/[0.045] px-2.5 py-2 ring-1 ring-amber-500/20 sm:ml-8 sm:mr-3 sm:px-3">
-          <div className="rounded-md bg-background/35 px-3 py-2.5 sm:px-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 shrink-0 text-amber-500" />
-                  <span className="text-[13px] font-medium text-foreground">Waiting for approval</span>
-                </div>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Approval required to continue.
-                  {summary ? <span className="text-muted-foreground/70"> — {summary}</span> : null}
-                </p>
-              </div>
+        <div className="ml-6 mr-1.5 mb-2 rounded-md bg-amber-500/[0.045] px-3 py-2.5 ring-1 ring-amber-500/20 sm:ml-8 sm:mr-3 sm:px-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  disabled={!onApprovalResponse || approvalSubmitting !== null}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    void handleApprovalResponse(false)
-                  }}
-                >
-                  {approvalSubmitting === 'reject' ? 'Rejecting...' : 'Reject'}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  disabled={!onApprovalResponse || approvalSubmitting !== null}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    void handleApprovalResponse(true)
-                  }}
-                >
-                  {approvalSubmitting === 'approve' ? 'Approving...' : 'Approve'}
-                </Button>
+                <Clock className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+                <span className="text-[13px] font-medium text-foreground">Waiting for approval</span>
               </div>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Approval required to continue.
+                {summary ? <span className="text-muted-foreground/70"> — {summary}</span> : null}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                disabled={!onApprovalResponse || approvalSubmitting !== null}
+                onClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  void handleApprovalResponse(false)
+                }}
+              >
+                {approvalSubmitting === 'reject' ? 'Rejecting...' : 'Reject'}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                disabled={!onApprovalResponse || approvalSubmitting !== null}
+                onClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  void handleApprovalResponse(true)
+                }}
+              >
+                {approvalSubmitting === 'approve' ? 'Approving...' : 'Approve'}
+              </Button>
             </div>
           </div>
         </div>
       )}
       {hasInlineSecretPrompt && (
-        <div className="ml-6 mr-1.5 mb-2 rounded-md bg-yellow-500/[0.035] px-2.5 py-2 ring-1 ring-yellow-500/15 sm:ml-8 sm:mr-3 sm:px-3">
-          <div className="rounded-md bg-background/35 px-2.5 py-2 sm:px-3">
-            {resolvedInlineSecretPrompt}
-          </div>
+        <div className="ml-6 mr-1.5 mb-2 rounded-md bg-yellow-500/[0.035] px-3 py-2.5 ring-1 ring-yellow-500/15 sm:ml-8 sm:mr-3 sm:px-3">
+          {resolvedInlineSecretPrompt}
         </div>
       )}
     </Collapsible>

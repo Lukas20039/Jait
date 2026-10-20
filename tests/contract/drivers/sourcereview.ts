@@ -12,6 +12,24 @@ process.env.__JAIT_CLI = '1';
 
 // Exact reviewed inventory. Mutations redirect one entry to an isolated source copy.
 export const sources: Record<string, string> = {
+  "networkScanHelpers": "../../../packages/gateway/src/lib/network-scan.ts",
+  reusedSessionRoutes: '../../../packages/gateway/src/routes/sessions.ts',
+  reusedProjectTools: '../../../packages/gateway/src/tools/project-tools.ts',
+  reusedDiskJanitor: '../../../packages/gateway/src/services/disk-janitor.ts',
+  reusedSecurityEngines: '../../../packages/gateway/src/lib/security/engines.ts',
+  reusedPreviewTools: '../../../packages/gateway/src/tools/preview-tools.ts',
+  reusedSchedulerService: '../../../packages/gateway/src/scheduler/service.ts',
+  reusedJobRoutes: '../../../packages/gateway/src/routes/jobs.ts',
+  reusedAcpRunner: '../../../packages/gateway/src/tools/agent-acp-runner.ts',
+  reusedFilesystem: '../../../packages/gateway/src/surfaces/filesystem.ts',
+  "maintenanceService": "../../../packages/gateway/src/services/maintenance.ts",
+  "agentGithubTools": "../../../packages/gateway/src/tools/agent-github-tools.ts",
+  reusedElevatedTools: '../../../packages/gateway/src/tools/elevated-tools.ts',
+  reusedPreviewRunner: '../../../packages/gateway/src/services/preview-runner.ts',
+  reusedProjectMessage: '../../../packages/gateway/src/tools/project-message-tool.ts',
+  reusedReminderRoutes: '../../../packages/gateway/src/routes/reminders.ts',
+  reusedTelegramConnector: '../../../packages/gateway/src/channels/telegram/connector.ts',
+  reusedMsTeamsConnector: '../../../packages/gateway/src/channels/msteams/connector.ts',
   reusedBrowserDevtools: '../../../packages/gateway/src/routes/browser-devtools.ts',
   reusedRemoteCliProvider: '../../../packages/gateway/src/providers/remote-cli-provider.ts',
   reusedHostSoftware: '../../../packages/gateway/src/lib/security/host-software.ts',
@@ -715,11 +733,65 @@ export async function dispatch(call: any): Promise<unknown> {
     finally{await app.close();}
   }
 
+  if (call.op === 'sourcereview.agentGithubTools') {
+    const subject=await import(specifier);const calls:unknown[]=[];
+    const service={
+      list(userId:unknown){calls.push(['list',userId]);return call.connections??[];},
+      get(userId:unknown,agentId:unknown){calls.push(['get',userId,agentId]);return call.connection??null;},
+      publicBaseUrl(){calls.push(['baseUrl']);return 'https://gateway.fixture';},
+      webhookSecret(userId:unknown,agentId:unknown){calls.push(['webhookSecret',userId,agentId]);return call.webhookSecret??null;},
+      async testConnection(userId:unknown,agentId:unknown){calls.push(['test',userId,agentId]);if(call.error)throw new Error(call.error);return call.testResult??{ok:true};},
+      async resolveAgentGithubEnv(userId:unknown,agentId:unknown){calls.push(['env',userId,agentId]);if(call.error)throw new Error(call.error);return call.env??null;}
+    };
+    const deps:any={service(){calls.push(['service']);return service;}};
+    if(call.currentAgentId!==undefined)deps.currentAgentId=(context:unknown)=>{calls.push(['identity',context]);return call.currentAgentId;};
+    const tool=call.token?subject.createAgentGithubTokenTool(deps):subject.createAgentGithubTool(deps);
+    return {result:await tool.execute(call.input??{},call.context??{userId:'owner',threadId:'thread'}),calls};
+  }
+  if (call.op === 'sourcereview.maintenanceService') {
+    const {mock}=await import('bun:test');const childProcess=await import('node:child_process');
+    const fs=await import('node:fs/promises'),path=await import('node:path');
+    const artifacts=path.join(new URL('../../../', import.meta.url).pathname,'.jait/artifacts');await fs.mkdir(artifacts,{recursive:true});
+    const directory=await fs.mkdtemp(path.join(artifacts,'maintenance-review-'));
+    const commands:unknown[]=[],writes:unknown[]=[],plans:any[]=[];
+    const repo={id:'repo',name:'Fixture Repo',localPath:directory};
+    const log=console.error;console.error=()=>{};
+    mock.module('node:child_process',()=>({...childProcess,execSync(command:string,options:any){
+      commands.push({command,ownedCwd:options.cwd===directory,timeout:options.timeout,encoding:options.encoding,maxBuffer:options.maxBuffer,ci:options.env.CI,color:options.env.FORCE_COLOR,windowsHide:options.windowsHide});
+      const result=(call.outputs??{})[command];
+      if(result?.error)throw new Error(result.error);
+      if(result?.failure)throw {stdout:result.stdout??'',stderr:result.stderr??'',status:1};
+      return result?.stdout??'passed\n';
+    }}));
+    const database={insert(){return{values(value:any){writes.push({op:'insert',status:value.status,triggeredBy:value.triggeredBy});return{run(){}};}};},
+      update(){return{set(value:any){writes.push({op:'update',status:value.status,output:value.output?.replace(/\d+ms/g,'$MS'),error:value.error,hasPlan:value.planId!==null,completed:typeof value.completedAt==='string'});return{where(){return{run(){}};}};}};},
+      select(){return{from(){return{where(){return{get(){return call.row??null;},orderBy(){return{limit(){return{all(){return call.rows??[];}};}};}};},orderBy(){return{limit(){return{all(){return call.rows??[];}};}};}};}};}};
+    const repos={getById(_id:string){return call.missing?null:call.inaccessible?{...repo,localPath:path.join(directory,'missing')}:repo;},list(){return[repo];}};
+    const planService={create(value:any){plans.push({repoId:value.repoId,tasks:value.tasks.map((t:any)=>({title:t.title,description:t.description,status:t.status}))});return{id:'plan-fixture'};}};
+    try{
+      const subject=await import(specifier);const service=new subject.MaintenanceService(database,planService,repos);
+      let result:unknown;
+      try {
+        if(call.action==='list')result=service.listRuns(call.jobId,call.limit);
+        else if(call.action==='get')result=service.getRun('run');
+        else {const value=await service.runForRepo('repo','job',call.config??{checks:[{name:'Check',command:'check'}]});
+          result={repoId:value.repoId,repoName:value.repoName,allPassed:value.allPassed,planId:value.planId??null,checks:value.checks.map((c:any)=>({name:c.name,command:c.command,passed:c.passed,output:c.output,durationValid:Number.isFinite(c.durationMs)&&c.durationMs>=0}))};}
+      }catch(error){result={error:(error as Error).message.replaceAll(directory,'$ROOT')};}
+      return{result,commands,writes,plans};
+    }finally{mock.restore();console.error=log;await fs.rm(directory,{recursive:true,force:true});}
+  }
+  if (call.op === 'sourcereview.networkScanHelpers') {
+    const subject=await import(specifier);
+    if(call.method==='candidates') {const values=subject.buildSubnetCandidates(call.input);return {length:values.length,values:call.indices.map((index:number)=>values[index]??null)};}
+    const methods:Record<string,string>={arp:'parseArpTable',prefix:'normalizeSubnetPrefix',ipv4:'isValidIpv4',ips:'normalizeIps',merge:'mergeEntries'};
+    if(!Object.hasOwn(methods,call.method))throw new Error('unknown pure network helper');
+    return subject[methods[call.method]!](call.input);
+  }
   if (call.op === 'sourcereview.jaitModels') {
     const {mock}=await import('bun:test');const calls:unknown[]=[];const boundary=(path:string)=>new URL(path,new URL('../../../', import.meta.url)).pathname;
     const methods:any={};for(const name of ['fetchOpenAIModels','fetchOpenRouterModels','fetchOllamaModels','fetchOmniRouteModels'])methods[name]=async(...args:unknown[])=>{calls.push([name,...args.map(x=>x??null)]);if((call.fail??[]).includes(name))throw new Error('fixture fetch failed');return call.models?.[name]??[];};
     mock.module(boundary('packages/gateway/src/providers/model-fetchers.ts'),()=>methods);mock.module(boundary('packages/gateway/src/providers/jait-provider.ts'),()=>({OPENROUTER_MODELS:[{id:'router-fallback',name:'Router Fallback',description:'Static router',isDefault:true}]}));
-    try{const subject=await import(specifier);const result=await subject.listJaitModels({config:call.config??{},apiKeys:call.apiKeys,fallbackModels:call.fallbackModels??[{id:'fallback',name:'Fallback',isDefault:true}]});return {result,calls};}finally{mock.restore();}
+    try{const subject=await import(specifier);const result=await subject.listJaitModels({config:call.config??{},apiKeys:call.apiKeys,fallbackModels:call.fallbackModels??[{id:'fallback',name:'Fallback',isDefault:true}],...(call.includeCloud===undefined?{}:{includeCloud:call.includeCloud})});return {result,calls};}finally{mock.restore();}
   }
   if (call.op === 'sourcereview.metaTools') {
     const subject=await import(specifier);const calls:unknown[]=[];const all=call.tools??[];const visible=all.filter((t:any)=>!(call.hidden??[]).includes(t.name));const apiKeys={FIXTURE_KEY:'fixture-key'};

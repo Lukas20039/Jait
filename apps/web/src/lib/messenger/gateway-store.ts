@@ -385,6 +385,11 @@ export class GatewayMessengerStore implements MessengerStoreApi {
     const bytes = Uint8Array.from(atob(result.data), (c) => c.charCodeAt(0));
     return new Blob([bytes], { type: attachment.mime });
   }
+  async avatarBlob(mxcUrl: string) {
+    const result = await this.request('/media', 'POST', { url: mxcUrl });
+    const bytes = Uint8Array.from(atob(result.data), (c) => c.charCodeAt(0));
+    return new Blob([bytes]);
+  }
   async restoreKeys(recoveryKey: string) {
     await this.request('/keys', 'POST', { recoveryKey });
     await this.refreshRemote();

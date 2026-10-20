@@ -269,6 +269,7 @@ pub struct ListJaitModelsOptions<'a> {
     pub config: &'a JaitModelsConfig,
     pub api_keys: Option<&'a HashMap<String, String>>,
     pub fallback_models: &'a [ProviderModelInfo],
+    pub include_cloud: Option<bool>,
 }
 
 impl<'a> ListJaitModelsOptions<'a> {
@@ -919,6 +920,7 @@ async fn fetch_configured_instance_models(
     instance: &JaitBackendInstanceConfig,
     fallback_models: &[ProviderModelInfo],
     fetchers: &dyn ModelFetchers,
+    include_cloud: bool,
 ) -> Vec<ProviderModelInfo> {
     let api_key = instance.api_key.clone().unwrap_or_default();
     let outcome = if instance.backend.is_openai_compatible() {
@@ -931,7 +933,9 @@ async fn fetch_configured_instance_models(
             Err(error) => Err(error),
         }
     } else if instance.backend == JaitBackend::Ollama {
-        fetchers.fetch_ollama_with(&instance.base_url, true).await
+        fetchers
+            .fetch_ollama_with(&instance.base_url, include_cloud)
+            .await
     } else {
         fetchers.fetch_omniroute(&api_key, &instance.base_url).await
     };
@@ -971,10 +975,11 @@ async fn list_configured_models(
     instances: &[JaitBackendInstanceConfig],
     fallback_models: &[ProviderModelInfo],
     fetchers: &dyn ModelFetchers,
+    include_cloud: bool,
 ) -> Vec<ProviderModelInfo> {
-    let catalogues = instances
-        .iter()
-        .map(|instance| fetch_configured_instance_models(instance, fallback_models, fetchers));
+    let catalogues = instances.iter().map(|instance| {
+        fetch_configured_instance_models(instance, fallback_models, fetchers, include_cloud)
+    });
     join_all(catalogues).await.into_iter().flatten().collect()
 }
 
@@ -1049,8 +1054,19 @@ async fn list_legacy_models(
             if url.is_empty() {
                 return Vec::new();
             }
-            match fetchers.fetch_ollama_with(&url, true).await {
-                Ok(models) => tagged(models, "Ollama"),
+            match fetchers
+                .fetch_ollama_with(&url, options.include_cloud.unwrap_or(true))
+                .await
+            {
+                Ok(models) => models
+                    .into_iter()
+                    .map(|mut model| {
+                        if model.group.is_none() {
+                            model.group = Some("Ollama".into());
+                        }
+                        model
+                    })
+                    .collect(),
                 Err(_) => Vec::new(),
             }
         }) as CatalogueFuture<'_>
@@ -1083,7 +1099,13 @@ pub async fn list_jait_models(
 ) -> Vec<ProviderModelInfo> {
     let instances = parse_jait_backend_instances(options.api_key("JAIT_BACKEND_INSTANCES"));
     if !instances.is_empty() {
-        return list_configured_models(&instances, options.fallback_models, fetchers).await;
+        return list_configured_models(
+            &instances,
+            options.fallback_models,
+            fetchers,
+            options.include_cloud.unwrap_or(true),
+        )
+        .await;
     }
     list_legacy_models(options, fetchers).await
 }

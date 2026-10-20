@@ -26,3 +26,5 @@ pub mod decision;
 pub mod skill_discovery;
 
 pub mod chat_modes;
+
+pub mod maintenance;

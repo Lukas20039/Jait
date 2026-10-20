@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { usePreviewAccess } from '@/hooks/use-preview-access'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Info, Maximize, Minimize, Move } from 'lucide-react'
@@ -10,6 +11,8 @@ export interface NoVncSessionViewProps extends NoVncSessionOptions {
   title?: string
   className?: string
   overlay?: ReactNode
+  hideControls?: boolean
+  controlsContainer?: HTMLElement | null
   onLoad?: () => void
 }
 
@@ -72,6 +75,8 @@ export function NoVncSessionView({
   title = 'Remote session',
   className = 'h-full w-full bg-white',
   overlay,
+  hideControls = false,
+  controlsContainer,
   onLoad,
 }: NoVncSessionViewProps) {
   const resolvedSource = resolveNoVncSessionUrl(source, {
@@ -163,12 +168,13 @@ export function NoVncSessionView({
   }
 
   return (
-    <ZoomPanWrapper overlay={overlay} controls={tracksConnection ? <button type="button" onClick={retry} className="rounded bg-background/90 px-2 py-1 text-xs shadow hover:bg-muted">Reconnect browser</button> : undefined}>
+    <ZoomPanWrapper controlsContainer={controlsContainer} hideControls={hideControls} overlay={overlay} controls={tracksConnection ? <button type="button" onClick={retry} className="rounded bg-background/90 px-2 py-1 text-xs shadow hover:bg-muted">Reconnect browser</button> : undefined}>
       {src && <iframe
         ref={iframeRef}
         key={`${src}:${revision}`}
         src={src}
         title={title}
+        tabIndex={hideControls ? -1 : undefined}
         className={className}
         sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
         onLoad={() => { if (!tracksConnection) setConnection('connected'); onLoad?.() }}
@@ -186,7 +192,7 @@ export function NoVncSessionView({
 const MIN_ZOOM = 0.25
 const MAX_ZOOM = 5
 
-function ZoomPanWrapper({ children, overlay, controls }: { children: ReactNode; overlay?: ReactNode; controls?: ReactNode }) {
+function ZoomPanWrapper({ children, overlay, controls, controlsContainer, hideControls = false }: { children: ReactNode; overlay?: ReactNode; controls?: ReactNode; controlsContainer?: HTMLElement | null; hideControls?: boolean }) {
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -220,7 +226,7 @@ function ZoomPanWrapper({ children, overlay, controls }: { children: ReactNode; 
     try {
       if (document.fullscreenElement?.contains(root)) await document.exitFullscreen()
       else {
-        const target = root.closest<HTMLElement>('[data-browser-layout]') ?? root
+        const target = root.closest<HTMLElement>('[data-browser-panel]') ?? root.closest<HTMLElement>('[data-browser-layout]') ?? root
         if (!target.requestFullscreen) throw new Error('Fullscreen is unavailable in this browser.')
         await target.requestFullscreen()
       }
@@ -378,42 +384,8 @@ function ZoomPanWrapper({ children, overlay, controls }: { children: ReactNode; 
     setIsHintExpanded(expanded => !expanded)
   }, [])
 
-  return (
-    <div
-      ref={containerRef}
-      className="relative h-full overflow-hidden bg-background focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-      tabIndex={0}
-      role="group"
-      aria-label="Remote view controls"
-      onKeyDown={handleKeyDown}
-    >
-      <div
-        style={{
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: '0 0',
-          width: '100%',
-          height: '100%',
-          willChange: isTransformed ? 'transform' : undefined,
-        }}
-      >
-        {children}
-      </div>
-      {/* Overlay is opt-in; normal clicks and scrolling always reach the page. */}
-      <div
-        ref={overlayRef}
-        className="absolute inset-0 z-10"
-        style={{
-          pointerEvents: adjusting || isDragging ? 'auto' : 'none',
-          cursor: isDragging ? 'grabbing' : adjusting ? 'grab' : undefined,
-        }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        onLostPointerCapture={() => setIsDragging(false)}
-        onDoubleClick={handleDoubleClick}
-      />
-      <div className="absolute left-2 top-2 z-20 flex items-start gap-2">
+  const viewControls = <>
+      <div hidden={hideControls} className={hideControls ? "hidden" : controlsContainer ? "flex items-start gap-2" : "absolute left-2 top-2 z-20 flex items-start gap-2"}>
         <div className="pointer-events-auto flex items-start gap-2">
           <TooltipHint content={isHintExpanded ? 'Hide pan and zoom help' : 'Show pan and zoom help'}>
           <button
@@ -438,14 +410,14 @@ function ZoomPanWrapper({ children, overlay, controls }: { children: ReactNode; 
           </div>
         ) : null}
       </div>
-      {controls ? (
-        <div className="absolute right-2 top-2 z-20">
+      {controls && !hideControls ? (
+        <div className={controlsContainer ? "" : "absolute right-2 top-2 z-20"}>
           {controls}
         </div>
       ) : null}
-      {fullscreenError && <p role="alert" className="absolute bottom-14 right-2 z-30 rounded bg-background p-2 text-xs text-destructive">{fullscreenError}</p>}
-      {/* Floating controls — always accessible */}
-      <div className="absolute bottom-2 right-2 z-20 flex items-center gap-1 rounded bg-background/90 px-2 py-1.5 text-sm text-muted-foreground shadow sm:gap-0.5 sm:px-1.5 sm:py-1 sm:text-xs">
+      {fullscreenError && <p role="alert" className={controlsContainer ? "text-xs text-destructive" : "absolute bottom-14 right-2 z-30 rounded bg-background p-2 text-xs text-destructive"}>{fullscreenError}</p>}
+      {/* In chat these controls live in the header; other viewers keep the floating toolbar. */}
+      <div hidden={hideControls} className={hideControls ? "hidden" : `${controlsContainer ? "flex flex-wrap" : "absolute bottom-2 right-2 z-20 flex shadow"} items-center gap-1 rounded bg-background/90 px-2 py-1.5 text-sm text-muted-foreground sm:gap-0.5 sm:px-1.5 sm:py-1 sm:text-xs`}>
         <TooltipHint content="Adjust view (V when view controls are focused)">
         <button
           type="button"
@@ -488,6 +460,44 @@ function ZoomPanWrapper({ children, overlay, controls }: { children: ReactNode; 
           </TooltipHint>
         ) : null}
       </div>
+  </>
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative h-full overflow-hidden bg-background focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+      tabIndex={hideControls ? -1 : 0}
+      role="group"
+      aria-label="Remote view controls"
+      onKeyDown={handleKeyDown}
+    >
+      <div
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: '0 0',
+          width: '100%',
+          height: '100%',
+          willChange: isTransformed ? 'transform' : undefined,
+        }}
+      >
+        {children}
+      </div>
+      {/* Overlay is opt-in; normal clicks and scrolling always reach the page. */}
+      <div
+        ref={overlayRef}
+        className="absolute inset-0 z-10"
+        style={{
+          pointerEvents: adjusting || isDragging ? 'auto' : 'none',
+          cursor: isDragging ? 'grabbing' : adjusting ? 'grab' : undefined,
+        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onLostPointerCapture={() => setIsDragging(false)}
+        onDoubleClick={handleDoubleClick}
+      />
+      {controlsContainer ? createPortal(viewControls, controlsContainer) : viewControls}
     </div>
   )
 }

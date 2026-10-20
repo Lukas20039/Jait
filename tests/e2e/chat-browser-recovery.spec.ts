@@ -1,6 +1,15 @@
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
+// Load the fixture directly so App authentication/navigation cannot replace it
+// while a recovery test is establishing its live-view connection.
+test.beforeEach(async ({ page }) => {
+  await page.route('**/src/e2e-fixtures/browser-recovery.html*', route => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><html><body><script type="module" src="/src/e2e-fixtures/browser-recovery.tsx"></script></body></html>',
+  }))
+})
+
 test('a dropped browser connection reconnects with a fresh scoped grant and preserves control', async ({ page }) => {
   let accessRequests = 0
   // The VNC transport is external; use the real viewer, wrapper, and grant lifecycle.
@@ -28,8 +37,7 @@ test('a dropped browser connection reconnects with a fresh scoped grant and pres
     url.searchParams.set('grant', String(accessRequests))
     await route.fulfill({ json: { url: url.pathname + url.search } })
   })
-  await page.goto('/')
-  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await page.goto('/src/e2e-fixtures/browser-recovery.html')
   const browser = page.frameLocator('iframe[title="Remote session"]')
   await expect(browser.getByText('Remote browser connected')).toBeVisible()
   const frame = () => page.frames().find(frame => frame.url().includes('/noVNC/vnc_lite.html'))!
@@ -63,8 +71,7 @@ test('outage retries are bounded and hiding the browser cancels recovery', async
     accessRequests++
     await route.fulfill({ json: { url: '/noVNC/vnc_lite.html?path=preview/test/live/6080/websockify&grant=' + accessRequests } })
   })
-  await page.goto('/')
-  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await page.goto('/src/e2e-fixtures/browser-recovery.html')
   await expect.poll(() => accessRequests, { timeout: 15000 }).toBe(4)
   await expect(page.getByText('Browser connection interrupted.', { exact: true })).toBeVisible()
   await page.waitForTimeout(4500)
@@ -87,20 +94,19 @@ test('a stopped browser can be restarted from its chat while retaining user cont
     await route.fulfill({ json: { session } })
   })
   await page.route('**/api/preview/access', route => route.fulfill({ json: { url: '/noVNC/vnc_lite.html?path=preview/scoped/live/6081/websockify' } }))
-  await page.goto('/?mode=chat')
-  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await page.goto('/src/e2e-fixtures/browser-recovery.html?mode=chat')
   await expect(page.getByText('No live browser is available for this chat.')).toBeVisible()
+  await page.getByLabel('Browser view options', { exact: true }).click()
   await page.getByRole('button', { name: 'Restart browser', exact: true }).click()
   expect(restarts).toBe(1)
-  await expect(page.getByText('You are controlling', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^(Share with agent|Take control)$/ })).toHaveText('Share with agent')
   await expect(page.locator('iframe[title="Agent browser"]')).toHaveAttribute('src', /6081/)
 })
 
 test('standard noVNC viewers retain their own connection UI', async ({ page }) => {
   await page.route('**/api/preview/access', route => route.fulfill({ json: { url: '/noVNC/vnc.html?path=preview/scoped/live/6080/websockify' } }))
   await page.route('**/noVNC/vnc.html**', route => route.fulfill({ contentType: 'text/html', body: '<html><body>Standard viewer controls</body></html>' }))
-  await page.goto('/?mode=full')
-  await page.evaluate(() => import('/src/e2e-fixtures/browser-recovery.tsx'))
+  await page.goto('/src/e2e-fixtures/browser-recovery.html?mode=full')
   await expect(page.frameLocator('iframe').getByText('Standard viewer controls')).toBeVisible()
   await expect(page.getByText('Connecting to browser…', { exact: true })).toHaveCount(0)
 })

@@ -41,3 +41,27 @@ sizes remain unbounded; no scanner safety or assessment scope is implied by URL 
 No live providers/credentials are used. TLS/proxy/redirect wire equivalence outside the shared
 reqwest engine and owned fixtures, and activation through the catalogue's typed seam, remain
 separate integration/readiness work. This module adds no second credit for the catalogue service.
+
+
+## 2026-10-20 live-source refresh: Ollama Cloud
+
+The live reference gained a separate optional cloud catalogue. Native local-cache entries
+now contain only local models; cloud data is merged per invocation. Direct fetch defaults
+to `includeCloud: false`, matching the real export. Force refresh bypasses both TTLs while
+local in-flight work stays coalesced; cloud calls are not coalesced. The cloud cache is
+per daemon and expires at 300000 ms. Signed-out or failed account probes cache an empty
+list; failed catalogue responses retain the prior list without refreshing its timestamp.
+The account uses POST; catalogue uses GET; neither adds authorization. Both share one
+4000 ms deadline, including body reads. Owned Tokio tasks continue admitted work when
+the caller disappears. No external account or provider was contacted.
+
+The same three failing differential tests now pass: opt-in after a local cache hit,
+cloud fetching after a non-OK local response, and permissive cloud mapping. Logs:
+`cloud-parity-before.log`, `cloud-parity-after.log` under the gateway-rust artifact root.
+Mapping covers null/empty rows, fallback IDs, duplicate removal, non-string `.trim()`
+errors, JS truthy/join coercion, and malformed capabilities. Additional checks cover
+independent TTL expiry, force/fallback/signed-out transitions, invalid account payloads,
+no cloud probe by default, and a paused-clock 3s+3s peer cancelled at exactly 4s.
+`cloud-catalogue-final.log`: 27 model-fetcher checks and 24 catalogue-service checks pass.
+The shared-deadline check is native; actual wire/cloud-service equivalence remains outside
+these controlled peers. Existing URL-policy/production-activation limits still apply.

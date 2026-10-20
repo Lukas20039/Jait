@@ -141,7 +141,18 @@ impl ModelFetchers for ScriptedFetchers {
     }
 
     fn fetch_ollama<'a>(&'a self, base_url: &'a str) -> ModelFetchFuture<'a> {
-        let response = self.respond("ollama", vec![json!(base_url)]);
+        self.fetch_ollama_with(base_url, false)
+    }
+
+    fn fetch_ollama_with<'a>(
+        &'a self,
+        base_url: &'a str,
+        include_cloud: bool,
+    ) -> ModelFetchFuture<'a> {
+        let response = self.respond(
+            "ollama",
+            vec![json!(base_url), json!({"includeCloud":include_cloud})],
+        );
         let suspend = self.suspend;
         let completed = &self.completed;
         Box::pin(async move {
@@ -241,6 +252,7 @@ async fn configured_models(
         &serde_json::to_string(instances).expect("instances serialize"),
     )]);
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config,
         api_keys: Some(&api_keys),
         fallback_models: fallback,
@@ -271,6 +283,7 @@ async fn legacy_tags_each_source_and_keeps_fixed_source_order() {
     ]);
     let fallback: Vec<ProviderModelInfo> = Vec::new();
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -301,7 +314,10 @@ async fn legacy_tags_each_source_and_keeps_fixed_source_order() {
         json!(["sk-openai", "https://api.openai.com/v1"])
     );
     assert_eq!(calls[1]["args"].clone(), json!(["sk-openrouter"]));
-    assert_eq!(calls[2]["args"].clone(), json!(["http://localhost:11434"]));
+    assert_eq!(
+        calls[2]["args"].clone(),
+        json!(["http://localhost:11434", {"includeCloud":true}])
+    );
     assert_eq!(
         calls[3]["args"].clone(),
         json!(["sk-omniroute", "http://localhost:20128/v1"])
@@ -318,6 +334,7 @@ async fn legacy_trims_overrides_and_skips_sources_without_endpoints() {
     let api_keys = keys(&[("OPENAI_API_KEY", "  sk-trimmed  ")]);
     let fallback = vec![ProviderModelInfo::new("gpt-4o-mini", "GPT-4o mini")];
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -347,6 +364,7 @@ async fn legacy_uses_config_openai_key_when_override_absent_or_blank() {
     let api_keys = keys(&[("OPENAI_API_KEY", "   ")]);
     let fallback: Vec<ProviderModelInfo> = Vec::new();
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -371,6 +389,7 @@ async fn legacy_isolates_source_errors_and_uses_static_openrouter_catalogue() {
     let api_keys = keys(&[("OPENROUTER_API_KEY", "sk-or")]);
     let fallback = vec![model("fallback-openai")];
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -393,6 +412,7 @@ async fn legacy_empty_openrouter_catalogue_also_uses_the_static_catalogue() {
     let api_keys = keys(&[("OPENROUTER_API_KEY", "sk-or")]);
     let fallback: Vec<ProviderModelInfo> = Vec::new();
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -424,6 +444,7 @@ async fn legacy_starts_every_source_before_consuming_any_result() {
     ]);
     let fallback: Vec<ProviderModelInfo> = Vec::new();
     let options = ListJaitModelsOptions {
+        include_cloud: None,
         config: &config,
         api_keys: Some(&api_keys),
         fallback_models: &fallback,
@@ -905,7 +926,7 @@ fn native_script(script: &Value) -> HashMap<String, Response> {
 }
 
 fn list_vectors() -> Vec<Value> {
-    vec![
+    let mut vectors = vec![
         // Every key/URL overridden through `apiKeys`; all four sources healthy.
         json!({
             "config": {"openaiApiKey": "cfg", "openaiBaseUrl": "https://cfg/v1"},
@@ -921,7 +942,7 @@ fn list_vectors() -> Vec<Value> {
             "script": {
                 "openai": {"models": [{"id": "gpt-4o", "name": "GPT-4o", "contextLength": 128000}]},
                 "openrouter": {"models": [{"id": "or/one", "name": "One"}]},
-                "ollama": {"models": [{"id": "qwen3", "name": "qwen3"}]},
+                "ollama": {"models": [{"id": "qwen3", "name": "qwen3"}, {"id":"hosted-cloud", "name":"Cloud", "group":"Ollama Cloud"}, {"id":"blank-group", "name":"Blank", "group":""}]},
                 "omniroute": {"models": [{"id": "route", "name": "Route", "isDefault": true}]}
             }
         }),
@@ -958,7 +979,7 @@ fn list_vectors() -> Vec<Value> {
             "apiKeys": {"JAIT_BACKEND_INSTANCES": "[{\"id\":\"gpu/lab\",\"type\":\"ollama\",\"name\":\"Lab\",\"baseUrl\":\"192.168.1.50:11434/\",\"model\":\"qwen3:32b\",\"numCtx\":4096},{\"id\":\"corp\",\"type\":\"openai\",\"name\":\"Corp\",\"baseUrl\":\"https://api.corp/v1\",\"apiKey\":\" k \"},{\"id\":\"router\",\"type\":\"openrouter\",\"name\":\"Router\",\"baseUrl\":\"https://openrouter.ai/api/v1\"},{\"id\":\"dead\",\"type\":\"openai\",\"name\":\"Dead\",\"baseUrl\":\"https://dead/v1\"}]"},
             "fallbackModels": [{"id": "gpt-4o-mini", "name": "GPT-4o mini"}],
             "script": {
-                "ollama": {"models": [{"id": "qwen3:32b", "name": "qwen3", "description": "32B"}]},
+                "ollama": {"models": [{"id": "qwen3:32b", "name": "qwen3", "description": "32B"}, {"id":"hosted-cloud", "name":"Hosted", "group":"Ollama Cloud"}, {"id":"empty-group", "name":"Empty", "group":""}]},
                 "openai": {"models": [{"id": "gpt-4o", "name": "GPT-4o", "vendorFlag": {"nested": [1, 2]}, "supportedReasoningEfforts": [{"reasoningEffort": "high", "description": "deep"}]}]},
                 "openrouter": {"error": "429"}
             }
@@ -970,7 +991,13 @@ fn list_vectors() -> Vec<Value> {
             "fallbackModels": [],
             "script": {"openai": {"models": [{"id": "served", "name": "Served"}]}}
         }),
-    ]
+    ];
+    for index in [0usize, 4] {
+        let mut disabled = vectors[index].clone();
+        disabled["includeCloud"] = json!(false);
+        vectors.push(disabled);
+    }
+    vectors
 }
 
 fn assert_same(label: &str, reference: &Value, native: &Value) {
@@ -994,6 +1021,7 @@ async fn differential_list_routing_matches_typescript() {
         let script_value = payload.get("script").cloned().unwrap_or(Value::Null);
         let fetchers = ScriptedFetchers::new(native_script(&script_value));
         let options = ListJaitModelsOptions {
+            include_cloud: payload["includeCloud"].as_bool(),
             config: &config,
             api_keys: api_keys.as_ref(),
             fallback_models: &fallback,

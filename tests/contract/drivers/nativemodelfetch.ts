@@ -16,7 +16,7 @@ export async function dispatch(call:any) {
       timeoutMs=Number(ms); return originalTimeout(fn,ms,...args);
     };
     globalThis.fetch=(async (url:any,init:any)=>{
-      requests.push({url:String(url),authorization:init.headers?.Authorization??null,timeoutMs});
+      requests.push({url:String(url),authorization:init.headers?.Authorization??null,timeoutMs,method:init.method??'GET'});
       if (!init.signal || !(init.signal instanceof AbortSignal)) throw new Error('reference omitted abort signal');
       const script=scripts.shift(); if (!script) throw new Error('unscripted request');
       if (script.hold) await new Promise<void>(resolve=>releases.set(script.hold,resolve));
@@ -26,12 +26,15 @@ export async function dispatch(call:any) {
     }) as typeof fetch;
     const reference=await import(pathToFileURL(source).href+'?native-models='+crypto.randomUUID());
     if (call.op==='nativemodelfetch.filters') return call.ids.map((id:any)=>({chat:reference.isChatCapableOpenAIModelId(id),reasoning:reference.supportsReasoningEffort(id)}));
+    if (call.op==='nativemodelfetch.cloudmap') {
+      try { return {ok:true,wire:JSON.stringify(reference.mapOllamaCloudModels(call.tags))}; } catch {return {ok:false};}
+    }
     reference.resetModelFetcherCaches();
     const fetcher=(step:any)=>{
       switch(step.kind) {
         case 'openai': return reference.fetchOpenAIModels(step.key??'',step.url??'http://models.fixture/v1');
         case 'openrouter': return reference.fetchOpenRouterModels(step.key??'');
-        case 'ollama': return reference.fetchOllamaModels(step.url??'http://models.fixture/v1');
+        case 'ollama': return reference.fetchOllamaModels(step.url??'http://models.fixture/v1', {force:step.force,includeCloud:step.includeCloud});
         case 'omniroute': return reference.fetchOmniRouteModels(step.key??'',step.url??'http://models.fixture/v1');
         default: throw new Error('unknown catalogue kind');
       }

@@ -414,6 +414,8 @@ function ParallelChatPanelImpl({
       )}
 
       <Conversation
+        sessionId={session.id}
+        authToken={token}
         onLatestContentViewed={viewedActivityAt ? handleLatestContentViewed : undefined}
         className="min-h-0 flex-1"
         loading={isLoadingHistory}

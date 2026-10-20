@@ -8,9 +8,13 @@ import { TOOL_CARD_ANCHOR_SETTLE_MS, TOOL_CARD_TOGGLE_EVENT } from './tool-card-
 import { cn } from '@/lib/utils'
 import { estimateMessageHeight, estimateMessageHeightFromMessage } from '@/lib/pretext-height'
 import { TooltipHint } from '@/components/ui/tooltip'
+import { ChatBrowserView } from './chat-browser-view'
+import { findConversationBrowser } from '@/lib/conversation-browser'
 
 interface ConversationProps {
   variant?: 'assistant' | 'messenger'
+  sessionId?: string | null
+  authToken?: string | null
   children: React.ReactNode
   className?: string
   compact?: boolean
@@ -435,7 +439,7 @@ function ConversationPositioningSkeleton({ label }: { label: string }) {
   )
 }
 
-export function Conversation({ variant = 'assistant', children, className, mobile = false, loading, isStreaming, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
+export function Conversation({ variant = 'assistant', sessionId, authToken, children, className, mobile = false, loading, isStreaming, loadingLabel = 'Loading conversation', messageContents, messageEstimateInputs, hasMore, onLoadMore, onEditPreviousUserMessage, scrollToMessageId, showMinimap = false, elevatedMessageId, onLatestContentViewed }: ConversationProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   // The scroll container may not exist yet on first mount (history still
   // loading renders the skeleton branch), and a plain ref object is not
@@ -1398,11 +1402,13 @@ export function Conversation({ variant = 'assistant', children, className, mobil
 
   // Park the floating controls just left of the minimap rail rather than on top
   // of it — a click meant for a button would otherwise scrub the transcript.
+  const browser = useMemo(() => variant === 'assistant' ? findConversationBrowser(messageEstimateInputs ?? [], sessionId) : null, [variant, messageEstimateInputs, sessionId])
   const floatingControlInset = (showMinimap ? MINIMAP_RAIL_WIDTH_PX : 0) + FLOATING_CONTROL_GAP_PX
   const previousMessagePreview = getPreviousMessagePreview(messageContents, previousUserMessageIndex)
 
   return (
-    <AIConversation className={cn('relative flex flex-1 overflow-hidden', className)}>
+    <AIConversation className={cn('relative flex min-h-0 flex-1 flex-col overflow-hidden', className)}>
+      {browser && <ChatBrowserView key={sessionId ?? 'conversation-browser'} data={browser.data} sessionId={sessionId} authToken={authToken} autoOpen />}
       {loading && !hasContent ? (
         <ConversationPositioningSkeleton label={loadingLabel} />
       ) : (
@@ -1412,7 +1418,7 @@ export function Conversation({ variant = 'assistant', children, className, mobil
           role={variant === 'messenger' ? 'log' : undefined}
           aria-label={variant === 'messenger' ? 'Messages' : undefined}
           onScroll={updateBottomState}
-          className="h-full min-w-0 flex-1 overflow-y-auto scrollbar-none"
+          className="min-h-0 min-w-0 flex-1 overflow-y-auto scrollbar-none"
           style={{
             ...MOBILE_SCROLL_CONTAINMENT_STYLE,
             visibility: !hasContent || initialScrollReady ? 'visible' : 'hidden',

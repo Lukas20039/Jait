@@ -2105,9 +2105,15 @@
         "internal.sourcereview.models-configured-opencode-go-empty",
         "internal.sourcereview.models-configured-opencode-go-failure",
         "internal.sourcereview.models-configured-no-model-openai",
-        "internal.sourcereview.models-configured-no-model-vllm"
+        "internal.sourcereview.models-configured-no-model-vllm",
+        "internal.sourcereview.models-legacy-cloud-group-default",
+        "internal.sourcereview.models-legacy-cloud-explicit-false",
+        "internal.sourcereview.models-configured-cloud-group-true",
+        "internal.sourcereview.models-configured-cloud-group-false",
+        "internal.sourcereview.models-legacy-empty-group",
+        "internal.sourcereview.models-configured-empty-group"
       ],
-      "review": "Checks legacy credentials/base-URL precedence, backend request arguments/group ordering and success/empty/failure fallback behavior; every configured backend dispatch, escaped instance/model IDs, grouped descriptions, configured-model fallback and OpenAI-only generic fallback. Model-fetch functions and static router catalogue are spies; no provider call occurs. Shared instance parser and transport behavior remain separate.",
+      "review": "Checks legacy credentials/base-URL precedence, backend request arguments/group ordering and success/empty/failure fallback behavior; every configured backend dispatch, escaped instance/model IDs, grouped descriptions, configured-model fallback and OpenAI-only generic fallback. Model-fetch functions and static router catalogue are spies; no provider call occurs. Shared instance parser and transport behavior remain separate. Current hosted catalogue protocol refresh checks exact includeCloud=true forwarding by default, explicit opt-out, legacy cloud group preservation and configured instance/cloud group composition. Fetchers stay injected; no catalogue request runs.",
       "mutation": {
         "find": "instances.length > 0",
         "replace": "instances.length > 100",
@@ -3269,13 +3275,20 @@
         "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_240_3",
         "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_247_3",
         "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_254_3",
-        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_259_3",
-        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_273_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_278_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_292_3",
         "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_290_3",
         "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_295_3",
-        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_304_3"
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_304_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_259_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_273_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_334_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_363_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_376_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_389_3",
+        "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_410_3"
       ],
-      "review": "Reuses all original Rust-owned model-fetcher declarations and parameterized cases: chat ID filtering, OpenAI mapping/sorting and compatible endpoints, request URL/header construction, per-endpoint cache/concurrent requests, OpenRouter free-model filtering/cap/fallback names/description truncation, OmniRoute aliases/caps/environment overrides/keyless headers/failures, and Ollama tag details/cache URLs. Every fetch is replaced with a local response/rejection; no endpoint or model is contacted. Stale refresh timing, API-key cache isolation, coalesced request failures, malformed catalog rows, cancellation and live provider behavior remain separate gaps.",
+      "review": "Reuses all original Rust-owned model-fetcher declarations and parameterized cases: chat ID filtering, OpenAI mapping/sorting and compatible endpoints, request URL/header construction, per-endpoint cache/concurrent requests, OpenRouter free-model filtering/cap/fallback names/description truncation, OmniRoute aliases/caps/environment overrides/keyless headers/failures, and Ollama tag details/cache URLs. Every fetch is replaced with a local response/rejection; no endpoint or model is contacted. Stale refresh timing, API-key cache isolation, coalesced request failures, malformed catalog rows, cancellation and live provider behavior remain separate gaps. Current declaration refresh retains existing rules and adds source-copy execution of the new five hosted-catalogue opt-in/sign-in/deduplication/cache/failure tests with injected fetch, no external service access.",
       "mutation": {
         "find": "const OPENROUTER_MAX_MODELS = 100;",
         "replace": "const OPENROUTER_MAX_MODELS = 99;",
@@ -3992,9 +4005,10 @@
       "case_ids": [
         "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_7_3",
         "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_10_3",
-        "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_13_3"
+        "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_13_3",
+        "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_54_3"
       ],
-      "review": "Reviewed screenshot tool options, target and output path resolution, browser setup/capture/cache/cleanup and helper serialization. Three selected Rust-owned original fixtures assert output defaults under the supplied project, relative PNG suffix and absolute output preservation. These are pure path calculations; no browser, image or filesystem write executes. Target safety/SSRF, real browser launch/capture, cancellation, viewport coercion, selector/fill/click flow, display-cache CWD placement, failure cleanup and explicit output-path authorization remain gaps. Project-local test outputs do not establish all production screenshot destinations are safe.",
+      "review": "Reviewed screenshot tool options, target and output path resolution, browser setup/capture/cache/cleanup and helper serialization. Three selected Rust-owned original fixtures assert output defaults under the supplied project, relative PNG suffix and absolute output preservation. These are pure path calculations; no browser, image or filesystem write executes. Target safety/SSRF, real browser launch/capture, cancellation, viewport coercion, selector/fill/click flow, display-cache CWD placement, failure cleanup and explicit output-path authorization remain gaps. Project-local test outputs do not establish all production screenshot destinations are safe. Current declaration refresh retains existing rules and adds source-copy execution of the new project-root display-copy scenario using an injected browser and owned PNG fixture, no real browser or external capture. Earlier gap notes are historical; display-copy CWD placement now has an executable assertion.",
       "mutation": {
         "find": "if (!resolved.endsWith(\".png\")) return `${resolved}.png`;",
         "replace": "if (!resolved.endsWith(\".png\")) return `${resolved}.jpg`;",
@@ -4123,6 +4137,480 @@
       "evidence_files": [
         "packages/gateway/src/routes/browser-devtools.test.ts",
         "tests/contract/drivers/tailstatic/fixture-gateway-src-routes-browser-devtools-test-25d9c25f.ts"
+      ]
+    },
+    {
+      "module": "reusedMsTeamsConnector",
+      "path": "packages/gateway/src/channels/msteams/connector.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_22_3",
+        "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_47_3",
+        "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_56_3",
+        "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_124_3"
+      ],
+      "review": "Reviewed inbound activity conversion, mention/entity normalization, service host/protocol filtering, reference capture, webhook body/auth/error handling, listener startup/stop, credential checks, outgoing payload and token reuse/expiry. Four original Rust-owned scenarios cover exact inbound mapping, accepted/rejected URL protocols/hosts, owned loopback webhook with injected auth and fake token/reply transport, and missing credential status. The mutation allows HTTP and must fail the false protocol assertion, then restoration passes. No external Teams message or token/JWKS request runs. Real JWT/JWKS trust, tenant/audience failures, oversized/malformed bodies, listen errors, missing reference, token/cache/error branches, shutdown races and all supported environments remain gaps.",
+      "mutation": {
+        "find": "if (parsed.protocol !== \"https:\") return false;",
+        "replace": "if (parsed.protocol !== \"https:\" && parsed.protocol !== \"http:\") return false;",
+        "case_id": "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_47_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/channels/msteams/connector.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-channels-msteams-connector-test-8b3549d5.ts"
+      ]
+    },
+    {
+      "module": "reusedTelegramConnector",
+      "path": "packages/gateway/src/channels/telegram/connector.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_21_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_41_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_56_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_61_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_65_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_72_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_77_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_84_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_95_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_100_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_107_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_112_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_122_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_126_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_135_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_148_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_199_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_220_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_244_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_264_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_285_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_309_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_320_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_336_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_353_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_358_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_374_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_388_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_434_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_455_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_477_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_491_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_519_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_543_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_557_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_658_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_676_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_698_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_717_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_737_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_755_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_763_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_770_5",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_780_3",
+        "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_786_3"
+      ],
+      "review": "Reviewed bot-token extraction, inbound mapping, return URL validation, setup links/QR and generated usernames, pairing lifecycle and deadlines, callback token storage, command menu limits/scopes, typed status/error reporting, long-poll retry and cancellation paths. Original Rust-owned assertions use injected Bot API responses, owned timers and QR encoders to exercise pairing success/refusal/expiry, setup failure, command/dialog output, live message fallbacks and polling recovery. The mutation disables pairing deadline rejection and must fail the paired-count assertion before restored pass. No Telegram account, external bot command or real QR encoder runs. Actual Telegram transport, long-held socket cancellation, every malformed response/error/race, callback cache eviction/replay authorization and supported platforms remain separate gaps.",
+      "mutation": {
+        "find": "const expired = this.pairingExpiresAt > 0 && Date.now() > this.pairingExpiresAt;",
+        "replace": "const expired = false;",
+        "case_id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_557_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/channels/telegram/connector.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-channels-telegram-connector-test-bebe4906.ts"
+      ]
+    },
+    {
+      "module": "reusedReminderRoutes",
+      "path": "packages/gateway/src/routes/reminders.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedReminderRoutes-packages_gateway_src_routes_reminders_test_ts_22_3"
+      ],
+      "review": "Reviewed authenticated reminder list/export/create/update/delete routes, status/limit/tag normalization, owned project/session checks on creation, semantic engine projection and delete fallback. The original Rust-owned integration scenario uses in-memory SQLite, a real owned JWT and Fastify injection to assert semantic entry fields and deletion. The mutation changes the engine kind and must fail the exact object membership assertion before restored pass. No production data or external memory backend is touched. Query caps/filter combinations, export headers/content, invalid create/update inputs, owner refusal paths, optional services and cross-user engine-memory policy remain gaps; this focused scenario establishes only the semantic integration boundary.",
+      "mutation": {
+        "find": "kind: \"engine\" as const,",
+        "replace": "kind: \"reminder\" as const,",
+        "case_id": "internal.sourcereview.reusedReminderRoutes-packages_gateway_src_routes_reminders_test_ts_22_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/routes/reminders.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-routes-reminders-test-f9b209a1.ts"
+      ]
+    },
+    {
+      "module": "reusedProjectMessage",
+      "path": "packages/gateway/src/tools/project-message-tool.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_88_3",
+        "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_157_3",
+        "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_201_3",
+        "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_275_3",
+        "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_297_3"
+      ],
+      "review": "Reviewed user/project/message validation, project resolution/creation, live-chat assignment through authenticated HTTP and direct fallback, broadcasts, queued-turn handling and background chat creation/provider options. Five original Rust-owned in-memory SQLite fixtures exercise new/existing projects, fake provider turn/thread creation, existing live-chat reuse/move with exact working directory, and missing message/target refusals. The mutation changes the new-chat broadcast type and must fail the exact event-order assertion; restored source passes. Fake providers record turns; no external agent conversation or message runs. HTTP route success/refusal/queue fallback, missing caller ownership, assignment failures, start failures, every option/title/broadcast branch, concurrent turns and real node execution remain gaps. Original /tmp paths are symbolic database metadata; no files are created there.",
+      "mutation": {
+        "find": "type: \"chat.created\" as WsEventType,",
+        "replace": "type: \"chat.changed\" as WsEventType,",
+        "case_id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_88_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/tools/project-message-tool.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-tools-project-message-tool-test-b1da469d.ts"
+      ]
+    },
+    {
+      "module": "reusedPreviewRunner",
+      "path": "packages/gateway/src/services/preview-runner.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_17_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_32_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_57_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_75_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_86_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_101_3",
+        "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_121_3"
+      ],
+      "review": "Reviewed package-manager ancestor detection, config/dependency framework selection, monorepo frontend resolution/ambiguity, explicit and fallback commands, local/private target normalization, port allocation, bounded HTTP readiness with abort listeners, child output/exit monitoring, process-group stop and unavailable Docker stub. Seven original Rust-owned fixtures cover owned early-exit subprocess output and deadline, a disposable owned loopback HTTP child and shutdown, monorepo selection/root preservation, Bun ancestry and exact npm Vite/Next commands. Fixture temporary paths are redirected under project artifacts by the contract environment. The mutation drops npm's exec separator and must fail exact command equality, followed by restored pass. No project dev stack, Docker deployment or external service starts. Framework/lock ambiguity, invalid package JSON, host normalization, all error/cancellation/race paths, Windows process trees and Docker runtime remain gaps.",
+      "mutation": {
+        "find": "return `npm exec -- ${executable}${suffix}`;",
+        "replace": "return `npm exec ${executable}${suffix}`;",
+        "case_id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_101_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/services/preview-runner.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-services-preview-runner-test-53dc014a.ts"
+      ]
+    },
+    {
+      "module": "reusedElevatedTools",
+      "path": "packages/gateway/src/tools/elevated-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_78_3",
+        "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_122_3",
+        "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_136_3",
+        "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_169_3"
+      ],
+      "review": "Reviewed trimmed command/secret refusal, caller-scoped secret requests, root/nonroot runtime selection, Linux sudo stdin and argv, Windows UAC/credential wrapper encoding/env inputs, output normalization/truncation/JSON parse, timeout/abort kill and result reporting. Four original Rust-owned scenarios use fake spawned EventEmitters and in-memory secret/audit services to assert exact sudo args, no audit/input password leakage, schema password omission, and decoded Windows UAC versus credential scripts. Mutation removes sudo's forced credential refresh flag and must fail exact argument equality, then restoration passes. No command, privilege elevation, password prompt UI, PowerShell process or package installation runs. Real sudo/UAC credential security, child exit/error/abort/timeout races, output caps, missing secret/command, root bypass, sensitive stream redaction and supported-platform execution remain gaps.",
+      "mutation": {
+        "find": "[\"-S\", \"-k\", \"-p\", \"\", \"--\", \"sh\", \"-lc\", input.command]",
+        "replace": "[\"-S\", \"-p\", \"\", \"--\", \"sh\", \"-lc\", input.command]",
+        "case_id": "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_78_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/tools/elevated-tools.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-tools-elevated-tools-test-ddb5848e.ts"
+      ]
+    },
+    {
+      "module": "agentGithubTools",
+      "path": "packages/gateway/src/tools/agent-github-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.agent-github-status-no-user",
+        "internal.sourcereview.agent-github-token-no-user",
+        "internal.sourcereview.agent-github-token-no-agent",
+        "internal.sourcereview.agent-github-status-whitespace-agent",
+        "internal.sourcereview.agent-github-test-no-agent",
+        "internal.sourcereview.agent-github-status-empty",
+        "internal.sourcereview.agent-github-status-connected",
+        "internal.sourcereview.agent-github-status-missing",
+        "internal.sourcereview.agent-github-token-missing",
+        "internal.sourcereview.agent-github-token-blocked",
+        "internal.sourcereview.agent-github-token-pending-default",
+        "internal.sourcereview.agent-github-test-success",
+        "internal.sourcereview.agent-github-test-defaults",
+        "internal.sourcereview.agent-github-test-refused",
+        "internal.sourcereview.agent-github-test-error",
+        "internal.sourcereview.agent-github-token-no-env",
+        "internal.sourcereview.agent-github-token-error",
+        "internal.sourcereview.agent-github-token-mint",
+        "internal.sourcereview.agent-github-token-inferred"
+      ],
+      "review": "Reviewed agent GitHub tool metadata, caller identity/agent resolution, status/instructions projection, webhook-secret presence, injected connection tests and connection-gated installation-token minting/expiry/env hints and errors. Nineteen Rust-owned deterministic cases assert unauthenticated/missing/whitespace/inferred identity paths, owner-scoped service arguments, exact connected/missing statuses, test success/default/refusal/errors, blocked/pending/missing/null/error token paths and fixture token serialization. All service methods are spies with fabricated credentials. Mutation removes the connected-state guard and must fail blocked-token output/call assertions before restored pass. No GitHub request, token mint, external message or private key access occurs. Real service crypto/ownership, token secrecy/expiry, unknown actions/input types, instructions and metadata prose, identity resolver failures and all account/platform integrations remain gaps.",
+      "mutation": {
+        "find": "if (connection.status !== \"connected\") {",
+        "replace": "if (false) {",
+        "case_id": "internal.sourcereview.agent-github-token-blocked"
+      }
+    },
+    {
+      "module": "maintenanceService",
+      "path": "packages/gateway/src/services/maintenance.ts",
+      "case_ids": [
+        "internal.sourcereview.maintenance-missing-repository",
+        "internal.sourcereview.maintenance-inaccessible-path",
+        "internal.sourcereview.maintenance-empty-checks",
+        "internal.sourcereview.maintenance-passing-command",
+        "internal.sourcereview.maintenance-failed-command-proposal",
+        "internal.sourcereview.maintenance-execution-error",
+        "internal.sourcereview.maintenance-explicit-timeout",
+        "internal.sourcereview.maintenance-list-runs",
+        "internal.sourcereview.maintenance-get-run"
+      ],
+      "review": "Reviewed repository accessibility/runAll isolation, configured/default bounded shell execution, command result/error/output caps, job-run persistence, list/get, failure summaries and proposed remediation task creation. Nine Rust-owned deterministic fixtures use an owned disposable project directory, injected child-process calls, recording database chains and a fake plan service. Assertions cover missing/inaccessible repository refusals, empty/success/failure/error checks, configured timeout and fixed execution env/argv options, persisted state/output, read projections and proposal-only remediation tasks. Mutation changes proposed task status to running and must fail exact captured-plan assertions before restoration. No shell command, real database, fix agent or production repository operation runs. Actual process timeout/termination, output caps, runAll repository iteration/failures, sorting/filter SQL, transaction failure, cancellation, malformed config, path/credential/log redaction and platform execution remain gaps.",
+      "mutation": {
+        "find": "status: \"proposed\" as const,",
+        "replace": "status: \"running\" as const,",
+        "case_id": "internal.sourcereview.maintenance-failed-command-proposal"
+      }
+    },
+    {
+      "module": "reusedFilesystem",
+      "path": "packages/gateway/src/surfaces/filesystem.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_120_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_125_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_130_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_136_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_144_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_149_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_156_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_161_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_167_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_171_3",
+        "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_175_3"
+      ],
+      "review": "Reviewed lifecycle/guard construction, read/binary/write/patch, snapshot counts, list/stat/existence, original-first backups and restore, external backup, delete/rename/move/create/copy helpers and guard enforcement. Eleven selected original Rust-owned Sprint 3 fixtures perform disposable project-local file reads/writes/patch/list/stat and exact snapshots plus outside-root refusals. Original tmpdir fixtures are redirected under the contract artifact root; no production paths are modified. Mutation preserves old bytes instead of applying patch and must fail the replacement-content assertion before restored pass. Backup/restore semantics, binary reads, external changes, recursive filesystem operations, symlink races/escapes in every helper, permission/error branches and supported platforms remain gaps. The source review does not replace PathGuard's independent security evidence.",
+      "mutation": {
+        "find": "const patched = original.replace(search, replace);",
+        "replace": "const patched = original;",
+        "case_id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_136_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/sprint3.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-sprint3-test-cfd617fc.ts"
+      ]
+    },
+    {
+      "module": "reusedAcpRunner",
+      "path": "packages/gateway/src/tools/agent-acp-runner.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_67_3",
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_107_3",
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_140_3",
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_162_3",
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_193_3",
+        "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_216_3"
+      ],
+      "review": "Reviewed transcript text/thinking/error/tool grouping and finalization, provider ownership/availability/mode selection, scoped session and MCP setup, event filtering/forwarding, approval denial on callback errors, completion/performative output, timeout/abort/error results and teardown. Six original Rust-owned fake-provider scenarios assert exact merged output/segments, tool persistence, error and partial transcript retention, timeout stop and inaccessible provider refusal. Mutation removes provider teardown and must fail the stopped-session count before restored pass. Fake provider records only; no CLI worker, delegated conversation, approval or external provider starts. Pre-aborted signals and listener lifetime, approval callbacks, unrelated-session events, availability/start/stop failures, every performative/collector edge and supported CLI integrations remain gaps.",
+      "mutation": {
+        "find": "await provider.stopSession(session.id);",
+        "replace": "await Promise.resolve();",
+        "case_id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_67_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-tools-agent-acp-runner-test-5eea95c5.ts"
+      ]
+    },
+    {
+      "module": "reusedJobRoutes",
+      "path": "packages/gateway/src/routes/jobs.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_15_3",
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_116_3",
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_170_3",
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_216_3",
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_306_3",
+        "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_362_3"
+      ],
+      "review": "Reviewed authenticated provider/job/run endpoints, user scoping, pagination, cron and agent prompt validation, system tool-name normalization, job metadata inference, stripping fixed thread titles, create/update semantic preservation, model null clearing and trigger persistence/errors. Selected original Rust-owned route cases execute owned JWT/Fastify injection, in-memory scheduler storage and fake tool callbacks to assert delivery-thread payloads, schedule validation, disabled toggles, ownership refusal, run projection and legacy edit metadata. Mutation retains the forbidden fixed title and must fail not-toHaveProperty before restored pass. No scheduler timer, real agent work, provider catalogue or persistent job is started. Provider visibility/catalogue errors, pagination edges, missing/auth refusal on every route, delete, trigger storage failures, every metadata and semantic patch combination remain gaps. The standalone timezone helper case is excluded because it does not exercise this route source. Cases mapped to dedicated non-tail Rust contracts are excluded from this reuse review: rejects agent_task automations without prompt, does not allow one user to trigger another user's job, returns 400 for invalid creates and leaves a job unchanged after invalid edits. Their original declaration evidence remains separate.",
+      "mutation": {
+        "find": "return rest;",
+        "replace": "return payload ?? {};",
+        "case_id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_15_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/routes/jobs.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-routes-jobs-test-02bdd565.ts"
+      ]
+    },
+    {
+      "module": "reusedSchedulerService",
+      "path": "packages/gateway/src/scheduler/service.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_22_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_29_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_41_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_51_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_60_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_74_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_88_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_109_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_132_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_162_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_169_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_177_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_187_3",
+        "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_202_3"
+      ],
+      "review": "Reviewed cron/timezone and same-minute matching, input/tool normalization, caller-owned CRUD, timer lifecycle, job/run persistence, agent-delivery normalization, one-shot success deletion/failure disarm, retention purge and overlapping/concurrent tick guards. Fourteen original Rust-owned service fixtures use in-memory SQLite and fake tool callbacks to assert one-shot flag/deletion/disarm/manual/recurring behavior, duplicate-minute suppression, independent concurrent jobs, same-job exclusion and bounded retention sweeps. Mutation keeps a delivered one-shot armed and must fail null/empty job assertions, then restored pass. No live job, channel delivery or scheduler daemon runs. Real timer/restart durability, all cron/timezone fields, ownership/system-job policy, corrupt stored payloads, serialization/callback failures, shutdown and concurrent update/cancellation races remain gaps; other scheduler test files retain their own separate evidence.",
+      "mutation": {
+        "find": "return succeeded ? \"delete\" : \"disarm\";",
+        "replace": "return \"keep\";",
+        "case_id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_29_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/scheduler/service.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-scheduler-service-test-8f7567b2.ts"
+      ]
+    },
+    {
+      "module": "reusedPreviewTools",
+      "path": "packages/gateway/src/tools/preview-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_9_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_18_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_89_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_145_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_177_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_239_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_306_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_345_3",
+        "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_377_3"
+      ],
+      "review": "Reviewed current-session validation, project/target normalization, open/start alias, stable target persistence and UI state broadcasts, failed-start hiding, stop/restart/status handling, sharing-gated events/log projections and inspect screenshot omission/control checks. Original Rust-owned fake-service fixtures assert schema alias visibility, exact start/broadcast/state payloads and MCP session routing, failure-panel state, screenshot opt-in/error count and restart success. Mutation persists transient preview URL instead of stable user target and must fail the exact UI/state payload assertion; restoration passes. No real preview, browser, screenshot, external website or UI command is sent. Stop/status/log filters/caps, absent services/sessions, browser-control refusal and failures, every sharing/metrics branch, real process lifecycle and UI/platform integration remain gaps.",
+      "mutation": {
+        "find": "const stableTarget = preview.target ?? target ?? null;",
+        "replace": "const stableTarget = preview.url ?? null;",
+        "case_id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_18_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/tools/preview-tools.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-tools-preview-tools-test-ab134d2d.ts"
+      ]
+    },
+    {
+      "module": "reusedSecurityEngines",
+      "path": "packages/gateway/src/lib/security/engines.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_4_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_11_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_21_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_32_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_39_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_49_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_58_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_63_1",
+        "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_71_1"
+      ],
+      "review": "Reviewed bounded executable runner argv/env/output/timeout/cancellation cleanup, scanner-version recording, Nmap XML safety/scope/duplicate/coverage reconstruction, revision-pinned Nuclei template and no-callback/redirect/update flags, exact result allowlists and inconclusive absence, and Trivy schema/outcome/caps/redacted deterministic evidence with suspected package correlations. Nine original Rust-owned parser/profile fixtures use documentation addresses, injected runners and project-local temporary template files. They assert scope/XML escapes, literal fixed TCP argv, template/URL restrictions, no finding-to-safe inference, build suffixes, policy ID normalization, scanner ID retention, rollback guidance and passing-rule coverage. Mutation disables Nmap address membership and must fail the required scope-exception assertion, then restore passes. No scanner executable, packet, network request or assessment runs. Actual engine integrations and runner kill/output/argument boundaries have separate tests; unsupported versions/platforms, every malformed nesting/count/type, process races and exhaustiveness remain gaps.",
+      "mutation": {
+        "find": "if (addresses.length !== 1 || !targets.includes(String(addresses[0]?.addr))) throw new Error(\"Nmap returned an out-of-scope address\");",
+        "replace": "if (addresses.length !== 1) throw new Error(\"Nmap returned an out-of-scope address\");",
+        "case_id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_4_1"
+      },
+      "evidence_files": [
+        "packages/gateway/src/lib/security/engines.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-lib-security-engines-test-fbc5ae66.ts"
+      ]
+    },
+    {
+      "module": "reusedDiskJanitor",
+      "path": "packages/gateway/src/services/disk-janitor.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_117_3_each0",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_117_3_each1",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_153_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_176_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_193_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_208_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_223_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_234_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_250_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_266_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_278_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_288_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_297_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_302_3",
+        "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_316_3"
+      ],
+      "review": "Reviewed policy/env defaults, managed-root containment, symlink-skipping byte estimation, inspect/run/start/stop guards and timing, bounded error/permission logging, owning-thread lookup with foreign-platform paths, terminal/orphan grace periods, branch-preserving worktree cleanup and age/name-limited sandbox/scratch deletion. Original Rust-owned fixtures inject all three managed roots into disposable project-local directories, use in-memory SQLite and fake Git cleanup, and assert preservation/deletion/dry-run bytes and permission-error recovery. Mutation removes active-thread exclusion and must fail the zero-reaped/preserved-file assertions; restored pass follows. Only owned disposable fixtures are removed; no real worktree, sandbox VM, OS temporary directory or background janitor is touched. Symlink/TOCTOU hardening, lookup-failure ambiguity, active sandbox ownership, permission behavior outside this Linux user, timer stop/concurrency races, every policy parse and Git failure branch remain gaps.",
+      "mutation": {
+        "find": "if (!TERMINAL_THREAD_STATUSES.includes(thread.status as (typeof TERMINAL_THREAD_STATUSES)[number])) {",
+        "replace": "if (false) {",
+        "case_id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_193_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/services/disk-janitor.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-services-disk-janitor-test-16a7a2e0.ts"
+      ]
+    },
+    {
+      "module": "reusedProjectTools",
+      "path": "packages/gateway/src/tools/project-tools.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_53_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_71_3_each0",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_71_3_each1",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_88_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_97_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_104_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_120_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_137_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_151_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_167_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_177_3",
+        "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_210_3"
+      ],
+      "review": "Reviewed create/idempotence/title/chat assignment, repository assignment and typed failures, user-scoped project lookup and broadcasts, metadata-only move/target validation/stale repo clearing and relinking, and transfer source/node/preflight/copy/visibility-before-retarget/error behavior. Original Rust-owned in-memory SQLite fixtures cover creation broadcasts, existing/new chat assignment and foreign-owner refusal, required node/target/missing project/no-op/same-node move boundaries, fake remote SCP success and failure with unchanged metadata. Mutation bypasses local destination existence and must fail the refusal assertion; restored pass follows. Test files/directories are disposable project-local fixtures; remote transports are injected and no SCP, external node transfer or live project retarget occurs. Explicit repository assignment, every create/title/owner case, remote path failures/visibility/copy races, transfer credentials/argv and complete rollback semantics remain gaps.",
+      "mutation": {
+        "find": "exists = existsSync(targetRootPath);",
+        "replace": "exists = true;",
+        "case_id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_104_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/tools/project-tools.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-tools-project-tools-test-a4c05dc9.ts"
+      ]
+    },
+    {
+      "module": "reusedSessionRoutes",
+      "path": "packages/gateway/src/routes/sessions.ts",
+      "case_ids": [
+        "internal.sourcereview.reusedSessionRoutes-packages_gateway_src_routes_sessions_personal_test_ts_12_3"
+      ],
+      "review": "Reviewed authenticated session/project create/list/last-active/get/update/viewed/title/delete/archive/move and state endpoints, user/node/project ownership and busy-device constraints, limit parsing and hasMore, title-generation races/fallback, audit/hooks/broadcasts and legacy self-control handlers. One original Rust-owned owned-JWT/Fastify/in-memory SQLite scenario asserts old personal chats remain visible despite newer project activity, owner/status filtering, exact unbounded personal membership and capped personal/all pages with hasMore. Mutation disables the personal-only predicate and must fail exact membership equality, then restored pass. No user session, device, generated title request or live chat changes occur. Most endpoint behavior, node control, same-owner moves, title generation/races, invalid input/auth/state protection, all legacy self-control authentication and user isolation, audit/hook failures and client/platform integration remain gaps. This focused list-boundary review does not establish all route security coverage.",
+      "mutation": {
+        "find": "const personalOnly = query[\"personal\"] === \"true\";",
+        "replace": "const personalOnly = false;",
+        "case_id": "internal.sourcereview.reusedSessionRoutes-packages_gateway_src_routes_sessions_personal_test_ts_12_3"
+      },
+      "evidence_files": [
+        "packages/gateway/src/routes/sessions-personal.test.ts",
+        "tests/contract/drivers/tailstatic/fixture-gateway-src-routes-sessions-personal-test-4e814fa5.ts"
+      ]
+    },
+    {
+      "module": "networkScanHelpers",
+      "path": "packages/gateway/src/lib/network-scan.ts",
+      "case_ids": [
+        "internal.sourcereview.network-arp_linux",
+        "internal.sourcereview.network-arp_macos",
+        "internal.sourcereview.network-arp_hyphen",
+        "internal.sourcereview.network-arp_filtered",
+        "internal.sourcereview.network-arp_empty",
+        "internal.sourcereview.network-prefix_cidr",
+        "internal.sourcereview.network-prefix_ip",
+        "internal.sourcereview.network-prefix_bare",
+        "internal.sourcereview.network-ips_normalize",
+        "internal.sourcereview.network-ips_empty",
+        "internal.sourcereview.network-merge_first",
+        "internal.sourcereview.network-merge_later",
+        "internal.sourcereview.network-prefix_range",
+        "internal.sourcereview.network-prefix_invalid",
+        "internal.sourcereview.network-ipv4_valid",
+        "internal.sourcereview.network-ipv4_invalid",
+        "internal.sourcereview.network-candidates-one",
+        "internal.sourcereview.network-candidates-two"
+      ],
+      "review": "Reviewed legacy interface/subnet selection, IPv4 and ARP parsing/normalization, default gateway/neighbor command paths, candidate construction/merging, ping/TCP discovery, detailed probes/health lookup, hostname/OS hints, aggregation/order and recorded timings. Eighteen original Rust-owned pure-helper fixtures assert Linux/macOS/MAC normalization and multicast/broadcast filtering, IPv4/subnet rejection, deduplication/responsiveness and exact candidate boundaries. Mutation drops the last host candidate and must fail exact count/boundary assertions, then restored pass. No network scan, ping, process, DNS lookup, interface inspection or target contact executes. Legacy scan authorization/rate/cancellation/size limits, all actual command/TCP/HTTP behavior, unreachable/error/partial outputs, platform execution and LAN/WAN visibility remain gaps. This helper evidence does not authorize or establish safety of the legacy scanning path. The same eighteen assertion groups from security_internal_contracts.rs are retained under source-copy IDs: exact ARP/normalization/merge results, every invalid-input member and candidate count/indices. The dedicated declaration mappings remain unchanged. Candidate summaries transport observed lengths/indices, never a pass verdict.",
+      "mutation": {
+        "find": "for (let host = 1; host <= 254; host += 1)",
+        "replace": "for (let host = 1; host <= 253; host += 1)",
+        "case_id": "internal.sourcereview.network-candidates-one"
+      },
+      "evidence_files": [
+        "packages/gateway/src/lib/network-scan.test.ts"
       ]
     }
   ]

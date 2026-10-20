@@ -1,8 +1,19 @@
-import { CircleQuestionMark, Loader2, MessageSquare, MessageSquareX, ShieldQuestion } from 'lucide-react'
+import {
+  CircleQuestionMark,
+  Hourglass,
+  Loader2,
+  MessageSquare,
+  MessageSquareX,
+  MousePointerClick,
+  ShieldQuestion,
+  TerminalSquare,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type {
   HTMLAttributes,
   MouseEventHandler,
 } from 'react'
+import type { SessionWait, SessionWaitKind } from '@jait/shared'
 import { SessionChatIcon } from '@/components/chat/session-chat-icon'
 import { formatAgo } from '@/lib/relative-time'
 import { TooltipHint } from '@/components/ui/tooltip'
@@ -33,6 +44,13 @@ export interface SessionRowProps {
   isWaitingForApproval?: boolean
   /** True while the chat has an open question awaiting the user's answer. */
   isAwaitingAnswer?: boolean
+  /**
+   * Why the chat is stopped right now, straight from the gateway. Takes
+   * precedence over the legacy `isAwaitingAnswer`/`isWaitingForApproval`
+   * booleans so every wait — browser control, a terminal prompt, a running
+   * background command — is visible in the list, not just questions.
+   */
+  wait?: SessionWait
   /** Shown when session.name is empty (e.g. "Personal chat" vs "Untitled session"). */
   fallbackLabel?: string
   onRowClick?: () => void
@@ -41,6 +59,35 @@ export interface SessionRowProps {
   dragProps?: Pick<HTMLAttributes<HTMLDivElement>, 'draggable' | 'onDragStart' | 'onDragEnd'>
   /** Extra long-press/pointer handlers spread onto the row. */
   longPressProps?: HTMLAttributes<HTMLDivElement>
+}
+
+/**
+ * One icon per wait reason. `background` is deliberately not the streaming
+ * spinner: a background command means the agent is *not* producing output.
+ */
+const SESSION_WAIT_ICONS: Record<SessionWaitKind, LucideIcon> = {
+  question: CircleQuestionMark,
+  consent: ShieldQuestion,
+  secret: ShieldQuestion,
+  browser: MousePointerClick,
+  terminal: TerminalSquare,
+  background: Hourglass,
+}
+
+/** Icon + tooltip for one wait reason. Blocking waits are amber, background is muted. */
+function SessionWaitIcon({ wait }: { wait: SessionWait }) {
+  const Icon = SESSION_WAIT_ICONS[wait.kind] ?? CircleQuestionMark
+  const title = wait.detail ? `${wait.label} — ${wait.detail}` : wait.label
+  const tone = wait.blocking ? 'text-amber-500' : 'text-muted-foreground'
+  return (
+    <TooltipHint content={title}>
+      <Icon
+        className={`h-3.5 w-3.5 shrink-0 ${tone} ${wait.blocking ? '' : 'animate-pulse'}`}
+        aria-label={title}
+        data-testid={`session-row-wait-${wait.kind}`}
+      />
+    </TooltipHint>
+  )
 }
 
 /**
@@ -53,6 +100,7 @@ export function SessionRow({
   isStreaming = false,
   isWaitingForApproval = false,
   isAwaitingAnswer = false,
+  wait,
   fallbackLabel = 'Untitled session',
   onRowClick,
   onRowContextMenu,
@@ -75,7 +123,9 @@ export function SessionRow({
       {...dragProps}
       {...longPressProps}
     >
-      {isAwaitingAnswer ? (
+      {wait ? (
+        <SessionWaitIcon wait={wait} />
+      ) : isAwaitingAnswer ? (
         <TooltipHint content="Waiting for your answer">
           <CircleQuestionMark
             className="h-3.5 w-3.5 shrink-0 text-amber-500"

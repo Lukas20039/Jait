@@ -623,3 +623,103 @@ fn title_normalization_matches_reference_utf16_and_word_boundaries() {
         assert_eq!(actual, expected);
     }
 }
+
+// TypeScript rejects protocol payloads before truncation. Compare real source
+// exports so the native normalizer cannot accidentally name a chat from tool data.
+#[test]
+fn title_normalization_rejects_tool_protocol_like_reference() {
+    let mut inputs = vec![];
+    for marker in [
+        "<tool_call>",
+        "<tool_calls>",
+        "</tool_call>",
+        "<|tool_call|>",
+        "<function_call>",
+        "<function_calls/>",
+        "<tool_use id=fixture>",
+        "[TOOL_CALL]",
+        "[tool_calls]",
+        "<TOOL_CALL>",
+    ] {
+        for prefix in ["", "Title: - ", "1. ", "`"] {
+            for fallback in ["Fallback 🦀", ""] {
+                inputs.push(json!([
+                    format!("{prefix}{marker}\n{{\"name\":\"fixture\"}}\nPlausible later title"),
+                    fallback
+                ]));
+            }
+        }
+    }
+    for chunk in inputs.chunks(40) {
+        let expected = reference(json!({"op":"nativesessionhttp.normalize","inputs":chunk}));
+        let fallback_units = json!(
+            chunk
+                .iter()
+                .map(|v| { v[1].as_str().unwrap().encode_utf16().collect::<Vec<_>>() })
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(
+            expected, fallback_units,
+            "reference must reject the whole response"
+        );
+        let actual = json!(
+            chunk
+                .iter()
+                .map(|v| {
+                    normalize_generated_thread_title(v[0].as_str().unwrap(), v[1].as_str().unwrap())
+                        .0
+                })
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(
+            actual, expected,
+            "native thread-title protocol rejection parity"
+        );
+    }
+}
+
+#[test]
+fn title_protocol_boundaries_preserve_similar_legitimate_titles() {
+    let mut inputs = vec![];
+    for raw in [
+        "tool_call as a concept",
+        "<tool_callback>",
+        "<tool_calling>",
+        "<tool_callsx>",
+        "<function_callback>",
+        "<tool_user>",
+        "[TOOL_CALLING]",
+        "<|tool_usex>",
+        "</|tool_call>",
+        "<tool_call\u{0085}attribute>",
+        "<tool_call~>",
+        "<tool_call\u{feff}attribute>",
+        "<Tool_USE",
+        "[tool_call]More",
+        "</FUNCTION_CALLS /name>",
+        "<tool_calls|payload>",
+        "Text about <tool_call>",
+        "<ordinary_tag>",
+    ] {
+        for fallback in ["Fallback 🦀", ""] {
+            inputs.push(json!([raw, fallback]));
+        }
+    }
+    let expected = reference(json!({"op":"nativesessionhttp.normalize","inputs":inputs}));
+    let actual = json!(
+        inputs
+            .iter()
+            .map(|value| {
+                normalize_generated_thread_title(
+                    value[0].as_str().unwrap(),
+                    value[1].as_str().unwrap(),
+                )
+                .0
+            })
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(
+        actual, expected,
+        "protocol prefix boundary and ASCII case behavior"
+    );
+}

@@ -84,3 +84,16 @@ and retains every schema/data/backfill/integrity/foreign-key/idempotence
 assertion. Each subprocess still has its ten-second deadline. The same 76-prefix
 comparison passes after batching (28.62 seconds across the full multi-call test).
 No migration code or timeout was changed. Host resource pressure is not proven.
+
+## Title protocol rejection regression
+
+The source now rejects tool-protocol payloads after title cleanup and before
+truncation. Running the previously ignored contract with `--ignored` reproduced
+native output `<tool_call>` instead of the source's fallback. The native normalizer
+now matches the case-insensitive protocol-prefix and boundary rules. The test is
+enabled, and an additional real-source comparison preserves similar legitimate
+titles, non-ECMAScript whitespace and ordinary prose. All 21 session HTTP checks
+pass, including both protocol tests; `title-protocol.before.log`,
+`title-protocol.after.log` and `graphrag-mutations/restored.after.log` record evidence.
+The thread-title source component still receives no credit: provider turn/API
+execution remains unported. Session-route candidate limitations above remain open.

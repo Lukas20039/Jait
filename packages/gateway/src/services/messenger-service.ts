@@ -30,6 +30,7 @@ import {
   type MessengerSnapshot,
   type MessengerRoom,
   type MessengerMessage,
+  type MessengerPresence,
   type MessengerToolResponse,
 } from '@jait/shared';
 import type { MessengerHistory } from './messenger-history.js';
@@ -37,6 +38,8 @@ import { getStateDirectory } from '../state-directory.js';
 
 const MAX_EVENTS = 10000;
 const MAX_MEDIA = 20 * 1024 * 1024;
+/** How long a presence answer is reused before asking the homeserver again. */
+const PRESENCE_TTL = 30_000;
 const enc = encodeURIComponent;
 type Event = {
   event_id?: string;
@@ -54,7 +57,10 @@ type Room = {
   states: Event[];
   previous?: string | null;
   receipts: Record<string, Record<string, { ts?: number }>>;
+  /** Counterpart of a direct conversation, resolved from `m.direct`/member state. */
+  peer?: { userId: string; name: string; avatarUrl?: string };
 };
+type PresenceRecord = { presence: MessengerPresence; lastActiveAgo?: number; at: number };
 interface Saved {
   owner: string;
   session: MessengerSession;
@@ -230,6 +236,12 @@ class Connection {
   client: GatewayMatrixClient | null = null;
   rooms = new Map<string, Room>();
   assistantAccess = false;
+  /** Presence last reported by the homeserver, keyed by Matrix user id. */
+  private presence = new Map<string, PresenceRecord>();
+  /** Last presence probe per user, so the poll loop cannot hammer the homeserver. */
+  private presenceProbes = new Map<string, number>();
+  /** `m.direct` account data: room id -> the single direct counterpart. */
+  private direct = new Map<string, string>();
   private history: MessengerHistory | null = null;
   private retryTimer?: ReturnType<typeof setTimeout>;
   private work: Promise<unknown> = Promise.resolve();
@@ -248,8 +260,83 @@ class Connection {
     this.work = next;
     return next;
   }
+  /** Drop cached presence so a signed-out session cannot leak status to the next account. */
+  resetPresence() {
+    this.presence.clear();
+    this.presenceProbes.clear();
+    this.direct.clear();
+  }
+  /** Merge cached presence into a room summary before it leaves the gateway. */
+  private roomSummary(room: Room): MessengerRoom {
+    const peer = room.peer;
+    if (!peer) return room.summary;
+    const cached = this.presence.get(peer.userId);
+    return {
+      ...room.summary,
+      peer: {
+        ...peer,
+        presence: cached?.presence ?? 'unknown',
+        ...(cached?.lastActiveAgo !== undefined
+          ? { lastActiveAgo: cached.lastActiveAgo }
+          : {}),
+      },
+    };
+  }
+  private trackPresence(presence: any) {
+    for (const event of Array.isArray(presence?.events) ? presence.events : []) {
+      if (event?.type !== 'm.presence' || typeof event.sender !== 'string') continue;
+      const value = event.content?.presence;
+      if (value !== 'online' && value !== 'unavailable' && value !== 'offline') continue;
+      const lastActiveAgo = event.content?.last_active_ago;
+      this.presence.set(event.sender, {
+        presence: value,
+        at: Date.now(),
+        ...(typeof lastActiveAgo === 'number' && lastActiveAgo >= 0
+          ? { lastActiveAgo }
+          : {}),
+      });
+    }
+  }
+  /**
+   * `m.presence` is not part of the filter the Matrix SDK asks for, so ask the
+   * homeserver directly for the counterpart of the open conversation. Bridged
+   * contacts (WhatsApp & co.) usually expose no presence at all, in which case the
+   * result stays `unknown` and the UI simply omits the status dot.
+   */
+  private probePresence(roomId: string) {
+    const peer = this.rooms.get(roomId)?.peer;
+    const client = this.client;
+    if (!peer || !client || this.status !== 'ready') return;
+    const now = Date.now();
+    const cached = this.presence.get(peer.userId);
+    if (cached && now - cached.at < PRESENCE_TTL) return;
+    const probed = this.presenceProbes.get(peer.userId);
+    if (probed !== undefined && now - probed < PRESENCE_TTL) return;
+    this.presenceProbes.set(peer.userId, now);
+    const generation = this.generation;
+    const store = (value: unknown, lastActiveAgo?: unknown) => {
+      if (this.client !== client || generation !== this.generation) return;
+      this.presence.set(peer.userId, {
+        presence:
+          value === 'online' || value === 'unavailable' || value === 'offline'
+            ? value
+            : 'unknown',
+        at: Date.now(),
+        ...(typeof lastActiveAgo === 'number' && lastActiveAgo >= 0
+          ? { lastActiveAgo }
+          : {}),
+      });
+    };
+    void Promise.resolve()
+      .then(() => client.getPresenceStatusFor(peer.userId))
+      .then(
+        (status) => store(status?.state, status?.lastActiveAgo),
+        () => store('unknown'),
+      );
+  }
   snapshot(roomId: string | null = null): MessengerSnapshot {
     const s = this.session;
+    if (roomId) this.probePresence(roomId);
     return {
       status: this.status,
       error: this.error,
@@ -257,7 +344,7 @@ class Connection {
         ? { homeserver: s.homeserver, userId: s.userId, deviceId: s.deviceId }
         : null,
       rooms: [...this.rooms.values()]
-        .map((r) => r.summary)
+        .map((r) => this.roomSummary(r))
         .sort((a, b) => b.timestamp - a.timestamp),
       selectedRoomId: roomId,
       messages: roomId ? this.messages(roomId) : [],
@@ -287,6 +374,49 @@ class Connection {
         users.add(e.sender); keys.set(relation.key, users); reactions.set(relation.event_id, keys);
       }
     }
+    // Matrix stores one receipt per acknowledged event, so the raw receipt map
+    // repeats the same reader once for every message they read. Reduce it to the
+    // furthest read event per user so each reader appears exactly once.
+    const receiptIndex = new Map<string, number>();
+    // Index over the filtered list, not the raw event log: the read-state check
+    // below compares against positions in `active`, so redacted-in-place events
+    // must not shift the numbering.
+    active.forEach((item, index) => {
+      if (item.event_id) receiptIndex.set(item.event_id, index);
+    });
+    const furthestRead = new Map<
+      string,
+      { index: number; eventId: string; timestamp: number | null }
+    >();
+    for (const [eventId, users] of Object.entries(room?.receipts ?? {})) {
+      const index = receiptIndex.get(eventId);
+      if (index === undefined) continue;
+      for (const [userId, receipt] of Object.entries(users)) {
+        if (userId === this.session?.userId) continue;
+        const timestamp = typeof receipt?.ts === 'number' ? receipt.ts : null;
+        const current = furthestRead.get(userId);
+        if (
+          !current ||
+          index > current.index ||
+          (index === current.index && (timestamp ?? 0) > (current.timestamp ?? 0))
+        ) {
+          furthestRead.set(userId, { index, eventId, timestamp });
+        }
+      }
+    }
+    const readerNames = new Map<string, string>();
+    const readerName = (userId: string) => {
+      let name = readerNames.get(userId);
+      if (name === undefined) {
+        name = String(
+          room?.states.find(
+            (s) => s.type === 'm.room.member' && s.state_key === userId,
+          )?.content?.displayname ?? userId,
+        ).slice(0, 512);
+        readerNames.set(userId, name);
+      }
+      return name;
+    };
     return active
       .filter(
         (e) =>
@@ -307,23 +437,18 @@ class Connection {
         const member = room?.states.find(
           (s) => s.type === 'm.room.member' && s.state_key === e.sender,
         );
-        const readBy = Object.entries(room?.receipts ?? {}).flatMap(
-          ([eventId, users]) => {
-            const readIndex = room!.events.findIndex(
-              (item) => item.event_id === eventId,
-            );
-            const index = room!.events.indexOf(e);
-            if (readIndex < index) return [];
-            return Object.entries(users)
-              .filter(([id]) => id !== this.session?.userId)
-              .map(([userId, receipt]) => ({
-                userId,
-                name: userId,
-                timestamp: receipt.ts ?? null,
-                exact: eventId === e.event_id,
-              }));
-          },
-        );
+        const index = receiptIndex.get(e.event_id!);
+        const readBy =
+          index === undefined
+            ? []
+            : [...furthestRead.entries()]
+                .filter(([, read]) => read.index >= index)
+                .map(([userId, read]) => ({
+                  userId,
+                  name: readerName(userId),
+                  timestamp: read.timestamp,
+                  exact: read.eventId === e.event_id,
+                }));
         return {
           id: e.event_id!,
           sender: String(
@@ -378,6 +503,9 @@ class Connection {
     this.session = session;
     this.status = 'connecting';
     this.error = null;
+    this.presence.clear();
+    this.presenceProbes.clear();
+    this.direct.clear();
     mkdirSync(this.directory, { recursive: true, mode: 0o700 });
     const cryptoPath = join(this.directory, session.cryptoStore);
     mkdirSync(cryptoPath, { recursive: true, mode: 0o700 });
@@ -473,6 +601,20 @@ class Connection {
     }
   }
   private async sync(raw: any) {
+    this.trackPresence(raw.presence);
+    for (const event of raw.account_data?.events ?? []) {
+      if (event?.type !== 'm.direct' || !event.content || typeof event.content !== 'object')
+        continue;
+      // `m.direct` is a complete replacement: room id -> the one direct counterpart.
+      const direct = new Map<string, string>();
+      for (const [userId, rooms] of Object.entries(
+        event.content as Record<string, unknown>,
+      ))
+        if (Array.isArray(rooms))
+          for (const roomId of rooms)
+            if (typeof roomId === 'string') direct.set(roomId, userId);
+      this.direct = direct;
+    }
     for (const [membership, rooms] of Object.entries(raw.rooms ?? {})) {
       for (const [id, data] of Object.entries(rooms as Record<string, any>)) {
         if (membership === 'leave' && !this.rooms.has(id)) continue;
@@ -522,6 +664,45 @@ class Connection {
         room.summary.encrypted = room.states.some(
           (e) => e.type === 'm.room.encryption',
         );
+        // The counterpart of a direct chat: `m.direct` when the bridge reports it,
+        // otherwise the single other participant of the room.
+        const others = room.states.filter(
+          (e) =>
+            e.type === 'm.room.member' &&
+            !!e.state_key &&
+            e.state_key !== this.session?.userId &&
+            (e.content?.membership === 'join' ||
+              e.content?.membership === 'invite'),
+        );
+        const counterpart = this.direct.get(id);
+        const peerEvent = counterpart
+          ? others.find((e) => e.state_key === counterpart)
+          : others.length === 1
+            ? others[0]
+            : undefined;
+        room.peer =
+          peerEvent?.state_key !== undefined
+            ? {
+                userId: peerEvent.state_key,
+                name: String(
+                  peerEvent.content?.displayname ?? peerEvent.state_key,
+                ).slice(0, 512),
+                ...(typeof peerEvent.content?.avatar_url === 'string' &&
+                peerEvent.content.avatar_url.startsWith('mxc://')
+                  ? { avatarUrl: peerEvent.content.avatar_url }
+                  : {}),
+              }
+            : undefined;
+        const roomAvatar = room.states.find(
+          (e) => e.type === 'm.room.avatar',
+        )?.content?.url;
+        const avatar =
+          room.peer?.avatarUrl ??
+          (typeof roomAvatar === 'string' && roomAvatar.startsWith('mxc://')
+            ? roomAvatar
+            : undefined);
+        if (avatar) room.summary.avatarUrl = avatar;
+        else delete room.summary.avatarUrl;
         const bridge = room.states.find((e) =>
           ['m.bridge', 'uk.half-shot.bridge'].includes(e.type),
         )?.content;
@@ -1046,6 +1227,7 @@ export class MessengerService {
       await c.stop();
       c.session = null;
       c.rooms.clear();
+      c.resetPresence();
       c.status = 'disconnected';
       c.error = null;
       const file = join(c.directory, 'session');

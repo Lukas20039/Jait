@@ -49915,7 +49915,10 @@
               ],
               [
                 "fetchOllamaModels",
-                "http://ollama.fixture"
+                "http://ollama.fixture",
+                {
+                  "includeCloud": true
+                }
               ],
               [
                 "fetchOmniRouteModels",
@@ -49977,7 +49980,10 @@
               ],
               [
                 "fetchOllamaModels",
-                "http://ollama.fixture"
+                "http://ollama.fixture",
+                {
+                  "includeCloud": true
+                }
               ],
               [
                 "fetchOmniRouteModels",
@@ -50045,7 +50051,10 @@
               ],
               [
                 "fetchOllamaModels",
-                "http://ollama.fixture"
+                "http://ollama.fixture",
+                {
+                  "includeCloud": true
+                }
               ],
               [
                 "fetchOmniRouteModels",
@@ -50102,7 +50111,10 @@
               ],
               [
                 "fetchOllamaModels",
-                "http://config-l"
+                "http://config-l",
+                {
+                  "includeCloud": true
+                }
               ],
               [
                 "fetchOmniRouteModels",
@@ -50422,7 +50434,10 @@
             "calls": [
               [
                 "fetchOllamaModels",
-                "https://models.fixture/v1"
+                "https://models.fixture/v1",
+                {
+                  "includeCloud": true
+                }
               ]
             ]
           }
@@ -50463,7 +50478,10 @@
             "calls": [
               [
                 "fetchOllamaModels",
-                "https://models.fixture/v1"
+                "https://models.fixture/v1",
+                {
+                  "includeCloud": true
+                }
               ]
             ]
           }
@@ -50506,7 +50524,10 @@
             "calls": [
               [
                 "fetchOllamaModels",
-                "https://models.fixture/v1"
+                "https://models.fixture/v1",
+                {
+                  "includeCloud": true
+                }
               ]
             ]
           }
@@ -79792,7 +79813,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each0"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each0"
       }
     ],
     "assertions": [
@@ -79811,7 +79832,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each1"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each1"
       }
     ],
     "assertions": [
@@ -79830,7 +79851,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each2"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each2"
       }
     ],
     "assertions": [
@@ -79849,7 +79870,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each3"
       }
     ],
     "assertions": [
@@ -79868,7 +79889,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each4"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each4"
       }
     ],
     "assertions": [
@@ -79887,7 +79908,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each5"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each5"
       }
     ],
     "assertions": [
@@ -79906,7 +79927,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each0"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each0"
       }
     ],
     "assertions": [
@@ -79925,7 +79946,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each1"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each1"
       }
     ],
     "assertions": [
@@ -79944,7 +79965,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each2"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each2"
       }
     ],
     "assertions": [
@@ -79963,7 +79984,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each3"
       }
     ],
     "assertions": [
@@ -79982,7 +80003,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each4"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each4"
       }
     ],
     "assertions": [
@@ -80001,7 +80022,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each5"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each5"
       }
     ],
     "assertions": [
@@ -80020,7 +80041,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each6"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each6"
       }
     ],
     "assertions": [
@@ -80039,7 +80060,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each7"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each7"
       }
     ],
     "assertions": [
@@ -80058,7 +80079,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each8"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each8"
       }
     ],
     "assertions": [
@@ -80077,7 +80098,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each9"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each9"
       }
     ],
     "assertions": [
@@ -80096,7 +80117,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_62_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_81_3"
       }
     ],
     "assertions": [
@@ -80115,7 +80136,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_84_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_103_3"
       }
     ],
     "assertions": [
@@ -80134,7 +80155,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_89_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_108_3"
       }
     ],
     "assertions": [
@@ -80153,7 +80174,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_98_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_117_3"
       }
     ],
     "assertions": [
@@ -80172,7 +80193,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_105_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_124_3"
       }
     ],
     "assertions": [
@@ -80191,7 +80212,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_114_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_133_3"
       }
     ],
     "assertions": [
@@ -80210,7 +80231,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_120_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_139_3"
       }
     ],
     "assertions": [
@@ -80229,7 +80250,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_143_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_162_3"
       }
     ],
     "assertions": [
@@ -80248,7 +80269,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_160_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_179_3"
       }
     ],
     "assertions": [
@@ -80267,7 +80288,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_169_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_188_3"
       }
     ],
     "assertions": [
@@ -80286,7 +80307,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_174_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_193_3"
       }
     ],
     "assertions": [
@@ -80305,7 +80326,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_183_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_202_3"
       }
     ],
     "assertions": [
@@ -80324,7 +80345,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_206_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_225_3"
       }
     ],
     "assertions": [
@@ -80343,7 +80364,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_214_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_233_3"
       }
     ],
     "assertions": [
@@ -80362,7 +80383,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_220_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_239_3"
       }
     ],
     "assertions": [
@@ -80381,7 +80402,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_230_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_249_3"
       }
     ],
     "assertions": [
@@ -80400,7 +80421,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_240_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3"
       }
     ],
     "assertions": [
@@ -80419,7 +80440,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_247_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_266_3"
       }
     ],
     "assertions": [
@@ -80438,7 +80459,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_254_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3"
       }
     ],
     "assertions": [
@@ -80449,7 +80470,7 @@
     ]
   },
   {
-    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_259_3",
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_278_3",
     "calls": [
       {
         "op": "sourcereview.reused",
@@ -80457,7 +80478,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3"
       }
     ],
     "assertions": [
@@ -80468,7 +80489,7 @@
     ]
   },
   {
-    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_273_3",
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_292_3",
     "calls": [
       {
         "op": "sourcereview.reused",
@@ -80476,7 +80497,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_273_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3"
       }
     ],
     "assertions": [
@@ -80495,7 +80516,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_290_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_309_3"
       }
     ],
     "assertions": [
@@ -80514,7 +80535,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_295_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_314_3"
       }
     ],
     "assertions": [
@@ -80533,7 +80554,7 @@
         "source": "packages/gateway/src/providers/model-fetchers.ts",
         "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
         "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
-        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_304_3"
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_323_3"
       }
     ],
     "assertions": [
@@ -87924,7 +87945,7 @@
         "source": "packages/gateway/src/tools/screenshot-tools.ts",
         "source_test": "packages/gateway/src/tools/screenshot-tools.test.ts",
         "fixture": "gateway-src-tools-screenshot-tools-test-04a9779d",
-        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3"
+        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_79_3"
       }
     ],
     "assertions": [
@@ -87943,7 +87964,7 @@
         "source": "packages/gateway/src/tools/screenshot-tools.ts",
         "source_test": "packages/gateway/src/tools/screenshot-tools.test.ts",
         "fixture": "gateway-src-tools-screenshot-tools-test-04a9779d",
-        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3"
+        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_82_3"
       }
     ],
     "assertions": [
@@ -87962,7 +87983,7 @@
         "source": "packages/gateway/src/tools/screenshot-tools.ts",
         "source_test": "packages/gateway/src/tools/screenshot-tools.test.ts",
         "fixture": "gateway-src-tools-screenshot-tools-test-04a9779d",
-        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3"
+        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_85_3"
       }
     ],
     "assertions": [
@@ -88425,6 +88446,5155 @@
       {
         "path": "",
         "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_22_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedMsTeamsConnector",
+        "source": "packages/gateway/src/channels/msteams/connector.ts",
+        "source_test": "packages/gateway/src/channels/msteams/connector.test.ts",
+        "fixture": "gateway-src-channels-msteams-connector-test-8b3549d5",
+        "test": "tailstatic_packages_gateway_src_channels_msteams_connector_test_ts_22_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_47_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedMsTeamsConnector",
+        "source": "packages/gateway/src/channels/msteams/connector.ts",
+        "source_test": "packages/gateway/src/channels/msteams/connector.test.ts",
+        "fixture": "gateway-src-channels-msteams-connector-test-8b3549d5",
+        "test": "tailstatic_packages_gateway_src_channels_msteams_connector_test_ts_47_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_56_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedMsTeamsConnector",
+        "source": "packages/gateway/src/channels/msteams/connector.ts",
+        "source_test": "packages/gateway/src/channels/msteams/connector.test.ts",
+        "fixture": "gateway-src-channels-msteams-connector-test-8b3549d5",
+        "test": "tailstatic_packages_gateway_src_channels_msteams_connector_test_ts_56_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedMsTeamsConnector-packages_gateway_src_channels_msteams_connector_test_ts_124_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedMsTeamsConnector",
+        "source": "packages/gateway/src/channels/msteams/connector.ts",
+        "source_test": "packages/gateway/src/channels/msteams/connector.test.ts",
+        "fixture": "gateway-src-channels-msteams-connector-test-8b3549d5",
+        "test": "tailstatic_packages_gateway_src_channels_msteams_connector_test_ts_124_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_21_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_21_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_41_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_41_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_56_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_56_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_61_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_61_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_65_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_65_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_72_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_72_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_77_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_77_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_84_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_84_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_95_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_95_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_100_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_100_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_107_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_107_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_112_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_112_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_122_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_122_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_126_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_126_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_135_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_135_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_148_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_148_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_199_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_199_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_220_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_220_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_244_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_244_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_264_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_264_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_285_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_285_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_309_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_309_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_320_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_320_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_336_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_336_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_353_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_353_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_358_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_358_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_374_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_374_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_388_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_388_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_434_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_434_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_455_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_455_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_477_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_477_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_491_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_491_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_519_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_519_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_543_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_543_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_557_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_557_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_658_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_658_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_676_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_676_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_698_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_698_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_717_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_717_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_737_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_737_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_755_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_755_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_763_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_763_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_770_5",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_770_5"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_780_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_780_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedTelegramConnector-packages_gateway_src_channels_telegram_connector_test_ts_786_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedTelegramConnector",
+        "source": "packages/gateway/src/channels/telegram/connector.ts",
+        "source_test": "packages/gateway/src/channels/telegram/connector.test.ts",
+        "fixture": "gateway-src-channels-telegram-connector-test-bebe4906",
+        "test": "tailstatic_packages_gateway_src_channels_telegram_connector_test_ts_786_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedReminderRoutes-packages_gateway_src_routes_reminders_test_ts_22_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedReminderRoutes",
+        "source": "packages/gateway/src/routes/reminders.ts",
+        "source_test": "packages/gateway/src/routes/reminders.test.ts",
+        "fixture": "gateway-src-routes-reminders-test-f9b209a1",
+        "test": "tailstatic_packages_gateway_src_routes_reminders_test_ts_22_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_88_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectMessage",
+        "source": "packages/gateway/src/tools/project-message-tool.ts",
+        "source_test": "packages/gateway/src/tools/project-message-tool.test.ts",
+        "fixture": "gateway-src-tools-project-message-tool-test-b1da469d",
+        "test": "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_88_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_157_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectMessage",
+        "source": "packages/gateway/src/tools/project-message-tool.ts",
+        "source_test": "packages/gateway/src/tools/project-message-tool.test.ts",
+        "fixture": "gateway-src-tools-project-message-tool-test-b1da469d",
+        "test": "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_157_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_201_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectMessage",
+        "source": "packages/gateway/src/tools/project-message-tool.ts",
+        "source_test": "packages/gateway/src/tools/project-message-tool.test.ts",
+        "fixture": "gateway-src-tools-project-message-tool-test-b1da469d",
+        "test": "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_201_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_275_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectMessage",
+        "source": "packages/gateway/src/tools/project-message-tool.ts",
+        "source_test": "packages/gateway/src/tools/project-message-tool.test.ts",
+        "fixture": "gateway-src-tools-project-message-tool-test-b1da469d",
+        "test": "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_275_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectMessage-packages_gateway_src_tools_project_message_tool_test_ts_297_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectMessage",
+        "source": "packages/gateway/src/tools/project-message-tool.ts",
+        "source_test": "packages/gateway/src/tools/project-message-tool.test.ts",
+        "fixture": "gateway-src-tools-project-message-tool-test-b1da469d",
+        "test": "tailstatic_packages_gateway_src_tools_project_message_tool_test_ts_297_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_17_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_17_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_32_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_32_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_57_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_57_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_75_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_75_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_86_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_86_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_101_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_101_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewRunner-packages_gateway_src_services_preview_runner_test_ts_121_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewRunner",
+        "source": "packages/gateway/src/services/preview-runner.ts",
+        "source_test": "packages/gateway/src/services/preview-runner.test.ts",
+        "fixture": "gateway-src-services-preview-runner-test-53dc014a",
+        "test": "tailstatic_packages_gateway_src_services_preview_runner_test_ts_121_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_78_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedElevatedTools",
+        "source": "packages/gateway/src/tools/elevated-tools.ts",
+        "source_test": "packages/gateway/src/tools/elevated-tools.test.ts",
+        "fixture": "gateway-src-tools-elevated-tools-test-ddb5848e",
+        "test": "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_78_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_122_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedElevatedTools",
+        "source": "packages/gateway/src/tools/elevated-tools.ts",
+        "source_test": "packages/gateway/src/tools/elevated-tools.test.ts",
+        "fixture": "gateway-src-tools-elevated-tools-test-ddb5848e",
+        "test": "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_122_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_136_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedElevatedTools",
+        "source": "packages/gateway/src/tools/elevated-tools.ts",
+        "source_test": "packages/gateway/src/tools/elevated-tools.test.ts",
+        "fixture": "gateway-src-tools-elevated-tools-test-ddb5848e",
+        "test": "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_136_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedElevatedTools-packages_gateway_src_tools_elevated_tools_test_ts_169_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedElevatedTools",
+        "source": "packages/gateway/src/tools/elevated-tools.ts",
+        "source_test": "packages/gateway/src/tools/elevated-tools.test.ts",
+        "fixture": "gateway-src-tools-elevated-tools-test-ddb5848e",
+        "test": "tailstatic_packages_gateway_src_tools_elevated_tools_test_ts_169_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_259_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_273_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_273_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_334_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_334_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_363_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_363_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_376_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_376_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_389_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_389_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedModelFetchers-packages_gateway_src_providers_model_fetchers_test_ts_410_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedModelFetchers",
+        "source": "packages/gateway/src/providers/model-fetchers.ts",
+        "source_test": "packages/gateway/src/providers/model-fetchers.test.ts",
+        "fixture": "gateway-src-providers-model-fetchers-test-d7ff0c3a",
+        "test": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_410_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedScreenshotPaths-packages_gateway_src_tools_screenshot_tools_test_ts_54_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedScreenshotPaths",
+        "source": "packages/gateway/src/tools/screenshot-tools.ts",
+        "source_test": "packages/gateway/src/tools/screenshot-tools.test.ts",
+        "fixture": "gateway-src-tools-screenshot-tools-test-04a9779d",
+        "test": "tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_54_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-legacy-cloud-group-default",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "config": {
+          "ollamaUrl": "http://cloud.fixture"
+        },
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "Ollama Cloud",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "fallback",
+                "name": "Fallback",
+                "isDefault": true,
+                "group": "OpenAI"
+              },
+              {
+                "id": "cloud-model",
+                "name": "Cloud Model",
+                "group": "Ollama Cloud",
+                "description": "Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": true
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-legacy-cloud-explicit-false",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "config": {
+          "ollamaUrl": "http://cloud.fixture"
+        },
+        "includeCloud": false,
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "Ollama Cloud",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "fallback",
+                "name": "Fallback",
+                "isDefault": true,
+                "group": "OpenAI"
+              },
+              {
+                "id": "cloud-model",
+                "name": "Cloud Model",
+                "group": "Ollama Cloud",
+                "description": "Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": false
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-configured-cloud-group-true",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "apiKeys": {
+          "JAIT_BACKEND_INSTANCES": "[{\"id\": \"cloud\", \"name\": \"Instance\", \"type\": \"ollama\", \"baseUrl\": \"http://cloud.fixture\"}]"
+        },
+        "includeCloud": true,
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "Ollama Cloud",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "jait://ollama/cloud/cloud-model",
+                "name": "Cloud Model",
+                "group": "Instance \u00b7 Ollama Cloud",
+                "description": "Ollama \u00b7 Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": true
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-configured-cloud-group-false",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "apiKeys": {
+          "JAIT_BACKEND_INSTANCES": "[{\"id\": \"cloud\", \"name\": \"Instance\", \"type\": \"ollama\", \"baseUrl\": \"http://cloud.fixture\"}]"
+        },
+        "includeCloud": false,
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "Ollama Cloud",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "jait://ollama/cloud/cloud-model",
+                "name": "Cloud Model",
+                "group": "Instance \u00b7 Ollama Cloud",
+                "description": "Ollama \u00b7 Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": false
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-legacy-empty-group",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "config": {
+          "ollamaUrl": "http://cloud.fixture"
+        },
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "fallback",
+                "name": "Fallback",
+                "isDefault": true,
+                "group": "OpenAI"
+              },
+              {
+                "id": "cloud-model",
+                "name": "Cloud Model",
+                "group": "",
+                "description": "Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": true
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.models-configured-empty-group",
+    "calls": [
+      {
+        "op": "sourcereview.jaitModels",
+        "module": "jaitModels",
+        "apiKeys": {
+          "JAIT_BACKEND_INSTANCES": "[{\"id\": \"cloud\", \"name\": \"Instance\", \"type\": \"ollama\", \"baseUrl\": \"http://cloud.fixture\"}]"
+        },
+        "models": {
+          "fetchOllamaModels": [
+            {
+              "id": "cloud-model",
+              "name": "Cloud Model",
+              "group": "",
+              "description": "Fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "jait://ollama/cloud/cloud-model",
+                "name": "Cloud Model",
+                "group": "Instance \u00b7 Ollama",
+                "description": "Ollama \u00b7 Fixture"
+              }
+            ],
+            "calls": [
+              [
+                "fetchOllamaModels",
+                "http://cloud.fixture",
+                {
+                  "includeCloud": true
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-status-no-user",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "context": {},
+        "input": {
+          "action": "status"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Authenticated user required to inspect GitHub App connections."
+            },
+            "calls": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-no-user",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "context": {},
+        "token": true
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Authenticated user required to mint an agent GitHub token."
+            },
+            "calls": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-no-agent",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "No agent identity resolved; pass agentId explicitly."
+            },
+            "calls": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-status-whitespace-agent",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "status",
+          "agentId": "  "
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "A valid agent id is required."
+            },
+            "calls": [
+              [
+                "service"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-test-no-agent",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "test"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Specify agentId (or run inside that agent's thread) to test its connection."
+            },
+            "calls": [
+              [
+                "service"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-status-empty",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "status"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "0 of 0 agents are connected to GitHub Apps.",
+              "data": {
+                "connections": [],
+                "webhookUrl": "https://gateway.fixture/api/github/apps/webhook",
+                "currentAgentId": null
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "list",
+                "owner"
+              ],
+              [
+                "baseUrl"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-status-connected",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "status",
+          "agentId": " agent "
+        },
+        "connections": [
+          {
+            "status": "connected",
+            "agentId": "agent"
+          }
+        ],
+        "connection": {
+          "status": "connected",
+          "agentId": "agent"
+        },
+        "webhookSecret": "fixture-secret"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Agent agent GitHub App: connected.",
+              "data": {
+                "connections": [
+                  {
+                    "status": "connected",
+                    "agentId": "agent"
+                  }
+                ],
+                "webhookUrl": "https://gateway.fixture/api/github/apps/webhook",
+                "webhookSecretAvailable": true,
+                "currentAgentId": "agent"
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "list",
+                "owner"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ],
+              [
+                "baseUrl"
+              ],
+              [
+                "webhookSecret",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-status-missing",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "status",
+          "agentId": "agent"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Agent agent has no GitHub App connected.",
+              "data": {
+                "connections": [],
+                "webhookUrl": "https://gateway.fixture/api/github/apps/webhook",
+                "webhookSecretAvailable": false,
+                "currentAgentId": "agent"
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "list",
+                "owner"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ],
+              [
+                "baseUrl"
+              ],
+              [
+                "webhookSecret",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-missing",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": "agent"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent agent has no GitHub App connected. Connect it on the Agents page first."
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-blocked",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": "agent"
+        },
+        "connection": {
+          "status": "error",
+          "lastError": "broken"
+        },
+        "env": {
+          "GH_TOKEN": "fixture-must-not-mint"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent agent GitHub App is error: broken."
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-pending-default",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": "agent"
+        },
+        "connection": {
+          "status": "pending"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent agent GitHub App is pending: not usable yet."
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-test-success",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "test",
+          "agentId": "agent"
+        },
+        "testResult": {
+          "ok": true,
+          "botLogin": "fixture-bot",
+          "repositoryCount": 2
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Agent agent authenticates as fixture-bot with access to 2 repositories.",
+              "data": {
+                "ok": true,
+                "botLogin": "fixture-bot",
+                "repositoryCount": 2
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "test",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-test-defaults",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "test",
+          "agentId": "agent"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Agent agent authenticates as its App bot with access to 0 repositories.",
+              "data": {
+                "ok": true
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "test",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-test-refused",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "test",
+          "agentId": "agent"
+        },
+        "testResult": {
+          "ok": false
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Agent agent GitHub App test failed.",
+              "data": {
+                "ok": false
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "test",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-test-error",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "input": {
+          "action": "test",
+          "agentId": "agent"
+        },
+        "error": "fixture failure"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent GitHub App test failed: fixture failure"
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "test",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-no-env",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": "agent"
+        },
+        "connection": {
+          "status": "connected",
+          "agentId": "agent"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent agent GitHub App could not mint a token."
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ],
+              [
+                "env",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-error",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": "agent"
+        },
+        "connection": {
+          "status": "connected",
+          "agentId": "agent"
+        },
+        "error": "fixture failure"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Could not mint agent GitHub token: fixture failure"
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ],
+              [
+                "env",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-mint",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "input": {
+          "agentId": " agent "
+        },
+        "connection": {
+          "status": "connected",
+          "agentId": "agent"
+        },
+        "env": {
+          "GH_TOKEN": "fixture-token",
+          "GITHUB_APP_BOT_LOGIN": "fixture-bot",
+          "GITHUB_APP_SLUG": "fixture-app",
+          "GITHUB_APP_INSTALLATION_ID": "42",
+          "JAIT_GITHUB_TOKEN_EXPIRES_AT": "2026-10-20T00:00:00Z"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": true,
+              "message": "Minted GitHub App token for agent agent as fixture-bot, expiring 2026-10-20T00:00:00Z.",
+              "data": {
+                "token": "fixture-token",
+                "tokenType": "installation",
+                "identity": "fixture-bot",
+                "appSlug": "fixture-app",
+                "installationId": "42",
+                "expiresAt": "2026-10-20T00:00:00Z",
+                "env": {
+                  "GH_TOKEN": "fixture-token",
+                  "GITHUB_APP_BOT_LOGIN": "fixture-bot",
+                  "GITHUB_APP_SLUG": "fixture-app",
+                  "GITHUB_APP_INSTALLATION_ID": "42",
+                  "JAIT_GITHUB_TOKEN_EXPIRES_AT": "2026-10-20T00:00:00Z"
+                },
+                "usage": "Use the token as GH_TOKEN for gh/git commands, e.g.\n  GH_TOKEN=fixture-token gh api /installation/repositories\nIt expires shortly, so mint a fresh one per task instead of storing it."
+              }
+            },
+            "calls": [
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ],
+              [
+                "env",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.agent-github-token-inferred",
+    "calls": [
+      {
+        "op": "sourcereview.agentGithubTools",
+        "module": "agentGithubTools",
+        "token": true,
+        "currentAgentId": "agent",
+        "connection": {
+          "status": "error"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "ok": false,
+              "message": "Agent agent GitHub App is error: not usable yet."
+            },
+            "calls": [
+              [
+                "identity",
+                {
+                  "userId": "owner",
+                  "threadId": "thread"
+                }
+              ],
+              [
+                "service"
+              ],
+              [
+                "get",
+                "owner",
+                "agent"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-missing-repository",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "missing": true
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "error": "Repository not found: repo"
+            },
+            "commands": [],
+            "writes": [],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-inaccessible-path",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "inaccessible": true
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "error": "Repository path not accessible: $ROOT/missing"
+            },
+            "commands": [],
+            "writes": [],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-empty-checks",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "config": {
+          "checks": []
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "repoId": "repo",
+              "repoName": "Fixture Repo",
+              "allPassed": true,
+              "planId": null,
+              "checks": []
+            },
+            "commands": [],
+            "writes": [
+              {
+                "op": "insert",
+                "status": "running",
+                "triggeredBy": "maintenance"
+              },
+              {
+                "op": "update",
+                "status": "completed",
+                "output": "",
+                "error": null,
+                "hasPlan": false,
+                "completed": true
+              }
+            ],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-passing-command",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "repoId": "repo",
+              "repoName": "Fixture Repo",
+              "allPassed": true,
+              "planId": null,
+              "checks": [
+                {
+                  "name": "Check",
+                  "command": "check",
+                  "passed": true,
+                  "output": "passed\n",
+                  "durationValid": true
+                }
+              ]
+            },
+            "commands": [
+              {
+                "command": "check",
+                "ownedCwd": true,
+                "timeout": 120000,
+                "encoding": "utf-8",
+                "maxBuffer": 1048576,
+                "ci": "true",
+                "color": "0",
+                "windowsHide": true
+              }
+            ],
+            "writes": [
+              {
+                "op": "insert",
+                "status": "running",
+                "triggeredBy": "maintenance"
+              },
+              {
+                "op": "update",
+                "status": "completed",
+                "output": "\u2713 Check ($MS)",
+                "error": null,
+                "hasPlan": false,
+                "completed": true
+              }
+            ],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-failed-command-proposal",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "outputs": {
+          "check": {
+            "failure": true,
+            "stdout": "bad",
+            "stderr": "worse"
+          }
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "repoId": "repo",
+              "repoName": "Fixture Repo",
+              "allPassed": false,
+              "planId": "plan-fixture",
+              "checks": [
+                {
+                  "name": "Check",
+                  "command": "check",
+                  "passed": false,
+                  "output": "bad\nworse",
+                  "durationValid": true
+                }
+              ]
+            },
+            "commands": [
+              {
+                "command": "check",
+                "ownedCwd": true,
+                "timeout": 120000,
+                "encoding": "utf-8",
+                "maxBuffer": 1048576,
+                "ci": "true",
+                "color": "0",
+                "windowsHide": true
+              }
+            ],
+            "writes": [
+              {
+                "op": "insert",
+                "status": "running",
+                "triggeredBy": "maintenance"
+              },
+              {
+                "op": "update",
+                "status": "failed",
+                "output": "\u2717 Check ($MS)",
+                "error": "Check: bad\nworse",
+                "hasPlan": true,
+                "completed": true
+              }
+            ],
+            "plans": [
+              {
+                "repoId": "repo",
+                "tasks": [
+                  {
+                    "title": "Fix Check failures",
+                    "description": "The `check` check failed. Fix the errors below.\n\n```\nbad\nworse\n```\n\nRun the same command again after fixing to verify.",
+                    "status": "proposed"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-execution-error",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "outputs": {
+          "check": {
+            "error": "cannot execute"
+          }
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "repoId": "repo",
+              "repoName": "Fixture Repo",
+              "allPassed": false,
+              "planId": "plan-fixture",
+              "checks": [
+                {
+                  "name": "Check",
+                  "command": "check",
+                  "passed": false,
+                  "output": "cannot execute",
+                  "durationValid": true
+                }
+              ]
+            },
+            "commands": [
+              {
+                "command": "check",
+                "ownedCwd": true,
+                "timeout": 120000,
+                "encoding": "utf-8",
+                "maxBuffer": 1048576,
+                "ci": "true",
+                "color": "0",
+                "windowsHide": true
+              }
+            ],
+            "writes": [
+              {
+                "op": "insert",
+                "status": "running",
+                "triggeredBy": "maintenance"
+              },
+              {
+                "op": "update",
+                "status": "failed",
+                "output": "\u2717 Check ($MS)",
+                "error": "Check: cannot execute",
+                "hasPlan": true,
+                "completed": true
+              }
+            ],
+            "plans": [
+              {
+                "repoId": "repo",
+                "tasks": [
+                  {
+                    "title": "Fix Check failures",
+                    "description": "The `check` check failed. Fix the errors below.\n\n```\ncannot execute\n```\n\nRun the same command again after fixing to verify.",
+                    "status": "proposed"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-explicit-timeout",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "config": {
+          "checks": [
+            {
+              "name": "Check",
+              "command": "check"
+            }
+          ],
+          "timeoutMs": 17
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "repoId": "repo",
+              "repoName": "Fixture Repo",
+              "allPassed": true,
+              "planId": null,
+              "checks": [
+                {
+                  "name": "Check",
+                  "command": "check",
+                  "passed": true,
+                  "output": "passed\n",
+                  "durationValid": true
+                }
+              ]
+            },
+            "commands": [
+              {
+                "command": "check",
+                "ownedCwd": true,
+                "timeout": 17,
+                "encoding": "utf-8",
+                "maxBuffer": 1048576,
+                "ci": "true",
+                "color": "0",
+                "windowsHide": true
+              }
+            ],
+            "writes": [
+              {
+                "op": "insert",
+                "status": "running",
+                "triggeredBy": "maintenance"
+              },
+              {
+                "op": "update",
+                "status": "completed",
+                "output": "\u2713 Check ($MS)",
+                "error": null,
+                "hasPlan": false,
+                "completed": true
+              }
+            ],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-list-runs",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "action": "list",
+        "rows": [
+          {
+            "id": "run",
+            "status": "failed"
+          }
+        ]
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": [
+              {
+                "id": "run",
+                "status": "failed"
+              }
+            ],
+            "commands": [],
+            "writes": [],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.maintenance-get-run",
+    "calls": [
+      {
+        "op": "sourcereview.maintenanceService",
+        "module": "maintenanceService",
+        "action": "get",
+        "row": {
+          "id": "run",
+          "status": "completed"
+        }
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "result": {
+              "id": "run",
+              "status": "completed"
+            },
+            "commands": [],
+            "writes": [],
+            "plans": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_120_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_120_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_125_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_125_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_130_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_130_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_136_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_136_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_144_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_144_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_149_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_149_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_156_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_156_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_161_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_161_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_167_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_167_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_171_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_171_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedFilesystem-packages_gateway_src_sprint3_test_ts_175_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedFilesystem",
+        "source": "packages/gateway/src/surfaces/filesystem.ts",
+        "source_test": "packages/gateway/src/sprint3.test.ts",
+        "fixture": "gateway-src-sprint3-test-cfd617fc",
+        "test": "tailstatic_packages_gateway_src_sprint3_test_ts_175_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_67_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_67_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_107_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_107_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_140_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_140_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_162_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_162_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_193_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_193_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedAcpRunner-packages_gateway_src_tools_agent_acp_runner_test_ts_216_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedAcpRunner",
+        "source": "packages/gateway/src/tools/agent-acp-runner.ts",
+        "source_test": "packages/gateway/src/tools/agent-acp-runner.test.ts",
+        "fixture": "gateway-src-tools-agent-acp-runner-test-5eea95c5",
+        "test": "tailstatic_packages_gateway_src_tools_agent_acp_runner_test_ts_216_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_15_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_15_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_116_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_116_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_170_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_170_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_216_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_216_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_306_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_306_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedJobRoutes-packages_gateway_src_routes_jobs_test_ts_362_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedJobRoutes",
+        "source": "packages/gateway/src/routes/jobs.ts",
+        "source_test": "packages/gateway/src/routes/jobs.test.ts",
+        "fixture": "gateway-src-routes-jobs-test-02bdd565",
+        "test": "tailstatic_packages_gateway_src_routes_jobs_test_ts_362_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_22_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_22_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_29_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_29_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_41_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_41_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_51_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_51_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_60_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_60_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_74_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_74_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_88_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_88_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_109_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_109_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_132_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_132_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_162_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_162_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_169_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_169_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_177_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_177_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_187_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_187_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSchedulerService-packages_gateway_src_scheduler_service_test_ts_202_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSchedulerService",
+        "source": "packages/gateway/src/scheduler/service.ts",
+        "source_test": "packages/gateway/src/scheduler/service.test.ts",
+        "fixture": "gateway-src-scheduler-service-test-8f7567b2",
+        "test": "tailstatic_packages_gateway_src_scheduler_service_test_ts_202_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_9_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_9_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_18_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_18_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_89_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_89_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_145_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_145_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_177_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_177_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_239_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_239_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_306_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_306_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_345_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_345_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedPreviewTools-packages_gateway_src_tools_preview_tools_test_ts_377_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedPreviewTools",
+        "source": "packages/gateway/src/tools/preview-tools.ts",
+        "source_test": "packages/gateway/src/tools/preview-tools.test.ts",
+        "fixture": "gateway-src-tools-preview-tools-test-ab134d2d",
+        "test": "tailstatic_packages_gateway_src_tools_preview_tools_test_ts_377_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_4_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_4_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_11_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_11_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_21_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_21_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_32_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_32_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_39_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_39_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_49_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_49_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_58_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_58_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_63_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_63_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSecurityEngines-packages_gateway_src_lib_security_engines_test_ts_71_1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSecurityEngines",
+        "source": "packages/gateway/src/lib/security/engines.ts",
+        "source_test": "packages/gateway/src/lib/security/engines.test.ts",
+        "fixture": "gateway-src-lib-security-engines-test-fbc5ae66",
+        "test": "tailstatic_packages_gateway_src_lib_security_engines_test_ts_71_1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_117_3_each0",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_117_3_each0"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_117_3_each1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_117_3_each1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_153_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_153_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_176_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_176_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_193_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_193_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_208_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_208_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_223_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_223_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_234_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_234_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_250_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_250_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_266_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_266_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_278_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_278_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_288_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_288_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_297_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_297_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_302_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_302_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedDiskJanitor-packages_gateway_src_services_disk_janitor_test_ts_316_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedDiskJanitor",
+        "source": "packages/gateway/src/services/disk-janitor.ts",
+        "source_test": "packages/gateway/src/services/disk-janitor.test.ts",
+        "fixture": "gateway-src-services-disk-janitor-test-16a7a2e0",
+        "test": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_316_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_53_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_53_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_71_3_each0",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each0"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_71_3_each1",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_71_3_each1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_88_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_88_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_97_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_97_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_104_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_104_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_120_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_120_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_137_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_137_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_151_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_151_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_167_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_167_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_177_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_177_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedProjectTools-packages_gateway_src_tools_project_tools_test_ts_210_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedProjectTools",
+        "source": "packages/gateway/src/tools/project-tools.ts",
+        "source_test": "packages/gateway/src/tools/project-tools.test.ts",
+        "fixture": "gateway-src-tools-project-tools-test-a4c05dc9",
+        "test": "tailstatic_packages_gateway_src_tools_project_tools_test_ts_210_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.reusedSessionRoutes-packages_gateway_src_routes_sessions_personal_test_ts_12_3",
+    "calls": [
+      {
+        "op": "sourcereview.reused",
+        "module": "reusedSessionRoutes",
+        "source": "packages/gateway/src/routes/sessions.ts",
+        "source_test": "packages/gateway/src/routes/sessions-personal.test.ts",
+        "fixture": "gateway-src-routes-sessions-personal-test-4e814fa5",
+        "test": "tailstatic_packages_gateway_src_routes_sessions_personal_test_ts_12_3"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "reused-tail"
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-arp_linux",
+    "calls": [
+      {
+        "input": "? (192.168.1.1) at 00:11:22:33:44:55 [ether] on eth0\n? (192.168.1.2) at aa:bb:cc:dd:ee:ff [ether] on eth0\n? (192.168.1.3) at <incomplete> on eth0",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.1",
+              "mac": "00:11:22:33:44:55",
+              "responsive": true
+            },
+            {
+              "ip": "192.168.1.2",
+              "mac": "aa:bb:cc:dd:ee:ff",
+              "responsive": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-arp_macos",
+    "calls": [
+      {
+        "input": "? (192.168.1.3) at 0:11:22:33:44:55 on en0 ifscope [ethernet]",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.3",
+              "mac": "00:11:22:33:44:55",
+              "responsive": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-arp_hyphen",
+    "calls": [
+      {
+        "input": "192.168.1.4 at 00-11-22-33-44-55 [ether] on eth0",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.4",
+              "mac": "00:11:22:33:44:55",
+              "responsive": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-arp_filtered",
+    "calls": [
+      {
+        "input": "? (192.168.1.10) at ff:ff:ff:ff:ff:ff [ether] on eth0\n? (192.168.1.11) at 00:00:00:00:00:00 [ether] on eth0\n? (192.168.1.12) at 01:00:5e:00:00:01 [ether] on eth0\n? (192.168.1.13) at 02:11:22:33:44:55 [ether] on eth0",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.13",
+              "mac": "02:11:22:33:44:55",
+              "responsive": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-arp_empty",
+    "calls": [
+      {
+        "input": "",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      },
+      {
+        "input": "no arp entries here\njust text",
+        "method": "arp",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-prefix_cidr",
+    "calls": [
+      {
+        "input": "192.168.1.0/24",
+        "method": "prefix",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          "192.168.1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-prefix_ip",
+    "calls": [
+      {
+        "input": "192.168.1.42",
+        "method": "prefix",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          "192.168.1"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-prefix_bare",
+    "calls": [
+      {
+        "input": "  10.0.0  ",
+        "method": "prefix",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          "10.0.0"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-ips_normalize",
+    "calls": [
+      {
+        "input": [
+          " 192.168.1.1 ",
+          "192.168.1.1",
+          "10.0.0.1",
+          "bad",
+          "999.1.1.1"
+        ],
+        "method": "ips",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            "192.168.1.1",
+            "10.0.0.1"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-ips_empty",
+    "calls": [
+      {
+        "method": "ips",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      },
+      {
+        "input": [],
+        "method": "ips",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-merge_first",
+    "calls": [
+      {
+        "input": [
+          {
+            "ip": "192.168.1.1",
+            "mac": "00:11:22:33:44:55",
+            "responsive": true
+          },
+          {
+            "ip": "192.168.1.1",
+            "mac": null,
+            "responsive": false
+          },
+          {
+            "ip": "192.168.1.2",
+            "mac": null,
+            "responsive": false
+          }
+        ],
+        "method": "merge",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.1",
+              "mac": "00:11:22:33:44:55",
+              "responsive": true
+            },
+            {
+              "ip": "192.168.1.2",
+              "mac": null,
+              "responsive": false
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-merge_later",
+    "calls": [
+      {
+        "input": [
+          {
+            "ip": "192.168.1.1",
+            "mac": null,
+            "responsive": true
+          },
+          {
+            "ip": "192.168.1.1",
+            "mac": "00:11:22:33:44:55",
+            "responsive": false
+          }
+        ],
+        "method": "merge",
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          [
+            {
+              "ip": "192.168.1.1",
+              "mac": "00:11:22:33:44:55",
+              "responsive": true
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-prefix_range",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "256.1.1.0/24"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "192.168.999.0/24"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "999.999.999.0/24"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "256.1.1.42"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "256.1.1"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-prefix_invalid",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "192.168.1.0/16"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "192.168.1.0/24/24"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": "not-an-ip"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "prefix",
+        "input": ""
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-ipv4_valid",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "192.168.1.1"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "0.0.0.0"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "255.255.255.255"
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          true,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-ipv4_invalid",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "192.168.1"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "192.168.1.1.1"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "256.1.1.1"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "1.1.1.999"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "192.168.1.abc"
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": "192.168.1.1 "
+      },
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "ipv4",
+        "input": ""
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-candidates-one",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "candidates",
+        "input": [
+          "192.168.1"
+        ],
+        "indices": [
+          0,
+          253
+        ]
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "length": 254,
+            "values": [
+              "192.168.1.1",
+              "192.168.1.254"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "internal.sourcereview.network-candidates-two",
+    "calls": [
+      {
+        "op": "sourcereview.networkScanHelpers",
+        "module": "networkScanHelpers",
+        "method": "candidates",
+        "input": [
+          "10.0.0",
+          "10.0.1"
+        ],
+        "indices": [
+          0,
+          253,
+          254,
+          507
+        ]
+      }
+    ],
+    "assertions": [
+      {
+        "path": "",
+        "kind": "eq",
+        "value": [
+          {
+            "length": 508,
+            "values": [
+              "10.0.0.1",
+              "10.0.0.254",
+              "10.0.1.1",
+              "10.0.1.254"
+            ]
+          }
+        ]
       }
     ]
   }

@@ -2,24 +2,25 @@
 
 ## Current native checkpoint — 2026-10-20
 
-The source-bound gate verifies **148/364 components (40.66%)** with unchanged
-sources and exact live fingerprints. This supersedes historical counts below.
-The latest batches add the DNS-pinned public mail-image loader and an opt-in
-skills HTTP adapter (12 and 8 focused tests, nine caught/restored mutations).
-The preceding batch implements subscription quota fetching: 26 focused differential
-checks and 34 native checks cover cookie/status handling, HTML and quota parsing,
-stream limits/cleanup, UTF-8, redirects and deadlines. Four timezone subprocesses
-cover local dates and daylight-saving transitions. A 100,000-level document now
-passes in 0.40 seconds after replacing repeated ancestor scans; a duration bound
-retains the regression. All 2,231 entity mappings match the reference decoder.
+The latest completed source-bound gate verifies **155/365 components (42.47%)**
+against its frozen snapshot. All format, strict Clippy, native-test and 89
+differential-target checks passed with unchanged snapshot sources. Concurrent
+ACP provider and session HTTP test changes require a refreshed gate before
+claiming an exact live-source match.
 
-Evidence: `tests/contract/reviews/native-subscription-usage.md` and
-`.jait/artifacts/gateway-rust/checkpoints/148-report.json`. The review records
-fail-then-pass discrepancies and explicit format/platform/integration limits.
-The full gate passes 171 native library tests and 82 differential targets.
-Production remains the TypeScript gateway. **216 components remain**; full
-replacement, client/platform, resource and rollback gates remain open.
+Since the 150-component checkpoint, reviewed native implementations add consent
+management, security tool profiles, nested-agent history persistence, session-wait
+tracking and the maintenance tool adapter. The full report is
+`.jait/artifacts/gateway-rust/checkpoints/155-report.json`.
+A 156-component candidate adds the GraphRAG export adapter, with exact JSONL and
+manifest comparisons and caught/restored mutation checks. Its complete gate is
+pending. Native title normalization also now rejects tool-protocol payloads,
+with a reproduced failure and enabled regression tests.
 
+The inventory grew from 364 to 365 when the session-wait service was added.
+The completion target includes every inventoried component. Component counts
+measure focused native behavior coverage; production remains the TypeScript
+gateway and broader replacement/readiness gates remain open.
 
 Parallel native implementation beside `packages/gateway`. The standalone process
 currently serves only `GET /health` (and HEAD). It does not yet serve the application.
@@ -57,7 +58,7 @@ and compilation is bounded to two jobs.
 
 ## Verified components
 
-The latest passing frozen-source checkpoint covers 141 of the 364 gateway
+The historical 141-component frozen-source checkpoint covers 141 of the then-364 gateway
 source components in `tests/contract/coverage.json`: **38.74% focused native component
 coverage**. The current report records whether that snapshot still matches live sources. Components have equal weight; this percentage measures neither effort
 remaining nor readiness to replace production.
@@ -196,7 +197,7 @@ installed gateway have not been switched over.
 
 ## Completion target
 
-The requested target is **361/361 verified native components (100%)**.
+The requested target is **all inventoried native components (currently 365/365, 100%)**.
 The source-bound report and its live-source match flag are authoritative.
 The earlier 55/361 checkpoint described below is historical; the completion target remains open.
 The source-bound report covers formatting, strict Clippy, seven native tests and

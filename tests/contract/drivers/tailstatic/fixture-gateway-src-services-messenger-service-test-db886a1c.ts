@@ -234,6 +234,81 @@ function setup() {
 try {
 await (async()=>{
 
+    const { c, room, message } = setup();
+    room.events = [message('$one'), message('$two'), message('$three')];
+    room.receipts = {
+      '$one': { '@bob:test': { ts: 100 } },
+      '$two': { '@bob:test': { ts: 200 } },
+      '$three': { '@bob:test': { ts: 300 } },
+    } as any;
+    const messages = c.messages('!room:test');
+    __jait_capture(0, (messages[0].readBy));
+    __jait_capture(1, (messages[2].readBy));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_68_3": {
+
+
+function setup() {
+  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
+  const c = (service as any).connection('test');
+  c.status = 'ready';
+  c.session = { userId: '@alice:test' };
+  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
+  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
+  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
+  c.rooms.set('!room:test', room);
+  return { c, room, message };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const { c, room, message } = setup();
+    room.events = [message('$one'), message('$two'), message('$three')];
+    room.events.push({ event_id: '$redact', type: 'm.room.redaction', content: { redacts: '$one' } } as any);
+    room.receipts = { '$three': { '@bob:test': { ts: 300 } } } as any;
+    const messages = c.messages('!room:test');
+    __jait_capture(0, (messages.map((m: any) => m.id)));
+    __jait_capture(1, (messages[0].readBy));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_messenger_service_test_ts_77_3": {
+
+
+function setup() {
+  const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', __jait_original_url)));
+  const c = (service as any).connection('test');
+  c.status = 'ready';
+  c.session = { userId: '@alice:test' };
+  c.client = { doRequest: vi.fn(), sendMessage: vi.fn().mockResolvedValue('$edit'), sendEvent: vi.fn().mockResolvedValue('$reaction'), redactEvent: vi.fn().mockResolvedValue('$redaction'), leaveRoom: vi.fn().mockResolvedValue(undefined) };
+  const message = (id: string, sender = '@alice:test', content = { body: 'original', msgtype: 'm.text' }) => ({ event_id: id, sender, type: 'm.room.message', origin_server_ts: 1, content });
+  const room = { summary: { id: '!room:test', membership: 'join' }, events: [message('$one')], states: [], receipts: {}, previous: 'page1' };
+  c.rooms.set('!room:test', room);
+  return { c, room, message };
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
     const { c } = setup();
     await c.command({ action: 'remove', roomId: '!room:test' });
     __jait_capture(0, (c.client.leaveRoom.mock.calls));

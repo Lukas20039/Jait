@@ -31,7 +31,7 @@ const peersSource = [
   '}',
   'export async function fetchOpenAIModels(apiKey: string, baseUrl: string) { return respond("openai", [apiKey, baseUrl]); }',
   'export async function fetchOpenRouterModels(apiKey: string) { return respond("openrouter", [apiKey]); }',
-  'export async function fetchOllamaModels(baseUrl: string) { return respond("ollama", [baseUrl]); }',
+  'export async function fetchOllamaModels(baseUrl: string, options: unknown) { return respond("ollama", [baseUrl, options]); }',
   'export async function fetchOmniRouteModels(apiKey: string, baseUrl: string) { return respond("omniroute", [apiKey, baseUrl]); }',
   '',
 ].join('\n');
@@ -88,6 +88,7 @@ export async function dispatch(call: any): Promise<unknown> {
         config: configFrom(payload.config),
         apiKeys: payload.apiKeys,
         fallbackModels: payload.fallbackModels ?? [],
+        includeCloud: payload.includeCloud,
       });
       return { models, calls: state.__jaitModelsCalls };
     }

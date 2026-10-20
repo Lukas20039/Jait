@@ -11,6 +11,7 @@ import type { SessionInfo } from '@/hooks/useChat'
 import type { ProjectSearchResults, ProjectSession, ProjectRecord } from '@/hooks/useProjects'
 import type { ActiveProjectState } from '@/lib/active-project'
 import type { AutomationRepository } from '@/lib/automation-repositories'
+import type { SessionWaitMap } from '@/lib/session-waits'
 import {
   DEVELOPER_SIDEBAR_MIN_WIDTH,
   clampDeveloperSidebarWidth,
@@ -53,6 +54,8 @@ interface DeveloperSidebarsProps {
   approvalSessionIds?: ReadonlySet<string>
   /** IDs of sessions with an open `user.ask` question awaiting an answer. */
   questionSessionIds?: ReadonlySet<string>
+  /** Every known wait reason per session (question, consent, browser, terminal, …). */
+  sessionWaits?: SessionWaitMap
   sidebarRef: RefObject<HTMLElement | null>
   onAssignRepository: (projectId: string) => void
   onArchiveSession: (sessionId: string) => void
@@ -117,6 +120,7 @@ export function DeveloperSidebars({
   streamingSessionIds,
   approvalSessionIds,
   questionSessionIds,
+  sessionWaits,
   sidebarRef,
   onAssignRepository,
   onArchiveSession,
@@ -240,6 +244,7 @@ export function DeveloperSidebars({
               streamingSessionIds={streamingSessionIds}
               approvalSessionIds={approvalSessionIds}
               questionSessionIds={questionSessionIds}
+              sessionWaits={sessionWaits}
             />
           </ErrorBoundary>
           <div

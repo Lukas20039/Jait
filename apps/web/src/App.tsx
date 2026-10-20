@@ -1,6 +1,7 @@
 import { handleMessengerNotification } from '@/lib/messenger/notification-actions'
 import { applyPendingApprovalEvent } from '@/lib/pending-approvals'
 import { applyPendingQuestionEvent, pendingQuestionSessionIds } from '@/lib/pending-questions'
+import { applySessionWaitEvent, type SessionWaitMap } from '@/lib/session-waits'
 import { safeNotificationLink } from '@jait/shared'
 import { openNotification, subscribeNotificationNavigation, retryNotificationNavigation, androidNotificationBridge, setAndroidNotificationContext, watchAndroidNotifications } from '@/lib/notification-navigation'
 import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo, type FocusEvent } from 'react'
@@ -680,6 +681,15 @@ function App() {
   useEffect(() => { setPendingQuestions(new Map()) }, [token])
   const handleUserQuestionEvent = useCallback((event: { type: string; payload: unknown }) => {
     setPendingQuestions((prev) => applyPendingQuestionEvent(prev, event))
+  }, [])
+  // Why each chat is currently stopped, in one channel: a `user.ask` question,
+  // a tool consent prompt, a secret prompt, the user holding browser control, a
+  // terminal blocked on an interactive prompt, or (non-blocking) a running
+  // background command. The chat list renders a single reason-aware icon.
+  const [sessionWaits, setSessionWaits] = useState<SessionWaitMap>(() => new Map())
+  useEffect(() => { setSessionWaits(new Map()) }, [token])
+  const handleSessionWaitEvent = useCallback((event: { type: string; payload: unknown }) => {
+    setSessionWaits((prev) => applySessionWaitEvent(prev, event))
   }, [])
   const [streamingSessionIds, setStreamingSessionIds] = useState<Set<string>>(() => new Set())
   useEffect(() => {
@@ -2073,6 +2083,7 @@ function App() {
     onSessionStreamingSnapshot: handleSessionStreamingSnapshot,
     onConsentEvent: handleConsentEvent,
     onUserQuestionEvent: handleUserQuestionEvent,
+    onSessionWaitEvent: handleSessionWaitEvent,
     onAgentHaltEvent: agentControl.applyEvent,
     onThreadEvent: useCallback((type: string, payload: Record<string, unknown>) => {
       if (type.startsWith('project.') || type.startsWith('chat.')) {
@@ -5560,6 +5571,7 @@ function App() {
                       streamingSessionIds={streamingSessionIds}
                       approvalSessionIds={approvalSessionIds}
                       questionSessionIds={questionSessionIds}
+                      sessionWaits={sessionWaits}
                       sidebarRef={sidebarRef}
                       onAssignRepository={(projectId) => {
                         void handleAssignProjectRepository(projectId)
@@ -5981,6 +5993,7 @@ function App() {
                       streamingSessionIds={streamingSessionIds}
                       approvalSessionIds={approvalSessionIds}
                       questionSessionIds={questionSessionIds}
+                      sessionWaits={sessionWaits}
                     />
                   </ErrorBoundary>
                 }

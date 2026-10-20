@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Minimize2, RotateCcw, Settings2 } from 'lucide-react'
 import { BrowserViewLayout } from '@/components/remote/browser-view-layout'
 import { NoVncSessionView } from '@/components/remote/no-vnc-session-view'
 import { apiFetch } from '@/lib/api-fetch'
@@ -19,9 +20,11 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
   data?: Record<string, unknown>; sessionId?: string | null; authToken?: string | null; autoOpen: boolean
 }) {
   const record = (data?.browserSession ?? (liveViewUrl(data?.url) ? { ...data, previewUrl: data?.url, controller: data?.sharedWithAgent ? 'agent' : 'user' } : undefined)) as Record<string, unknown> | undefined
-  const id = typeof record?.sessionId === 'string' ? record.sessionId : sessionId
+  const id = sessionId ?? (typeof record?.sessionId === 'string' ? record.sessionId : undefined)
   const browserId = typeof data?.browserId === 'string' ? data.browserId : undefined
   const [expanded, setExpanded] = useState(autoOpen)
+  const [controlsContainer, setControlsContainer] = useState<HTMLDivElement | null>(null)
+  const optionsRef = useRef<HTMLDetailsElement>(null)
   const [state, setState] = useState<BrowserState | null>(() => id && liveViewUrl(record?.previewUrl) ? {
     sessionId: id, browserId, url: liveViewUrl(record?.previewUrl), sharedWithAgent: record?.controller === 'agent', verified: false,
   } : null)
@@ -30,7 +33,7 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
   const headers = authToken ? { Authorization: `Bearer ${authToken}` } : undefined
 
   useEffect(() => {
-    if (!id || !expanded) return
+    if (!id) return
     let cancelled = false
     const controller = new AbortController()
     let timer: ReturnType<typeof setTimeout>
@@ -39,7 +42,7 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
         const response = await apiFetch(`${getApiUrl()}/api/preview/session/${encodeURIComponent(id)}`, { headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined, signal: controller.signal })
         if (!response.ok) { if (!cancelled) setState(null); return }
         const { session } = await response.json()
-        if (!cancelled) setState(session?.status === 'ready' && (!browserId || session.browserId === browserId) ? {
+        if (!cancelled) setState(session?.status === 'ready' ? {
           sessionId: id, browserId: session.browserId, url: liveViewUrl(session.url), sharedWithAgent: session.sharedWithAgent === true, verified: true, currentUrl: session.metrics?.url ?? session.target,
         } : null)
       } catch { /* Leave the last live view available during a temporary disconnect. */ }
@@ -47,7 +50,7 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
     }
     void load()
     return () => { cancelled = true; clearTimeout(timer); controller.abort() }
-  }, [id, browserId, authToken, expanded])
+  }, [id, authToken])
 
   const setShared = async () => {
     if (!state?.verified || busy) return
@@ -81,22 +84,50 @@ export function ChatBrowserView({ data, sessionId, authToken, autoOpen }: {
     finally { setBusy(false) }
   }
   if (!id) return null
-  return (
-    <div className="border-b border-border/40">
-      <div className="flex flex-wrap items-center gap-2 px-3 py-2">
-        <button type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)} className="font-medium text-cyan-600 hover:underline">{expanded ? 'Hide browser' : 'Show browser'}</button>
-        {expanded && <button type="button" disabled={busy} onClick={() => void restartBrowser()} className="rounded border px-2 py-1 disabled:opacity-50">Restart browser</button>}
-        {state?.url && <>
-          <span className="ml-auto text-muted-foreground">{state.sharedWithAgent ? 'Agent is controlling' : 'You are controlling'}</span>
-          <button type="button" disabled={busy || !state.verified} onClick={() => void setShared()} className="rounded border px-2 py-1 disabled:opacity-50">{busy ? 'Changing control…' : state.sharedWithAgent ? 'Take control' : 'Share with agent'}</button>
-        </>}
+  const controlLabel = state?.sharedWithAgent ? 'Take control' : 'Share with agent'
+  const controls = <>
+    <button type="button"
+      title={`${state?.sharedWithAgent ? 'Agent is controlling' : 'You are controlling'} · ${controlLabel}`}
+      disabled={busy || !state?.verified} onClick={() => void setShared()}
+      className="h-8 shrink-0 whitespace-nowrap rounded border px-2 hover:bg-muted disabled:opacity-50">
+      {controlLabel}
+    </button>
+    <details ref={optionsRef} className="relative shrink-0" onKeyDown={event => {
+      if (event.key === 'Escape' && optionsRef.current) { optionsRef.current.open = false; optionsRef.current.querySelector('summary')?.focus() }
+    }}>
+      <summary aria-label="Browser view options" title="Browser view options"
+        className="flex h-8 cursor-pointer list-none items-center rounded border px-2 hover:bg-muted [&::-webkit-details-marker]:hidden">
+        <Settings2 className="h-4 w-4" />
+      </summary>
+      <div className="absolute right-0 top-10 z-50 w-72 max-w-[calc(100vw-2rem)] space-y-3 rounded-xl border bg-popover p-3 text-popover-foreground shadow-xl">
+        <div className="text-xs font-medium">Browser view</div>
+        <div ref={setControlsContainer} className="space-y-2" />
+        <button type="button" disabled={busy} onClick={() => void restartBrowser()}
+          className="flex w-full items-center gap-2 rounded border px-2 py-2 text-xs hover:bg-muted disabled:opacity-50">
+          <RotateCcw className="h-3.5 w-3.5" />Restart browser
+        </button>
       </div>
-      {error && <p role="alert" className="px-3 pb-2 text-destructive">{error}</p>}
-      {expanded && (state?.url ? <div className="flex h-[420px] min-h-64 max-h-[65vh] w-full flex-col">
-        <BrowserViewLayout addressBar={{ sessionId: state.sessionId, authToken, currentUrl: state.currentUrl, sharedWithAgent: state.sharedWithAgent, disabled: busy || !state.verified }}>
-          <NoVncSessionView source={state.url} title="Agent browser" viewOnly={state.sharedWithAgent || busy || !state.verified} className="h-full w-full border-0 bg-white" />
+    </details>
+    <button type="button" aria-label="Minimize browser" title="Minimize browser" aria-expanded={expanded}
+      onClick={() => { if (optionsRef.current) optionsRef.current.open = false; setExpanded(false) }}
+      className="flex h-8 shrink-0 items-center rounded border px-2 hover:bg-muted">
+      <Minimize2 className="h-4 w-4" />
+    </button>
+  </>
+  return (
+    <section aria-label="Chat browser" data-browser-panel data-browser-minimized={!expanded}
+      className={expanded
+        ? 'relative z-30 mx-auto mb-1 mt-3 flex h-[min(480px,55vh)] max-h-[65%] w-[calc(100%-1.5rem)] max-w-3xl shrink-0 flex-col rounded-xl border border-border bg-background text-xs shadow-lg [&:fullscreen]:m-0 [&:fullscreen]:h-screen [&:fullscreen]:max-h-none [&:fullscreen]:w-screen [&:fullscreen]:max-w-none'
+        : 'absolute left-3 top-3 z-30 h-[90px] w-40 overflow-hidden rounded-lg border border-border bg-background text-xs shadow-lg'}>
+      <div className={expanded ? 'min-h-0 flex-1 [&_[data-browser-layout]]:rounded-xl' : 'h-full w-full pointer-events-none'} inert={!expanded ? true : undefined}>
+        <BrowserViewLayout compact={!expanded} addressBar={{ sessionId: id, authToken, currentUrl: state?.currentUrl, sharedWithAgent: state?.sharedWithAgent === true, disabled: busy || !state?.verified, controls }}>
+          {state?.url ? <NoVncSessionView source={state.url} title="Agent browser" controlsContainer={controlsContainer}
+            hideControls={!expanded} viewOnly={state.sharedWithAgent || busy || !state.verified} className="h-full w-full rounded-b-xl border-0 bg-white" />
+            : <p className="p-3 text-muted-foreground">No live browser is available for this chat.</p>}
         </BrowserViewLayout>
-      </div> : <p className="px-3 pb-3 text-muted-foreground">No live browser is available for this chat.</p>)}
-    </div>
+      </div>
+      {expanded && error && <p role="alert" className="absolute bottom-0 inset-x-0 rounded-b-xl bg-background/95 px-3 py-2 text-destructive">{error}</p>}
+      {!expanded && <button type="button" aria-label="Expand browser" aria-expanded={false} onClick={() => setExpanded(true)} className="absolute inset-0 z-50 cursor-pointer rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" />}
+    </section>
   )
 }

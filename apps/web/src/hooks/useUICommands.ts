@@ -185,6 +185,12 @@ interface UseUICommandsOptions {
   onConsentEvent?: (event: { type: string; payload: unknown }) => void
   /** Called when the gateway broadcasts a `user.ask` question lifecycle event. */
   onUserQuestionEvent?: (event: { type: string; payload: unknown }) => void
+  /**
+   * Called when the gateway reports that a chat started or stopped waiting on
+   * something (question, consent, secret, browser control, terminal input,
+   * background command) — the chat-list icon is driven from this.
+   */
+  onSessionWaitEvent?: (event: { type: string; payload: unknown }) => void
   /** Called with the authoritative agent-control state after a halt/resume. */
   onAgentHaltEvent?: (payload: unknown) => void
   /** Called when the gateway broadcasts a thread lifecycle event. */
@@ -224,6 +230,7 @@ export function useUICommands(opts: UseUICommandsOptions) {
     onSessionStreamingSnapshot,
     onConsentEvent,
     onUserQuestionEvent,
+    onSessionWaitEvent,
     onAgentHaltEvent,
     onThreadEvent,
     onFsChanges,
@@ -248,6 +255,8 @@ export function useUICommands(opts: UseUICommandsOptions) {
   onConsentEventRef.current = onConsentEvent
   const onUserQuestionEventRef = useRef(onUserQuestionEvent)
   onUserQuestionEventRef.current = onUserQuestionEvent
+  const onSessionWaitEventRef = useRef(onSessionWaitEvent)
+  onSessionWaitEventRef.current = onSessionWaitEvent
   const onAgentHaltEventRef = useRef(onAgentHaltEvent)
   onAgentHaltEventRef.current = onAgentHaltEvent
   const onThreadEventRef = useRef(onThreadEvent)
@@ -364,6 +373,11 @@ export function useUICommands(opts: UseUICommandsOptions) {
         // Pending `user.ask` questions — the sidebar badges the owning chat so a
         // question raised in a background chat is visible without opening it.
         onUserQuestionEventRef.current?.(msg)
+      } else if (['session-wait.updated', 'session-wait.snapshot'].includes(msg.type)) {
+        // One reason-aware "this chat is stopped because…" channel feeds the
+        // chat-list icon: questions, consent, secrets, browser control,
+        // terminal prompts and background commands all report here.
+        onSessionWaitEventRef.current?.(msg)
       } else if (msg.type === 'agent.halted') {
         // Owner-wide kill switch changed on some device. Driven from the server
         // payload so a halt started in another tab (or a resume) lands here too.
@@ -763,6 +777,10 @@ export function useUICommands(opts: UseUICommandsOptions) {
         ws.send(JSON.stringify({
           type: 'resource.subscribe',
           payload: { resource: 'root:/pending-questions' },
+        }))
+        ws.send(JSON.stringify({
+          type: 'resource.subscribe',
+          payload: { resource: 'root:/session-wait' },
         }))
         ws.send(JSON.stringify({ type: 'resource.subscribe', payload: { resource: 'root:/agent-control' } }))
         ws.send(JSON.stringify({

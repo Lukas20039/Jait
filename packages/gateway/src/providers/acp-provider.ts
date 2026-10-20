@@ -385,6 +385,7 @@ export class AcpProvider implements CliProviderAdapter {
   private authProbeInFlight: Promise<ProviderAuthStatus> | null = null;
   private activeLoginAuthProbeInFlight: Promise<ProviderAuthStatus> | null = null;
   private authenticatedHint: boolean | null = null;
+  private acpStartupError: string | undefined;
 
   constructor(config: AcpProviderConfig) {
     const providerType = config.providerType ?? config.id;
@@ -468,8 +469,8 @@ export class AcpProvider implements CliProviderAdapter {
       }
     }
 
-    this.info.available = true;
-    this.info.unavailableReason = undefined;
+    this.info.available = !this.acpStartupError;
+    this.info.unavailableReason = this.acpStartupError;
     return true;
   }
 
@@ -615,7 +616,13 @@ export class AcpProvider implements CliProviderAdapter {
     }
 
     const providerCliAuthenticated = await this.getProviderCliAuthenticated();
-    const probe = await this.probeAcpAuth().catch(() => null);
+    this.acpStartupError = undefined;
+    const probe = await this.probeAcpAuth().catch((error) => {
+      this.acpStartupError = `Unable to start ${this.info.name}: ${extractErrorMessage(error, "ACP initialization failed")}`;
+      return null;
+    });
+    this.info.available = Boolean(probe);
+    this.info.unavailableReason = this.acpStartupError;
     const login = (probe?.authMethods.length ?? 0) > 0;
     const acpLogout = Boolean(probe?.initialized.agentCapabilities?.auth?.logout);
     probe?.child.kill();
@@ -629,9 +636,9 @@ export class AcpProvider implements CliProviderAdapter {
       logout,
       deviceCode: false,
       authenticated,
-      detail: probe
+      detail: this.acpStartupError ?? (probe
         ? formatAcpAuthDetail(this.info.name, authenticated)
-        : formatCliAuthDetail(this.info.name, authenticated, logout),
+        : formatCliAuthDetail(this.info.name, authenticated, logout)),
     };
     this.cachedAuthStatus = { status: result, expiresAt: Date.now() + AUTH_STATUS_TTL_MS };
     return result;

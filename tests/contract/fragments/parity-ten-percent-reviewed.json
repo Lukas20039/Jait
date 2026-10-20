@@ -112,7 +112,7 @@
     {
       "id": "packages/gateway/src/providers/provider-auth.test.ts:110:3",
       "status": "verified",
-      "parity_review": "Passes the two original newline-joined lines Opening https://claude.ai/oauth/authorize in your browser… and Enter the authorization code from your browser:. Captures the complete result first, then the type of details.userCode. Rust requires the literal URL, requiresCodeInput true and exact inputPrompt, followed by undefined userCode.\n2 original mandatory assertion site(s); 2 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(details).toMatchObject({\n      verificationUri: \"https://claude.ai/oauth/authorize\",\n      requiresCodeInput: true,\n      inputPrompt: \"Enter the authorization code from your browser\",\n    }). [2] expect(details.userCode).toBeUndefined().\nSetup, hooks, teardown and mock boundary: There are no describe hooks and no mocks in this original file. Fixture49 imports the real provider-auth exports from the original production module. The inline GH_TOKEN try/finally at line 201 is retained only in that declaration. The disposable test environment changes unasserted home/PATH contents; the actual asserted PATH/token expressions still execute.\nMatcher and serialization argument: All asserted fields are own plain string/boolean properties. Rust subset is appropriate for this original toMatchObject; additional unasserted properties are allowed by both. The captureType helper preserves undefined versus null and every non-null object is kept non-null. Erasing an object payload cannot turn it into the asserted undefined/null value.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Passes the two original newline-joined lines Opening https://claude.ai/oauth/authorize in your browser\u2026 and Enter the authorization code from your browser:. Captures the complete result first, then the type of details.userCode. Rust requires the literal URL, requiresCodeInput true and exact inputPrompt, followed by undefined userCode.\n2 original mandatory assertion site(s); 2 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(details).toMatchObject({\n      verificationUri: \"https://claude.ai/oauth/authorize\",\n      requiresCodeInput: true,\n      inputPrompt: \"Enter the authorization code from your browser\",\n    }). [2] expect(details.userCode).toBeUndefined().\nSetup, hooks, teardown and mock boundary: There are no describe hooks and no mocks in this original file. Fixture49 imports the real provider-auth exports from the original production module. The inline GH_TOKEN try/finally at line 201 is retained only in that declaration. The disposable test environment changes unasserted home/PATH contents; the actual asserted PATH/token expressions still execute.\nMatcher and serialization argument: All asserted fields are own plain string/boolean properties. Rust subset is appropriate for this original toMatchObject; additional unasserted properties are allowed by both. The captureType helper preserves undefined versus null and every non-null object is kept non-null. Erasing an object payload cannot turn it into the asserted undefined/null value.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
       "rust_cases": [
         {
           "id": "tailstatic_packages_gateway_src_providers_provider_auth_test_ts_110_3",
@@ -266,372 +266,372 @@
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:34:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:53:3",
       "status": "verified",
-      "parity_review": "Reviews all six it.each rows in order: (gpt-4o,true), (gpt-4o-mini,true), (o1-preview,true), (o3-mini,true), (o4-mini,true), (chatgpt-4o-latest,true). Each peer binds both original id and expected, calls the real isChatCapableOpenAIModelId(id) once and captures the boolean. Its Rust rule owns literal true, equivalent to that row's expected parameter. Six actual Rust cases are required for this ONE declaration; credit is not multiplied by six.\n1 original mandatory assertion site(s); 6 mandatory comparisons across 6 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(isChatCapableOpenAIModelId(id)).toBe(expected).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: Only primitive string/boolean equality is used at this site; no NaN, signed-zero, function or object structural-equality shortcut is involved. No network double is called for any row.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each0",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each0",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each1",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each1",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each2",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each2",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each4",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each4",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each5",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each5",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:45:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:64:3",
       "status": "verified",
-      "parity_review": "Reviews all ten it.each inputs in order: text-embedding-3-large, dall-e-3, whisper-1, tts-1, gpt-4o-realtime-preview, gpt-4o-audio-preview, gpt-4o-transcribe, gpt-image-1, gpt-3.5-turbo:ft-acme, and empty string. Each peer binds its original id and captures one call to isChatCapableOpenAIModelId(id); every Rust rule expects false. All ten peers belong to this ONE declaration.\n1 original mandatory assertion site(s); 10 mandatory comparisons across 10 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(isChatCapableOpenAIModelId(id)).toBe(false).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: Only primitive string/boolean equality is used at this site; no NaN, signed-zero, function or object structural-equality shortcut is involved. No network double is called for any row.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each0",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each0",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each1",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each1",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each2",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each2",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each4",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each4",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each5",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each5",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each6",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each6",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each7",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each7",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each8",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each8",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each9",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each9",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:62:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:81:3",
       "status": "verified",
-      "parity_review": "Installs the same JSON Response containing ordered data entries gpt-4o and gpt-4o-mini owned_by openai, gpt-4o-realtime-preview, dall-e-3, whisper-1, o3-mini and text-embedding-3-large. Awaits fetchOpenAIModels(\"k\",\"https://api.openai.com/v1\"). Captures models.map(id), models[0], models[1], models[2], then models[2].description type. The expected sorted ids and all four fields of each of the three model objects remain Rust literals, including undefined description for o3-mini and reasoning booleans false,false,true.\n5 original mandatory assertion site(s); 5 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models.map((m) => m.id)).toEqual([\"gpt-4o\", \"gpt-4o-mini\", \"o3-mini\"]). [2] expect(models[0]).toEqual({ id: \"gpt-4o\", name: \"gpt-4o\", description: \"by openai\", reasoningEffortSupported: false }). [3] expect(models[1]).toEqual({ id: \"gpt-4o-mini\", name: \"gpt-4o-mini\", description: \"by openai\", reasoningEffortSupported: false }). [4] expect(models[2]).toEqual({ id: \"o3-mini\", name: \"o3-mini\", description: undefined, reasoningEffortSupported: true }). [5] expect(models[2].description).toBeUndefined().\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases. Undefined-property elision in toEqual matches Vitest; the fifth explicit toBeUndefined remains separate.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_62_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_81_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:84:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:103:3",
       "status": "verified",
-      "parity_review": "Installs JSON {error:\"unauthorized\"} with HTTP 401, then awaits fetchOpenAIModels(\"bad-key\",\"https://api.openai.com/v1\") through captureResolved. The only original assertion is resolves.toEqual([]); captureResolved awaits fulfillment and propagates rejection, so a throw/rejection cannot satisfy the [] comparison.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchOpenAIModels(\"bad-key\", \"https://api.openai.com/v1\")).resolves.toEqual([]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases. No real unauthorized network request runs; the original also mocks fetch.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_84_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_103_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:89:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:108:3",
       "status": "verified",
-      "parity_review": "Installs JSON data:[{id:\"gpt-4o\"}], awaits fetchOpenAIModels(\"k\",\"https://api.openai.com/v1///\"), then captures the real spy's mock.calls. Rust requires some complete two-argument call with exact URL https://api.openai.com/v1/models and nested objectContaining headers containing Authorization:\"Bearer k\". Both outer options and inner headers are explicitly asymmetric in the original, so extra fields are permitted at both levels.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock).toHaveBeenCalledWith(\n      \"https://api.openai.com/v1/models\",\n      expect.objectContaining({ headers: expect.objectContaining({ Authorization: \"Bearer k\" }) }),\n    ).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The recursive subset issue documented for line 240 does not weaken this rule: both nested objects are explicit objectContaining and the asserted leaf is an exact primitive string. Unasserted signal/options are ignored by both. The original asserts existence of a matching call, not exact trace length.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_89_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_108_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:98:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:117:3",
       "status": "verified",
-      "parity_review": "Installs data:[{id:\"gpt-4o\"}], awaits fetchOpenAIModels(\"k\",\"https://api.openai.com/v1\") twice sequentially, then captures the fetch spy trace for exactly one call. No reset is inserted between the two cache calls.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock).toHaveBeenCalledTimes(1).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_98_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_117_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:105:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:124:3",
       "status": "verified",
-      "parity_review": "Installs data:[{id:\"gpt-4o\"}], awaits the api.openai.com/v1 call, replaces only fetch with a new response/spy containing gpt-4o-mini, then awaits fetchOpenAIModels(\"k\",\"https://proxy.example.com/v1\"). Captures second spy calls before result ids; Rust requires one second-spy call and exactly [gpt-4o-mini]. The first call and cache state remain real.\n2 original mandatory assertion site(s); 2 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock2).toHaveBeenCalledTimes(1). [2] expect(result.map((m) => m.id)).toEqual([\"gpt-4o-mini\"]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument. The second ordered-id comparison also remains independent of the trace count.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_105_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_124_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:114:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:133:3",
       "status": "verified",
-      "parity_review": "Installs data:[{id:\"qwen3-coder\"},{id:\"glm-5\"}] in that original order, awaits fetchOpenAIModels(\"k\",\"https://compatible.example.com/v1\"), then captures ids and checks ordered [glm-5,qwen3-coder]. Neither the response order nor the compatible endpoint is normalized to a golden input.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models.map((model) => model.id)).toEqual([\"glm-5\", \"qwen3-coder\"]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_114_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_133_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:120:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:139:3",
       "status": "verified",
-      "parity_review": "Preserves the input-sensitive async fetch mock: String(input).includes(\"first\") selects first-model, otherwise second-model, wrapped in a 200 JSON Response. Executes the original Promise.all argument order: fetchOpenAIModels(\"first-key\",\"https://first.example.com/v1\"), then fetchOpenAIModels(\"second-key\",\"https://second.example.com/v1\"). Captures first ids, second ids, then calls trace; Rust expects [first-model], [second-model], then exactly 2 calls. No in-flight fetcher/cache implementation is mocked.\n3 original mandatory assertion site(s); 3 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(first.map((model) => model.id)).toEqual([\"first-model\"]). [2] expect(second.map((model) => model.id)).toEqual([\"second-model\"]). [3] expect(fetchMock).toHaveBeenCalledTimes(2).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument. This retains the original concurrent scheduling and endpoint separation; it does not claim a deterministic interleaving beyond what the original asserts.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_120_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_139_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:143:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:162:3",
       "status": "verified",
-      "parity_review": "Builds 150 entries with id vendor/model-${i}, name Model ${i} except each i divisible by 7, then appends {id:\"vendor/model-free:free\",name:\"Free Variant\"}. Installs that body, awaits fetchOpenRouterModels(\"key\"), captures models for length 100, then the every(!id.includes(\":free\")) boolean for true, then finds vendor/model-0 and captures fallback?.name for literal model-0. All dynamic generated inputs and their order are unchanged.\n3 original mandatory assertion site(s); 3 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models).toHaveLength(100). [2] expect(models.every((m) => !m.id.includes(\":free\"))).toBe(true). [3] expect(fallback?.name).toBe(\"model-0\").\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. The every/find computations still run against real outputs in TypeScript; Rust owns the three verdicts. Optional fallback absence produces undefined and fails its mandatory toBe, so it is not an optional assertion.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_143_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_162_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:160:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:179:3",
       "status": "verified",
-      "parity_review": "Constructs longDescription as \"x\".repeat(200), installs data:[{id:\"vendor/m1\",name:\"M1\",description:longDescription}], awaits fetchOpenRouterModels(\"key\"), then captures models[0].description for exactly 80 UTF-16 units. The 200-character input is not replaced by a pre-truncated fixture.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models[0].description).toHaveLength(80).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. The original asserts length only, without exact description content.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_160_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_179_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:169:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:188:3",
       "status": "verified",
-      "parity_review": "Installs empty JSON body with HTTP 502, then captureResolved awaits fetchOpenRouterModels(\"k\") for the original resolves.toEqual([]). A rejection stops the peer and fails rather than becoming an empty successful result.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchOpenRouterModels(\"k\")).resolves.toEqual([]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_169_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_188_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:174:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:193:3",
       "status": "verified",
-      "parity_review": "Installs data:[{id:\"vendor/m1\"}], awaits fetchOpenRouterModels(\"k\") twice in original sequential order, then captures fetch spy calls and requires exactly 1. Cache reset remains before the test, never between calls.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock).toHaveBeenCalledTimes(1).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_174_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_193_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:183:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:202:3",
       "status": "verified",
-      "parity_review": "Installs ordered entries deepseek/deepseek-r1 owned_by deepseek, google/gemini-2.5-flash and openai/gpt-4o. Awaits fetchOmniRouteModels(\"k\",\"http://localhost:20128/v1\"), captures models[0] for {id:\"auto\",isDefault:true} subset, slice(1).map(id) for the three original catalogue ids in order, then find(deepseek/deepseek-r1)?.reasoningEffortSupported for true. The source data, manual alias behavior and optional-chain actual remain real.\n3 original mandatory assertion site(s); 3 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models[0]).toMatchObject({ id: \"auto\", isDefault: true }). [2] expect(models.slice(1).map((m) => m.id)).toEqual([\n      \"deepseek/deepseek-r1\",\n      \"google/gemini-2.5-flash\",\n      \"openai/gpt-4o\",\n    ]). [3] expect(models.find((m) => m.id === \"deepseek/deepseek-r1\")?.reasoningEffortSupported).toBe(true).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: All asserted fields are own plain string/boolean properties. Rust subset is appropriate for this original toMatchObject; additional unasserted properties are allowed by both. The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases. A missing deepseek entry yields undefined and fails the mandatory true rule.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_183_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_202_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:206:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:225:3",
       "status": "verified",
-      "parity_review": "Installs data:[{id:\"auto\"},{id:\"auto/coding\"},{id:\"openai/gpt-4o\"}], awaits fetchOmniRouteModels(\"\",\"http://localhost:20128/v1\"), captures filtered auto entries for length 1 then all ids for membership of auto/coding. This preserves the keyless input and both duplicate-prevention and catalogue-strategy assertions.\n2 original mandatory assertion site(s); 2 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models.filter((m) => m.id === \"auto\")).toHaveLength(1). [2] expect(models.map((m) => m.id)).toContain(\"auto/coding\").\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. Membership uses a primitive string, not reference containment. This declaration makes no Authorization-header assertion.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_206_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_225_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:214:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:233:3",
       "status": "verified",
-      "parity_review": "Generates all 400 ordered vendor/model-${i} response entries, awaits fetchOmniRouteModels(\"k\",\"http://localhost:20128/v1\"), then captures the complete models array for exact length 151. The default cap is observed from real module code, not supplied to the mock.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models).toHaveLength(151).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. The original length assertion alone does not prove catalogue ordering or which particular 150 entries survive.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_214_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_233_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:220:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:239:3",
       "status": "verified",
-      "parity_review": "Preserves resetModules -> stubEnv(\"OMNIROUTE_MAX_MODELS\",\"5\") -> fresh dynamic module import -> resetCapped -> 400 generated vendor/model-${i} entries -> await fetchCapped(\"k\",\"http://localhost:20128/v1\") -> capture models. Rust requires length 6. The peer adapts the import to vi.importFresh of the same production file; tailmock increments moduleEpoch and removes that file from require.cache before import. The observed 6 after a fresh default-cap static import is evidence the env-sensitive constant was actually re-evaluated. No return value is mocked.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models).toHaveLength(6).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. This establishes the reset/import behavior used by this single module-level cap read; it does not certify tailmock as a general substitute for Vitest's full module-graph reset. The original afterEach env restoration is retained.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_220_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_239_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:230:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:249:3",
       "status": "verified",
-      "parity_review": "Preserves resetModules -> stubEnv(\"OMNIROUTE_MAX_MODELS\",\"0\") -> fresh dynamic module import -> resetAll -> all 400 generated entries -> await fetchAll(\"k\",\"http://localhost:20128/v1\") -> capture models. Rust requires 401. vi.importFresh reloads the same env-reading production file; observing all 400 entries plus auto establishes the zero/unlimited branch rather than a literal shortcut.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models).toHaveLength(401).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The real implementation returns a dense array or primitive string here. Rust length matches its array cardinality or UTF-16 string length. Arbitrary custom array-like objects are outside this bounded declaration review. The module-reset claim is bounded to this env-sensitive file, not transitive-module invalidation in general. The afterEach env restoration remains mandatory teardown.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_230_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_249_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:247:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:266:3",
       "status": "verified",
-      "parity_review": "Installs an async fetch spy that throws new Error(\"ECONNREFUSED\") exactly as the original does; captureResolved awaits fetchOmniRouteModels(\"k\",\"http://localhost:20128/v1\") and Rust compares []. The production catch/recovery path still runs and the expected failure is not replaced with a successful mock [].\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchOmniRouteModels(\"k\", \"http://localhost:20128/v1\")).resolves.toEqual([]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases. The source exercises a mocked connection failure, not a real network service; rejection from the fetcher itself would still fail the peer.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_247_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_266_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
-        }
-      ]
-    },
-    {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:254:3",
-      "status": "verified",
-      "parity_review": "Installs empty JSON body with HTTP 503; captureResolved awaits fetchOmniRouteModels(\"k\",\"http://localhost:20128/v1\") and retains the sole original resolves.toEqual([]) assertion. The router aliases must not leak into the result for this response branch.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchOmniRouteModels(\"k\", \"http://localhost:20128/v1\")).resolves.toEqual([]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_254_3",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
-        }
-      ]
-    },
-    {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:259:3",
-      "status": "verified",
-      "parity_review": "Installs data:[{id:\"vendor/a\"}] with spy1, awaits the localhost:20128/v1 call twice, captures spy1 for exactly 1 call; installs data:[{id:\"vendor/b\"}] with spy2, awaits http://nas:20128/v1, captures spy2 for exactly 1 call then result ids for vendor/b membership. All sequential calls and the cache boundary remain intact.\n3 original mandatory assertion site(s); 3 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock1).toHaveBeenCalledTimes(1). [2] expect(fetchMock2).toHaveBeenCalledTimes(1). [3] expect(result.map((m) => m.id)).toContain(\"vendor/b\").\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument. The last assertion is primitive string membership, not full result equality; no extra ordering or result-length claim is added.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
       "id": "packages/gateway/src/providers/model-fetchers.test.ts:273:3",
       "status": "verified",
-      "parity_review": "Installs the original ordered models: llama3:8b with family llama/parameter_size 8B, qwen2 with family qwen, and naked without details. Awaits fetchOllamaModels(\"http://localhost:11434\"), then captures ids, descriptions at indices 0 and 1, and description type at index 2. Rust expects [llama3:8b,qwen2,naked], llama · 8B, qwen, undefined in exactly that order.\n4 original mandatory assertion site(s); 4 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(models.map((m) => m.id)).toEqual([\"llama3:8b\", \"qwen2\", \"naked\"]). [2] expect(models[0].description).toBe(\"llama · 8B\"). [3] expect(models[1].description).toBe(\"qwen\"). [4] expect(models[2].description).toBeUndefined().\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases. The captureType helper preserves undefined versus null and every non-null object is kept non-null. Erasing an object payload cannot turn it into the asserted undefined/null value.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
           "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_273_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:290:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:278:3",
       "status": "verified",
-      "parity_review": "Installs empty JSON body with HTTP 500, then captureResolved awaits fetchOllamaModels(\"http://localhost:11434\") and Rust compares []. Awaiting the original promise preserves its fulfillment requirement; no thrown error is silently accepted.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchOllamaModels(\"http://localhost:11434\")).resolves.toEqual([]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The observed values are ordinary data with strings, booleans, ordered dense arrays and explicit undefined markers. No getters, custom toJSON, symbol keys, cycles or nested class/date semantics participate; this does not certify those general serializer cases.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_290_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:295:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:292:3",
       "status": "verified",
-      "parity_review": "Installs models:[], awaits fetchOllamaModels(\"http://localhost:11434//\"), then captures fetch spy calls. Rust requires an exact two-argument call to http://localhost:11434/api/tags whose options contain signal matching any(AbortSignal). The production AbortController and its signal remain real; the serializer tags an actual AbortSignal only after instanceof AbortSignal.\n1 original mandatory assertion site(s); 1 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock).toHaveBeenCalledWith(\n      \"http://localhost:11434/api/tags\",\n      expect.objectContaining({ signal: expect.any(AbortSignal) }),\n    ).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The signal marker preserves the asserted built-in type for the concrete AbortController.signal produced here; aborted state, timeout firing and cancellation are not asserted by the original. A forged plain object colliding with wire marker keys, custom constructors or cross-realm signals are outside this bounded claim. Other option fields are legitimately ignored by objectContaining.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_295_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },
     {
-      "id": "packages/gateway/src/providers/model-fetchers.test.ts:304:3",
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:309:3",
       "status": "verified",
-      "parity_review": "Installs models:[{name:\"a\"}], awaits fetchOllamaModels(\"http://a:11434\"), captures first spy for exactly 1 call; replaces fetch with models:[{name:\"b\"}], awaits http://b:11434, captures second spy for exactly 1 call then returned ids for ordered [b]. No cache reset occurs between the distinct base URLs.\n3 original mandatory assertion site(s); 3 mandatory comparisons across 1 emitted Rust variant(s). Every slot executed exactly once in each focused run. There are 0 optional comparisons, 0 conditional rules and 0 completion guards. In original call order: [1] expect(fetchMock1).toHaveBeenCalledTimes(1). [2] expect(fetchMock2).toHaveBeenCalledTimes(1). [3] expect(result.map((m) => m.id)).toEqual([\"b\"]).\nSetup, hooks, teardown and mock boundary: For each original declaration/row, beforeEach resets all real model-fetcher caches; fixture47 calls its copied hook before the test body. Its finally runs the original afterEach in order: restore globalThis.fetch to saved originalFetch, restore all mocks, then unstub every environment variable. mockFetchOnce is copied with the same JSON.stringify(body), Response status selection (default 200; supplied 401/500/502/503), content-type application/json and async vi.fn returning that Response. vi.fn is the installed @vitest/spy implementation. Fetch is the original mock boundary: real catalogue filtering, mapping, caching and in-flight code is exercised. There is no real network request and no mocked fetcher result. Each expansion runs in its own peer process; no cross-declaration module state is asserted by the original.\nMatcher and serialization argument: The mock is the installed @vitest/spy fn, not a replacement of the production fetcher. Capturing mock.calls serializes the ordered trace immediately before teardown; Rust checks its cardinality. The original does not additionally assert every call argument. Full equality on returned ids remains an independent literal comparison.\nThis is reference-test equivalence only; final complete source-bound evidence is collected by the parent.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_304_3",
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_309_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/contracts/9884f914-abc5-4fac-810d-8c15a28123cd/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:314:3",
+      "status": "verified",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_314_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
+        }
+      ]
+    },
+    {
+      "id": "packages/gateway/src/providers/model-fetchers.test.ts:323:3",
+      "status": "verified",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
+      "rust_cases": [
+        {
+          "id": "tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_323_3",
+          "source": "tests/contract/tests/tail_static.rs",
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },

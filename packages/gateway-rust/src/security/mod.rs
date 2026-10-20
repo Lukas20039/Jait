@@ -14,3 +14,9 @@ pub mod trust_worker;
 pub mod path_guard;
 
 pub mod contracts;
+
+pub mod tool_permissions;
+
+pub mod consent_manager;
+
+pub mod tool_profiles;

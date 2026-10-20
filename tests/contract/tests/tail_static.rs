@@ -5035,403 +5035,453 @@ fn tailstatic_packages_gateway_src_providers_jait_provider_test_ts_398_3() {
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each0() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each0() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each0"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each1() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each1() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each1"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each2() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each2() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each2"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each4() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each4() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each4"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:34:3: accepts chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:53:3: accepts chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each5() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each5() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_34_3_each5"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_53_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each0() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each0() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each0"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each0"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each1() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each1() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each1"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each1"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each2() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each2() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each2"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each2"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each4() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each4() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each4"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each4"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each5() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each5() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each5"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each6() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each6() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each6"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each6"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each7() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each7() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each7"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each7"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each8() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each8() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each8"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each8"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:45:3: rejects non-chat model id %s
+// packages/gateway/src/providers/model-fetchers.test.ts:64:3: rejects non-chat model id %s
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each9() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each9() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_45_3_each9"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_64_3_each9"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:62:3: filters non-chat models, sorts by id, and maps to ProviderModelInfo
+// packages/gateway/src/providers/model-fetchers.test.ts:81:3: filters non-chat models, sorts by id, and maps to ProviderModelInfo
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_62_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_81_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_62_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_81_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["gpt-4o","gpt-4o-mini","o3-mini"]},{"matcher":"toEqual","negate":false,"expected":{"id":"gpt-4o","name":"gpt-4o","description":"by openai","reasoningEffortSupported":false}},{"matcher":"toEqual","negate":false,"expected":{"id":"gpt-4o-mini","name":"gpt-4o-mini","description":"by openai","reasoningEffortSupported":false}},{"matcher":"toEqual","negate":false,"expected":{"id":"o3-mini","name":"o3-mini","description":{"__jait_type":"undefined"},"reasoningEffortSupported":true}},{"matcher":"toBeUndefined","negate":false}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:84:3: returns empty array on non-ok response without throwing
+// packages/gateway/src/providers/model-fetchers.test.ts:103:3: returns empty array on non-ok response without throwing
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_84_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_103_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_84_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_103_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:89:3: strips trailing slashes from the base URL when issuing the request
+// packages/gateway/src/providers/model-fetchers.test.ts:108:3: strips trailing slashes from the base URL when issuing the request
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_89_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_108_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_89_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_108_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["https://api.openai.com/v1/models",{"__jait_matcher":"objectContaining","value":{"headers":{"__jait_matcher":"objectContaining","value":{"Authorization":"Bearer k"}}}}]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:98:3: serves the second call from cache when the base URL matches
+// packages/gateway/src/providers/model-fetchers.test.ts:117:3: serves the second call from cache when the base URL matches
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_98_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_117_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_98_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_117_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:105:3: re-fetches when the base URL changes
+// packages/gateway/src/providers/model-fetchers.test.ts:124:3: re-fetches when the base URL changes
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_105_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_124_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_105_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_124_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":["gpt-4o-mini"]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:114:3: keeps provider-specific model ids from compatible endpoints
+// packages/gateway/src/providers/model-fetchers.test.ts:133:3: keeps provider-specific model ids from compatible endpoints
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_114_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_133_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_114_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_133_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["glm-5","qwen3-coder"]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:120:3: fetches different compatible endpoints concurrently without sharing in-flight work
+// packages/gateway/src/providers/model-fetchers.test.ts:139:3: fetches different compatible endpoints concurrently without sharing in-flight work
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_120_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_139_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_120_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_139_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":["first-model"]},{"matcher":"toEqual","negate":false,"expected":["second-model"]},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:143:3: drops :free variants, caps at 100, and falls back to id-derived names
+// packages/gateway/src/providers/model-fetchers.test.ts:162:3: drops :free variants, caps at 100, and falls back to id-derived names
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_143_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_162_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_143_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_162_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":100},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"model-0"}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:160:3: truncates descriptions to 80 chars
+// packages/gateway/src/providers/model-fetchers.test.ts:179:3: truncates descriptions to 80 chars
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_160_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_179_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_160_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_179_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":80}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:169:3: returns empty array on non-ok response
+// packages/gateway/src/providers/model-fetchers.test.ts:188:3: returns empty array on non-ok response
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_169_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_188_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_169_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_188_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:174:3: serves repeat calls from cache
+// packages/gateway/src/providers/model-fetchers.test.ts:193:3: serves repeat calls from cache
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_174_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_193_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_174_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_193_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:183:3: keeps non-OpenAI model ids and prepends the routing aliases
+// packages/gateway/src/providers/model-fetchers.test.ts:202:3: keeps non-OpenAI model ids and prepends the routing aliases
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_183_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_202_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_183_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_202_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"id":"auto","isDefault":true}},{"matcher":"toEqual","negate":false,"expected":["deepseek/deepseek-r1","google/gemini-2.5-flash","openai/gpt-4o"]},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:206:3: does not duplicate auto if a future catalogue starts listing it
+// packages/gateway/src/providers/model-fetchers.test.ts:225:3: does not duplicate auto if a future catalogue starts listing it
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_206_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_225_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_206_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_225_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"auto/coding"}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:214:3: caps a very large catalogue
+// packages/gateway/src/providers/model-fetchers.test.ts:233:3: caps a very large catalogue
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_214_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_233_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_214_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_233_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":151}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:220:3: honours a custom OMNIROUTE_MAX_MODELS cap
+// packages/gateway/src/providers/model-fetchers.test.ts:239:3: honours a custom OMNIROUTE_MAX_MODELS cap
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_220_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_239_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_220_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_239_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":6}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:230:3: returns the full catalogue when OMNIROUTE_MAX_MODELS=0
+// packages/gateway/src/providers/model-fetchers.test.ts:249:3: returns the full catalogue when OMNIROUTE_MAX_MODELS=0
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_230_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_249_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_230_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_249_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":401}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:240:3: omits the Authorization header when no key is configured
-#[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_240_3() {
-    tail_assertions::check(
-        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_240_3"#,
-        r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://localhost:20128/v1/models",{"__jait_matcher":"objectContaining","value":{"headers":{}}}]}]"#,
-    );
-}
-
-// packages/gateway/src/providers/model-fetchers.test.ts:247:3: returns nothing when the router is not running, rather than dead aliases
-#[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_247_3() {
-    tail_assertions::check(
-        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_247_3"#,
-        r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
-    );
-}
-
-// packages/gateway/src/providers/model-fetchers.test.ts:254:3: returns empty array on non-ok response
-#[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_254_3() {
-    tail_assertions::check(
-        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_254_3"#,
-        r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
-    );
-}
-
-// packages/gateway/src/providers/model-fetchers.test.ts:259:3: isolates cache by base URL
+// packages/gateway/src/providers/model-fetchers.test.ts:259:3: omits the Authorization header when no key is configured
 #[test]
 fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
         r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_259_3"#,
-        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"vendor/b"}]"#,
+        r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://localhost:20128/v1/models",{"__jait_matcher":"objectContaining","value":{"headers":{}}}]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:273:3: maps tag entries and joins detail fields with separator
+// packages/gateway/src/providers/model-fetchers.test.ts:266:3: returns nothing when the router is not running, rather than dead aliases
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_266_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_266_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:273:3: returns empty array on non-ok response
 #[test]
 fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_273_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
         r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_273_3"#,
-        r#"[{"matcher":"toEqual","negate":false,"expected":["llama3:8b","qwen2","naked"]},{"matcher":"toBe","negate":false,"expected":"llama · 8B"},{"matcher":"toBe","negate":false,"expected":"qwen"},{"matcher":"toBeUndefined","negate":false}]"#,
-    );
-}
-
-// packages/gateway/src/providers/model-fetchers.test.ts:290:3: returns empty array on non-ok response
-#[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_290_3() {
-    tail_assertions::check(
-        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_290_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:295:3: strips trailing slashes from base URL when calling /api/tags
+// packages/gateway/src/providers/model-fetchers.test.ts:278:3: isolates cache by base URL
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_295_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_295_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_278_3"#,
+        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toContain","negate":false,"expected":"vendor/b"}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:292:3: maps tag entries and joins detail fields with separator
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_292_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":["llama3:8b","qwen2","naked"]},{"matcher":"toBe","negate":false,"expected":"llama · 8B"},{"matcher":"toBe","negate":false,"expected":"qwen"},{"matcher":"toBeUndefined","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:309:3: returns empty array on non-ok response
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_309_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_309_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":[]}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:314:3: strips trailing slashes from base URL when calling /api/tags
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_314_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_314_3"#,
         r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://localhost:11434/api/tags",{"__jait_matcher":"objectContaining","value":{"signal":{"__jait_matcher":"any","type":"AbortSignal"}}}]}]"#,
     );
 }
 
-// packages/gateway/src/providers/model-fetchers.test.ts:304:3: isolates cache by base URL
+// packages/gateway/src/providers/model-fetchers.test.ts:323:3: isolates cache by base URL
 #[test]
-fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_304_3() {
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_323_3() {
     tail_assertions::check(
         r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
-        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_304_3"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_323_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":["b"]}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:334:3: merges the hosted cloud catalogue for a signed-in daemon
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_334_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_334_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":"llama3:8b"},{"matcher":"toContain","negate":true,"expected":"llama3:8b-cloud"},{"matcher":"toEqual","negate":false,"expected":["llama3:8b","gpt-oss:120b","kimi-k2:1t-cloud"]},{"matcher":"toBeUndefined","negate":false},{"matcher":"toMatchObject","negate":false,"expected":{"group":"Ollama Cloud"}},{"matcher":"toBe","negate":false,"expected":"thinking"}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:363:3: skips the hosted catalogue when the daemon is signed out
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_363_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_363_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":["llama3:8b"]},{"matcher":"toHaveBeenCalledWith","negate":true,"expected":["https://ollama.com/api/tags",{"__jait_matcher":"anything"}]}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:376:3: does not probe the cloud catalogue unless asked to
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_376_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_376_3"#,
+        r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["http://localhost:11434/api/tags",{"__jait_matcher":"anything"}]}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:389:3: caches the cloud catalogue until force is set
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_389_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_389_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toEqual","negate":false,"expected":["llama3:8b","gpt-oss:120b"]},{"matcher":"toHaveBeenCalled","negate":false}]"#,
+    );
+}
+
+// packages/gateway/src/providers/model-fetchers.test.ts:410:3: keeps the local catalogue when the cloud catalogue fails
+#[test]
+fn tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_410_3() {
+    tail_assertions::check(
+        r#"gateway-src-providers-model-fetchers-test-d7ff0c3a"#,
+        r#"tailstatic_packages_gateway_src_providers_model_fetchers_test_ts_410_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":["llama3:8b"]}]"#,
     );
 }
 
@@ -14774,16 +14824,35 @@ fn tailstatic_packages_gateway_src_services_messenger_service_test_ts_47_3() {
     );
 }
 
-// packages/gateway/src/services/messenger-service.test.ts:56:3: removes a conversation after leaving and forgetting
+// packages/gateway/src/services/messenger-service.test.ts:56:3: lists each reader once no matter how many messages they acknowledged
 #[test]
 fn tailstatic_packages_gateway_src_services_messenger_service_test_ts_56_3() {
     tail_assertions::check(
         r#"gateway-src-services-messenger-service-test-db886a1c"#,
         r#"tailstatic_packages_gateway_src_services_messenger_service_test_ts_56_3"#,
-        r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["!room:test"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["POST","/_matrix/client/v3/rooms/!room%3Atest/forget",{"__jait_type":"undefined"},{}]},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
+        r#"[{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toEqual","negate":false,"expected":[{"userId":"@bob:test","name":"@bob:test","timestamp":300,"exact":true}]}]"#,
     );
 }
 
+// packages/gateway/src/services/messenger-service.test.ts:68:3: keeps receipt positions stable when an earlier message is redacted
+#[test]
+fn tailstatic_packages_gateway_src_services_messenger_service_test_ts_68_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-messenger-service-test-db886a1c"#,
+        r#"tailstatic_packages_gateway_src_services_messenger_service_test_ts_68_3"#,
+        r#"[{"matcher":"toEqual","negate":false,"expected":["$two","$three"]},{"matcher":"toEqual","negate":false,"expected":[{"userId":"@bob:test","name":"@bob:test","timestamp":300,"exact":false}]}]"#,
+    );
+}
+
+// packages/gateway/src/services/messenger-service.test.ts:77:3: removes a conversation after leaving and forgetting
+#[test]
+fn tailstatic_packages_gateway_src_services_messenger_service_test_ts_77_3() {
+    tail_assertions::check(
+        r#"gateway-src-services-messenger-service-test-db886a1c"#,
+        r#"tailstatic_packages_gateway_src_services_messenger_service_test_ts_77_3"#,
+        r#"[{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["!room:test"]},{"matcher":"toHaveBeenCalledWith","negate":false,"expected":["POST","/_matrix/client/v3/rooms/!room%3Atest/forget",{"__jait_type":"undefined"},{}]},{"matcher":"toEqual","negate":false,"expected":[]}]"#,
+    );
+}
 // packages/gateway/src/services/mobile-push.test.ts:11:3: revokes on every device except the one that answered
 #[test]
 fn tailstatic_packages_gateway_src_services_mobile_push_test_ts_11_3() {
@@ -23919,386 +23988,386 @@ fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1659_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
         r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1659_3"#,
-        r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Initial answer. Steered follow-up."},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"Initial answer."},{"type":"steering","content":"Adjust the answer now"},{"type":"text","content":" Steered follow-up."}]},{"matcher":"toContainEqual","negate":false,"expected":{"type":"steering","message":"Adjust the answer now"}}]"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Initial answer. Steered follow-up."},{"matcher":"toEqual","negate":false,"expected":[{"type":"text","content":"Initial answer."},{"type":"steering","content":"Adjust the answer now"},{"type":"text","content":" Steered follow-up."}]},{"matcher":"toContainEqual","negate":false,"expected":{"type":"steering","message":"Adjust the answer now","deferred":true}}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:1725:3: calls onPersist exactly once and reports persisted=true on normal completion
+// packages/gateway/src/tools/agent-loop.test.ts:1732:3: calls onPersist exactly once and reports persisted=true on normal completion
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1732_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1732_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Hello world"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant","content":"Hello world"}}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:1773:3: emits a swarm mode notice without forcing any tool call
+// packages/gateway/src/tools/agent-loop.test.ts:1780:3: emits a swarm mode notice without forcing any tool call
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1780_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1780_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"type":"mode_notice","mode":"swarm"}},{"matcher":"toBe","negate":false,"expected":"No specialists needed for this."},{"matcher":"toHaveLength","negate":false,"expected":0}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:1819:3: runs specialist agent.spawn calls the model recommends concurrently
+// packages/gateway/src/tools/agent-loop.test.ts:1826:3: runs specialist agent.spawn calls the model recommends concurrently
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1826_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1826_3"#,
         r#"[{"matcher":"toMatchObject","negate":false,"expected":{"type":"mode_notice","mode":"swarm"}},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Swarm complete."},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toMatchObject","negate":false,"expected":{"tool":"agent.spawn","ok":true}}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:1891:3: blocks implementation tools the coordinator tries to use directly, forcing delegation
+// packages/gateway/src/tools/agent-loop.test.ts:1898:3: blocks implementation tools the coordinator tries to use directly, forcing delegation
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1898_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1898_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":0},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toMatchObject","negate":false,"expected":{"tool":"edit","ok":false}},{"matcher":"toContain","negate":false,"expected":"not available to the Swarm coordinator"},{"matcher":"toContain","negate":false,"expected":"agent tool"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:1957:3: gives concurrent agent.spawn calls a shared swarm round id, but not a solo call
+// packages/gateway/src/tools/agent-loop.test.ts:1964:3: gives concurrent agent.spawn calls a shared swarm round id, but not a solo call
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1964_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1964_3"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toBeTruthy","negate":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBeUndefined","negate":false}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2083:3: forces delegation once the coordinator has made several direct reads without ever calling agent
+// packages/gateway/src/tools/agent-loop.test.ts:2090:3: forces delegation once the coordinator has made several direct reads without ever calling agent
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2090_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2090_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Investigation done."},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2185:3: auto-continues when a text response is cut off by finish_reason=length
+// packages/gateway/src/tools/agent-loop.test.ts:2192:3: auto-continues when a text response is cut off by finish_reason=length
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2192_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2192_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"Part one and part two."},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2334:3: quarantines a ping-pong loop and lets the provider recover
+// packages/gateway/src/tools/agent-loop.test.ts:2341:3: quarantines a ping-pong loop and lets the provider recover
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2341_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2341_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBeLessThan","negate":false,"expected":40},{"matcher":"toBe","negate":false,"expected":"Recovered from the ping-pong loop."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2399:3: stops re-running a call that keeps returning the identical error
+// packages/gateway/src/tools/agent-loop.test.ts:2406:3: stops re-running a call that keeps returning the identical error
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2406_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2406_3"#,
         r#"[{"matcher":"toBeLessThanOrEqual","negate":false,"expected":3},{"matcher":"toBeGreaterThan","negate":false,"expected":0},{"matcher":"toContain","negate":false,"expected":"ripgrep is unavailable"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2464:3: bounds total repeats of one call even when the model ignores every nudge
+// packages/gateway/src/tools/agent-loop.test.ts:2471:3: bounds total repeats of one call even when the model ignores every nudge
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2471_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2471_3"#,
         r#"[{"matcher":"toBeLessThanOrEqual","negate":false,"expected":10}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2518:3: without maxRounds, ends normally when the model answers before the safety backstop
+// packages/gateway/src/tools/agent-loop.test.ts:2525:3: without maxRounds, ends normally when the model answers before the safety backstop
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2525_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2525_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":"All done."}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2575:3: does not flag a legitimate multi-file read sequence
+// packages/gateway/src/tools/agent-loop.test.ts:2582:3: does not flag a legitimate multi-file read sequence
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2582_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2582_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Read all files."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2625:3: redirects a range-jitter read loop before it can consume the turn
+// packages/gateway/src/tools/agent-loop.test.ts:2632:3: redirects a range-jitter read loop before it can consume the turn
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2632_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2632_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBeLessThan","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"Recovered after the redundant reads were blocked."}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2694:3: tolerates a handful of defensive re-reads without stopping (regression: two near-identical code blocks)
+// packages/gateway/src/tools/agent-loop.test.ts:2701:3: tolerates a handful of defensive re-reads without stopping (regression: two near-identical code blocks)
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2701_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2701_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":"Verified both handlers are patched."}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2757:3: does not flag sequential non-overlapping reads that grow through a file
+// packages/gateway/src/tools/agent-loop.test.ts:2764:3: does not flag sequential non-overlapping reads that grow through a file
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2764_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2764_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":"Read the whole file."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":7,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"}]},"flags":""}}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2815:3: quarantines an ignored duplicate call, continues with another tool, then restores it
+// packages/gateway/src/tools/agent-loop.test.ts:2822:3: quarantines an ignored duplicate call, continues with another tool, then restores it
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2822_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2822_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered with a different approach."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toEqual","negate":false,"expected":["read","read","read","search"]},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2906:3: keeps quarantining and recovers when a provider calls an unavailable tool
+// packages/gateway/src/tools/agent-loop.test.ts:2913:3: keeps quarantining and recovers when a provider calls an unavailable tool
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2913_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2913_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toBe","negate":false,"expected":7},{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered after the unavailable call was rejected."},{"matcher":"toContain","negate":true,"expected":"Stopped:"},{"matcher":"toContain","negate":true,"expected":"DSML"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:2974:3: steers a turn that replays the same thinking + same rejected tool call every round, then stops as a backstop
+// packages/gateway/src/tools/agent-loop.test.ts:2981:3: steers a turn that replays the same thinking + same rejected tool call every round, then stops as a backstop
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2981_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2981_3"#,
         r#"[{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":5},{"matcher":"toBeLessThan","negate":false,"expected":12},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":2},{"matcher":"toBeLessThan","negate":false,"expected":12},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":4,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"n"},{"id":1,"kind":"char","value":"o"},{"id":2,"kind":"char","value":"p"},{"id":3,"kind":"char","value":"e"}]},"flags":""}},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":13,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"r"},{"id":1,"kind":"char","value":"e"},{"id":2,"kind":"char","value":"s"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"o"},{"id":5,"kind":"char","value":"n"},{"id":6,"kind":"char","value":"s"},{"id":7,"kind":"char","value":"e"},{"id":12,"kind":"alt","nodes":[{"id":9,"kind":"seq","nodes":[{"id":8,"kind":"class","items":[{"category":"W"}],"negate":false}]},{"id":11,"kind":"seq","nodes":[{"id":10,"kind":"end"}]}]}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3086:3: lets the model recover after being steered out of a replay loop instead of stopping
+// packages/gateway/src/tools/agent-loop.test.ts:3093:3: lets the model recover after being steered out of a replay loop instead of stopping
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3093_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3093_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":2},{"matcher":"toContain","negate":false,"expected":"Fixed the streaming issue"},{"matcher":"toBeGreaterThanOrEqual","negate":false,"expected":4}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3193:3: executes an identical tool call only once when the provider repeats it within one round
+// packages/gateway/src/tools/agent-loop.test.ts:3200:3: executes an identical tool call only once when the provider repeats it within one round
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3200_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3200_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBe","negate":false,"expected":1},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3252:3: quarantines a repeated call hidden inside otherwise changing tool batches
+// packages/gateway/src/tools/agent-loop.test.ts:3259:3: quarantines a repeated call hidden inside otherwise changing tool batches
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3259_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3259_3"#,
         r#"[{"matcher":"toBeLessThan","negate":false,"expected":40},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Recovered from the changing batch loop."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3325:3: continues through an invisible checkpoint when the caller omits maxRounds
+// packages/gateway/src/tools/agent-loop.test.ts:3332:3: continues through an invisible checkpoint when the caller omits maxRounds
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3332_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3332_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Finished too late."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":12,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"P"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"u"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":"f"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"r"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":81},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3377:3: compacts completed work inside the active turn before context pressure causes a duplicate-call loop
+// packages/gateway/src/tools/agent-loop.test.ts:3384:3: compacts completed work inside the active turn before context pressure causes a duplicate-call loop
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3384_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3384_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Recovered from the long investigation."},{"matcher":"toMatch","negate":true,"expected":{"__jait_matcher":"textPattern","expr":{"id":36,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"S"},{"id":1,"kind":"char","value":"t"},{"id":2,"kind":"char","value":"o"},{"id":3,"kind":"char","value":"p"},{"id":4,"kind":"char","value":"p"},{"id":5,"kind":"char","value":"e"},{"id":6,"kind":"char","value":"d"},{"id":7,"kind":"char","value":":"},{"id":8,"kind":"char","value":" "},{"id":9,"kind":"char","value":"r"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"p"},{"id":12,"kind":"char","value":"e"},{"id":13,"kind":"char","value":"a"},{"id":14,"kind":"char","value":"t"},{"id":15,"kind":"char","value":"e"},{"id":16,"kind":"char","value":"d"},{"id":17,"kind":"char","value":" "},{"id":18,"kind":"char","value":"t"},{"id":19,"kind":"char","value":"h"},{"id":20,"kind":"char","value":"e"},{"id":21,"kind":"char","value":" "},{"id":22,"kind":"char","value":"s"},{"id":23,"kind":"char","value":"a"},{"id":24,"kind":"char","value":"m"},{"id":25,"kind":"char","value":"e"},{"id":26,"kind":"char","value":" "},{"id":27,"kind":"char","value":"t"},{"id":28,"kind":"char","value":"o"},{"id":29,"kind":"char","value":"o"},{"id":30,"kind":"char","value":"l"},{"id":31,"kind":"char","value":" "},{"id":32,"kind":"char","value":"c"},{"id":33,"kind":"char","value":"a"},{"id":34,"kind":"char","value":"l"},{"id":35,"kind":"char","value":"l"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3463:3: does not quarantine a re-read whose earlier result compaction erased
+// packages/gateway/src/tools/agent-loop.test.ts:3470:3: does not quarantine a re-read whose earlier result compaction erased
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3470_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3470_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBe","negate":false,"expected":6},{"matcher":"toBe","negate":false,"expected":false}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3555:3: keeps tool results verbatim below the Codex-style trigger — no lossy truncation
+// packages/gateway/src/tools/agent-loop.test.ts:3562:3: keeps tool results verbatim below the Codex-style trigger — no lossy truncation
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3562_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3562_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeGreaterThan","negate":false,"expected":1},{"matcher":"toContain","negate":true,"expected":"compacted for context"},{"matcher":"toContain","negate":true,"expected":"[active-turn-summary]"},{"matcher":"toContain","negate":true,"expected":"[conversation-summary]"},{"matcher":"toHaveLength","negate":false,"expected":8},{"matcher":"toContain","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3627:3: keeps explicit round budgets bounded for specialist runs
+// packages/gateway/src/tools/agent-loop.test.ts:3634:3: keeps explicit round budgets bounded for specialist runs
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3634_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3634_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatch","negate":false,"expected":{"__jait_matcher":"textPattern","expr":{"id":26,"kind":"seq","nodes":[{"id":0,"kind":"char","value":"P"},{"id":1,"kind":"char","value":"a"},{"id":2,"kind":"char","value":"u"},{"id":3,"kind":"char","value":"s"},{"id":4,"kind":"char","value":"e"},{"id":5,"kind":"char","value":"d"},{"id":6,"kind":"char","value":" "},{"id":7,"kind":"char","value":"a"},{"id":8,"kind":"char","value":"f"},{"id":9,"kind":"char","value":"t"},{"id":10,"kind":"char","value":"e"},{"id":11,"kind":"char","value":"r"},{"id":12,"kind":"char","value":" "},{"id":13,"kind":"char","value":"2"},{"id":14,"kind":"char","value":" "},{"id":15,"kind":"char","value":"t"},{"id":16,"kind":"char","value":"o"},{"id":17,"kind":"char","value":"o"},{"id":18,"kind":"char","value":"l"},{"id":19,"kind":"char","value":" "},{"id":20,"kind":"char","value":"r"},{"id":21,"kind":"char","value":"o"},{"id":22,"kind":"char","value":"u"},{"id":23,"kind":"char","value":"n"},{"id":24,"kind":"char","value":"d"},{"id":25,"kind":"char","value":"s"}]},"flags":""}},{"matcher":"toBe","negate":false,"expected":2}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3670:3: caps the thinking persisted to history so long reasoning blocks don't grow context unboundedly
+// packages/gateway/src/tools/agent-loop.test.ts:3677:3: caps the thinking persisted to history so long reasoning blocks don't grow context unboundedly
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3677_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3677_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":4000},{"matcher":"toBe","negate":false,"expected":4001},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3742:3: preserves DeepSeek reasoning during a text-only length continuation
+// packages/gateway/src/tools/agent-loop.test.ts:3749:3: preserves DeepSeek reasoning during a text-only length continuation
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3749_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3749_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3760:3: replays DeepSeek reasoning verbatim through a real tool round
+// packages/gateway/src/tools/agent-loop.test.ts:3767:3: replays DeepSeek reasoning verbatim through a real tool round
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3767_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3767_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Done."},{"matcher":"toBeDefined","negate":false},{"matcher":"toBeGreaterThan","negate":false,"expected":4000},{"matcher":"toBe","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3831:3: recovers instead of stopping when a thinking-only round repeats the same reasoning verbatim
+// packages/gateway/src/tools/agent-loop.test.ts:3838:3: recovers instead of stopping when a thinking-only round repeats the same reasoning verbatim
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3838_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3838_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":3},{"matcher":"toBe","negate":false,"expected":"Recovered after the repeated reasoning was rejected."},{"matcher":"toContain","negate":true,"expected":"Stopped:"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toHaveLength","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3892:3: finishes with a persisted fallback answer when a round streams only timing-noise reasoning like 25.0s
+// packages/gateway/src/tools/agent-loop.test.ts:3899:3: finishes with a persisted fallback answer when a round streams only timing-noise reasoning like 25.0s
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3899_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3899_3"#,
         r#"[{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"},{"matcher":"toHaveBeenCalledTimes","negate":false,"expected":1},{"matcher":"toBe","negate":false,"expected":"assistant"},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toMatchObject","negate":false,"expected":{"role":"assistant"}},{"matcher":"toContain","negate":false,"expected":"reasoning without a final answer"}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:3952:3: feeds answer-less reasoning back as an assistant turn so the retry request differs
+// packages/gateway/src/tools/agent-loop.test.ts:3959:3: feeds answer-less reasoning back as an assistant turn so the retry request differs
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3959_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3959_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":"Here is the answer."},{"matcher":"toHaveLength","negate":false,"expected":2},{"matcher":"toContain","negate":false,"dynamic":true},{"matcher":"toBe","negate":true,"dynamic":true},{"matcher":"toContain","negate":false,"expected":"produced reasoning but no answer"},{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4064:5: adds configured recovery advice without bypassing the forced-answer guard
+// packages/gateway/src/tools/agent-loop.test.ts:4071:5: adds configured recovery advice without bypassing the forced-answer guard
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4071_5() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4071_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":"Here is what I found."}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4073:5: withholds tools to force an answer when nothing changes for many rounds
+// packages/gateway/src/tools/agent-loop.test.ts:4080:5: withholds tools to force an answer when nothing changes for many rounds
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4080_5() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4080_5"#,
         r#"[{"matcher":"toBe","negate":false,"expected":false},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":"Here is what I found."},{"matcher":"toBeLessThan","negate":false,"expected":30}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4085:5: re-anchors on the goal once, not once per round
+// packages/gateway/src/tools/agent-loop.test.ts:4092:5: re-anchors on the goal once, not once per round
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4092_5() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4092_5"#,
         r#"[{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4096:5: keeps a single live copy of the periodic reminder instead of stacking one every 4 rounds
+// packages/gateway/src/tools/agent-loop.test.ts:4103:5: keeps a single live copy of the periodic reminder instead of stacking one every 4 rounds
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4103_5() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4103_5"#,
         r#"[{"matcher":"toBeTruthy","negate":false},{"matcher":"toHaveLength","negate":false,"expected":1}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4112:3: re-executes the original tool and replaces its history entry
+// packages/gateway/src/tools/agent-loop.test.ts:4119:3: re-executes the original tool and replaces its history entry
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4119_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4119_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":true,"message":"ok","data":{"stdout":"test"}}},{"matcher":"toMatchObject","negate":false,"expected":{"ok":true,"message":"ok","data":{"stdout":"test"},"retryCount":1}},{"matcher":"toEqual","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/agent-loop.test.ts:4157:3: returns a not found error for unknown call ids
+// packages/gateway/src/tools/agent-loop.test.ts:4164:3: returns a not found error for unknown call ids
 #[test]
-fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3() {
+fn tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4164_3() {
     tail_assertions::check(
         r#"gateway-src-tools-agent-loop-test-b195b7af"#,
-        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3"#,
+        r#"tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4164_3"#,
         r#"[{"matcher":"toEqual","negate":false,"expected":{"ok":false,"message":"Tool call missing-call not found"}}]"#,
     );
 }
@@ -28986,36 +29055,45 @@ fn tailstatic_packages_gateway_src_tools_screenshot_launch_test_ts_14_3() {
     );
 }
 
-// packages/gateway/src/tools/screenshot-tools.test.ts:7:3: defaults to the active project's .jait directory
+// packages/gateway/src/tools/screenshot-tools.test.ts:54:3: saves the inline display copy inside the chat project, not the gateway cwd
 #[test]
-fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3() {
+fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_54_3() {
     tail_assertions::check(
         r#"gateway-src-tools-screenshot-tools-test-04a9779d"#,
-        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_7_3"#,
+        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_54_3"#,
+        r#"[{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toBe","negate":false,"expected":true},{"matcher":"toEqual","negate":false,"dynamic":true},{"matcher":"toBe","negate":false,"expected":false}]"#,
+    );
+}
+
+// packages/gateway/src/tools/screenshot-tools.test.ts:79:3: defaults to the active project's .jait directory
+#[test]
+fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_79_3() {
+    tail_assertions::check(
+        r#"gateway-src-tools-screenshot-tools-test-04a9779d"#,
+        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_79_3"#,
         r#"[{"matcher":"toBe","negate":false,"expected":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/screenshot-tools.test.ts:10:3: resolves an explicit relative path against the project
+// packages/gateway/src/tools/screenshot-tools.test.ts:82:3: resolves an explicit relative path against the project
 #[test]
-fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3() {
+fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_82_3() {
     tail_assertions::check(
         r#"gateway-src-tools-screenshot-tools-test-04a9779d"#,
-        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_10_3"#,
+        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_82_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
 }
 
-// packages/gateway/src/tools/screenshot-tools.test.ts:13:3: preserves an explicitly chosen absolute path
+// packages/gateway/src/tools/screenshot-tools.test.ts:85:3: preserves an explicitly chosen absolute path
 #[test]
-fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3() {
+fn tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_85_3() {
     tail_assertions::check(
         r#"gateway-src-tools-screenshot-tools-test-04a9779d"#,
-        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_13_3"#,
+        r#"tailstatic_packages_gateway_src_tools_screenshot_tools_test_ts_85_3"#,
         r#"[{"matcher":"toBe","negate":false,"dynamic":true}]"#,
     );
 }
-
 // packages/gateway/src/tools/security-tools.test.ts:6:1: uses authenticated ownership and keeps assessment execution bound to the gateway
 #[test]
 fn tailstatic_packages_gateway_src_tools_security_tools_test_ts_6_1() {

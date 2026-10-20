@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowRight, RefreshCw, Wrench } from 'lucide-react'
 import { apiFetch } from '@/lib/api-fetch'
 import { getApiUrl } from '@/lib/gateway-url'
@@ -9,9 +9,10 @@ export interface BrowserAddressBarProps {
   currentUrl?: string | null
   sharedWithAgent: boolean
   disabled?: boolean
+  controls?: ReactNode
 }
 
-export function BrowserAddressBar({ sessionId, authToken, currentUrl, sharedWithAgent, disabled = false, toolsOpen, onToggleTools }: BrowserAddressBarProps & {
+export function BrowserAddressBar({ sessionId, authToken, currentUrl, sharedWithAgent, disabled = false, controls, toolsOpen, onToggleTools }: BrowserAddressBarProps & {
   toolsOpen: boolean
   onToggleTools: () => void
 }) {
@@ -109,6 +110,7 @@ export function BrowserAddressBar({ sessionId, authToken, currentUrl, sharedWith
           disabled={disabled} onClick={onToggleTools} className="flex h-8 items-center gap-1 rounded border px-2 hover:bg-muted disabled:opacity-50">
           <Wrench className="h-4 w-4" /><span className="hidden sm:inline">Tools</span>
         </button>
+        {controls}
       </form>
       {error && <p role="alert" className="pt-1 text-xs text-destructive">{error}</p>}
     </div>

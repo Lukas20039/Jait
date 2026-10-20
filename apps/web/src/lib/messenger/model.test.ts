@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bridgeLabel, isStatusRoom, messengerError, normalizeHomeserver, readSession, roomKind, sessionKey } from './model'
+import { bridgeLabel, isStatusRoom, messengerError, normalizeHomeserver, presenceLabel, readSession, roomKind, sessionKey, uniqueReaders } from './model'
 
 describe('Matrix account boundaries', () => {
   it('accepts HTTPS and loopback HTTP and rejects secret-bearing or unsafe URLs', () => {
@@ -56,5 +56,50 @@ describe('Matrix account boundaries', () => {
     // Unknown shapes stay plain chats so nothing disappears.
     expect(roomKind({ service: 'Matrix', name: 'Bob' })).toBe('chat')
     expect(roomKind({})).toBe('chat')
+  })
+})
+
+describe('Peer presence labels', () => {
+  it('names online, away, and offline states', () => {
+    expect(presenceLabel('online')).toBe('Online')
+    expect(presenceLabel('unavailable')).toBe('Away')
+    expect(presenceLabel('offline')).toBe('Offline')
+  })
+  it('stays silent when the homeserver has no presence for the peer', () => {
+    expect(presenceLabel(undefined)).toBe('')
+    expect(presenceLabel('unknown')).toBe('')
+  })
+  it('adds a last-seen age only for finite non-negative offline ages', () => {
+    expect(presenceLabel('offline', 30_000)).toBe('Last seen just now')
+    expect(presenceLabel('offline', 12 * 60_000)).toBe('Last seen 12 min ago')
+    expect(presenceLabel('offline', 5 * 3_600_000)).toBe('Last seen 5 h ago')
+    expect(presenceLabel('offline', 3 * 86_400_000)).toBe('Last seen 3 d ago')
+    expect(presenceLabel('offline', Number.NaN)).toBe('Offline')
+    expect(presenceLabel('offline', -1)).toBe('Offline')
+    expect(presenceLabel('online', 5 * 86_400_000)).toBe('Online')
+  })
+})
+
+describe('Read receipt rendering', () => {
+  it('lists a reader once even when they acknowledged several messages', () => {
+    const readers = [
+      { userId: '@bob:test', name: 'Bob', timestamp: 1_700_000_000_000, exact: false },
+      { userId: '@bob:test', name: 'Bob', timestamp: 1_700_000_900_000, exact: true },
+      { userId: '@bob:test', name: 'Bob', timestamp: 1_700_000_500_000, exact: false },
+    ]
+    expect(uniqueReaders(readers)).toEqual([
+      { userId: '@bob:test', name: 'Bob', timestamp: 1_700_000_900_000, exact: true },
+    ])
+  })
+  it('keeps distinct readers in order and tolerates missing timestamps', () => {
+    const deduped = uniqueReaders([
+      { userId: '@bob:test', name: 'Bob', timestamp: null, exact: false },
+      { userId: '@carol:test', name: 'Carol', timestamp: 1_700_000_000_000, exact: true },
+      { userId: '@bob:test', name: 'Bob', timestamp: null, exact: false },
+    ])
+    expect(deduped).toEqual([
+      { userId: '@bob:test', name: 'Bob', timestamp: null, exact: false },
+      { userId: '@carol:test', name: 'Carol', timestamp: 1_700_000_000_000, exact: true },
+    ])
   })
 })

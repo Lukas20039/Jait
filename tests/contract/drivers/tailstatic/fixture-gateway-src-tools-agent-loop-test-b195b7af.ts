@@ -5142,6 +5142,9 @@ await (async()=>{
     __jait_capture(0, (fetchCalls));
     __jait_capture(1, (result.content));
     __jait_capture(2, (result.segments));
+    // The steer arrived mid-response, so it is only injected at the round
+    // boundary; the event is marked deferred and carries no queuedMessageId
+    // because it was not submitted through the HTTP steer route.
     __jait_capture(3, (events));
   
 })();
@@ -5153,7 +5156,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1725_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1732_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5242,7 +5245,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1773_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1780_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5331,7 +5334,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1819_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1826_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5446,7 +5449,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1891_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1898_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5555,7 +5558,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1957_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_1964_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5724,7 +5727,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2083_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2090_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5850,7 +5853,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2185_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2192_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -5954,7 +5957,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2334_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2341_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -6151,7 +6154,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2399_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2406_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -6348,7 +6351,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2464_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2471_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -6534,7 +6537,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2518_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2525_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -6723,7 +6726,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2575_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2582_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -6905,7 +6908,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2625_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2632_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -7106,7 +7109,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2694_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2701_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -7301,7 +7304,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2757_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2764_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -7491,7 +7494,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2815_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2822_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -7714,7 +7717,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2906_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2913_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -7914,7 +7917,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2981_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -8156,7 +8159,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3086_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3093_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -8391,7 +8394,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3193_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3200_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -8582,7 +8585,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3252_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3259_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -8787,7 +8790,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3325_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3332_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -8971,7 +8974,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3377_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3384_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -9189,7 +9192,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3463_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3470_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -9411,7 +9414,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3555_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3562_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -9615,7 +9618,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3627_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3634_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -9790,7 +9793,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3670_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3677_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -9994,7 +9997,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3742_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3749_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -10144,7 +10147,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3760_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3767_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -10347,7 +10350,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3831_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3838_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -10540,7 +10543,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3892_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3899_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -10732,7 +10735,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3952_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_3959_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -10924,7 +10927,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4064_5": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4071_5": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -11116,7 +11119,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4073_5": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4080_5": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -11311,7 +11314,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4085_5": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4092_5": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -11505,7 +11508,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4096_5": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4103_5": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -11701,7 +11704,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4112_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4119_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({
@@ -11784,7 +11787,7 @@ await __jait_hook_1133();
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4157_3": {
+case "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_4164_3": {
 
 
 toolDefsToSchemas(["file.read", "file.list", "web.search", "agent.spawn", "project.create", "project.assign_repository"].map(name => ({

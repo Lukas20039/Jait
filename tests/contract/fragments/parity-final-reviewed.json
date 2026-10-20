@@ -230,14 +230,14 @@
       ]
     },
     {
-      "id": "packages/gateway/src/tools/agent-loop.test.ts:2974:3",
+      "id": "packages/gateway/src/tools/agent-loop.test.ts:2981:3",
       "status": "verified",
-      "parity_review": "Reviewed original declaration and all generated variants in the single batch. The source AST review binds imports, fixture inputs, setup/teardown, dynamic tables, assertion operands and matcher polarity. Observed values passed the raw-domain guards; actual Vitest and Rust matcher verdicts agree for baseline observations and opposing counterexamples. Original unchanged Vitest files pass with explicit local integration opt-ins, including the separately saved three-test Ollama result. Runtime registration, discovery/consent, retry-loop and SQL expansion counts are independently checked in original-expansions.json. The batch mutation controls reject changed original/peer operands, expectations, gates or variant inventories as applicable. Every mapped variant has a successful source-bound reference report. Evidence: .jait/artifacts/parity-final/source-checkpoint/.jait/artifacts/parity-final-single/combined-selected.json, wire-summary.json and structural-negative-controls.json; .jait/artifacts/parity-final/original-expansions.json and complete.json. This is reviewed reference-test assertion preservation; native implementation coverage and complete runtime-source review remain separate requirements.",
+      "parity_review": "Reviewed current model-fetcher, steering and screenshot declarations against regenerated Rust matcher rules. All prior matcher rules are unchanged except the exact deferred=true steering event addition, checked by merge-current-drift-selected.py. New cloud catalogue tests retain ordered deduplication, group/description, opt-in/sign-in, cache/force and failure assertions. Screenshot display-copy tests retain project-root, existence, bytes and gateway-CWD noncreation assertions; the three existing path declarations remain executed. Fresh source-bound translated TypeScript report passes. Declaration equivalence only; runtime/native/platform acceptance remains separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2974_3",
+          "id": "tailstatic_packages_gateway_src_tools_agent_loop_test_ts_2981_3",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-final/source-checkpoint/.jait/artifacts/contracts/853453c9-4449-4ee1-83e3-9f3135880bfb/report.json"
+          "report": ".jait/artifacts/source-review-authoring/goal-reference-validation/frozen-source/.jait/artifacts/contracts/86f07faf-af54-410f-9b79-971ca37ebee4/report.json"
         }
       ]
     },

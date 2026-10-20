@@ -67,5 +67,32 @@ class InventoryMetadataTests(unittest.TestCase):
             self.assertFalse(validation.inventory_review_metadata_only(self.before, value))
 
 
+class FrozenCompilerCacheTests(unittest.TestCase):
+    def test_native_source_root_cannot_reuse_live_embedded_root_binary(self):
+        import tempfile
+        from unittest.mock import patch
+        artifacts = ROOT / ".jait/artifacts/native-cache-tests"
+        artifacts.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=artifacts) as temporary:
+            root = Path(temporary)
+            output = root / "frozen/.jait/artifacts"
+            output.mkdir(parents=True)
+            cache = root / ".jait/artifacts/gateway-rust-target"
+            cache.mkdir(parents=True)
+            marker = cache / "live-binary"
+            marker.write_text("embeds live root")
+            (output / "gateway-rust-target").symlink_to(cache, target_is_directory=True)
+            contract = root / ".jait/artifacts/rust-contract-target"
+            contract.mkdir()
+            with patch.object(validation, "ROOT", root), patch.object(validation, "RUN_OUTPUT", output):
+                validation.prepare_compiler_caches()
+                validation.prepare_compiler_caches()
+            self.assertFalse((output / "gateway-rust-target").is_symlink())
+            self.assertNotEqual((output / "gateway-rust-target").resolve(), cache.resolve())
+            self.assertTrue(marker.exists(), "live cache must remain untouched")
+            self.assertFalse((output / "gateway-rust-target/live-binary").exists())
+            self.assertEqual((output / "rust-contract-target").resolve(), contract.resolve())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -81,6 +81,21 @@ fn scoped_local_ollama_model() -> std::io::Result<String> {
     Ok(model)
 }
 
+// Peers may customize Error stacks. Classify terminal errors from Rust verdicts.
+fn peer_error(message: &Value, counts: &[usize], last: &[bool]) -> String {
+    if let Some(slot) = counts
+        .iter()
+        .zip(last)
+        .position(|(count, pass)| *count > 0 && !*pass)
+    {
+        return format!(
+            "final observation failed at assertion {slot}; peer error: {}",
+            message["message"]
+        );
+    }
+    message["message"].to_string()
+}
+
 const CLEANUP_TIMEOUT: Duration = Duration::from_secs(2);
 /// Per-run scratch sandboxes (fake HOME/TMPDIR, assertion stream, stderr log).
 const RUN_ROOT: &str = ".jait/artifacts/gateway-rust-readiness/tailstatic-runs";
@@ -547,7 +562,7 @@ fn run_inner(
             "complete" => break,
             "error" => panic!(
                 "{name}: {}; inspect {}",
-                message["message"],
+                peer_error(&message, &counts, &last),
                 directory.display()
             ),
             event => panic!("unknown fixture event: {event}"),
@@ -630,6 +645,37 @@ mod local_ollama_tests {
         }
         for malformed in [Value::Null, json!({}), json!({"models":{}})] {
             assert!(validate_local_ollama_model(&malformed, "fixture:tiny").is_err());
+        }
+    }
+}
+
+#[cfg(test)]
+mod peer_error_tests {
+    use super::*;
+
+    #[test]
+    fn missing_peer_error_message_preserves_rust_assertion_failure() {
+        let error = peer_error(
+            &json!({"event":"error","message":"Error\n at observe"}),
+            &[1, 1],
+            &[true, false],
+        );
+        assert!(
+            error.contains("final observation failed at assertion 1"),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn setup_errors_and_recovered_retry_failures_do_not_gain_mutation_credit() {
+        for (counts, last) in [(vec![0], vec![true]), (vec![2], vec![true])] {
+            let error = peer_error(
+                &json!({"event":"error","message":"fixture setup failed"}),
+                &counts,
+                &last,
+            );
+            assert!(!error.contains("final observation failed"), "{error}");
+            assert!(error.contains("fixture setup failed"));
         }
     }
 }

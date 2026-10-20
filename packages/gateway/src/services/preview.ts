@@ -12,6 +12,7 @@ import {
   type PreviewRunner,
   type PreviewRunnerResult,
 } from "./preview-runner.js";
+import { browserWaitKey, sessionWaits } from "./session-waits.js";
 
 export type PreviewStatus = "starting" | "ready" | "error" | "stopped";
 export type PreviewMode = "local" | "docker" | "url";
@@ -348,6 +349,7 @@ export class PreviewService {
     session.status = "stopped";
     session.updatedAt = nowIso();
     this.appendLog(session, "system", "Preview stopped");
+    sessionWaits.clear(browserWaitKey(session.sessionId));
     this.notifyChanged(session);
     this.sessions.delete(sessionId);
     return true;
@@ -394,6 +396,9 @@ export class PreviewService {
     if (!session) return null;
     if (session.sharedWithAgent !== shared) {
       session.sharedWithAgent = shared;
+      // Sharing back with the agent ends the takeover wait; a fresh takeover only
+      // starts one once the agent actually tries to drive the browser.
+      if (shared) sessionWaits.clear(browserWaitKey(session.sessionId));
       this.devToolsRevisions.set(sessionId, (this.devToolsRevisions.get(sessionId) ?? 0) + 1);
       session.updatedAt = nowIso();
       this.notifyChanged(session);
@@ -425,6 +430,14 @@ export class PreviewService {
     if (!browserId) return;
     const session = [...this.sessions.values()].find((item) => item.browserId === browserId);
     if (session && !session.sharedWithAgent) {
+      // The agent just lost the browser to the user, so the chat stops here until
+      // they share control back. Reporting it turns into the chat-row reason.
+      sessionWaits.raise({
+        key: browserWaitKey(session.sessionId),
+        kind: "browser",
+        sessionId: session.sessionId,
+        label: "Paused — you have browser control",
+      });
       throw new Error("This preview is not shared with the agent. Use Share with agent in the chat browser card or preview tab to allow browser tools.");
     }
   }
