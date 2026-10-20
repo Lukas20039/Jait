@@ -4,6 +4,39 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.953](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.953) — 2026-10-20
+
+- feat(gateway,web,gateway-rust): queue mid-loop steers until the tool round ends — 8691640c
+
+Steering now tells the truth about timing. A steer sent while a tool round is
+running is parked in a per-session queue and injected at the top of the next
+iteration — after the running round's tools finish, before the next model call
+— instead of landing in the transcript as if the model had already read it.
+`POST /api/sessions/:sessionId/steer` responds with `deferred` and the client's
+`queuedMessageId`, and the `steering` event echoes both so the UI can promote
+the parked row into a real transcript segment at the moment of injection. Until
+then the message queue shows it as `Queued #N` ("Sends after this step") with
+reorder, edit and steer actions suppressed, and pending steers are excluded
+from the auto-drain so they cannot be replayed as their own turn. A rejected
+steer falls back to an ordinary queued message. On the native side, a new
+`services::steering` queue provides the same primitive in Rust with idempotent
+steer-per-id, session-scoped drains and a discard path, covered by tests for
+round-boundary deferral, send ordering, idempotency, session scoping, discard
+and observer re-entrancy.
+
+## [v0.1.952](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.952) — 2026-10-20
+
+- fix(gateway): harden thread titles, user questions and network seams — f12c7461
+- feat(web): edit and resend chat messages — 53932001
+- feat(gateway-rust): complete the provider, service and route port — 30a29dda
+- fix(gateway): list Ollama Cloud models in refreshed model catalogues — a1649bdc
+
+Chat gains in-place message editing and resend, so a prompt can be corrected
+without starting a new thread. Refreshed model catalogues now include Ollama
+Cloud entries. The gateway hardens thread-title generation, user-question
+handling and several network seams, and the Rust port reaches parity for the
+remaining providers, services and routes.
+
 ## [v0.1.951](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.951) — 2026-10-19
 
 - feat(gateway): account token overhead and usage end-to-end — 90a8b2b0
