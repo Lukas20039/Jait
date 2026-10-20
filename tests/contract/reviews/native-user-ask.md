@@ -35,3 +35,41 @@ Evidence is in .jait/artifacts/gateway-rust/user-ask-mutations.json and the
 corresponding mutant/restored logs. The full source-bound gate is required before
 crediting the component. This is focused schema-valid JSON compatibility, not
 validation of arbitrary untyped JavaScript inputs or complete production dispatch.
+
+---
+
+## Resumable MCP wait refresh — 2026-10-20
+
+The current source adds startResumable/waitForAnswer and a requestId branch in
+user.ask. Native UserQuestionService now retains shared answers independently of
+any one waiter. Exact request/session/owner lookup rejects mismatches without
+consumption; the 60,000 ms deadline returns pending, while answer collection
+removes the entry. Answers/cancellation arriving between calls remain collectable.
+Already-started concurrent waiters share one settled result. Dropping a waiter
+leaves the request intact. Plain non-MCP asks still wait indefinitely for answer
+or cancellation and keep their pending entry when a receiver is dropped.
+
+The tool accepts absent questions when resuming, rejects new questions with a
+nonempty requestId, starts resumable requests only for mcp-client origin, and
+returns the exact pending/answered/cancelled/missing envelopes. Context supplies
+owner/session; input identity never does. Metadata was regenerated from the real
+constructor and compared exactly, including the optional requestId schema.
+
+Evidence under `.jait/artifacts/gateway-rust/parallel-20261020/user-ask-resume/`:
+
+- `node tests/contract/run.mjs test --test gateway_rust_user_ask --test gateway_rust_user_ask_resume --test gateway_rust_input` passes. The refresh target has twelve component tests and four shared transport checks; old question/secret-input contracts remain green.
+- `node packages/gateway-rust/run.mjs test --lib resume_tests` passes three native lifecycle tests, including a 59,999/60,000 ms boundary, answer-between-calls, null versus empty owner, cancelled/concurrent waiters, and one-time collection.
+- The original user-questions and user-question-tools Vitest files pass eight tests.
+- Three restored mutations (wait deadline, owner binding, retained collected entry) fail native and differential suites. Restored sources pass.
+
+The TypeScript driver replaces timers with a caller-driven queue over the actual
+service/tool exports; native tests advance a paused Tokio clock. No 60-second
+real wait or question sent to the user is needed. UUID identities are validated
+and normalized before comparing complete results and callback traces.
+
+Typed/activation limits: shared state is in memory and restart drops requests,
+matching this module's source responsibilities. Callback alias/reentrant native
+panic behavior is not an arbitrary-JavaScript claim. Real MCP transport, user
+surface delivery and durable request persistence are separate components. New
+and resumed MCP calls are tested at the service/tool boundary; end-to-end client
+transport activation remains open. The full source-bound gate controls credit.

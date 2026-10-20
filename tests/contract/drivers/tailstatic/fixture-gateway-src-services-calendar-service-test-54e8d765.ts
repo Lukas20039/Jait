@@ -3,6 +3,7 @@ import { migrateDatabase, openDatabase, type JaitDB } from "../../../../packages
 import type { SqliteDatabase } from "../../../../packages/gateway/src/db/sqlite-shim.js";
 import { UserSecretService } from "../../../../packages/gateway/src/services/user-secrets.js";
 import { CalendarService } from "../../../../packages/gateway/src/services/calendar/service.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
@@ -50,7 +51,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -62,11 +63,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -77,7 +78,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
 
@@ -90,7 +91,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -102,11 +103,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -129,7 +130,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
 
@@ -142,7 +143,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -154,11 +155,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -174,7 +175,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
 
@@ -187,7 +188,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -199,11 +200,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -212,7 +213,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
 
@@ -225,7 +226,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -237,11 +238,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -267,7 +268,7 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
 
@@ -280,7 +281,7 @@ let sqlite: SqliteDatabase;
 let db: JaitDB;
 let secrets: UserSecretService;
 let service: CalendarService;
-const __jait_hook_430 = async () => {
+const __jait_hook_434 = async () => {
   const opened = await openDatabase(":memory:");
   sqlite = opened.sqlite;
   db = opened.db;
@@ -292,11 +293,11 @@ const __jait_hook_430 = async () => {
   delete process.env["GMAIL_OAUTH_CLIENT_ID"];
   delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
 };
-const __jait_hook_896 = () => {
+const __jait_hook_900 = () => {
   sqlite.close();
 };
 /*__jait_scope_open__*/{
-await __jait_hook_430();
+await __jait_hook_434();
 try {
 await (async()=>{
 
@@ -341,9 +342,116 @@ await (async()=>{
 })();
 
 } finally {
-await __jait_hook_896();
+await __jait_hook_900();
 }
 }
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_135_1": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_900 = () => {
+  sqlite.close();
+};
+await __jait_hook_434();
+try {
+await (async()=>{
+
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_expired_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000 + 1));
+    await __jait_rejected(0, service.completeConnect({ code: "synthetic-code", state }));
+    vi.setSystemTime(started);
+    await __jait_rejected(1, service.completeConnect({ code: "synthetic-code", state }));
+    __jait_capture(2, (fetchMock.mock.calls));
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+
+})();
+
+} finally {
+await __jait_hook_900();
+}
+
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_calendar_service_test_ts_156_1": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: CalendarService;
+const __jait_hook_434 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new CalendarService(db, secrets);
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_ID"];
+  delete process.env["GOOGLE_CALENDAR_OAUTH_CLIENT_SECRET"];
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_900 = () => {
+  sqlite.close();
+};
+await __jait_hook_434();
+try {
+await (async()=>{
+
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_boundary_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000));
+    await __jait_rejected(0, service.completeConnect({ code: "synthetic-code", state }));
+    await __jait_rejected(1, service.completeConnect({ code: "synthetic-code", state }));
+    __jait_capture(2, (fetchMock.mock.calls));
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+
+})();
+
+} finally {
+await __jait_hook_900();
+}
+
 
 break;
 }

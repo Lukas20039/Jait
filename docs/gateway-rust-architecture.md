@@ -159,7 +159,7 @@ wait time must be reported separately from gateway CPU time.
 
 Foundation progress has four equal milestones: architecture review, stack and
 budgets, scaffold on disk, successful validation. This is separate from
-the 361-component implementation inventory and cutover gates.
+the 364-component implementation inventory and cutover gates.
 
 1. **Foundation:** this decision, module structure, shared work admission, release
    profile, native formatting/Clippy/unit tests and existing focused contracts.

@@ -285,6 +285,40 @@ pub fn run(
     rules: &[Value],
     compare: impl Fn(&Value, &Value) -> bool,
 ) {
+    run_inner(root, file, name, rules, compare, None);
+}
+
+#[allow(dead_code)]
+pub struct SourceReview<'a> {
+    pub source: &'a Path,
+    pub copy: &'a Path,
+    pub cancelled: &'a dyn Fn() -> bool,
+}
+
+#[allow(dead_code)]
+pub fn run_source(
+    root: &Path,
+    file: &str,
+    name: &str,
+    rules: &[Value],
+    compare: impl Fn(&Value, &Value) -> bool,
+    review: SourceReview<'_>,
+) {
+    run_inner(root, file, name, rules, compare, Some(review));
+}
+
+fn run_inner(
+    root: &Path,
+    file: &str,
+    name: &str,
+    rules: &[Value],
+    compare: impl Fn(&Value, &Value) -> bool,
+    review: Option<SourceReview<'_>>,
+) {
+    assert!(
+        !review.as_ref().is_some_and(|review| (review.cancelled)()),
+        "source review cancelled"
+    );
     sweep_stale_runs(root);
     let directory = root
         .join(RUN_ROOT)
@@ -355,6 +389,12 @@ pub fn run(
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
+    if let Some(review) = &review {
+        command.env(
+            "JAIT_SOURCE_REVIEW_OVERRIDE",
+            json!({"source":review.source,"copy":review.copy}).to_string(),
+        );
+    }
     if name.starts_with("tailstatic_packages_gateway_src_lib_security_engines_integration_test_ts_")
         && let Some(cache) = std::env::var_os("JAIT_TEST_TRIVY_CACHE")
     {
@@ -422,8 +462,20 @@ pub fn run(
             directory.display()
         );
         let remaining = deadline.saturating_duration_since(Instant::now());
-        let line = receive
-            .recv_timeout(remaining)
+        assert!(
+            !review.as_ref().is_some_and(|review| (review.cancelled)()),
+            "source review cancelled"
+        );
+        let wait = if review.is_some() {
+            remaining.min(Duration::from_millis(100))
+        } else {
+            remaining
+        };
+        let received = receive.recv_timeout(wait);
+        if review.is_some() && matches!(received, Err(mpsc::RecvTimeoutError::Timeout)) {
+            continue;
+        }
+        let line = received
             .unwrap_or_else(|error| {
                 panic!(
                     "{name}: fixture deadline/disconnect: {error}; {}",

@@ -514,6 +514,30 @@ pub(crate) fn matches(observation: &Value, rule: &Value) -> bool {
     }
 }
 
+#[allow(dead_code)]
+pub fn check_source(
+    root: &Path,
+    file: &str,
+    name: &str,
+    rules: &[Value],
+    source: &Path,
+    copy: &Path,
+    cancelled: &dyn Fn() -> bool,
+) {
+    tail_stream::run_source(
+        root,
+        file,
+        name,
+        rules,
+        matches,
+        tail_stream::SourceReview {
+            source,
+            copy,
+            cancelled,
+        },
+    );
+}
+
 pub fn check(file: &str, name: &str, rules_source: &str) {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()

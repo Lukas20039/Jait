@@ -3,3 +3,5 @@ pub mod blocking;
 mod server;
 
 pub use server::Gateway;
+
+pub mod command;

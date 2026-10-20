@@ -72,6 +72,21 @@ impl JsonGraph {
 /// code units until a transport encodes them instead of silently substituting.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Utf16Text(pub Vec<u16>);
+impl From<&str> for Utf16Text {
+    fn from(value: &str) -> Self {
+        Self(value.encode_utf16().collect())
+    }
+}
+impl From<String> for Utf16Text {
+    fn from(value: String) -> Self {
+        Self::from(value.as_str())
+    }
+}
+impl<'de> serde::Deserialize<'de> for Utf16Text {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        <String as serde::Deserialize>::deserialize(deserializer).map(Self::from)
+    }
+}
 impl serde::Serialize for Utf16Text {
     fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let raw = serde_json::value::RawValue::from_string(quote(&self.0)).expect("quoted UTF-16");
@@ -99,21 +114,9 @@ fn number(value: f64) -> String {
     if !value.is_finite() {
         return "null".into();
     }
-    if value == 0.0 {
-        return "0".into();
-    }
-    if value.abs() >= 1e21 || value.abs() < 1e-6 {
-        let mut text = format!("{value:e}");
-        if let Some(at) = text.find('e')
-            && !text[at + 1..].starts_with('-')
-        {
-            text.insert(at + 1, '+')
-        }
-        text
-    } else {
-        value.to_string()
-    }
+    ryu_js::Buffer::new().format(value).to_owned()
 }
+
 fn ordered(entries: &[(String, usize)]) -> Vec<&(String, usize)> {
     let index = |key: &str| {
         key.parse::<u32>()

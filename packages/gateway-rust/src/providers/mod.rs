@@ -13,3 +13,13 @@ pub mod snapshot;
 pub mod provider_auth;
 
 pub mod pi_mcp_provision;
+
+pub mod codex_event_mapper;
+
+pub mod usage;
+
+pub mod acp_registry;
+
+pub mod acp_binary_launcher;
+
+pub mod model_fetchers;

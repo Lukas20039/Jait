@@ -13,3 +13,7 @@ pub mod secrets;
 pub mod assistant_profiles;
 
 pub mod architecture;
+
+pub mod agent_control;
+
+pub mod skills;

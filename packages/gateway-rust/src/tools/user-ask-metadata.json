@@ -1,9 +1,13 @@
 {
   "name": "user.ask",
-  "description": "Ask the user one or more structured questions and wait until they answer or cancel, without a timeout. Questions are surfaced on every connected Jait client; attention only controls notification emphasis.",
+  "description": "Ask the user one or more structured questions and wait until they answer or cancel, without a timeout. MCP calls may return pending with a requestId: keep calling user.ask with only that requestId until answered or cancelled; do not create another question or proceed without the answer. Questions are surfaced on every connected Jait client; attention only controls notification emphasis.",
   "parameters": {
     "type": "object",
     "properties": {
+      "requestId": {
+        "type": "string",
+        "description": "Resume waiting for a pending request. Supply only this field; use the exact returned requestId."
+      },
       "title": {
         "type": "string",
         "description": "Short title shown above the questions."
@@ -18,7 +22,7 @@
       },
       "questions": {
         "type": "array",
-        "description": "Questions to ask. Use stable IDs so answers are easy to map.",
+        "description": "Questions for a new request. Required unless resuming with requestId. Use stable IDs so answers are easy to map.",
         "items": {
           "type": "object",
           "properties": {
@@ -74,10 +78,7 @@
           ]
         }
       }
-    },
-    "required": [
-      "questions"
-    ]
+    }
   },
   "tier": "core",
   "category": "gateway",

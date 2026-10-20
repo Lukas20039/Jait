@@ -177,7 +177,7 @@ await (async()=>{
         __jait_capture(4, (threadService.getExecutionCheckpoint(thread.id)?.calls));
       }
     } finally { await app.close(); sqlite.close(); }
-  
+
 })();
 
 } finally {
@@ -304,7 +304,7 @@ await (async()=>{
         __jait_capture(4, (threadService.getExecutionCheckpoint(thread.id)?.calls));
       }
     } finally { await app.close(); sqlite.close(); }
-  
+
 })();
 
 } finally {
@@ -427,7 +427,7 @@ await (async()=>{
       await new Promise(resolve => setTimeout(resolve, 10));
       __jait_capture(3, (threadService.getById(thread.id)?.status));
     } finally { await app.close(); sqlite.close(); }
-  
+
 })();
 
 } finally {
@@ -550,7 +550,7 @@ await (async()=>{
       await new Promise(resolve => setTimeout(resolve, 10));
       __jait_capture(3, (threadService.getById(thread.id)?.status));
     } finally { await app.close(); sqlite.close(); }
-  
+
 })();
 
 } finally {
@@ -685,7 +685,7 @@ await (async()=>{
     __jait_capture(11, (provider.startSessionCalls));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -797,7 +797,7 @@ await (async()=>{
     __jait_capture(2, (service.getById(thread.id)));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -927,7 +927,7 @@ await (async()=>{
     __jait_capture(8, (provider.startSessionCalls));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1047,7 +1047,7 @@ await (async()=>{
     __jait_capture(2, (service.listPendingRecovery()));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1178,7 +1178,7 @@ await (async()=>{
     __jait_captureType(5, (restored.getRecovery(thread.id)));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1305,7 +1305,7 @@ await (async()=>{
       await app.close();
     }
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1434,7 +1434,7 @@ await (async()=>{
     __jait_captureType(5, (service.getRecovery(thread.id)));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1551,7 +1551,7 @@ await (async()=>{
     __jait_capture(3, (messages[0]?.payload));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1682,7 +1682,7 @@ await (async()=>{
     await waitFor(() => service.getById(thread.id)?.status === "completed");
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1807,7 +1807,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -1955,7 +1955,7 @@ await (async()=>{
     __jait_captureType(15, (thread.json().personaAgentId));
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2092,7 +2092,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2221,7 +2221,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2356,7 +2356,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2498,7 +2498,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2630,7 +2630,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2755,7 +2755,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -2894,7 +2894,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3035,13 +3035,19 @@ await (async()=>{
     __jait_capture(1, (response.statusCode));
     await waitFor(() => provider.sendTurn.mock.calls.length >= 1);
     const turnMessage = provider.sendTurn.mock.calls.at(-1)?.[1] as string;
+    // Discovery-first contract: no eager <available_skills> catalog with file
+    // paths — just the lazy <skillDiscovery> instruction, with the auto-matched
+    // skill named in the routing summary.
     __jait_capture(2, (turnMessage));
     __jait_capture(3, (turnMessage));
     __jait_capture(4, (turnMessage));
+    __jait_capture(5, (turnMessage));
+    __jait_capture(6, (turnMessage));
+    __jait_capture(7, (turnMessage));
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3051,7 +3057,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_873_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_879_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3191,12 +3197,16 @@ await (async()=>{
     __jait_capture(1, (response.statusCode));
     await waitFor(() => provider.sendTurn.mock.calls.length >= 1);
     const turnMessage = provider.sendTurn.mock.calls.at(-1)?.[1] as string;
+    // Only the pinned skill is auto-activated; the unpinned one is not named,
+    // and neither leaks its file path — skills are discovered lazily.
     __jait_capture(2, (turnMessage));
     __jait_capture(3, (turnMessage));
+    __jait_capture(4, (turnMessage));
+    __jait_capture(5, (turnMessage));
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3206,7 +3216,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_933_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_943_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3353,7 +3363,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3363,7 +3373,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_995_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1005_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3502,7 +3512,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3512,7 +3522,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1053_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1063_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3659,7 +3669,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3669,7 +3679,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1115_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1125_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3824,7 +3834,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3834,7 +3844,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1185_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1195_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -3955,7 +3965,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -3965,7 +3975,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1221_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1231_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4093,7 +4103,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4103,7 +4113,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1266_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1276_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4250,7 +4260,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4260,7 +4270,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1337_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1347_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4390,7 +4400,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4400,7 +4410,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1390_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1400_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4533,10 +4543,10 @@ await (async()=>{
       && typeof content === "string"
       && content.includes("Apply this follow-up work to the existing PR on branch `feature/existing-pr`."),
     )));
-    
+
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4546,7 +4556,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1441_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1451_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4688,7 +4698,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4698,7 +4708,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1498_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1508_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4826,7 +4836,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4836,7 +4846,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1544_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1554_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -4985,7 +4995,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -4995,7 +5005,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1608_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1618_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -5127,7 +5137,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -5137,7 +5147,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1666_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1676_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -5328,7 +5338,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -5338,7 +5348,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1772_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1782_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -5480,7 +5490,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -5490,7 +5500,7 @@ await __jait_hook_5447();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_threads_test_ts_1829_3": {
+case "tailstatic_packages_gateway_src_routes_threads_test_ts_1839_3": {
 
 const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
 async function authHeader(jwtSecret: string, userId: string) {
@@ -5640,7 +5650,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {

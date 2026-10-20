@@ -52,7 +52,7 @@ jobs:
       - name: Test TypeScript internals with Rust assertions
         run: bun run test:contract:internal
       - name: Validate reference source mutations and restored behavior
-        run: node tests/contract/run.mjs test --test source_review
+        run: bun run test:contract:source
       - name: Reconcile reviewed native and reference source contracts
         run: node tests/contract/tooling/native-source-review.mjs
       - name: Test translated assertions and record source-bound evidence

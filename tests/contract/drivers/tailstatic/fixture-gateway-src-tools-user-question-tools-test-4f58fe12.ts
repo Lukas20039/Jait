@@ -2,6 +2,7 @@
 import { UserQuestionService } from "../../../../packages/gateway/src/services/user-questions.js";
 import { createUserAskTool } from "../../../../packages/gateway/src/tools/user-question-tools.js";
 import type { ToolContext } from "../../../../packages/gateway/src/tools/contracts.js";
+import { vi } from '../tailmock.ts';
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
@@ -42,7 +43,7 @@ export async function run(name: string): Promise<unknown> {
  const __jait_instance=(slot:number,actual:any,expected:any,threw?:boolean)=>{const prototypes=[];let p=actual==null?null:Object.getPrototypeOf(actual);while(p){prototypes.push(__jait_ref(p));p=Object.getPrototypeOf(p)}__jait_record({slot,prototypes,expectedPrototype:__jait_ref(expected.prototype),...(threw===undefined?{}:{threw})})};
  const __jait_instanceRejected=async(slot:number,p:Promise<unknown>,expected:any)=>{let actual:any,threw=false;try{actual=await p}catch(e){actual=e;threw=true}__jait_instance(slot,actual,expected,threw)};
  switch(name){
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_17_3": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_19_3": {
 
 
 function context(): ToolContext {
@@ -54,6 +55,7 @@ function context(): ToolContext {
     userId: "user-1",
   };
 }
+const __jait_hook_432 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
@@ -69,13 +71,13 @@ await (async()=>{
 })();
 
 } finally {
-
+await __jait_hook_432();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_26_3": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_28_3": {
 
 
 function context(): ToolContext {
@@ -87,6 +89,7 @@ function context(): ToolContext {
     userId: "user-1",
   };
 }
+const __jait_hook_432 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
@@ -129,13 +132,13 @@ await (async()=>{
 })();
 
 } finally {
-
+await __jait_hook_432();
 }
 }
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_66_3": {
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_68_3": {
 
 
 function context(): ToolContext {
@@ -147,6 +150,7 @@ function context(): ToolContext {
     userId: "user-1",
   };
 }
+const __jait_hook_432 = () => vi.useRealTimers();
 /*__jait_scope_open__*/{
 
 try {
@@ -171,7 +175,99 @@ await (async()=>{
 })();
 
 } finally {
+await __jait_hook_432();
+}
+}
 
+break;
+}
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_88_3": {
+
+
+function context(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+  };
+}
+const __jait_hook_432 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    vi.useFakeTimers();
+    const service = new UserQuestionService();
+    const tool = createUserAskTool(service);
+    const mcpContext = { ...context(), requestedBy: "mcp-client" };
+    const first = tool.execute({ questions: [{ id: "choice", header: "Choice", question: "Which one?" }] }, mcpContext);
+    const [request] = service.listPending();
+    await vi.advanceTimersByTimeAsync(60_000);
+    __jait_capture(0, (await first), ({ ok: true, data: { status: "pending", requestId: request!.id } }));
+    for (let i = 0; i < 6; i++) {
+      const waiting = tool.execute({ requestId: request!.id }, mcpContext);
+      await vi.advanceTimersByTimeAsync(60_000);
+      __jait_capture(1, (await waiting), ({ ok: true, data: { status: "pending", requestId: request!.id } }));
+      __jait_capture(2, (service.listPending()));
+    }
+    // The answer arrives between MCP calls, well after the client's old deadline.
+    const answers = { choice: { selected: ["yes"], freeText: null, skipped: false } };
+    __jait_capture(3, (service.submit(request!.id, { answers }, "user-1")));
+    await vi.advanceTimersByTimeAsync(24 * 60 * 60 * 1000);
+    await __jait_captureResolved(4, (tool.execute({ requestId: request!.id }, mcpContext)), ({ ok: true, data: { answers } }));
+    __jait_capture(5, (service.listPending()));
+    __jait_capture(6, (vi.getTimerCount()));
+    await __jait_captureResolved(7, (tool.execute({ requestId: request!.id }, mcpContext)));
+  
+})();
+
+} finally {
+await __jait_hook_432();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_user_question_tools_test_ts_113_3": {
+
+
+function context(): ToolContext {
+  return {
+    sessionId: "session-1",
+    actionId: "action-1",
+    projectRoot: process.cwd(),
+    requestedBy: "agent",
+    userId: "user-1",
+  };
+}
+const __jait_hook_432 = () => vi.useRealTimers();
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    vi.useFakeTimers();
+    const service = new UserQuestionService();
+    const tool = createUserAskTool(service);
+    const mcpContext = { ...context(), requestedBy: "mcp-client" };
+    const first = tool.execute({ questions: [{ id: "choice", header: "Choice", question: "Which one?" }] }, mcpContext);
+    const [request] = service.listPending();
+    await vi.advanceTimersByTimeAsync(60_000);
+    await first;
+    await __jait_captureResolved(0, (tool.execute({ requestId: request!.id }, { ...mcpContext, userId: "other" })));
+    await __jait_captureResolved(1, (tool.execute({ requestId: request!.id }, { ...mcpContext, sessionId: "other" })));
+    const waiting = tool.execute({ requestId: request!.id }, mcpContext);
+    __jait_capture(2, (service.cancel(request!.id, "user-1")));
+    await __jait_captureResolved(3, (waiting));
+    __jait_capture(4, (vi.getTimerCount()));
+  
+})();
+
+} finally {
+await __jait_hook_432();
 }
 }
 

@@ -1,5 +1,26 @@
 # Native Rust gateway
 
+## Current native checkpoint — 2026-10-20
+
+The source-bound gate verifies **148/364 components (40.66%)** with unchanged
+sources and exact live fingerprints. This supersedes historical counts below.
+The latest batches add the DNS-pinned public mail-image loader and an opt-in
+skills HTTP adapter (12 and 8 focused tests, nine caught/restored mutations).
+The preceding batch implements subscription quota fetching: 26 focused differential
+checks and 34 native checks cover cookie/status handling, HTML and quota parsing,
+stream limits/cleanup, UTF-8, redirects and deadlines. Four timezone subprocesses
+cover local dates and daylight-saving transitions. A 100,000-level document now
+passes in 0.40 seconds after replacing repeated ancestor scans; a duration bound
+retains the regression. All 2,231 entity mappings match the reference decoder.
+
+Evidence: `tests/contract/reviews/native-subscription-usage.md` and
+`.jait/artifacts/gateway-rust/checkpoints/148-report.json`. The review records
+fail-then-pass discrepancies and explicit format/platform/integration limits.
+The full gate passes 171 native library tests and 82 differential targets.
+Production remains the TypeScript gateway. **216 components remain**; full
+replacement, client/platform, resource and rollback gates remain open.
+
+
 Parallel native implementation beside `packages/gateway`. The standalone process
 currently serves only `GET /health` (and HEAD). It does not yet serve the application.
 
@@ -36,8 +57,8 @@ and compilation is bounded to two jobs.
 
 ## Verified components
 
-The latest passing frozen-source checkpoint covers 116 of the 361 gateway
-source components in `tests/contract/coverage.json`: **32.13% focused native component
+The latest passing frozen-source checkpoint covers 141 of the 364 gateway
+source components in `tests/contract/coverage.json`: **38.74% focused native component
 coverage**. The current report records whether that snapshot still matches live sources. Components have equal weight; this percentage measures neither effort
 remaining nor readiness to replace production.
 

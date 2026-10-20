@@ -313,12 +313,15 @@ await (async()=>{
 
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
+    // Skills are lazy-discovered now: the prompt carries the discovery
+    // instruction, not the skill's file path.
     __jait_capture(2, (prompt));
     __jait_capture(3, (prompt));
     __jait_capture(4, (prompt));
     __jait_capture(5, (prompt));
-    __jait_capture(6, (prompt.length));
-  
+    __jait_capture(6, (prompt));
+    __jait_capture(7, (prompt.length));
+
 })();
 
 } finally {
@@ -328,7 +331,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_49_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_52_3": {
 
 
 const testConfig = {
@@ -569,7 +572,7 @@ await (async()=>{
     __jait_capture(0, (canUseGatewayProviderForProject("desktop-windows-node")));
     __jait_capture(1, (canUseGatewayProviderForProject("gateway")));
     __jait_capture(2, (canUseGatewayProviderForProject(null)));
-  
+
 })();
 
 } finally {
@@ -579,7 +582,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_57_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_60_3": {
 
 
 const testConfig = {
@@ -825,7 +828,7 @@ await (async()=>{
     __jait_capture(5, (getExternalFileMutationPath("edit", { relative_path: "src/f.ts" })));
     __jait_capture(6, (getExternalFileMutationPath("edit", { changes: [{ path: "src/g.ts" }] })));
     __jait_capture(7, (getExternalFileMutationPath("edit", { input: { changes: [{ file_path: "src/h.ts" }] } })));
-  
+
 })();
 
 } finally {
@@ -835,7 +838,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_68_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_71_3": {
 
 
 const testConfig = {
@@ -1076,7 +1079,7 @@ await (async()=>{
     __jait_captureType(0, (getExternalFileMutationPath("read", { path: "/tmp/a.ts" })));
     __jait_captureType(1, (getExternalFileMutationPath("web", { path: "/tmp/a.ts" })));
     __jait_captureType(2, (getExternalFileMutationPath("execute", { command: "echo hi" })));
-  
+
 })();
 
 } finally {
@@ -1086,7 +1089,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_76_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_79_3": {
 
 
 const testConfig = {
@@ -1327,7 +1330,7 @@ await (async()=>{
     __jait_capture(0, (normalizeProviderSessionError("Usage limit reached for this provider")));
     __jait_capture(1, (normalizeProviderSessionError("Please log in before continuing")));
     __jait_capture(2, (normalizeProviderSessionError("Temporary provider outage")));
-  
+
 })();
 
 } finally {
@@ -1337,7 +1340,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_82_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_85_3": {
 
 
 const testConfig = {
@@ -1586,7 +1589,7 @@ await (async()=>{
     __jait_capture(0, (getProviderRequestErrorMessage(error)));
     __jait_capture(1, (isNonRecoverableProviderRequestError(error)));
     __jait_capture(2, (isNonRecoverableProviderRequestError(new Error("Session process exited"))));
-  
+
 })();
 
 } finally {
@@ -1596,7 +1599,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_340_3_each0": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_343_3_each0": {
 
 
 const testConfig = {
@@ -1865,7 +1868,7 @@ await (async()=>{
     } finally {
       await app.close();
     }
-  
+
 })();
 
 } finally {
@@ -1876,7 +1879,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_340_3_each1": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_343_3_each1": {
 
 
 const testConfig = {
@@ -2145,7 +2148,7 @@ await (async()=>{
     } finally {
       await app.close();
     }
-  
+
 })();
 
 } finally {
@@ -2156,7 +2159,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_372_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_375_3": {
 
 
 const testConfig = {
@@ -2411,7 +2414,7 @@ await (async()=>{
     } finally {
       await app.close();
     }
-  
+
 })();
 
 } finally {
@@ -2421,7 +2424,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_392_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_395_3": {
 
 
 const testConfig = {
@@ -2685,7 +2688,7 @@ await (async()=>{
     __jait_capture(4, (provider.interruptTurn.mock.calls));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -2695,7 +2698,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_421_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_424_3": {
 
 
 const testConfig = {
@@ -2959,7 +2962,7 @@ await (async()=>{
     __jait_capture(5, (provider.sendTurn.mock.calls));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -2969,7 +2972,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_450_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_453_3": {
 
 
 const testConfig = {
@@ -3248,7 +3251,7 @@ await (async()=>{
     __jait_capture(7, (provider.startSession.mock.calls[1]?.[0]));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -3258,7 +3261,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_494_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_497_3": {
 
 
 const testConfig = {
@@ -3537,7 +3540,7 @@ await (async()=>{
     __jait_capture(3, (provider.startSession.mock.calls[1]?.[0]));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -3547,7 +3550,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_544_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_547_3": {
 
 
 const testConfig = {
@@ -3823,7 +3826,7 @@ await (async()=>{
     __jait_capture(6, (response.body));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -3833,7 +3836,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_585_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_588_3": {
 
 
 const testConfig = {
@@ -4104,7 +4107,7 @@ await (async()=>{
     __jait_capture(9, (response.body));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -4114,7 +4117,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_621_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_624_3": {
 
 
 const testConfig = {
@@ -4385,7 +4388,7 @@ await (async()=>{
     __jait_capture(6, (firstTurnMessage));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -4395,7 +4398,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_657_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_660_3": {
 
 
 const testConfig = {
@@ -4673,7 +4676,7 @@ await (async()=>{
     __jait_capture(4, (response.body));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -4683,7 +4686,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_700_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_703_3": {
 
 
 const testConfig = {
@@ -4971,7 +4974,7 @@ await (async()=>{
     __jait_capture(12, (response.body));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -4981,7 +4984,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_753_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_756_3": {
 
 
 const testConfig = {
@@ -5264,7 +5267,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -5274,7 +5277,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_806_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_809_3": {
 
 
 const testConfig = {
@@ -5554,7 +5557,7 @@ await (async()=>{
     __jait_capture(4, (assistantMessage?.segments));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -5564,7 +5567,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_855_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_858_3": {
 
 
 const testConfig = {
@@ -5837,7 +5840,7 @@ await (async()=>{
     __jait_capture(3, (messagesResponse.json()));
 
     await app.close();
-  
+
 })();
 
 } finally {
@@ -5847,7 +5850,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_893_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_896_3": {
 
 
 const testConfig = {
@@ -6145,7 +6148,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -6155,7 +6158,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_959_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_962_3": {
 
 
 const testConfig = {
@@ -6469,7 +6472,7 @@ await (async()=>{
       await app.close();
       sqlite.close();
     }
-  
+
 })();
 
 } finally {
@@ -6479,7 +6482,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1038_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1041_3": {
 
 
 const testConfig = {
@@ -6795,7 +6798,7 @@ await (async()=>{
       await app.close();
       sqlite.close();
     }
-  
+
 })();
 
 } finally {
@@ -6805,7 +6808,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1122_3": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1125_3": {
 
 
 const testConfig = {
@@ -7114,7 +7117,7 @@ await (async()=>{
 
     await app.close();
     sqlite.close();
-  
+
 })();
 
 } finally {
@@ -7124,7 +7127,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1197_1": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1200_1": {
 
 
 const testConfig = {
@@ -7406,7 +7409,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1235_1_each0": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1238_1_each0": {
 
 
 const testConfig = {
@@ -7736,7 +7739,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1235_1_each1": {
+case "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_1238_1_each1": {
 
 
 const testConfig = {

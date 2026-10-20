@@ -1,5 +1,7 @@
 //! Rust-owned assertion interpreter for declarative reference vectors.
 use crate::internal_driver;
+#[path = "source_review_reuse.rs"]
+mod source_review_reuse;
 use anyhow::{Context, Result, bail, ensure};
 use serde::Deserialize;
 use serde_json::{Value, value::RawValue};
@@ -114,6 +116,13 @@ pub fn check(
     cancelled: &dyn Fn() -> bool,
     case: &Case,
 ) -> Result<()> {
+    if case
+        .assertions
+        .iter()
+        .any(|rule| rule["kind"] == "reused-tail")
+    {
+        return source_review_reuse::check(root, case.calls.get(), &case.assertions, cancelled);
+    }
     let request = format!("{{\"version\":1,\"calls\":{}}}", case.calls.get());
     let actual = internal_driver::call_request(root, directory, &request, cancelled)?;
     validate(&actual, &case.assertions)

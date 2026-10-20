@@ -356,14 +356,14 @@ fn run() -> Result<bool> {
         .join(uuid::Uuid::new_v4().to_string());
     fs::create_dir_all(&directory)?;
     println!("Artifacts: {}", directory.display());
-    let source_fingerprints = evidence::snapshot(&root)?;
+    let source_fingerprints = evidence::translated_snapshot(&root)?;
     let started = Instant::now();
     let result = suite(&root, &directory, profile);
     let (cases, process_succeeded, error) = match result {
         Ok((cases, succeeded)) => (cases, succeeded, Value::Null),
         Err(error) => (Vec::new(), false, json!(format!("{error:#}"))),
     };
-    let sources_unchanged = source_fingerprints == evidence::snapshot(&root)?;
+    let sources_unchanged = source_fingerprints == evidence::translated_snapshot(&root)?;
     let success = full_results(&cases, process_succeeded, sources_unchanged)
         && (profile == Profile::Enabled || cases.iter().all(|case| case["status"] == "passed"));
     let passed = cases

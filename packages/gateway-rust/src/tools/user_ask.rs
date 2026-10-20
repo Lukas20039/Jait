@@ -1,6 +1,6 @@
 //! Structured user.ask adapter over the real native pending-question service.
 use crate::{
-    services::input_requests::{QuestionInput, UserQuestionService},
+    services::input_requests::{QuestionInput, UserQuestionService, WaitOutcome},
     text::js_trim,
 };
 use serde::Deserialize;
@@ -19,12 +19,17 @@ pub fn metadata() -> &'static Value {
 pub struct AskContext {
     pub session_id: String,
     pub user_id: Option<String>,
+    #[serde(default)]
+    pub requested_by: Option<String>,
 }
 #[derive(Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserAskInput {
+    #[serde(default)]
+    pub request_id: Option<String>,
     pub title: Option<String>,
     pub attention: Option<String>,
+    #[serde(default)]
     pub questions: Vec<AskQuestion>,
 }
 #[derive(Clone, Default, Deserialize)]
@@ -77,6 +82,13 @@ pub async fn execute(
     input: UserAskInput,
     context: &AskContext,
 ) -> Value {
+    // `if (input.requestId)`: an empty string is falsy and starts a new request.
+    if let Some(request_id) = input.request_id.as_deref().filter(|id| !id.is_empty()) {
+        if input.questions.is_empty() {
+            return wait_for_answer(service, request_id, context).await;
+        }
+        return json!({"ok":false,"message":"Resume with only requestId; do not supply new questions."});
+    }
     let questions: Vec<_> = input.questions.into_iter().map(normalize).collect();
     if questions.is_empty() {
         return json!({"ok":false,"message":"At least one question is required."});
@@ -100,18 +112,55 @@ pub async fn execute(
     if !duplicates.is_empty() {
         return json!({"ok":false,"message":format!("Duplicate question id(s): {}",duplicates.join(", "))});
     }
-    let handle = service.ask(QuestionInput {
+    let request = QuestionInput {
         session_id: context.session_id.clone(),
         user_id: context.user_id.clone(),
         requested_by: Some("user.ask".into()),
         title: input.title,
         attention: input.attention,
         questions,
-    });
+    };
+    if context.requested_by.as_deref() == Some("mcp-client") {
+        let request_id = service.start_resumable(request);
+        return wait_for_answer(service, &request_id, context).await;
+    }
+    let handle = service.ask(request);
     match handle.result.await {
         Ok(Some(result)) => {
             json!({"ok":true,"message":"User answered the question request.","data":result})
         }
         _ => json!({"ok":false,"message":"The user did not answer the question request."}),
+    }
+}
+
+/// One resumable wait. Pending keeps the request addressable so MCP clients can
+/// call `user.ask` with only the requestId until the user answers or cancels.
+async fn wait_for_answer(
+    service: &UserQuestionService,
+    request_id: &str,
+    context: &AskContext,
+) -> Value {
+    match service
+        .wait_for_answer(request_id, &context.session_id, context.user_id.as_deref())
+        .await
+    {
+        WaitOutcome::Missing => json!({
+            "ok":false,
+            "message":"Question request not found for this user and session."
+        }),
+        WaitOutcome::Pending => json!({
+            "ok":true,
+            "message":"Waiting for the user. Call user.ask again with only this requestId until answered or cancelled. The question has no expiry; do not proceed without the answer.",
+            "data":{"status":"pending","requestId":request_id}
+        }),
+        WaitOutcome::Answered(Some(result)) => json!({
+            "ok":true,
+            "message":"User answered the question request.",
+            "data":result
+        }),
+        WaitOutcome::Answered(None) => json!({
+            "ok":false,
+            "message":"The user cancelled the question request."
+        }),
     }
 }

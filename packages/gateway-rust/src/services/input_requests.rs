@@ -8,13 +8,34 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::sync::{Arc, Mutex};
-use tokio::{sync::oneshot, task::AbortHandle, time::Duration};
+use tokio::{
+    sync::{oneshot, watch},
+    task::AbortHandle,
+    time::Duration,
+};
 
 pub type Observer = Arc<dyn Fn(InputRequest) + Send + Sync>;
 pub type InputResult = Option<Value>;
+/// Production resumable wait deadline: TypeScript races the answer against a
+/// 60 s timer and treats expiry as `pending`, retaining the request.
+pub const RESUME_WAIT_MS: u64 = 60_000;
 pub struct InputHandle {
     pub id: String,
     pub result: oneshot::Receiver<InputResult>,
+}
+/// Shared answer state. `watch` keeps the settled answer observable by every
+/// concurrent waiter, like awaiting the same JS promise twice.
+#[derive(Clone, Debug)]
+pub enum Answer {
+    Waiting,
+    Settled(InputResult),
+}
+/// Result of one resumable wait, mirroring `UserQuestionWaitResult`.
+#[derive(Clone, Debug, PartialEq)]
+pub enum WaitOutcome {
+    Pending,
+    Missing,
+    Answered(InputResult),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -34,6 +55,7 @@ struct Pending {
     request: InputRequest,
     send: oneshot::Sender<InputResult>,
     timer: Option<AbortHandle>,
+    resumable: Option<watch::Sender<Answer>>,
 }
 struct Registry {
     pending: Mutex<Vec<Pending>>,
@@ -42,12 +64,20 @@ struct Registry {
 }
 impl Registry {
     fn insert(&self, request: InputRequest) -> InputHandle {
+        self.insert_with(request, None)
+    }
+    fn insert_with(
+        &self,
+        request: InputRequest,
+        resumable: Option<watch::Sender<Answer>>,
+    ) -> InputHandle {
         let (send, result) = oneshot::channel();
         let id = request.id.clone();
         self.pending.lock().unwrap().push(Pending {
             request,
             send,
             timer: None,
+            resumable,
         });
         InputHandle { id, result }
     }
@@ -105,6 +135,11 @@ impl Registry {
         request.status = status.into();
         // JS promise reactions run after the synchronous onResolved callback.
         (self.on_resolved)(request);
+        // Resumable waiters share one answer; the one-shot receiver may be gone
+        // (resumable requests never await their own handle), so ignore its error.
+        if let Some(answer) = entry.resumable {
+            let _ = answer.send(Answer::Settled(value.clone()));
+        }
         let _ = entry.send.send(value);
         true
     }
@@ -127,10 +162,18 @@ pub struct QuestionInput {
     pub attention: Option<String>,
     pub questions: Vec<Value>,
 }
+struct Resumable {
+    request_id: String,
+    session_id: String,
+    user_id: Option<String>,
+    answer: watch::Receiver<Answer>,
+}
 #[derive(Clone)]
 pub struct UserQuestionService {
     registry: Arc<Registry>,
+    resumable: Arc<Mutex<Vec<Resumable>>>,
     clock: Clock,
+    resume_wait: Duration,
 }
 impl Default for UserQuestionService {
     fn default() -> Self {
@@ -139,24 +182,126 @@ impl Default for UserQuestionService {
 }
 impl UserQuestionService {
     pub fn new(clock: Clock, on_request: Option<Observer>, on_resolved: Option<Observer>) -> Self {
+        Self::new_with_resume_wait(
+            clock,
+            Duration::from_millis(RESUME_WAIT_MS),
+            on_request,
+            on_resolved,
+        )
+    }
+    /// Test seam for the resumable deadline; production constructors always use
+    /// [`RESUME_WAIT_MS`].
+    pub fn new_with_resume_wait(
+        clock: Clock,
+        resume_wait: Duration,
+        on_request: Option<Observer>,
+        on_resolved: Option<Observer>,
+    ) -> Self {
         Self {
             registry: registry(on_request, on_resolved),
+            resumable: Arc::new(Mutex::new(Vec::new())),
             clock,
+            resume_wait,
         }
     }
-    pub fn ask(&self, input: QuestionInput) -> InputHandle {
-        let request = InputRequest {
-            id: uuidv7().to_string(), session_id: input.session_id,
-            user_id: input.user_id, requested_by: input.requested_by,
-            title: input.title.as_deref().map(js_trim).filter(|s| !s.is_empty()).unwrap_or("Input requested").into(),
-            created_at: iso((self.clock)()).expect("system time must be representable"), expires_at: None,
+    pub fn resume_wait(&self) -> Duration {
+        self.resume_wait
+    }
+    fn request(&self, input: QuestionInput) -> InputRequest {
+        InputRequest {
+            id: uuidv7().to_string(),
+            session_id: input.session_id,
+            user_id: input.user_id,
+            requested_by: input.requested_by,
+            title: input
+                .title
+                .as_deref()
+                .map(js_trim)
+                .filter(|s| !s.is_empty())
+                .unwrap_or("Input requested")
+                .into(),
+            created_at: iso((self.clock)()).expect("system time must be representable"),
+            expires_at: None,
             status: "pending".into(),
             details: serde_json::json!({"attention":if input.attention.as_deref()==Some("urgent") {"urgent"} else {"normal"},
                 "questions":input.questions}).as_object().unwrap().clone(),
-        };
+        }
+    }
+    pub fn ask(&self, input: QuestionInput) -> InputHandle {
+        let request = self.request(input);
         let handle = self.registry.insert(request.clone());
         (self.registry.on_request)(request);
         handle
+    }
+    /// Creates a request whose answer is retained for repeated waits. The entry
+    /// is registered after `onRequest`, matching `createRequest` ordering, and
+    /// is dropped only when a wait collects the answer.
+    pub fn start_resumable(&self, input: QuestionInput) -> String {
+        let request = self.request(input);
+        let (answer_send, answer) = watch::channel(Answer::Waiting);
+        let handle = self
+            .registry
+            .insert_with(request.clone(), Some(answer_send));
+        (self.registry.on_request)(request.clone());
+        self.resumable.lock().unwrap().push(Resumable {
+            request_id: request.id,
+            session_id: request.session_id,
+            user_id: request.user_id,
+            answer,
+        });
+        handle.id
+    }
+    /// Mirrors `Promise.race([result, 60 s timer])`. Lookup binds the exact
+    /// session and owner, an expiry keeps the entry, every concurrent waiter
+    /// observes the same settled answer, and dropping this future (client
+    /// cancellation) retains everything for the next call.
+    pub async fn wait_for_answer(
+        &self,
+        request_id: &str,
+        session_id: &str,
+        user_id: Option<&str>,
+    ) -> WaitOutcome {
+        let mut answer = {
+            let entries = self.resumable.lock().unwrap();
+            match entries.iter().find(|entry| {
+                entry.request_id == request_id
+                    && entry.session_id == session_id
+                    && entry.user_id.as_deref() == user_id
+            }) {
+                Some(entry) => entry.answer.clone(),
+                None => return WaitOutcome::Missing,
+            }
+        };
+        // Answers that arrived between waits resolve without arming a timer.
+        if let Answer::Settled(result) = &*answer.borrow() {
+            let result = result.clone();
+            self.collect(request_id);
+            return WaitOutcome::Answered(result);
+        }
+        let deadline = tokio::time::Instant::now() + self.resume_wait;
+        if tokio::time::timeout_at(deadline, answer.changed())
+            .await
+            .is_err()
+        {
+            return WaitOutcome::Pending;
+        }
+        let settled = match &*answer.borrow() {
+            Answer::Settled(result) => Some(result.clone()),
+            Answer::Waiting => None,
+        };
+        match settled {
+            Some(result) => {
+                self.collect(request_id);
+                WaitOutcome::Answered(result)
+            }
+            None => WaitOutcome::Pending,
+        }
+    }
+    fn collect(&self, request_id: &str) {
+        self.resumable
+            .lock()
+            .unwrap()
+            .retain(|entry| entry.request_id != request_id);
     }
     pub fn list_pending(&self, session: Option<&str>, user: Option<&str>) -> Vec<InputRequest> {
         self.registry.list(session, user)
@@ -275,5 +420,98 @@ impl SecretInputService {
     }
     pub fn cancel(&self, id: &str, user: Option<&str>) -> bool {
         self.registry.resolve(id, None, "cancelled", user, false)
+    }
+}
+
+#[cfg(test)]
+mod resume_tests {
+    use super::*;
+    fn input(owner: Option<&str>) -> QuestionInput {
+        QuestionInput {
+            session_id: "session".into(),
+            user_id: owner.map(String::from),
+            questions: vec![serde_json::json!({"id":"q","header":"H","question":"Q?"})],
+            ..Default::default()
+        }
+    }
+    #[tokio::test(start_paused = true)]
+    async fn timeout_keeps_answer_addressable_between_calls_and_collects_once() {
+        let service = UserQuestionService::default();
+        assert_eq!(service.resume_wait(), Duration::from_millis(60_000));
+        let id = service.start_resumable(input(Some("owner")));
+        let worker = service.clone();
+        let wait_id = id.clone();
+        let task = tokio::spawn(async move {
+            worker
+                .wait_for_answer(&wait_id, "session", Some("owner"))
+                .await
+        });
+        tokio::task::yield_now().await;
+        tokio::time::advance(Duration::from_millis(RESUME_WAIT_MS - 1)).await;
+        assert!(!task.is_finished());
+        tokio::time::advance(Duration::from_millis(1)).await;
+        assert_eq!(task.await.unwrap(), WaitOutcome::Pending);
+        assert_eq!(service.list_pending(None, None).len(), 1);
+        let answer = serde_json::json!({"answers":[{"id":"q","value":"yes"}]});
+        assert!(service.submit(&id, answer.clone(), Some("owner")));
+        assert_eq!(
+            service.wait_for_answer(&id, "session", Some("owner")).await,
+            WaitOutcome::Answered(Some(answer))
+        );
+        assert_eq!(
+            service.wait_for_answer(&id, "session", Some("owner")).await,
+            WaitOutcome::Missing
+        );
+    }
+    #[tokio::test(start_paused = true)]
+    async fn wrong_owner_session_and_empty_owner_do_not_collect_an_answer() {
+        let service = UserQuestionService::default();
+        let id = service.start_resumable(input(None));
+        assert_eq!(
+            service.wait_for_answer(&id, "other", None).await,
+            WaitOutcome::Missing
+        );
+        assert_eq!(
+            service.wait_for_answer(&id, "session", Some("")).await,
+            WaitOutcome::Missing
+        );
+        assert!(service.cancel(&id, None));
+        assert_eq!(
+            service.wait_for_answer(&id, "session", Some("owner")).await,
+            WaitOutcome::Missing
+        );
+        assert_eq!(
+            service.wait_for_answer(&id, "session", None).await,
+            WaitOutcome::Answered(None)
+        );
+    }
+    #[tokio::test(start_paused = true)]
+    async fn cancelled_waiter_keeps_shared_answer_for_concurrent_waiters() {
+        let service = UserQuestionService::default();
+        let id = service.start_resumable(input(Some("owner")));
+        let mut tasks = vec![];
+        for _ in 0..3 {
+            let worker = service.clone();
+            let id = id.clone();
+            tasks.push(tokio::spawn(async move {
+                worker.wait_for_answer(&id, "session", Some("owner")).await
+            }));
+        }
+        for _ in 0..8 {
+            tokio::task::yield_now().await;
+        }
+        tasks.remove(0).abort();
+        let answer = serde_json::json!({"answers":[]});
+        assert!(service.submit(&id, answer.clone(), Some("owner")));
+        for task in tasks {
+            assert_eq!(
+                task.await.unwrap(),
+                WaitOutcome::Answered(Some(answer.clone()))
+            );
+        }
+        assert_eq!(
+            service.wait_for_answer(&id, "session", Some("owner")).await,
+            WaitOutcome::Missing
+        );
     }
 }

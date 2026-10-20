@@ -1,6 +1,7 @@
 /** Test-only provider bridge. Rust supplies fixtures and assertions. */
 import { deriveOllamaResetWindow, parseOllamaResetSource, describeOllamaResetSource } from '../../../packages/gateway/src/services/provider-reset-windows.ts';
 import { normalizeReasoningEffort, resolveThreadSelectionDefaults } from '../../../packages/gateway/src/services/thread-defaults.ts';
+import { mapCodexNotification } from '../../../packages/gateway/src/providers/codex-event-mapper.ts';
 
 export async function dispatch(call: any): Promise<any> {
   switch (call.op) {
@@ -21,6 +22,11 @@ export async function dispatch(call: any): Promise<any> {
     case 'provider.reset-parse': return parseOllamaResetSource(call.value);
     case 'provider.reset-describe': return describeOllamaResetSource(call.value);
     case 'provider.effort': return normalizeReasoningEffort(call.value) ?? null;
+    // Replays a batch in one process so the mapper's module-level fallback-id
+    // counter advances exactly as it does in production; the native side keeps
+    // the same single shared counter, and the test normalizes the numeric tail.
+    case 'provider.codex-event-map': return call.calls.map((entry: any) =>
+      mapCodexNotification(entry.method, entry.params, entry.sessionId ?? 'session-1'));
     case 'provider.thread': {
       const reads: string[] = [];
       const options: any = { userId: call.userId, sessionId: call.sessionId };

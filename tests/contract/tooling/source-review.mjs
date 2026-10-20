@@ -10,7 +10,17 @@ const requiredEvidence = [
   'tests/contract/source-reviews.json', 'tests/contract/vectors/sourcereview.json',
   'tests/contract/drivers/sourcereview.ts', 'tests/contract/tests/source_review.rs',
   'tests/contract/src/internal_driver.rs', 'tests/contract/src/fixture_internal_contracts.rs',
-  'tests/contract/drivers/internals.ts', 'tests/contract/Cargo.toml', 'tests/contract/Cargo.lock',
+  'tests/contract/drivers/internals.ts', 'tests/source-review/Cargo.toml', 'tests/source-review/Cargo.lock',
+  'tests/contract/src/source_review_reuse.rs',
+  'tests/contract/tests/tail_static.rs',
+  'tests/contract/tests/support/tail_assertions.rs',
+  'tests/contract/tests/support/tail_stream.rs',
+  'tests/contract/tests/support/tail_text_pattern.rs',
+  'tests/contract/drivers/tailstatic.ts',
+  'tests/contract/drivers/tailstream.ts',
+  'tests/contract/drivers/tailtransport.ts',
+  'tests/contract/drivers/tail-peer.test.ts',
+  'tests/contract/drivers/tail-node-loader.mjs',
 ];
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const fnv = bytes => {
@@ -25,6 +35,7 @@ export function reviewedInventory(manifest, registry, report, read) {
   assert.equal(report.profile, 'source-runtime-review', 'wrong report profile');
   assert.equal(report.backend_label, 'typescript', 'reference backend required');
   assert.equal(report.success, true, 'failed report cannot grant source credit');
+  assert.equal(report.build_manifest, 'tests/source-review/Cargo.toml', 'isolated reference build required');
   const sources = registry.sources;
   assert.ok(sources.length > 0, 'no reviewed sources');
   assert.equal(members(sources.map(s => s.path)).length, sources.length, 'duplicate source review');
@@ -34,7 +45,18 @@ export function reviewedInventory(manifest, registry, report, read) {
   assert.ok(report.cases.every(c => c.status === 'passed'), 'every case must pass');
   assert.equal(report.mutations.length, sources.length, 'every source requires a mutation control');
   assert.equal(members(report.mutations.map(m => m.path)).length, sources.length, 'duplicate mutation evidence');
-  for (const path of [...requiredEvidence, ...sources.map(s => s.path)]) {
+  const extraFiles = sources.flatMap(source => {
+    assert.ok(source.evidence_files === undefined || Array.isArray(source.evidence_files), 'invalid extra evidence files');
+    for (const path of source.evidence_files ?? []) {
+      assert.ok(typeof path === 'string' && !path.split(/[\\/]/).includes('..') && (
+        /^tests\/contract\/drivers\/tailstatic\/fixture-[a-z0-9-]+\.ts$/.test(path)
+        || (path.startsWith('packages/gateway/') && /\.(test|spec)\.[cm]?[jt]sx?$/.test(path))
+        || path === 'tests/contract/drivers/source-review-assessment.ts'
+      ), 'extra evidence is not a reviewed fixture, original test or assessment helper');
+    }
+    return source.evidence_files ?? [];
+  });
+  for (const path of [...requiredEvidence, ...sources.map(s => s.path), ...extraFiles]) {
     assert.equal(report.source_sha256[path], sha256(read(path)), `stale or absent evidence: ${path}`);
   }
   const updated = structuredClone(manifest);
@@ -50,7 +72,7 @@ export function reviewedInventory(manifest, registry, report, read) {
     assert.equal(mutation?.case, source.mutation.case_id, 'mutation case differs from review');
     assert.ok(source.case_ids.includes(mutation.case), 'mutation borrows unrelated case');
     assert.deepEqual([mutation.before, mutation.mutated, mutation.restored], ['passed', 'assertion-failed', 'passed'], 'mutation requires pass/fail/restore');
-    assert.ok(mutation.error.includes('equality assertion failed'), 'setup failures do not prove behavior');
+    assert.ok(mutation.error.includes('equality assertion failed') || mutation.error.includes('source behavior assertion failed'), 'setup failures do not prove behavior');
     item.status = 'verified';
     item.parity_review = `${source.review} Executable review: tests/contract/source-reviews.json; Rust-owned cases and assertion-failing source mutation with restored pass: tests/contract/tests/source_review.rs. Reference source runtime coverage only; native implementation and broader migration acceptance remain separate.`;
     item.gap = 'Reviewed reference runtime behavior; native migration and wider acceptance gates remain separate.';

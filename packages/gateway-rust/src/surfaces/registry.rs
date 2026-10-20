@@ -20,11 +20,12 @@ pub enum SurfaceState {
     Stopped,
     Error,
 }
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SurfaceStartInput {
     pub session_id: String,
     pub project_root: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub node_id: Option<String>,
     #[serde(flatten)]
     pub properties: Map<String, Value>,

@@ -142,7 +142,283 @@ await __jait_hook_220();
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3": {
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each0": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "<tool_call>";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each1": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = '<tool_call>\n{"name":"terminal","arguments":{}}\n</tool_call>';
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each2": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "</tool_call>";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each3": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "<tool_calls />";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each4": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = '<function_call name="terminal">';
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each5": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = 'Title: "<TOOL_CALL>"';
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each6": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "- `<tool_call>`";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each7": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "<|tool_call|>";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_35_3_each8": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+/*__jait_scope_open__*/{
+const raw = "[TOOL_CALLS]";
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle(raw, "Fallback title")));
+    __jait_capture(1, (normalizeGeneratedThreadTitle(raw, "")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_50_3": {
+
+
+const originalFetch = globalThis.fetch;
+const __jait_hook_220 = () => {
+  globalThis.fetch = originalFetch;
+  vi.restoreAllMocks();
+};
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (normalizeGeneratedThreadTitle("Fix <tool_call> chat titles", "Fallback")));
+  
+})();
+
+} finally {
+await __jait_hook_220();
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_56_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -208,7 +484,7 @@ await __jait_hook_220();
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_81_3": {
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_102_3": {
 
 
 const originalFetch = globalThis.fetch;
@@ -289,7 +565,7 @@ await __jait_hook_220();
 
 break;
 }
-case "tailstatic_packages_gateway_src_services_thread_title_test_ts_142_3": {
+case "tailstatic_packages_gateway_src_services_thread_title_test_ts_163_3": {
 
 
 const originalFetch = globalThis.fetch;

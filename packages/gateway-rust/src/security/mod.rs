@@ -12,3 +12,5 @@ pub mod assessment_lease;
 pub mod trust_worker;
 
 pub mod path_guard;
+
+pub mod contracts;

@@ -3,3 +3,5 @@
 //! Frontend hosting and surface management remain unported.
 pub mod registry;
 pub mod terminal_output;
+
+pub mod contracts;

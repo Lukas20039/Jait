@@ -1,7 +1,24 @@
 /** Isolated fixtures; all comparisons execute in Rust. */
+// Source review only: redirect one defining module before loading its existing fixture.
+// This is absent in ordinary translated runs and has no gateway/tool entrypoint.
+async function applySourceReviewOverride(): Promise<void> {
+ const raw=process.env['JAIT_SOURCE_REVIEW_OVERRIDE'];if(!raw)return;
+ const value=JSON.parse(raw);const {realpathSync}=await import('node:fs');const {relative,isAbsolute}=await import('node:path');const {readFile}=await import('node:fs/promises');
+ if(!value||Object.keys(value).sort().join(',')!=='copy,source'||typeof value.source!=='string'||typeof value.copy!=='string'||!isAbsolute(value.source)||!isAbsolute(value.copy))throw new Error('Invalid source review override');
+ const root=realpathSync(new URL('../../../',import.meta.url));const source=realpathSync(value.source),copy=realpathSync(value.copy);const sourceRelative=relative(root,source).replaceAll('\\','/'),copyRelative=relative(root,copy).replaceAll('\\','/');
+ if(!sourceRelative.startsWith('packages/gateway/')||sourceRelative.split('/').includes('..')||(copy!==source&&!copyRelative.startsWith('.jait/artifacts/source-review/')))throw new Error('Source review override escapes fixture scope');
+ if(copy===source)return;
+ // Node applies the same bounded override in tail-node-loader.mjs before module evaluation.
+ if(!process.versions.bun)return;
+ // Load replacement bytes at the original identity, after fixture dependency mocks.
+ // Eagerly importing the copy here would evaluate unmocked top-level dependencies.
+ const {plugin}=await import('bun');const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ plugin({name:'source-review-copy',setup(build){build.onLoad({filter:new RegExp('^'+escaped+'$')},async()=>{const contents=await readFile(copy,'utf8');if(Buffer.byteLength(contents)>2*1024*1024)throw new Error('Source review copy exceeds size limit');return{contents,loader:'ts'};});}});
+}
+
 export async function dispatch(call: any): Promise<unknown> {
  const log=console.log; console.log=(...args:unknown[])=>console.error(...args);
- try { switch(call.file){
+ try { await applySourceReviewOverride(); switch(call.file){
 case "gateway-scripts-smoke-process-test-c012acd4": return await (await import('./tailstatic/fixture-gateway-scripts-smoke-process-test-c012acd4.ts')).run(call.name);
 case "gateway-src-build-retry-test-df437068": return await (await import('./tailstatic/fixture-gateway-src-build-retry-test-df437068.ts')).run(call.name);
 case "gateway-src-channels-assistant-test-16ca7bf5": return await (await import('./tailstatic/fixture-gateway-src-channels-assistant-test-16ca7bf5.ts')).run(call.name);
@@ -276,6 +293,7 @@ case "gateway-src-tools-channel-tools-test-83b31ba5": return await (await import
 case "gateway-src-tools-chat-modes-test-9caccc5c": return await (await import('./tailstatic/fixture-gateway-src-tools-chat-modes-test-9caccc5c.ts')).run(call.name);
 case "gateway-src-tools-code-graph-tools-test-37c774f1": return await (await import('./tailstatic/fixture-gateway-src-tools-code-graph-tools-test-37c774f1.ts')).run(call.name);
 case "gateway-src-tools-computer-tools-test-6897ac07": return await (await import('./tailstatic/fixture-gateway-src-tools-computer-tools-test-6897ac07.ts')).run(call.name);
+case "gateway-src-tools-context-overhead-test-19ee8168": return await (await import('./tailstatic/fixture-gateway-src-tools-context-overhead-test-19ee8168.ts')).run(call.name);
 case "gateway-src-tools-core-edit-test-8fad26fb": return await (await import('./tailstatic/fixture-gateway-src-tools-core-edit-test-8fad26fb.ts')).run(call.name);
 case "gateway-src-tools-core-get-fs-test-c4e4bea4": return await (await import('./tailstatic/fixture-gateway-src-tools-core-get-fs-test-c4e4bea4.ts')).run(call.name);
 case "gateway-src-tools-core-read-test-de8e0f2c": return await (await import('./tailstatic/fixture-gateway-src-tools-core-read-test-de8e0f2c.ts')).run(call.name);

@@ -3723,8 +3723,8 @@
     },
     {
       "path": "packages/gateway/src/services/calendar/service.ts",
-      "sha256": "e7ac458a88198283f67db1e1b3052c7b7a367071ac70f9258d7aeb3874dee1db",
-      "review": "Opt-in bounded-worker calendar account service; real TypeScript differential checks for ownership, encrypted credentials, OAuth state, device snapshots, token refresh, event aggregation and partial failures. ISO date input boundary documented.",
+      "sha256": "5d90f52f72430e9d2b77a245134e800426d34a95258b202be55f17b6bc16ffe9",
+      "review": "Opt-in bounded-worker calendar account service; real TypeScript differential checks for ownership, encrypted credentials, OAuth state, device snapshots, token refresh, event aggregation and partial failures. ISO date input boundary documented. Direct callback expiry and state consumption are checked before any token exchange, with the existing exact ten-minute boundary preserved and independent Rust assertions in addition to the differential comparison.",
       "cases": [
         {
           "id": "credentials_precedence_owner_isolation_used_timestamps_and_partial_save",
@@ -3758,6 +3758,11 @@
         },
         {
           "id": "calendar_event_limit_coercion_preserves_nan_and_numeric_input_boundaries",
+          "source": "tests/contract/tests/gateway_rust_calendar_service.rs",
+          "target": "gateway_rust_calendar_service"
+        },
+        {
+          "id": "oauth_callback_enforces_expiry_without_another_start_and_consumes_rejected_state",
           "source": "tests/contract/tests/gateway_rust_calendar_service.rs",
           "target": "gateway_rust_calendar_service"
         }
@@ -3977,6 +3982,80 @@
           "id": "cancellation_from_another_thread_wins_during_output_callback",
           "source": "tests/contract/tests/gateway_rust_bg_monitor.rs",
           "target": "gateway_rust_bg_monitor"
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/providers/provider-auth.ts",
+      "sha256": "1dc5c7c0e31da8bed1103169027cf19c13dc0e2fdc03308d4f1bc34484a1df2d",
+      "review": "Native Linux authentication children with literal argument parsing, filtered/ordered environment, bounded UTF-16 output, timeout and device-login state, explicit process ownership, input and overload handling. Real child/reference comparisons, 37 TypeScript tests, ten native executions, strict Clippy and three restored mutations. Windows execution and live provider credential integration remain separate. Bounded reference review follows tests/contract/reviews/native-provider-auth.md; live authentication/provider connectivity, Windows process execution and production composition remain separate.",
+      "cases": [
+        {
+          "id": "command_parser_preserves_escapes_unicode_and_literal_arguments",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        },
+        {
+          "id": "auth_details_match_shared_url_code_input_prompt_and_blocked_label_rules",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        },
+        {
+          "id": "ansi_environment_precedence_case_and_unsupported_results",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        },
+        {
+          "id": "logout_captures_exit_signal_ansi_tail_environment_and_literal_args",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        },
+        {
+          "id": "device_login_complete_partial_input_completed_error_and_timeout",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        },
+        {
+          "id": "started_login_accepts_input_and_releases_admission_after_exit_and_owner_drop",
+          "source": "tests/contract/tests/gateway_rust_provider_auth.rs",
+          "target": "gateway_rust_provider_auth"
+        }
+      ]
+    },
+    {
+      "path": "packages/gateway/src/providers/pi-mcp-provision.ts",
+      "sha256": "ec19bb8ac1e707d9f212b6af0148eb435b5194c164aef918299da60404dd337a",
+      "review": "Native owned per-session Pi config/wrappers, provider filtering, HTTP/SSE/stdio maps, private directories and cleanup. Actual wrapper execution with literal arguments, exact config/text comparisons, partial-write cleanup, ten component/transport executions plus a native unit test, gateway TypeScript check, strict Clippy, three restored mutations and three fail-then-pass production reference regressions. Windows wrapper text only; live Pi adapter and provider dispatch remain separate. Bounded reference review follows tests/contract/reviews/native-pi-mcp.md; live authentication/provider connectivity, Windows process execution and production composition remain separate.",
+      "cases": [
+        {
+          "id": "provider_filtering_empty_servers_default_command_and_command_trimming",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
+        },
+        {
+          "id": "stdio_http_sse_names_defaults_env_duplicates_and_numeric_key_order",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
+        },
+        {
+          "id": "wrapper_exec_preserves_literal_paths_arguments_and_session_config",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
+        },
+        {
+          "id": "windows_wrapper_text_retains_crlf_percent_forwarding_and_stdio_config",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
+        },
+        {
+          "id": "invalid_roots_and_session_paths_are_best_effort_without_leaked_files",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
+        },
+        {
+          "id": "concurrent_session_configs_are_distinct_and_last_owner_cleanup_is_idempotent",
+          "source": "tests/contract/tests/gateway_rust_pi_mcp.rs",
+          "target": "gateway_rust_pi_mcp"
         }
       ]
     }

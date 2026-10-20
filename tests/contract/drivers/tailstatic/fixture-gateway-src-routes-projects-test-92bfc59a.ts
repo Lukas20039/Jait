@@ -377,7 +377,11 @@ await (async()=>{
     const user = userService.createUser("title-user", "password123");
     userService.updateSettings(user.id, { apiKeys: { OPENAI_API_KEY: "test-key" } });
     const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({
+    // mockImplementation (not mockResolvedValue): every call gets a fresh
+    // Response body. A shared Response is consumed by the first res.json() and
+    // poisons later reads — and background polling (e.g. messenger sync) can
+    // legitimately call fetch while this test runs.
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({
       choices: [{ message: { content: "Diagnose Desktop gray screens" } }]
     }), { status: 200, headers: { "Content-Type": "application/json" } }));
 
@@ -401,7 +405,10 @@ await (async()=>{
       const titleBody = JSON.parse(titleRes.body) as { session: { name: string }; generated: boolean };
       __jait_capture(2, (titleBody.generated));
       __jait_capture(3, (titleBody.session.name));
-      __jait_capture(4, (fetchSpy.mock.calls));
+      // Scope to the completion call: unrelated background services may fetch
+      // while the test runs (messenger sync), so a global call count is racy.
+      const completionCalls = fetchSpy.mock.calls.filter((call) => String(call[0]).includes("/chat/completions"));
+      __jait_capture(4, (completionCalls.length));
     } finally {
       fetchSpy.mockRestore();
     }
@@ -415,7 +422,203 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_214_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_221_3_each0": {
+
+
+const testConfig = {
+  ...loadConfig(),
+  port: 0,
+  wsPort: 0,
+  logLevel: "silent",
+  nodeEnv: "test"
+};
+async function authHeaders(userId: string, username: string, jwtSecret: string) {
+  const token = await signAuthToken({ id: userId, username }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+let app: Awaited<ReturnType<typeof createServer>>;
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let userService: UserService;
+const tempRoots: string[] = [];
+function makeGitProjectRoot() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-route-"));
+    tempRoots.push(root);
+    mkdirSync(join(root, ".git"));
+    return root;
+  }
+const __jait_hook_2177 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    const sessionService = new SessionService(opened.db);
+    const projectService = new ProjectService(opened.db);
+    const projectState = new ProjectStateService(opened.db);
+    const repoService = new RepositoryService(opened.db);
+    userService = new UserService(opened.db);
+    const audit = new AuditWriter(opened.db);
+
+    app = await createServer(testConfig, {
+      db: opened.db,
+      sqlite: opened.sqlite,
+      sessionService,
+      projectService,
+      projectState,
+      repoService,
+      gitService: new GitService(),
+      userService,
+      audit
+    });
+  };
+const __jait_hook_2898 = async () => {
+    await app.close();
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+/*__jait_scope_open__*/{
+const content = "<tool_call>";
+await __jait_hook_2177();
+try {
+await (async()=>{
+
+    const user = userService.createUser("protocol-title-user", "password123");
+    userService.updateSettings(user.id, { apiKeys: { OPENAI_API_KEY: "test-key" } });
+    const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({
+      choices: [{ message: { content } }]
+    }), { status: 200, headers: { "Content-Type": "application/json" } }));
+
+    try {
+      const createRes = await app.inject({ method: "POST", url: "/api/sessions", headers, payload: {} });
+      const session = createRes.json() as { id: string };
+      const prompt = "Help investigate intermittent desktop crashes";
+      const titleRes = await app.inject({
+        method: "POST",
+        url: `/api/sessions/${session.id}/generate-title`,
+        headers,
+        payload: { prompt }
+      });
+      __jait_capture(0, (titleRes.statusCode));
+      __jait_capture(1, (titleRes.json()), ({ generated: false, session: { name: prompt } }));
+
+      const savedRes = await app.inject({ method: "GET", url: `/api/sessions/${session.id}`, headers });
+      __jait_capture(2, (savedRes.statusCode));
+      __jait_capture(3, (savedRes.json()), ({ name: prompt }));
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_2898();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_221_3_each1": {
+
+
+const testConfig = {
+  ...loadConfig(),
+  port: 0,
+  wsPort: 0,
+  logLevel: "silent",
+  nodeEnv: "test"
+};
+async function authHeaders(userId: string, username: string, jwtSecret: string) {
+  const token = await signAuthToken({ id: userId, username }, jwtSecret);
+  return { authorization: `Bearer ${token}` };
+}
+/*__jait_scope_open__*/{
+let app: Awaited<ReturnType<typeof createServer>>;
+let sqlite: Awaited<ReturnType<typeof openDatabase>>["sqlite"];
+let userService: UserService;
+const tempRoots: string[] = [];
+function makeGitProjectRoot() {
+    const root = mkdtempSync(join(__jait_fixture_dir, "jait-project-route-"));
+    tempRoots.push(root);
+    mkdirSync(join(root, ".git"));
+    return root;
+  }
+const __jait_hook_2177 = async () => {
+    const opened = await openDatabase(":memory:");
+    sqlite = opened.sqlite;
+    migrateDatabase(sqlite);
+    const sessionService = new SessionService(opened.db);
+    const projectService = new ProjectService(opened.db);
+    const projectState = new ProjectStateService(opened.db);
+    const repoService = new RepositoryService(opened.db);
+    userService = new UserService(opened.db);
+    const audit = new AuditWriter(opened.db);
+
+    app = await createServer(testConfig, {
+      db: opened.db,
+      sqlite: opened.sqlite,
+      sessionService,
+      projectService,
+      projectState,
+      repoService,
+      gitService: new GitService(),
+      userService,
+      audit
+    });
+  };
+const __jait_hook_2898 = async () => {
+    await app.close();
+    sqlite.close();
+    for (const root of tempRoots.splice(0)) {
+      rmSync(root, { recursive: true, force: true });
+    }
+  };
+/*__jait_scope_open__*/{
+const content = '<tool_call>\n{"name":"terminal","arguments":{}}\n</tool_call>';
+await __jait_hook_2177();
+try {
+await (async()=>{
+
+    const user = userService.createUser("protocol-title-user", "password123");
+    userService.updateSettings(user.id, { apiKeys: { OPENAI_API_KEY: "test-key" } });
+    const headers = await authHeaders(user.id, user.username, testConfig.jwtSecret);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({
+      choices: [{ message: { content } }]
+    }), { status: 200, headers: { "Content-Type": "application/json" } }));
+
+    try {
+      const createRes = await app.inject({ method: "POST", url: "/api/sessions", headers, payload: {} });
+      const session = createRes.json() as { id: string };
+      const prompt = "Help investigate intermittent desktop crashes";
+      const titleRes = await app.inject({
+        method: "POST",
+        url: `/api/sessions/${session.id}/generate-title`,
+        headers,
+        payload: { prompt }
+      });
+      __jait_capture(0, (titleRes.statusCode));
+      __jait_capture(1, (titleRes.json()), ({ generated: false, session: { name: prompt } }));
+
+      const savedRes = await app.inject({ method: "GET", url: `/api/sessions/${session.id}`, headers });
+      __jait_capture(2, (savedRes.statusCode));
+      __jait_capture(3, (savedRes.json()), ({ name: prompt }));
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  
+})();
+
+} finally {
+await __jait_hook_2898();
+}
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_253_3": {
 
 
 const testConfig = {
@@ -542,7 +745,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_278_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_317_3": {
 
 
 const testConfig = {
@@ -665,7 +868,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_335_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_374_3": {
 
 
 const testConfig = {
@@ -789,7 +992,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_393_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_432_3": {
 
 
 const testConfig = {
@@ -907,7 +1110,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_445_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_484_3": {
 
 
 const testConfig = {
@@ -1037,7 +1240,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_509_3": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_548_3": {
 
 
 const testConfig = {
@@ -1140,7 +1343,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_561_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_600_5": {
 
 
 const testConfig = {
@@ -1226,7 +1429,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_570_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_609_5": {
 
 
 const testConfig = {
@@ -1310,7 +1513,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_577_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_616_5": {
 
 
 const testConfig = {
@@ -1410,7 +1613,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_600_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_639_5": {
 
 
 const testConfig = {
@@ -1504,7 +1707,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_617_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_656_5": {
 
 
 const testConfig = {
@@ -1603,7 +1806,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_639_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_678_5": {
 
 
 const testConfig = {
@@ -1696,7 +1899,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_655_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_694_5": {
 
 
 const testConfig = {
@@ -1788,7 +1991,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_670_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_709_5": {
 
 
 const testConfig = {
@@ -1881,7 +2084,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_686_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_725_5": {
 
 
 const testConfig = {
@@ -1970,7 +2173,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_698_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_737_5": {
 
 
 const testConfig = {
@@ -2075,7 +2278,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_726_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_765_5": {
 
 
 const testConfig = {
@@ -2166,7 +2369,7 @@ await __jait_hook_2898();
 
 break;
 }
-case "tailstatic_packages_gateway_src_routes_projects_test_ts_740_5": {
+case "tailstatic_packages_gateway_src_routes_projects_test_ts_779_5": {
 
 
 const testConfig = {

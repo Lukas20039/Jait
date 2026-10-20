@@ -1,5 +1,26 @@
 # Gateway migration to Rust
 
+## Current native checkpoint — 2026-10-20
+
+The source-bound gate verifies **148/364 components (40.66%)** with unchanged
+sources and exact live fingerprints. This supersedes historical counts below.
+The latest batches add the DNS-pinned public mail-image loader and an opt-in
+skills HTTP adapter (12 and 8 focused tests, nine caught/restored mutations).
+The preceding batch implements subscription quota fetching: 26 focused differential
+checks and 34 native checks cover cookie/status handling, HTML and quota parsing,
+stream limits/cleanup, UTF-8, redirects and deadlines. Four timezone subprocesses
+cover local dates and daylight-saving transitions. A 100,000-level document now
+passes in 0.40 seconds after replacing repeated ancestor scans; a duration bound
+retains the regression. All 2,231 entity mappings match the reference decoder.
+
+Evidence: `tests/contract/reviews/native-subscription-usage.md` and
+`.jait/artifacts/gateway-rust/checkpoints/148-report.json`. The review records
+fail-then-pass discrepancies and explicit format/platform/integration limits.
+The full gate passes 171 native library tests and 82 differential targets.
+Production remains the TypeScript gateway. **216 components remain**; full
+replacement, client/platform, resource and rollback gates remain open.
+
+
 Status: parallel Rust implementation and reference-test reconstruction. The initial standalone native gateway is in `packages/gateway-rust`; production remains the TypeScript gateway.
 
 ## Native implementation checkpoint — 2026-10-18
@@ -513,3 +534,226 @@ write effects and stale cached rows after external changes. Nine focused tests
 and three restored mutations cover HTTP, storage, auth and shutdown behavior.
 Strict Clippy also passes for all five contract targets added in this continuation.
 The full source-bound gate remains the authority for component credit.
+
+## Inventory growth to 364 components
+
+Upstream commit `46a9e828` added three gateway sources to
+`tests/contract/coverage.json`, taking the inventory from 361 to 364:
+`packages/gateway/src/providers/usage.ts`,
+`packages/gateway/src/tools/model-result.ts` and
+`packages/gateway/src/tools/skill-discovery-tools.ts`. At re-baseline none of the three had a
+native counterpart and none was credited. They were recorded in
+`packages/gateway-rust/native-coverage.json` with status `pending` and their
+reference hashes so further edits to those files are fingerprinted before the
+port begins. `inventory_total` is now 364; verified coverage is measured against
+that number. The inventory's own `status: verified` field means reference/JS
+contract coverage only and is never read as native credit.
+
+## Provider usage accounting continuation — 2026-10-19
+
+The native `providers/usage.rs` implements `providers/usage.ts`: Codex and ACP
+counter parsing, turn/session accumulation, and complete summaries of retained
+accounting across dropped trace rounds. Differential tests exposed and corrected
+nullish fallback, integer-valued decimal, last-request scope, and aggregate
+arithmetic differences in the earlier partial implementation. The original
+`context_overhead` API re-exports the moved helpers.
+
+Fourteen differential comparisons and five native regressions pass. Four restored
+mutations fail both suites. See `tests/contract/reviews/native-provider-usage.md`
+for the typed boundary and evidence. The full source-bound report remains the
+authority for current coverage; the all-component migration goal is still open.
+
+## Model-result continuation — 2026-10-19
+
+Native `tools/model_result.rs` completes `tools/model-result.ts`: model-only
+projection, duplicate-message removal, omitted/null data, and serialization with
+the default 30,000 UTF-16-unit ceiling. The partial implementation's clipping
+measurement now uses JavaScript number spelling for candidate metadata as well
+as the original JSON. Shared JSON number formatting uses the pinned ryu-js
+encoder; existing audit/JSON contracts still pass.
+
+Eleven differential tests compare the reference outputs, including exact strings
+and previews. Five native regressions and four restored mutations verify the
+same behavior. Tiny budgets preserve the reference minimum envelope, which can
+exceed that budget. See `tests/contract/reviews/native-model-result.md` for the
+typed boundary. Component credit depends on the full source-bound report;
+production model-history wiring remains separate migration work.
+
+## Project transfer and notification detail — 2026-10-19
+
+Native project-transfer orchestration validates and quotes its SSH/SCP plans and
+runs them through a bounded argv-based command pool. Local executable peers test
+the actual process boundary without connecting to remote hosts. Lifecycle tests
+cover limits, failure ordering, admission, cancellation and process-group cleanup.
+Existing caller authorization remains required before using this internal API.
+
+Notification detail generation now has exact prompt construction, UTF-16 clipping,
+normalization and best-effort failure handling through an injected completion
+client. Paused-clock tests verify the real 12-second deadline and transport drop.
+The full gate controls component credit. See `native-project-transfer.md` and
+`native-chat-notification.md` under `tests/contract/reviews` for evidence and
+platform/transport boundaries. The 364-component goal remains open.
+
+## System One continuation — 2026-10-19
+
+The parallel native service now resolves configured System One endpoints, validates
+bounded questions/answers, isolates cached results and failure backoff by key/origin,
+and ranks already-authorized candidates with the original fallback behavior. Its
+decision-tool adapter preserves metadata, question construction and output JSON.
+Exact request/answer contracts and loopback transport tests cover the implementation;
+production gateway wiring remains separate.
+
+Twenty-one differential tests, twelve native regressions and eight restored
+mutations cover the pair. An added comparison caught and corrected signed-zero
+tie ordering in the draft. See `tests/contract/reviews/native-system-one.md` for
+evidence, compatibility boundaries and cache lifetime requirements. The full
+source-bound report controls coverage; the 364-component goal remains open.
+
+## Node registry continuation — 2026-10-20
+
+The native node state manager implements capability merging, connection timestamps,
+client reassignment, gateway retention during client disconnection, removal and
+snapshots. Compiled ICU collation preserves display-name sorting and stable ties;
+locale configuration remains explicit at activation. Advertised capabilities do
+not grant permissions.
+
+Eight differential comparisons, five native tests and four restored mutations
+cover the state transitions. Both Cargo lockfiles pin ICU collation/data. See
+`tests/contract/reviews/native-node-state-manager.md` for typed/ownership and locale
+boundaries. The full source-bound gate controls component credit; the 364-component
+goal and production gateway wiring remain open.
+
+## Ollama setup guidance continuation — 2026-10-20
+
+Native metadata-only Ollama setup guidance preserves loopback classification,
+operator key-path selection, first-failure retention, readable fallbacks and
+inert quoted ACL guidance. The Unix adapter uses real user metadata and stat/access
+without reading key contents. Differential tests caught and corrected default-path
+normalization, then compared actual filesystem results on owned fixture files.
+
+Eight differential tests, six native checks, five source tests and five restored
+mutations cover this component. See `tests/contract/reviews/native-ollama-usage-setup.md`
+for evidence and platform/host boundaries. The complete source-bound gate controls
+credit; production usage API activation and the full migration remain open.
+
+## Installed skill discovery continuation — 2026-10-20
+
+Native installed-skill search preserves exact-match priority, Unicode word scores,
+result limits, stable locale ties and 180-unit description previews. The read tool
+resolves enabled registry IDs to their trusted paths, returns untrusted file content,
+and masks read errors. A differential reproduction corrected repeated-separator
+spelling in baseDirectory.
+
+Ten differential comparisons, six native checks and four restored mutations cover
+the tool pair and full metadata. See `tests/contract/reviews/native-skill-discovery.md`
+for the registry adapter and Unicode/platform boundaries. This component grants no
+credit for the separate skill installation/discovery module, and production tool
+activation remains separate. The full source-bound gate controls the checkpoint.
+
+## Owner-wide emergency stop continuation — 2026-10-20
+
+Native agent control now persists owner-wide halt/resume state and executes teardown
+with the original callback, error and timestamp semantics. Cancellation during
+teardown leaves the halt durable. Six native tests include file-backed restart;
+six differential tests compare the real TypeScript/Drizzle service, callback traces
+and SQLite rows. Eight original tests pass and four restored mutations are caught
+by both suites. A fail-then-pass comparison corrected Bun's WTF-8 storage behavior
+when the reason ceiling splits an emoji. Review: `tests/contract/reviews/native-agent-control.md`.
+Production execution-path wiring remains separate; the full source-bound gate
+controls checkpoint credit and the 364-component migration goal remains open.
+
+## Attention delivery continuation — 2026-10-20
+
+Native attention delivery preserves stable request identities, insertion-ordered
+replacement, owner resolution, browser/desktop notification policy, targeted clears
+and best-effort sink fanout. Duplicate sink subscriptions and their unsubscribe
+behavior match object identity in the reference. Transport failures preserve the
+original state-mutation ordering. Six differential tests, five native tests and
+fourteen original tests pass; four restored mutations fail both native and
+differential suites. Review: `tests/contract/reviews/native-attention.md`.
+The full source-bound gate controls checkpoint credit; live WebSocket, mobile and
+channel transport activation remains separate migration work.
+
+## Calendar public contracts — 2026-10-20
+
+The calendar entry point now re-exports its existing native service and all native
+calendar record types. A compiler-checked TypeScript fixture corpus matches native
+JSON roundtrips, including optional/null errors and numeric limits. Three focused
+contract checks and two native checks cover the type-only module and barrel;
+they add no calendar engine behavior or duplicate service credit. Review:
+`tests/contract/reviews/native-calendar-contracts.md`. The full source-bound gate
+controls coverage and production activation remains unchanged.
+
+## Local Docker inventory continuation — 2026-10-20
+
+Native Docker metadata inventory now validates/maps container records, selects only
+local daemon endpoints, bounds argv/process output/time, batches at 32 with a 512
+cap, and coalesces polls with success/failure caching. A reproduced cancellation
+wedge was fixed by letting the shared collection outlive its first subscriber.
+Exact UTF-16 clipping and legacy icon-key wire shapes are retained. Twenty-six
+native tests, nine component contracts and a dedicated lifecycle regression pass;
+three restored mutations fail both suites. Review:
+`tests/contract/reviews/native-network-resources.md`. The source-bound gate controls
+credit; live-daemon/platform and production activation gates remain separate.
+
+## Resumable question parity refresh — 2026-10-20
+
+Concurrent TypeScript changes added requestId-based MCP waits. Their old native
+fingerprints were rejected by the gate. The native question service/tool now
+retains answers across 60-second pending waits, checks exact owner/session identity,
+allows already-started waiters to share an answer, and collects it once. Plain asks
+keep no-expiry behavior. Twelve refresh contract checks, three native lifecycle
+checks, the existing question/secret-input contracts and eight original tests pass.
+Three restored mutations fail both suites. Review: `native-user-ask.md` under
+`tests/contract/reviews`. This refresh retains existing component credit only after
+the full source-bound rerun; it adds no duplicate source-component credit.
+
+## ACP registry continuation — 2026-10-20
+
+Native registry configuration now covers npx/uvx and injected binary-launcher
+specifications, stable ICU ordering, bounded-time HTTP, disk cache permissions,
+single-flight loading, forced refresh and exact memory TTL. Host comparisons
+reproduced and corrected dropped-subscriber suspension, directory permissions,
+BOM decoding, redirect limits and inherited alias JSON projection. Six native
+tests, fourteen focused contracts (including 114 parser vectors), four original
+tests and four restored mutations pass. Review: `tests/contract/reviews/native-acp-registry.md`.
+The binary launcher is a separate component and requires an explicit native
+adapter; production activation and supported-platform readiness remain open.
+The full source-bound gate controls checkpoint credit.
+
+## Security and scheduler public contracts — 2026-10-20
+
+Native declarations now mirror the type-only security and scheduler contract
+modules: consent requests/decisions, audit records, numeric trust literals,
+scheduled job/create records and asynchronous service methods. Three focused
+compiler/roundtrip/signature checks and one native trust regression pass. These
+two inventory rows add no security or scheduler engine behavior. Review:
+`tests/contract/reviews/native-domain-contracts.md`. Credit awaits the full
+source-bound gate; production consent and scheduling activation remain separate.
+
+## Model catalogue, emergency control routes and launcher — 2026-10-20
+
+The source-bound 140-component checkpoint passes all four gates: format, strict Clippy,
+136 native library checks and 76 contract targets. Exact frozen/live hashes and a
+post-gate recheck match. It includes the ACP registry, security/scheduler public contracts,
+model catalogue and agent-control HTTP routes. Existing candidate session routes earn
+no verified credit. Reviews document typed seams and platform/activation limits.
+
+The ACP launcher continuation adds native installation and a standalone process, exercised
+against owned HTTPS/ZIP fixtures and the real TypeScript program. Cancellation reproductions
+caught leaked signal tasks and archive processes; bounded output and padded base64 decoding
+were also corrected with failing-before/passing-after evidence. Its 26 host checks and
+one native reader test pass. The complete frozen gate must pass again before counting it.
+Production TypeScript gateway wiring remains unchanged; the 364-component goal remains open.
+
+## Cached provider catalogues and public declarations — 2026-10-20
+
+The 141-component checkpoint includes the complete native ACP launcher with 137 native
+library checks and 77 contract targets, all passing and source-matched. The next candidate
+batch adds provider catalogue HTTP/cache behavior and the memory/session/surface public
+contracts. Fifteen model-fetcher component checks plus four transport checks cover actual
+HTTP, held refreshes, reset races, cancellation and serialized parity. Three restored mutations
+are caught. Five public-contract checks plus four transport checks bind declarations to strict
+TypeScript fixtures, including negative cases. These type-only rows add no new engine behavior.
+Credit requires the next frozen-source full gate; the 364-component goal and production
+activation remain open. Reviews: native-model-fetchers.md and native-public-contracts.md.

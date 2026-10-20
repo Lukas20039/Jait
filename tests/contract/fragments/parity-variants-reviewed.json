@@ -160,23 +160,6 @@
       ]
     },
     {
-      "id": "packages/gateway/src/routes/chat.external-providers.test.ts:340:3",
-      "status": "verified",
-      "parity_review": "Reviewed all 2 generated parameter variants of delivers uploaded images on first and reused turns, including display-segment uploads (recovery=%s). The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_340_3_each0",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        },
-        {
-          "id": "tailstatic_packages_gateway_src_routes_chat_external_providers_test_ts_340_3_each1",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        }
-      ]
-    },
-    {
       "id": "packages/gateway/src/routes/email.test.ts:28:3",
       "status": "verified",
       "parity_review": "Reviewed all 5 generated parameter variants of requires authentication for %s %s. The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
@@ -209,53 +192,19 @@
       ]
     },
     {
-      "id": "packages/gateway/src/routes/mcp-server.test.ts:1104:3",
+      "id": "packages/gateway/src/routes/mcp-server.test.ts:1134:3",
       "status": "verified",
-      "parity_review": "Reviewed all 2 generated parameter variants of resolves a worker's owner and execution context through %s. The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
+      "parity_review": "Original and regenerated Rust matcher rules for all existing declarations are identical; moved line IDs now reference the current test source. New resumable question assertions preserve pending IDs across repeated call deadlines, owner/session refusal, late answer collection, cancellation and timer cleanup. Fresh complete source-bound TypeScript reference evidence passed. Declaration equivalence only; runtime source and native Rust migration acceptance remain separate.",
       "rust_cases": [
         {
-          "id": "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1104_3_each0",
+          "id": "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1134_3_each0",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
+          "report": ".jait/artifacts/contracts/c91ea989-0bda-4264-a24c-9489c90feea8/report.json"
         },
         {
-          "id": "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1104_3_each1",
+          "id": "tailstatic_packages_gateway_src_routes_mcp_server_test_ts_1134_3_each1",
           "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        }
-      ]
-    },
-    {
-      "id": "packages/gateway/src/routes/threads.test.ts:106:3",
-      "status": "verified",
-      "parity_review": "Reviewed all 2 generated parameter variants of keeps %s failure terminal despite late provider completion. The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_routes_threads_test_ts_106_3_each0",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        },
-        {
-          "id": "tailstatic_packages_gateway_src_routes_threads_test_ts_106_3_each1",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        }
-      ]
-    },
-    {
-      "id": "packages/gateway/src/routes/threads.test.ts:145:3",
-      "status": "verified",
-      "parity_review": "Reviewed all 2 generated parameter variants of persists interruption with immediate abort event = %s. The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_routes_threads_test_ts_145_3_each0",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        },
-        {
-          "id": "tailstatic_packages_gateway_src_routes_threads_test_ts_145_3_each1",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
+          "report": ".jait/artifacts/contracts/c91ea989-0bda-4264-a24c-9489c90feea8/report.json"
         }
       ]
     },
@@ -1017,28 +966,6 @@
         },
         {
           "id": "tailstatic_packages_gateway_src_tools_os_tools_test_ts_39_3_each3",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        }
-      ]
-    },
-    {
-      "id": "packages/gateway/src/tools/prompts/prompt-registry.test.ts:15:3",
-      "status": "verified",
-      "parity_review": "Reviewed all 3 generated parameter variants of keeps generated artifacts in the active project for $model. The bounded AST audit binds the complete original input table, callback parameters/destructuring, original callback body, imports, lexical setup, helper bodies, lifecycle hooks, assertion operands, matchers and expected expressions to the fixture and Rust rules. Variant cardinality and input binding must match. Literal expectations are Rust-owned; dynamic expected expressions preserve original evaluation and bindings. Guarded runtime captures exclude unsupported reflection, getters, custom JSON and value domains. Zero observations are accepted only for lexically unused helpers or branches proven unreachable from the exact variant literals; every reachable assertion ran and every retry ended passing. Evidence for every variant, assertion, branch proof, repetition count and SHA256 binding is in .jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/parity-variants/combined-selected.json. Full-set negative controls rejected changed source input, changed peer binding, missing variant and changed expectation. Vitest and Rust agree on each observed comparison and its opposing counterexample. Full translated, internal and managed reports bind the frozen source checkpoint; live candidate input fingerprints were rechecked at promotion. This establishes reference-test equivalence over the exercised domains, not independent application completeness or native gateway parity.",
-      "rust_cases": [
-        {
-          "id": "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each0",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        },
-        {
-          "id": "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each1",
-          "source": "tests/contract/tests/tail_static.rs",
-          "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
-        },
-        {
-          "id": "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_15_3_each2",
           "source": "tests/contract/tests/tail_static.rs",
           "report": ".jait/artifacts/parity-variants/source-checkpoint/.jait/artifacts/contracts/0468b300-2b11-480b-a02e-766e71672da9/report.json"
         }

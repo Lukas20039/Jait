@@ -115,7 +115,7 @@ fn resolve(v: &Value, aliases: &HashMap<String, String>) -> Option<String> {
             .to_string()
     })
 }
-async fn compare(mut call: Value) {
+async fn compare(mut call: Value) -> Value {
     call["op"] = json!("nativecalendarservice.run");
     let mut expected = reference(call.clone());
     let now = Arc::new(AtomicI64::new(call["now"].as_i64().unwrap()));
@@ -298,6 +298,7 @@ async fn compare(mut call: Value) {
     }
     service.shutdown().await.unwrap();
     assert_eq!(actual, expected, "calendar service differential: {call}");
+    actual
 }
 fn device(id: &str, events: Value) -> Value {
     json!({"deviceId":id,"deviceName":"","calendars":[{"id":"work","name":"Work","selected":true}],"events":events})
@@ -465,4 +466,44 @@ async fn calendar_event_limit_coercion_preserves_nan_and_numeric_input_boundarie
         steps.push(json!({"op":"events","user":"owner","id":"$phone","options":{"timeMin":"2023-11-14","timeMax":"2023-11-16","limit":limit}}));
     }
     compare(json!({"now":1700000000000i64,"steps":steps})).await;
+}
+
+#[tokio::test]
+async fn oauth_callback_enforces_expiry_without_another_start_and_consumes_rejected_state() {
+    let invalid = json!({"error":"OAuth state is invalid or expired. Please retry connecting."});
+    let output = compare(json!({
+        "now":1700000000000i64,
+        "steps":[
+            {"op":"saveApp","user":"owner","credentials":{"clientId":"fixture-id","clientSecret":"fixture-secret"}},
+            {"op":"start","user":"owner","alias":"expired","redirect":"http://fixture.invalid/callback"},
+            {"op":"time","now":1700000600001i64},
+            {"op":"complete","start":"expired","code":"expired-code"},
+            {"op":"time","now":1700000000000i64},
+            {"op":"complete","start":"expired","code":"expired-replay"},
+            {"op":"start","user":"owner","alias":"boundary","redirect":"http://fixture.invalid/callback"},
+            {"op":"time","now":1700000600000i64},
+            {"op":"complete","start":"boundary","code":"boundary-code","fetches":[{"status":400,"data":{"error_description":"synthetic_boundary_fixture"}}]},
+            {"op":"complete","start":"boundary","code":"boundary-replay"}
+        ]
+    })).await;
+    assert_eq!(output["results"][3], invalid);
+    assert_eq!(output["results"][5], invalid);
+    assert_eq!(
+        output["results"][8],
+        json!({"error":"Calendar OAuth token request failed: synthetic_boundary_fixture"})
+    );
+    assert_eq!(output["results"][9], invalid);
+    let requests = output["requests"].as_array().unwrap();
+    assert_eq!(
+        requests.len(),
+        1,
+        "only the callback at the existing expiry boundary can exchange a token"
+    );
+    assert!(
+        requests[0]["body"]
+            .as_str()
+            .unwrap()
+            .contains("code=boundary-code")
+    );
+    assert_eq!(output["accounts"], json!([]));
 }

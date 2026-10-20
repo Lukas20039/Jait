@@ -249,6 +249,35 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_providers_acp_registry_test_ts_157_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const providers = parseAcpRegistry({
+      agents: [{
+        id: "constructor",
+        name: "Constructor",
+        version: "1.0.0",
+        description: "Synthetic registry fixture",
+        distribution: { npx: { package: "fixture-constructor" } },
+      }],
+    });
+    __jait_capture(0, (providers));
+    __jait_capture(1, (providers[0]));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

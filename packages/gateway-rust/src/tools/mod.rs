@@ -18,3 +18,11 @@ pub mod tool_names;
 pub mod session_todos;
 
 pub mod links;
+
+pub mod model_result;
+
+pub mod decision;
+
+pub mod skill_discovery;
+
+pub mod chat_modes;

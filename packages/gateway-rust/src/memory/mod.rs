@@ -4,3 +4,5 @@ pub mod engine;
 pub mod entries;
 pub mod scoring;
 pub mod sqlite_backend;
+
+pub mod contracts;

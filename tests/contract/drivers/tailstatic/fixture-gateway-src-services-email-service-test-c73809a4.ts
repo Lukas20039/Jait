@@ -714,6 +714,129 @@ await __jait_hook_912();
 
 break;
 }
+case "tailstatic_packages_gateway_src_services_email_service_test_ts_163_1": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: EmailService;
+function seedMailbox(owner: string, address: string) {
+  const internal = service as unknown as {
+    upsertAccount(owner: string, provider: string, email: string): { id: string };
+    storeTokens(id: string, owner: string, tokens: unknown): void;
+  };
+  const account = internal.upsertAccount(owner, "gmail", address);
+  internal.storeTokens(account.id, owner, { accessToken: "test-access-token", refreshToken: "refresh-token", expiresAt: Date.now() + 1e6 });
+  return account;
+}
+const __jait_hook_567 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new EmailService(db, secrets);
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_912 = () => {
+  vi.restoreAllMocks();
+  sqlite.close();
+};
+await __jait_hook_567();
+try {
+await (async()=>{
+
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_expired_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", "gmail", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", provider: "gmail", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000 + 1));
+    await __jait_rejected(0, service.completeConnect({ code: "synthetic-code", state }));
+    vi.setSystemTime(started);
+    await __jait_rejected(1, service.completeConnect({ code: "synthetic-code", state }));
+    __jait_capture(2, (fetchMock.mock.calls));
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+
+})();
+
+} finally {
+await __jait_hook_912();
+}
+
+
+break;
+}
+case "tailstatic_packages_gateway_src_services_email_service_test_ts_184_1": {
+
+
+let sqlite: SqliteDatabase;
+let db: JaitDB;
+let secrets: UserSecretService;
+let service: EmailService;
+function seedMailbox(owner: string, address: string) {
+  const internal = service as unknown as {
+    upsertAccount(owner: string, provider: string, email: string): { id: string };
+    storeTokens(id: string, owner: string, tokens: unknown): void;
+  };
+  const account = internal.upsertAccount(owner, "gmail", address);
+  internal.storeTokens(account.id, owner, { accessToken: "test-access-token", refreshToken: "refresh-token", expiresAt: Date.now() + 1e6 });
+  return account;
+}
+const __jait_hook_567 = async () => {
+  const opened = await openDatabase(":memory:");
+  sqlite = opened.sqlite;
+  db = opened.db;
+  migrateDatabase(sqlite);
+  secrets = new UserSecretService(db, "test-secret");
+  service = new EmailService(db, secrets);
+  delete process.env["GMAIL_OAUTH_CLIENT_ID"];
+  delete process.env["GMAIL_OAUTH_CLIENT_SECRET"];
+};
+const __jait_hook_912 = () => {
+  vi.restoreAllMocks();
+  sqlite.close();
+};
+await __jait_hook_567();
+try {
+await (async()=>{
+
+  vi.useFakeTimers({ toFake: ["Date"] });
+  const started = new Date("2026-10-20T12:00:00.000Z");
+  const fetchMock = vi.fn(async () => Response.json({ error: "synthetic_boundary_fixture" }, { status: 400 }));
+  vi.stubGlobal("fetch", fetchMock);
+  try {
+    vi.setSystemTime(started);
+    service.saveAppCredentials("u1", "gmail", { clientId: "synthetic-client", clientSecret: "synthetic-secret" });
+    const { authUrl } = service.startConnect({ userId: "u1", provider: "gmail", redirectUri: "http://fixture.invalid/callback" });
+    const state = new URL(authUrl).searchParams.get("state")!;
+    vi.setSystemTime(new Date(started.getTime() + 10 * 60_000));
+    await __jait_rejected(0, service.completeConnect({ code: "synthetic-code", state }));
+    await __jait_rejected(1, service.completeConnect({ code: "synthetic-code", state }));
+    __jait_capture(2, (fetchMock.mock.calls));
+  } finally {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  }
+
+})();
+
+} finally {
+await __jait_hook_912();
+}
+
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

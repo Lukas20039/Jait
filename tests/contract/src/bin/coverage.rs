@@ -236,6 +236,7 @@ fn current_reports(root: &Path, relative: &str) -> Result<Vec<Value>> {
     let directory = safe_path(root, relative, ".jait/artifacts/")?;
     let mut reports: BTreeMap<String, (std::time::SystemTime, Value)> = BTreeMap::new();
     let expected_sources = evidence::snapshot(root)?;
+    let expected_translated_sources = evidence::translated_snapshot(root)?;
     for entry in fs::read_dir(directory)? {
         let entry = entry?;
         if !entry.file_type()?.is_dir() {
@@ -251,7 +252,8 @@ fn current_reports(root: &Path, relative: &str) -> Result<Vec<Value>> {
         let path = safe_path(root, &relative_report, ".jait/artifacts/")?;
         let report: Value = serde_json::from_slice(&fs::read(&path)?)
             .with_context(|| format!("invalid report {}", path.display()))?;
-        if report["sources_unchanged"] == true && report["source_fingerprints"] == expected_sources
+        if report["sources_unchanged"] == true
+            && evidence::snapshot_matches(&report, &expected_sources, &expected_translated_sources)
         {
             let modified = fs::metadata(&path)?.modified()?;
             let profile = report["profile"].as_str().unwrap_or("unknown").to_owned();
@@ -617,6 +619,87 @@ mod tests {
         assert_eq!(current_reports(&root, &relative).unwrap().len(), 1);
         fs::remove_dir_all(root.join(relative)).unwrap();
     }
+    #[test]
+    fn translated_evidence_uses_its_exact_scope_and_still_rejects_runtime_drift() {
+        let project = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .canonicalize()
+            .unwrap();
+        let root = project
+            .join(".jait/artifacts/coverage-scoped")
+            .join(uuid::Uuid::new_v4().to_string());
+        for directory in [
+            "packages/gateway/src",
+            "packages/shared/src",
+            "tests/contract/tests",
+            "tests/contract/drivers",
+            ".github/workflows",
+            ".jait/artifacts/reports/run",
+        ] {
+            fs::create_dir_all(root.join(directory)).unwrap();
+        }
+        for path in [
+            "package.json",
+            "bun.lock",
+            ".github/workflows/ci.yml",
+            ".github/workflows/release.yml",
+            "packages/gateway/src/subject.ts",
+            "tests/contract/tests/gateway_rust_subject.rs",
+            "tests/contract/drivers/nativesubject.ts",
+        ] {
+            fs::write(root.join(path), b"original").unwrap();
+        }
+        let fingerprint = evidence::translated_snapshot(&root).unwrap();
+        let mut report = json!({
+            "profile":"translated-enabled-typescript-reference", "backend_label":"typescript",
+            "success":true, "sources_unchanged":true, "source_fingerprints":fingerprint,
+            "cases":[{"id":"scope-case","status":"passed"}]
+        });
+        let report_path = root.join(".jait/artifacts/reports/run/report.json");
+        let write =
+            |report: &Value| fs::write(&report_path, serde_json::to_vec(report).unwrap()).unwrap();
+        write(&report);
+        assert_eq!(
+            current_reports(&root, ".jait/artifacts/reports")
+                .unwrap()
+                .len(),
+            1
+        );
+        for path in [
+            "tests/contract/tests/gateway_rust_subject.rs",
+            "tests/contract/drivers/nativesubject.ts",
+        ] {
+            fs::write(root.join(path), b"native mutation").unwrap();
+        }
+        assert_eq!(
+            current_reports(&root, ".jait/artifacts/reports")
+                .unwrap()
+                .len(),
+            1
+        );
+        fs::write(
+            root.join("packages/gateway/src/subject.ts"),
+            b"runtime mutation",
+        )
+        .unwrap();
+        assert!(current_reports(&root, ".jait/artifacts/reports").is_err());
+        fs::write(root.join("packages/gateway/src/subject.ts"), b"original").unwrap();
+        report["source_fingerprints"]["files"] = json!({});
+        write(&report);
+        assert!(current_reports(&root, ".jait/artifacts/reports").is_err());
+        report["source_fingerprints"] = fingerprint.clone();
+        report["profile"] = json!("managed-http-and-restart");
+        write(&report);
+        assert!(current_reports(&root, ".jait/artifacts/reports").is_err());
+        report["profile"] = json!("translated-enabled-typescript-reference");
+        report["success"] = json!(false);
+        report["cases"][0]["status"] = json!("failed");
+        write(&report);
+        let reports = current_reports(&root, ".jait/artifacts/reports").unwrap();
+        assert!(!passing_report(&reports[0], "scope-case"));
+        fs::remove_dir_all(root).unwrap();
+    }
+
     #[test]
     fn latest_report_for_same_profile_cannot_be_masked_by_an_earlier_pass() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))

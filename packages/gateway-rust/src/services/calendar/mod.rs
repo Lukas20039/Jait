@@ -91,3 +91,10 @@ pub(crate) fn items(data: &Value) -> Result<&[Value], String> {
         _ => Err("Invalid provider response shape".into()),
     }
 }
+
+pub mod types;
+pub use service::CalendarService;
+pub use types::{
+    CalendarAccount, CalendarEvent, CalendarInfo, CalendarProvider, CalendarTokens,
+    DeviceCalendarSnapshot, ListCalendarEventsOptions,
+};

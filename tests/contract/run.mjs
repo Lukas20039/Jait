@@ -11,10 +11,16 @@ const localCargo = join(homedir(), '.cargo/bin', process.platform === 'win32' ? 
 const cargo = process.env.CARGO || (existsSync(localCargo) ? localCargo : 'cargo')
 const [mode = 'run', ...args] = process.argv.slice(2)
 const binaryModes = { internal: 'internal-contract', coverage: 'coverage', 'translated-report': 'translated-contract', 'resource-baseline': 'resource-baseline', interfaces: 'interfaces' }
-if (!['run', 'internal', 'coverage', 'test', 'translated', 'translated-report', 'resource-baseline', 'interfaces', 'fmt', 'clippy'].includes(mode)) throw new Error('Expected run, internal, coverage, test, translated, translated-report, resource-baseline, interfaces, fmt or clippy')
-const manifest = fileURLToPath(new URL('./Cargo.toml', import.meta.url))
+if (!['run', 'internal', 'coverage', 'test', 'translated', 'translated-report', 'resource-baseline', 'interfaces', 'source-review', 'fmt', 'clippy'].includes(mode)) throw new Error('Expected run, internal, coverage, test, translated, translated-report, resource-baseline, interfaces, source-review, fmt or clippy')
+// Source review has its own locked dependencies; unrelated native ports must not
+// alter its build while reference assertions and mutation controls are executing.
+const sourceReview = mode === 'source-review' || (mode === 'test' && args[0] === '--test'
+  && args[1] === 'source_review' && !args.slice(2).includes('--test'))
+const manifest = fileURLToPath(new URL(sourceReview ? '../source-review/Cargo.toml' : './Cargo.toml', import.meta.url))
 // Four peers retain subprocess isolation without saturating the host.
-const cargoArgs = mode === 'translated'
+const cargoArgs = sourceReview
+  ? ['test', '--locked', '--manifest-path', manifest, '--test', 'source_review', ...(mode === 'source-review' ? args : args.slice(2))]
+  : mode === 'translated'
   ? ['test', '--locked', '--manifest-path', manifest, '--test', 'tail_static', '--',
     ...(args.some(arg => arg.startsWith('--test-threads')) ? [] : ['--test-threads=4']), ...args]
   : mode === 'fmt'

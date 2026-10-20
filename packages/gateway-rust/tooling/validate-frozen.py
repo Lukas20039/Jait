@@ -226,12 +226,19 @@ def main():
     state_file = OUTPUT / "goal-checkpoint.json"
     state = json.loads(state_file.read_text()) if state_file.exists() else {}
     state.update(
-        goal="Reach 361/361 verified native components without replacing the production gateway.",
+        goal="Reach 364/364 verified native components without replacing the production gateway.",
         verified_components=count, verified_percent=report["verified_percent"],
-        inventory_total=report["inventory_total"], goal_met=count == report["inventory_total"] and not drift,
+        inventory_total=report["inventory_total"], goal_met=count == report["inventory_total"] and report["live_fingerprints_exact_match"],
         source_root=str(SNAPSHOT), live_sources_match=not drift, live_source_drift=drift,
         live_validation_metadata_drift=metadata_drift,
         latest_report=str(checkpoint.relative_to(ROOT)),
+        latest_frozen_report=str(checkpoint.relative_to(ROOT)),
+        last_live_matched_report=(str(checkpoint.relative_to(ROOT)) if report["live_fingerprints_exact_match"] else state.get("last_live_matched_report")),
+        validation_note=(f"{count}/{report['inventory_total']} full native gate passed with {len(report['targets'])} differential targets; "
+                         + ("live source fingerprints match." if report["live_fingerprints_exact_match"] else
+                            "live runtime inputs match; review metadata differs." if not drift else "live source drift remains; inspect report.")),
+        next=("Final component checks met; evaluate broader replacement-readiness gates." if count == report["inventory_total"] and report["live_fingerprints_exact_match"]
+              else "Continue unported components from remaining-native-components.json; refresh the inventory after each credited batch."),
         phase="Verified frozen source checkpoint; continue until all inventoried components pass",
     )
     state_file.write_text(json.dumps(state, indent=2) + "\n")

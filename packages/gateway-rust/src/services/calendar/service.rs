@@ -267,6 +267,11 @@ impl CalendarService {
             self.pending.lock().unwrap().remove(state).ok_or_else(|| {
                 fail("OAuth state is invalid or expired. Please retry connecting.")
             })?;
+        if pending.created_at < (self.clock)().saturating_sub(600000) {
+            return Err(fail(
+                "OAuth state is invalid or expired. Please retry connecting.",
+            ));
+        }
         let credentials = self
             .resolve_credentials(pending.user_id.as_deref())
             .await?

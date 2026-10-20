@@ -57,7 +57,7 @@ try {
 await (async()=>{
 
     __jait_capture(0, (JAIT_EXTERNAL_PROVIDER_INSTRUCTIONS_LITE), (PROJECT_ARTIFACT_INSTRUCTIONS));
-  
+
 })();
 
 } finally {
@@ -90,7 +90,7 @@ await (async()=>{
     __jait_capture(7, (prompt));
     __jait_capture(8, (prompt));
     __jait_capture(9, (prompt));
-  
+
 })();
 
 } finally {
@@ -124,7 +124,7 @@ await (async()=>{
     __jait_capture(7, (prompt));
     __jait_capture(8, (prompt));
     __jait_capture(9, (prompt));
-  
+
 })();
 
 } finally {
@@ -158,7 +158,7 @@ await (async()=>{
     __jait_capture(7, (prompt));
     __jait_capture(8, (prompt));
     __jait_capture(9, (prompt));
-  
+
 })();
 
 } finally {
@@ -203,7 +203,7 @@ await (async()=>{
     __jait_capture(14, (prompt));
     __jait_capture(15, (prompt));
     __jait_capture(16, (prompt));
-  
+
 })();
 
 } finally {
@@ -237,7 +237,7 @@ await (async()=>{
     __jait_capture(1, (prompt));
     __jait_capture(2, (prompt));
     __jait_capture(3, (prompt.indexOf("casual tone")), (prompt.indexOf("answer in english")));
-  
+
 })();
 
 } finally {
@@ -269,7 +269,7 @@ await (async()=>{
     if (globalIndex >= 0) {
       __jait_capture(0, (globalIndex), (prompt.indexOf("<projectInstructions>")));
     }
-  
+
 })();
 __jait_record({slot:1,completed:true});
 } finally {
@@ -297,7 +297,7 @@ await (async()=>{
     });
 
     __jait_capture(0, (prompt));
-  
+
 })();
 
 } finally {
@@ -329,7 +329,7 @@ await (async()=>{
     });
 
     __jait_capture(0, (prompt));
-  
+
 })();
 
 } finally {
@@ -364,7 +364,7 @@ await (async()=>{
     __jait_capture(3, (prompt));
     __jait_capture(4, (prompt));
     __jait_capture(5, (prompt));
-  
+
 })();
 
 } finally {
@@ -392,7 +392,7 @@ await (async()=>{
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
     __jait_capture(2, (prompt));
-  
+
 })();
 
 } finally {
@@ -431,11 +431,16 @@ await (async()=>{
       skills,
     });
 
+    // Discovery-first contract: enabled skills contribute the lazy
+    // <skillDiscovery> instruction, never an eager catalog with names,
+    // descriptions and file paths (that was ~19k chars of per-request overhead).
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
     __jait_capture(2, (prompt));
     __jait_capture(3, (prompt));
-  
+    __jait_capture(4, (prompt));
+    __jait_capture(5, (prompt));
+
 })();
 
 } finally {
@@ -445,7 +450,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_174_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_179_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -465,7 +470,7 @@ await (async()=>{
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
     __jait_capture(2, (prompt));
-  
+
 })();
 
 } finally {
@@ -475,7 +480,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_187_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_192_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -511,7 +516,7 @@ await (async()=>{
 
       rmSync(dir, { recursive: true, force: true });
     }
-  
+
 })();
 
 } finally {
@@ -521,7 +526,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_216_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_221_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -540,7 +545,7 @@ await (async()=>{
 
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
-  
+
 })();
 
 } finally {
@@ -550,7 +555,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_228_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_233_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -592,7 +597,7 @@ await (async()=>{
     __jait_capture(14, (prompt));
     // Project context injection
     __jait_capture(15, (prompt));
-  
+
 })();
 
 } finally {
@@ -602,7 +607,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_264_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_269_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -619,7 +624,7 @@ await (async()=>{
 
     __jait_capture(0, (prompt));
     __jait_capture(1, (prompt));
-  
+
 })();
 
 } finally {
@@ -629,7 +634,7 @@ await (async()=>{
 
 break;
 }
-case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_274_3": {
+case "tailstatic_packages_gateway_src_tools_prompts_prompt_registry_test_ts_279_3": {
 
 const { mkdtempSync, rmSync, writeFileSync } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fs", __jait_original_dir):__jait_require.resolve("fs")));
 const { tmpdir } = await import((typeof Bun!=="undefined"?Bun.resolveSync("os", __jait_original_dir):__jait_require.resolve("os")));
@@ -649,7 +654,7 @@ await (async()=>{
     __jait_capture(1, (prompt));
     __jait_capture(2, (prompt));
     __jait_capture(3, (prompt));
-  
+
 })();
 
 } finally {

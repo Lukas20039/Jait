@@ -730,7 +730,7 @@ async function captureError(run: Promise<unknown>): Promise<unknown> {
 try {
 await (async()=>{
 
-    const managedRoot = join(homedir(), ".jait", "worktrees");
+    const managedRoot = join(process.env["JAIT_STATE_DIR"] ?? join(homedir(), ".jait"), "worktrees");
 
     __jait_capture(0, (isManagedWorktreePath(join(managedRoot, "repo", "thread"))));
     __jait_capture(1, (isManagedWorktreePath(managedRoot)));

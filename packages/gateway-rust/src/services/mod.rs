@@ -53,3 +53,23 @@ pub mod architecture_diagrams;
 pub mod provider_reset_windows;
 
 pub mod calendar;
+
+pub mod project_transfer;
+
+pub mod chat_notification;
+
+pub mod system_one;
+
+pub mod node_state_manager;
+
+pub mod ollama_usage_setup;
+
+pub mod agent_control;
+
+pub mod attention;
+
+pub mod network_resources;
+
+pub mod jait_models;
+
+pub mod subscription_usage_fetchers;

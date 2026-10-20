@@ -384,7 +384,9 @@ pub struct PromptSkill {
 pub const SKILL_DISCOVERY_INSTRUCTIONS: &str = "Skills are available on demand. Discover skills.search and skills.read with tools.search. Search installed skills when specialized instructions could help; load a selected skill before applying it. Resolve an explicit /skill-id with skills.search, then read it. Resolve relative references against the returned baseDirectory. Do not list every installed skill.";
 
 pub fn format_skills(skills: &[PromptSkill]) -> String {
-    if skills.is_empty() { String::new() } else {
+    if skills.is_empty() {
+        String::new()
+    } else {
         format!("\n\n<skillDiscovery>\n{SKILL_DISCOVERY_INSTRUCTIONS}\n</skillDiscovery>")
     }
 }

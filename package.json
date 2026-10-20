@@ -33,6 +33,7 @@
     "test:contract": "node tests/contract/run.mjs run",
     "test:contract:internal": "node tests/contract/run.mjs internal",
     "test:contract:unit": "node tests/contract/run.mjs test",
+    "test:contract:source": "node tests/contract/run.mjs source-review",
     "test:contract:fmt": "node tests/contract/run.mjs fmt",
     "test:contract:lint": "node tests/contract/run.mjs clippy --all-targets -- -D warnings",
     "test:e2e": "npm --prefix tests/e2e test --",

@@ -5,3 +5,5 @@
 pub mod hooks;
 
 pub mod cron;
+
+pub mod contracts;

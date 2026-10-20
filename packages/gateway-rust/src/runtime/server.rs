@@ -90,6 +90,16 @@ impl Gateway {
         self.router = self.router.merge(routes.router());
         self
     }
+    /// Opt-in owner control routes remain available while agents are halted.
+    pub fn with_agent_control(mut self, routes: routes::agent_control::AgentControlRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    /// Explicit registry/checker/installer adapters; no automatic tool installs.
+    pub fn with_skills(mut self, routes: routes::skills::SkillRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
     pub fn local_addr(&self) -> io::Result<SocketAddr> {
         self.listener.local_addr()
     }
