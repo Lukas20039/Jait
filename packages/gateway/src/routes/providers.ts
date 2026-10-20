@@ -965,6 +965,7 @@ export function registerProviderRoutes(
           config,
           apiKeys: userApiKeys,
           fallbackModels: models,
+          includeCloud: true,
         });
 
         // Prepend recent models (if they exist in the full list)

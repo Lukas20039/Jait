@@ -196,6 +196,7 @@ export function registerJobRoutes(
               config,
               apiKeys: settings.apiKeys ?? {},
               fallbackModels: models,
+              includeCloud: true,
             });
           }
           providers[provider.id] = { name: provider.info.name, models: models.map((m) => m.id) };

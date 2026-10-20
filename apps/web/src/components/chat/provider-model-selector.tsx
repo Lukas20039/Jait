@@ -13,6 +13,7 @@ import {
   JaitIcon,
   PiIcon,
   providerBrandIcon,
+  providerIcon,
   providerIconUrl,
 } from '@/components/icons/provider-icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -177,7 +178,15 @@ export function providerLabelFor(providerType: string | undefined, id: string): 
 // list flat lets @tanstack/react-virtual render thousands of models cheaply
 // and gives keyboard quick-jump a single index space (1-9) across sections.
 type ModelListRow =
-  | { type: 'header'; key: string; label: string; sectionIndex: number }
+  | {
+      type: 'header'
+      key: string
+      label: string
+      sectionIndex: number
+      icon: ComponentType<{ className?: string }>
+      modelCount: number
+      collapsed: boolean
+    }
   | {
       type: 'model'
       key: string
@@ -225,6 +234,7 @@ const GROUP_TO_BACKEND: Record<string, JaitBackend> = {
   OpenAI: 'openai',
   OpenRouter: 'openrouter',
   Ollama: 'ollama',
+  'Ollama Cloud': 'ollama',
   OmniRoute: 'omniroute',
 }
 
@@ -235,6 +245,17 @@ const GROUP_TO_BACKEND: Record<string, JaitBackend> = {
 // its own chip, so "Ollama Büro" no longer collapses into a generic "Ollama".
 function modelGroupLabel(model: ModelDef): string {
   return model.group || 'Other'
+}
+
+// Group headers carry the icon of the backend provider the group belongs to.
+// Labels are either the bare backend name ("Ollama") or
+// "<instance name> · <backend>" (e.g. "LOCAL OmniRoute · OmniRoute"); try the
+// whole label first (right matchers anchor on word boundaries), then the last
+// "·"-separated segment, and fall back to the generic network glyph.
+function modelGroupIcon(label: string): ComponentType<{ className?: string }> {
+  return providerBrandIcon(label)
+    ?? providerBrandIcon(label.split('·').pop()?.trim() ?? label)
+    ?? providerIcon(null)
 }
 
 function summariseReason(reason: string): string {
@@ -312,6 +333,18 @@ export function ProviderModelSelector({
   const [models, setModels] = useState<ModelDef[]>([])
   const [loadedModelScopeKey, setLoadedModelScopeKey] = useState<string | null>(null)
   const [favorites, setFavorites] = useState<ModelFavorite[]>([])
+  // Collapsed group sections, by row key (`favorites` / `section:<key>`).
+  // Session-scoped: reopening the picker keeps every group visible, so models
+  // can never be "lost" behind a forgotten collapsed state. Searching always
+  // expands all groups (see modelRows).
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(() => new Set())
+  const toggleSectionCollapsed = useCallback((key: string) => {
+    setCollapsedSections((current) => {
+      const next = new Set(current)
+      if (!next.delete(key)) next.add(key)
+      return next
+    })
+  }, [])
   const [loadingModels, setLoadingModels] = useState(false)
   const [modelError, setModelError] = useState<string | null>(null)
   const [currentBackend, setCurrentBackend] = useState<string | null>(null)
@@ -679,17 +712,26 @@ export function ProviderModelSelector({
   // model rows (after favorites) as on-row Kbd hints.
   const modelRows = useMemo<ModelListRow[]>(() => {
     const rows: ModelListRow[] = []
+    // Searching always shows every match: a collapsed group must never hide
+    // the model the user is actively looking for.
+    const isCollapsed = (key: string) => !searchLower && collapsedSections.has(key)
     if (favoriteModels.length > 0) {
-      rows.push({ type: 'header', key: 'favorites', label: 'Favorites', sectionIndex: 0 })
-      for (const entry of favoriteModels) {
-        rows.push({ type: 'model', key: `fav:${provider}:${entry.id}`, model: entry, instance: currentProvider, providerId: provider, sectionIndex: 0, quickJumpIndex: null })
+      const collapsed = isCollapsed('favorites')
+      rows.push({ type: 'header', key: 'favorites', label: 'Favorites', sectionIndex: 0, icon: Star, modelCount: favoriteModels.length, collapsed })
+      if (!collapsed) {
+        for (const entry of favoriteModels) {
+          rows.push({ type: 'model', key: `fav:${provider}:${entry.id}`, model: entry, instance: currentProvider, providerId: provider, sectionIndex: 0, quickJumpIndex: null })
+        }
       }
     }
     let sectionIndex = favoriteModels.length > 0 ? 1 : 0
     for (const section of instanceSections) {
-      rows.push({ type: 'header', key: `section:${section.key}`, label: section.label, sectionIndex })
-      for (const entry of section.models) {
-        rows.push({ type: 'model', key: `${provider}:${section.key}:${entry.id}`, model: entry, instance: section.instance, providerId: provider, sectionIndex, quickJumpIndex: null })
+      const collapsed = isCollapsed(`section:${section.key}`)
+      rows.push({ type: 'header', key: `section:${section.key}`, label: section.label, sectionIndex, icon: modelGroupIcon(section.label), modelCount: section.models.length, collapsed })
+      if (!collapsed) {
+        for (const entry of section.models) {
+          rows.push({ type: 'model', key: `${provider}:${section.key}:${entry.id}`, model: entry, instance: section.instance, providerId: provider, sectionIndex, quickJumpIndex: null })
+        }
       }
       sectionIndex += 1
     }
@@ -698,7 +740,7 @@ export function ProviderModelSelector({
       if (row.type === 'model') row.quickJumpIndex = quickJump.get(row.key) ?? null
     }
     return rows
-  }, [favoriteModels, instanceSections, provider, currentProvider])
+  }, [favoriteModels, instanceSections, provider, currentProvider, collapsedSections, searchLower])
 
   // Rail sections (desktop only): one entry per top-level section so you can
   // click straight to a provider group without scrolling a long catalog.
@@ -720,21 +762,29 @@ export function ProviderModelSelector({
   }, [favoriteModels, instanceSections, modelRows])
 
   const modelListRef = useRef<HTMLDivElement | null>(null)
+  // Stable per-row keys: a row's measurement must follow the row when the list
+  // changes shape (favorite toggled, group collapsed, search filtered). With
+  // index keys the size of e.g. the Favorites header sticks to slot 0 and every
+  // later row inherits the wrong size — rows overlap and section headers paint
+  // through their neighbours.
+  const modelRowKey = useCallback((index: number) => modelRows[index]?.key ?? index, [modelRows])
   const modelVirtualizer = useVirtualizer({
     count: modelRows.length,
     getScrollElement: () => modelListRef.current,
-    estimateSize: (index) => (modelRows[index]?.type === 'header' ? 30 : 44),
+    estimateSize: (index) => (modelRows[index]?.type === 'header' ? 36 : 44),
     overscan: 12,
     enabled: open,
+    getItemKey: modelRowKey,
   })
 
-  // Re-measure once the popover is laid out so the virtualizer knows the real
-  // scrollport height (it is 0 while closed), and scroll the currently selected
-  // model into view so you always know where you are when the list opens.
+  // Scroll the currently selected model into view when the list opens. Never
+  // call `measure()` here: it clears the whole item-size cache and rows only
+  // re-measure on size *changes*, so the list would be positioned by estimates
+  // (and overlap) until every row happened to resize again. Rows measure
+  // themselves when they mount and when they actually change size.
   useEffect(() => {
     if (!open) return
     const raf = requestAnimationFrame(() => {
-      modelVirtualizer.measure()
       if (model) {
         const index = modelRows.findIndex((row) => row.type === 'model' && row.model.id === model && row.sectionIndex > 0)
         if (index >= 0) modelVirtualizer.scrollToIndex(index, { align: 'center' })
@@ -1245,15 +1295,32 @@ export function ProviderModelSelector({
               {modelVirtualizer.getVirtualItems().map((virtualRow) => {
                 const row = modelRows[virtualRow.index]
                 if (row.type === 'header') {
+                  const HeaderIcon = row.icon
                   return (
                     <div
-                      key={`header-${virtualRow.key}`}
+                      key={virtualRow.key}
                       data-index={virtualRow.index}
                       ref={modelVirtualizer.measureElement}
-                      className="px-3 py-1.5 text-3xs font-semibold uppercase tracking-wide text-muted-foreground/70"
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: `translateY(${virtualRow.start}px)` }}
                     >
-                      {row.label}
+                      <button
+                        type="button"
+                        aria-expanded={!row.collapsed}
+                        onClick={() => toggleSectionCollapsed(row.key)}
+                        title={row.collapsed ? `Expand ${row.label}` : `Collapse ${row.label}`}
+                        className={cn(
+                          'flex w-full items-center gap-1.5 rounded-sm px-3 py-1.5 text-left text-3xs font-semibold uppercase tracking-wide text-muted-foreground/70 transition-colors',
+                          'hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+                        )}
+                      >
+                        <ChevronDown
+                          aria-hidden="true"
+                          className={cn('h-3 w-3 shrink-0 transition-transform', row.collapsed && '-rotate-90')}
+                        />
+                        <HeaderIcon className="h-3 w-3 shrink-0" />
+                        <span className="min-w-0 truncate">{row.label}</span>
+                        <span className="ml-auto shrink-0 tabular-nums text-muted-foreground/60">{row.modelCount}</span>
+                      </button>
                     </div>
                   )
                 }
@@ -1557,7 +1624,9 @@ function ModelRow({
             } : () => onToggleFavorite(model)}
             className={cn(
               'inline-flex h-6 w-6 items-center justify-center rounded-sm transition-colors',
-              'opacity-0 group-hover:opacity-100 focus-visible:opacity-100',
+              // Hover-reveal is a pointer luxury: on touch the star must always
+              // be visible or favorites cannot be managed at all.
+              mobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100',
               isFavorite
                 ? 'opacity-100 text-amber-500 hover:text-amber-400'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground',
