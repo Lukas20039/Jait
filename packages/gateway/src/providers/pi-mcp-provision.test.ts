@@ -141,4 +141,35 @@ describe("pi provisioning regressions", () => {
       expect(config.mcpServers.__proto__).toEqual({ url: "http://example.test/mcp", lifecycle: "lazy" });
     } finally { provision.cleanup(); }
   });
+
+  it("refuses a session id that could escape the provisioning directory", () => {
+    // Session ids become directory names; a path separator must never let a
+    // provisioned config land outside the temp root. Provisioning is
+    // best-effort, so the session starts without Jait tools instead of failing.
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      expect(provisionPiMcp("pi", httpRefs, { sessionId: "../escape" })).toBeNull();
+      expect(warning).toHaveBeenCalledTimes(1);
+      expect(String(warning.mock.calls[0]?.[0])).toContain("pi MCP provisioning failed");
+    } finally { warning.mockRestore(); }
+  });
+});
+
+
+describe("minimal stdio provisioning", () => {
+  it("defaults omitted arguments and environment without changing the server command", () => {
+    mkdirSync(reproRoot, { recursive: true });
+    const previous = process.env.TMPDIR;
+    process.env.TMPDIR = reproRoot;
+    const provision = provisionPiMcp("pi", [{ name: "minimal", transport: "stdio", command: "node" }],
+      { sessionId: "minimal-stdio", realPiCommand: "  " })!;
+    expect(provision).not.toBeNull();
+    try {
+      const wrapper = provision.env.PI_ACP_PI_COMMAND!;
+      const config = JSON.parse(readFileSync(join(dirname(wrapper), "mcp.json"), "utf8"));
+      expect(config.mcpServers.minimal).toEqual({ command: "node", args: [] });
+      expect(config.mcpServers.minimal).not.toHaveProperty("env");
+      expect(readFileSync(wrapper, "utf8")).toContain('"pi" --mcp-config');
+    } finally { provision.cleanup(); restoreTmpdir(previous); }
+  });
 });

@@ -144,21 +144,12 @@ struct Cache {
     ollama_cloud: HashMap<String, Entry>,
 }
 /// Per-request switches mirroring `FetchOllamaModelsOptions` in the reference.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct FetchOptions {
     /// Skip the cache (the provider selector's "Refresh models" button).
     pub force: bool,
     /// Ollama only: also merge the hosted Ollama Cloud catalogue.
     pub include_cloud: bool,
-}
-impl Default for FetchOptions {
-    fn default() -> Self {
-        Self {
-            force: false,
-            // Signed-out daemons contribute nothing, so this is always safe.
-            include_cloud: true,
-        }
-    }
 }
 #[derive(Clone)]
 pub struct ModelFetchers {
@@ -207,6 +198,29 @@ impl ModelFetchers {
         base_url: &str,
         options: FetchOptions,
     ) -> ModelsResult {
+        let local = self
+            .fetch_local(kind, api_key, base_url, options.force)
+            .await?;
+        if kind != CatalogueKind::Ollama || !options.include_cloud {
+            return Ok(local);
+        }
+        // Cloud results are merged per call, never stored in the local TTL cache.
+        // Like a JS promise, an admitted cloud collection outlives its subscriber.
+        let owner = self.inner.clone();
+        let url = normalize_jait_backend_base_url(base_url, None);
+        let cloud =
+            tokio::spawn(async move { owner.ollama_cloud_models(&url, options.force).await })
+                .await
+                .map_err(|_| CatalogueError("cloud collection stopped".into()))?;
+        Ok(merge_ollama_models(local, cloud))
+    }
+    async fn fetch_local(
+        &self,
+        kind: CatalogueKind,
+        api_key: &str,
+        base_url: &str,
+        force: bool,
+    ) -> ModelsResult {
         let url = normalize_jait_backend_base_url(base_url, None);
         let key = Key(
             kind,
@@ -224,7 +238,7 @@ impl ModelFetchers {
             } else {
                 REMOTE_CACHE_TTL_MS
             };
-            let expired = options.force
+            let expired = force && kind == CatalogueKind::Ollama
                 || cached.as_ref().is_none_or(|entry| {
                     (self.inner.clock)().saturating_sub(entry.fetched_at) >= ttl
                 });
@@ -235,7 +249,7 @@ impl ModelFetchers {
                 let task_key = key.clone();
                 let api_key = api_key.to_string();
                 tokio::spawn(async move {
-                    let result = owner.collect(kind, &api_key, &url, options).await;
+                    let result = owner.collect(kind, &api_key, &url).await;
                     let mut state = owner.cache.lock().unwrap();
                     let result = match result {
                         Ok(Some(models)) => {
@@ -265,7 +279,7 @@ impl ModelFetchers {
                     let _ = send.send(Some(result));
                 });
             }
-            if let Some(entry) = cached.filter(|_| !options.force) {
+            if let Some(entry) = cached.filter(|_| !(force && kind == CatalogueKind::Ollama)) {
                 return Ok(entry.models);
             }
             cache.inflight.get(&key).expect("request admitted").clone()
@@ -287,7 +301,6 @@ impl Inner {
         kind: CatalogueKind,
         api_key: &str,
         url: &str,
-        options: FetchOptions,
     ) -> Result<Option<Vec<CatalogueModel>>, CatalogueError> {
         let endpoint = match kind {
             CatalogueKind::OpenRouter => "https://openrouter.ai/api/v1/models".into(),
@@ -320,12 +333,7 @@ impl Inner {
             &self.collation,
             url.to_lowercase().contains("api.openai.com"),
         )?;
-        if !(kind == CatalogueKind::Ollama && options.include_cloud) {
-            return Ok(Some(models));
-        }
-        // `/api/tags` omits cloud models the daemon has not pulled yet.
-        let cloud = self.ollama_cloud_models(url, options.force).await;
-        Ok(Some(merge_ollama_models(models, cloud)))
+        Ok(Some(models))
     }
 
     /// Hosted Ollama Cloud catalogue for a signed-in daemon.
@@ -337,17 +345,21 @@ impl Inner {
             let cache = self.cache.lock().unwrap();
             cache.ollama_cloud.get(url).cloned()
         };
-        if !force {
-            if let Some(entry) = &cached {
-                if (self.clock)().saturating_sub(entry.fetched_at) < OLLAMA_CLOUD_CACHE_TTL_MS {
-                    return entry.models.clone();
-                }
-            }
+        if !force
+            && let Some(entry) = &cached
+            && (self.clock)().saturating_sub(entry.fetched_at) < OLLAMA_CLOUD_CACHE_TTL_MS
+        {
+            return entry.models.clone();
         }
         let fallback = cached.map(|entry| entry.models).unwrap_or_default();
-        let models = if self.ollama_cloud_signed_in(url).await {
-            match self.fetch_ollama_cloud_catalogue().await {
-                Ok(Some(models)) => models,
+        // Both HTTP operations share the single reference AbortController deadline.
+        let deadline = tokio::time::Instant::now() + Duration::from_millis(OLLAMA_CLOUD_TIMEOUT_MS);
+        let signed_in = tokio::time::timeout_at(deadline, self.ollama_cloud_signed_in(url))
+            .await
+            .unwrap_or(false);
+        let models = if signed_in {
+            match tokio::time::timeout_at(deadline, self.fetch_ollama_cloud_catalogue()).await {
+                Ok(Ok(Some(models))) => models,
                 // Rejected or unparseable: keep serving the last good list.
                 _ => return fallback,
             }
@@ -458,37 +470,41 @@ pub fn map_ollama_cloud_catalogue(data: &Value) -> ModelsResult {
     let mut seen: HashSet<String> = HashSet::new();
     let mut models = Vec::new();
     for row in rows {
-        let raw = match field(row, "name")? {
-            Some(Value::Null) | None => field(row, "model")?,
-            other => other,
-        };
-        let Some(raw) = raw.and_then(Value::as_str) else {
-            continue;
+        let raw = row
+            .get("name")
+            .filter(|v| !v.is_null())
+            .or_else(|| row.get("model").filter(|v| !v.is_null()));
+        let raw = match raw {
+            None => "",
+            Some(Value::String(raw)) => raw,
+            _ => return Err(malformed()), // `.trim()` rejects non-strings.
         };
         let id = js_trim(raw);
         if id.is_empty() || !seen.insert(id.to_string()) {
             continue;
         }
         let mut parts = Vec::new();
-        if let Some(details) = field(row, "details")?.filter(|value| !value.is_null()) {
+        if let Some(details) = row.get("details") {
             for key in ["family", "parameter_size"] {
-                if let Some(value) = field(details, key)?.filter(|value| truthy(value)) {
+                if let Some(value) = details.get(key).filter(|value| truthy(value)) {
                     parts.push(js_string(value)?);
                 }
             }
         }
-        let mut description = (!parts.is_empty()).then(|| parts.join(" · "));
-        if description.is_none() {
-            if let Some(Value::Array(capabilities)) = field(row, "capabilities")? {
-                let joined = capabilities
-                    .iter()
-                    .filter_map(Value::as_str)
-                    .filter(|capability| !capability.is_empty() && *capability != "completion")
-                    .collect::<Vec<_>>()
-                    .join(", ");
-                if !joined.is_empty() {
-                    description = Some(joined);
-                }
+        let joined = parts.join(" · ");
+        let mut description = (!joined.is_empty()).then_some(joined);
+        if description.is_none()
+            && let Some(capabilities) = row.get("capabilities").filter(|v| !v.is_null())
+        {
+            let values = capabilities.as_array().ok_or_else(malformed)?;
+            let joined = values
+                .iter()
+                .filter(|v| truthy(v) && v.as_str() != Some("completion"))
+                .map(js_string)
+                .collect::<Result<Vec<_>, _>>()?
+                .join(", ");
+            if !joined.is_empty() {
+                description = Some(joined);
             }
         }
         let id = id.to_string();
@@ -855,7 +871,15 @@ mod tests {
     async fn ollama_merges_the_hosted_catalogue_when_signed_in() {
         let http = Arc::new(MockHttp::new(true));
         let models = fetchers(http.clone())
-            .fetch(CatalogueKind::Ollama, "", DAEMON_URL)
+            .fetch_with(
+                CatalogueKind::Ollama,
+                "",
+                DAEMON_URL,
+                FetchOptions {
+                    force: false,
+                    include_cloud: true,
+                },
+            )
             .await
             .expect("catalogue");
 
@@ -883,7 +907,15 @@ mod tests {
     async fn ollama_skips_the_hosted_catalogue_when_signed_out() {
         let http = Arc::new(MockHttp::new(false));
         let models = fetchers(http.clone())
-            .fetch(CatalogueKind::Ollama, "", DAEMON_URL)
+            .fetch_with(
+                CatalogueKind::Ollama,
+                "",
+                DAEMON_URL,
+                FetchOptions {
+                    force: false,
+                    include_cloud: true,
+                },
+            )
             .await
             .expect("catalogue");
 
@@ -924,11 +956,27 @@ mod tests {
         let fetchers = fetchers(http.clone());
 
         fetchers
-            .fetch(CatalogueKind::Ollama, "", DAEMON_URL)
+            .fetch_with(
+                CatalogueKind::Ollama,
+                "",
+                DAEMON_URL,
+                FetchOptions {
+                    force: false,
+                    include_cloud: true,
+                },
+            )
             .await
             .expect("first catalogue");
         fetchers
-            .fetch(CatalogueKind::Ollama, "", DAEMON_URL)
+            .fetch_with(
+                CatalogueKind::Ollama,
+                "",
+                DAEMON_URL,
+                FetchOptions {
+                    force: false,
+                    include_cloud: true,
+                },
+            )
             .await
             .expect("cached catalogue");
         assert_eq!(http.count(OLLAMA_CLOUD_CATALOGUE_URL), 1);

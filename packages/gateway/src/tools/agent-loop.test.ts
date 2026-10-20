@@ -10,6 +10,8 @@ import {
   buildTieredToolSchemas,
   toolDefsToSchemas,
   fromOpenAIName,
+  registerOpenAINameMappings,
+  listAmbiguousOpenAINames,
   runAgentLoop,
   serializeToolResultForModel,
   SteeringController,
@@ -4172,4 +4174,26 @@ describe("retryToolCall", () => {
 
     expect(result).toEqual({ ok: false, message: "Tool call missing-call not found" });
   });
+});
+
+
+describe("provider alias identity precedence", () => {
+  it("prefers the exact registered identity and records sorted collision claimants", () => {
+    registerOpenAINameMappings(["coverage.identity.tool", "coverage_identity_tool", "coverage.identity_tool"]);
+    expect(fromOpenAIName("coverage_identity_tool")).toBe("coverage_identity_tool");
+    registerOpenAINameMappings(["coverage.identity.tool", "coverage_identity_tool"]);
+    expect(fromOpenAIName("coverage_identity_tool")).toBe("coverage_identity_tool");
+    expect(listAmbiguousOpenAINames()).toContainEqual({ providerName: "coverage_identity_tool",
+      internalNames: ["coverage.identity.tool", "coverage.identity_tool", "coverage_identity_tool"] });
+  });
+});
+
+
+it("preserves queued steering metadata when draining a tool-round boundary", () => {
+  const steering = new SteeringController();
+  steering.steer("provider text", { displayContent: "visible text", queuedMessageId: "queued-coverage" });
+  expect(steering.hasPending).toBe(true);
+  expect(steering.drain()).toEqual([{ message: "provider text", displayContent: "visible text", queuedMessageId: "queued-coverage" }]);
+  expect(steering.hasPending).toBe(false);
+  expect(steering.drain()).toEqual([]);
 });

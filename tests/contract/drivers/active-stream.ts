@@ -51,9 +51,12 @@ const provider = Bun.serve({ hostname: '127.0.0.1', port: 0, async fetch(request
       await Bun.sleep(5);
     };
     try {
+      // Install the gate before exposing the token: the client may release as
+      // soon as it receives those bytes, while send() is still yielding.
+      const gate = round === 1 ? new Promise<void>(resolve => { release = resolve; }) : undefined;
       await send({content: round === 1 ? 'α🙂' : '終'});
       if (round === 1) {
-        await new Promise<void>(resolve => { release = resolve; });
+        await gate;
         await send({content:'β'});
         await send({tool_calls:[{index:0,id:'active-proof',type:'function',function:{name:'proof_ok',arguments:'{}'}}]});
         await send({}, 'tool_calls');
