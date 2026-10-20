@@ -162,7 +162,9 @@ export type AgentLoopEvent =
   | { type: "tool_result"; call_id: string; tool: string; ok: boolean; message: string; parent_call_id?: string; data?: unknown }
   | { type: "tool_retry"; call_id: string; attempt: number; maxAttempts: number }
   | { type: "tool_validation_error"; call_id: string; tool: string; errors: string[] }
-  | { type: "steering"; message: string }
+  // Emitted only when the loop actually consumes the steer, never on arrival —
+  // the client keeps the message in its queued state until this fires.
+  | { type: "steering"; message: string; displayContent?: string; queuedMessageId?: string; deferred?: boolean }
   | { type: "plan_action"; action: PlannedAction }
   | { type: "plan_complete"; planId: string; summary: string; actions: PlannedAction[] }
   | { type: "mode_notice"; mode: ChatMode; message: string }
@@ -422,20 +424,53 @@ export interface Logger {
 // ── Steering controller ──────────────────────────────────────────────
 
 /**
+ * Client-visible metadata carried alongside a pending steer so the UI can match
+ * a queued entry to the moment the loop actually consumes it.
+ */
+export interface SteeringMessageMeta {
+  /** What the transcript should render (falls back to `message` when absent). */
+  displayContent?: string
+  /** Client queue-entry id of the pending message that produced this steer. */
+  queuedMessageId?: string
+}
+
+/** A steering message together with the metadata that identifies it. */
+export interface SteeringMessage extends SteeringMessageMeta {
+  message: string
+}
+
+/**
  * Steering lets the user (or system) inject guidance into the agent
  * loop while it's running. The steered message gets appended to the
  * conversation as a system message before the next LLM call.
+ *
+ * Steering is deliberately *deferred*: a message handed to `steer()` while a
+ * tool-call round is in flight stays pending (the client keeps rendering it as a
+ * queued, not-yet-sent message) and is only drained — and only then reported via
+ * a `steering` event — once that round has finished.
  */
 export class SteeringController {
-  private queue: string[] = [];
+  private queue: SteeringMessage[] = [];
 
-  /** Inject a steering message into the loop */
-  steer(message: string): void {
-    this.queue.push(message);
+  /**
+   * Inject a steering message into the loop.
+   *
+   * The message is only *pending* until the running tool-call round finishes
+   * and the loop reaches its next injection boundary. `queuedMessageId` lets the
+   * originating client match this pending entry to the queue item it renders as
+   * "waiting to be sent", so the transcript marker only appears once the steer
+   * was actually consumed by the loop.
+   */
+  steer(message: string, meta?: SteeringMessageMeta): void {
+    this.queue.push({
+      message,
+      ...(meta?.displayContent ? { displayContent: meta.displayContent } : {}),
+      ...(meta?.queuedMessageId ? { queuedMessageId: meta.queuedMessageId } : {}),
+    });
   }
 
   /** Drain all pending steering messages (called by the loop) */
-  drain(): string[] {
+  drain(): SteeringMessage[] {
     const msgs = this.queue.splice(0);
     return msgs;
   }
@@ -3283,13 +3318,29 @@ export async function runAgentLoop(
       );
     }
 
-    // ── Apply steering messages ──
+    // ── Apply steering messages (deferred to the tool-round boundary) ──
+    // This sits at the top of an iteration, i.e. after the previous round's
+    // tools have all finished and before the next model call. A steer that
+    // arrives mid-round therefore waits here instead of interrupting the tools,
+    // and the `steering` event below is the only signal the client uses to
+    // promote its queued entry into the transcript.
     if (steering) {
       const steered = steering.drain();
-      for (const msg of steered) {
+      for (const pending of steered) {
+        const msg = pending.message;
         history.push({ role: "system", content: `[STEERING] ${msg}` });
-        segments.push({ type: "steering", content: msg });
-        onEvent?.({ type: "steering", message: msg });
+        segments.push({
+          type: "steering",
+          content: msg,
+          ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+        });
+        onEvent?.({
+          type: "steering",
+          message: msg,
+          ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+          ...(pending.queuedMessageId ? { queuedMessageId: pending.queuedMessageId } : {}),
+          deferred: true,
+        });
         log.info(`Steering injected for session ${sessionId}: ${msg.slice(0, 100)}`);
       }
     }
@@ -4813,11 +4864,25 @@ export async function runAgentLoop(
       if (contentText || thinkingText) {
         history.push({ role: "assistant", content: contentText, thinking: capThinking(thinkingText, /deepseek/i.test(llm.openaiModel)) });
       }
-      for (const msg of steered) {
-        history.push({ role: "system", content: "[STEERING] " + msg });
-        segments.push({ type: "steering", content: msg });
-        onEvent?.({ type: "steering", message: msg });
-        log.info("Steering injected for session " + sessionId + ": " + msg.slice(0, 100));
+      // The run finished producing its answer while a steer was still pending:
+      // apply it now (once) and let the loop answer it. This is the boundary the
+      // UI waits for before promoting the queued message into the transcript.
+      for (const pending of steered) {
+        const msg = pending.message;
+        history.push({ role: "system", content: `[STEERING] ${msg}` });
+        segments.push({
+          type: "steering",
+          content: msg,
+          ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+        });
+        onEvent?.({
+          type: "steering",
+          message: msg,
+          ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+          ...(pending.queuedMessageId ? { queuedMessageId: pending.queuedMessageId } : {}),
+          deferred: true,
+        });
+        log.info(`Steering injected for session ${sessionId}: ${msg.slice(0, 100)}`);
       }
       continue;
     }

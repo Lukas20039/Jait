@@ -76,10 +76,14 @@ export function normalizeMessageSegments(raw: unknown): MessageSegment[] {
     } else if (type === 'steering') {
       const content = (seg as { content?: unknown }).content
       const displayContent = (seg as { displayContent?: unknown }).displayContent
+      const queuedMessageId = (seg as { queuedMessageId?: unknown }).queuedMessageId
+      const deferred = (seg as { deferred?: unknown }).deferred
       out.push({
         type: 'steering',
         content: typeof content === 'string' ? content : String(content ?? ''),
         ...(typeof displayContent === 'string' ? { displayContent } : {}),
+        ...(typeof queuedMessageId === 'string' && queuedMessageId ? { queuedMessageId } : {}),
+        ...(deferred === true ? { deferred } : {}),
       })
     }
     // Unknown segment types are dropped rather than rendered, which keeps a

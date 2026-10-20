@@ -219,6 +219,41 @@ describe('createMessageStream', () => {
     ])
   })
 
+  it('anchors a deferred steer after the tool round that was already running', () => {
+    const stream = createMessageStream()
+
+    // Round 1: the user sends a message, the model starts a tool call.
+    stream.pushText('let me look at the file')
+    stream.pushToolStart('t1', 'read_file', { path: 'a.ts' })
+
+    // Mid-loop the user steers. The gateway defers injection to the next round
+    // boundary, so no marker exists yet — the queue owns the visible "unsent"
+    // row and the transcript stays untouched.
+    expect(stream.snapshot().segments).toEqual([
+      { type: 'text', content: 'let me look at the file' },
+      { type: 'toolGroup', callIds: ['t1'] },
+    ])
+
+    // The in-flight round finishes…
+    stream.pushToolResult('t1', true, 'ok', {}, undefined)
+
+    // …and only then does the boundary inject the steer, carrying the id the
+    // client used to correlate the queued row with this marker.
+    stream.pushSteering('use b.ts instead', 'use b.ts instead', 'steer-123', true)
+
+    expect(stream.snapshot().segments).toEqual([
+      { type: 'text', content: 'let me look at the file' },
+      { type: 'toolGroup', callIds: ['t1'] },
+      {
+        type: 'steering',
+        content: 'use b.ts instead',
+        displayContent: 'use b.ts instead',
+        queuedMessageId: 'steer-123',
+        deferred: true,
+      },
+    ])
+  })
+
   it('does not duplicate a steering marker echoed by a persisted snapshot', () => {
     const stream = createMessageStream()
     stream.pushText('before')

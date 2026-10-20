@@ -219,6 +219,17 @@ interface ParallelChatState {
   reasoningEffort: SessionReasoningEffort | null
 }
 
+/**
+ * Correlation id for a deferred steer. The gateway echoes it back on the
+ * `steering` event, which is how the UI knows the parked queue entry is now
+ * really in the transcript and can be promoted from "queued" to sent.
+ */
+function createSteerQueuedMessageId(): string {
+  const cryptoObj = typeof globalThis === 'object' ? globalThis.crypto : undefined
+  if (cryptoObj && typeof cryptoObj.randomUUID === 'function') return cryptoObj.randomUUID()
+  return `steer-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 function App() {
   const {
     inputValueRef,
@@ -826,7 +837,8 @@ function App() {
     rejectPlan,
     enqueueMessage,
     dequeueMessage,
-    recordSteeredMessage,
+    enqueuePendingSteer,
+    discardPendingSteer,
     updateQueueItem,
     reorderQueueItem,
     toggleHoldQueueItem,
@@ -1032,18 +1044,24 @@ function App() {
   const pendingThreadCompletionRef = useRef<Record<string, AgentThread>>({})
   const previousThreadStatusesRef = useRef<Record<string, ThreadStatus>>({})
 
+  // A pending steer is already accepted by the running agent loop; it only sits
+  // in the queue so it can render VS Code-style as "queued until this step
+  // finishes". It must never be drained into a new turn, and it must not count
+  // as waiting work for the interrupted-exit prompt either.
+  const drainableQueue = useMemo(() => messageQueue.filter(item => !item.pendingSteer), [messageQueue])
+
   useEffect(() => {
-    if (messageQueue.length > 0) {
+    if (drainableQueue.length > 0) {
       chatQueueSeenRef.current = true
     }
-  }, [messageQueue.length])
+  }, [drainableQueue.length])
 
   const chatCompletionSignal = completionCount + remoteMessageCompleteCount
   const promptBeforeProcessingQueuedMessage = shouldPromptBeforeProcessingQueuedMessage({
     hasInterruptedExit: hitMaxRounds,
     isLoading,
     isLoadingHistory,
-    queuedCount: messageQueue.length,
+    queuedCount: drainableQueue.length,
     allowQueuedMessageAfterInterruptedExit,
   })
   const sourceControlCompletionCountRef = useRef(completionCount)
@@ -3904,6 +3922,28 @@ function App() {
           queueAsFallback()
           return
         }
+        // The gateway defers every steer to the running loop's next round
+        // boundary (after the in-flight tool round, before the next model call),
+        // so the message is accepted but not in the transcript yet. Park it as a
+        // pending queue entry — visibly "queued", VS Code style — and let the
+        // `steering` event with our id promote it to a sent bubble at its real
+        // position. Showing it as sent now would place it above tool calls that
+        // have not run yet.
+        const steerId = createSteerQueuedMessageId()
+        enqueuePendingSteer({
+          content: promptText,
+          displayContent,
+          mode: sendTarget === 'swarm' ? 'swarm' : chatMode,
+          provider: chatProvider,
+          runtimeMode: chatProviderRuntimeMode,
+          responseStyle: chatResponseStyle,
+          model: cliModel ?? undefined,
+          reasoningEffort: chatReasoningEffort,
+          referencedFiles: prepared?.referencedFiles,
+          displaySegments: nextDisplaySegments,
+          attachments,
+          steerQueuedMessageId: steerId,
+        })
         try {
           const response = await fetch(`${API_URL}/api/sessions/${encodeURIComponent(activeSessionId)}/steer`, {
             method: 'POST',
@@ -3911,7 +3951,7 @@ function App() {
               'Content-Type': 'application/json',
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
-            body: JSON.stringify({ message: promptText, displayContent }),
+            body: JSON.stringify({ message: promptText, displayContent, queuedMessageId: steerId }),
           })
           if (!response.ok) {
             const err = (await response.json().catch(() => ({}))) as Record<string, unknown>
@@ -3919,15 +3959,17 @@ function App() {
             const error = typeof err.error === 'string' ? err.error : null
             throw new Error(details || error || `Failed to steer: ${response.statusText}`)
           }
-          recordSteeredMessage(promptText, displayContent)
-          toast.success('Steered the running agent')
+          toast.success('Queued — steers when the current step finishes')
         } catch (err) {
+          // Nothing will ever resolve the parked entry: pull it back out and
+          // keep the text as a normal queued message so nothing is lost.
+          discardPendingSteer(steerId)
           queueAsFallback()
           toast.error(getNonEmptyMessage(err instanceof Error ? err.message : null, 'Failed to steer — message queued instead'))
         }
       })()
     },
-    [activeSessionId, chatMode, chatProvider, chatProviderRuntimeMode, chatReasoningEffort, chatResponseStyle, cliModel, enqueueMessage, isLoading, preparePromptSubmission, recordSteeredMessage, sendTarget, setInputValue, setInputSegments, token],
+    [activeSessionId, chatMode, chatProvider, chatProviderRuntimeMode, chatReasoningEffort, chatResponseStyle, cliModel, enqueueMessage, enqueuePendingSteer, discardPendingSteer, isLoading, preparePromptSubmission, sendTarget, setInputValue, setInputSegments, token],
   )
 
   // Fork button in the composer while streaming: fork the running session and
@@ -4107,15 +4149,15 @@ function App() {
         hasInterruptedExit: hitMaxRounds,
         isLoading,
         isLoadingHistory,
-        queuedCount: messageQueue.length,
+        queuedCount: drainableQueue.length,
         allowQueuedMessageAfterInterruptedExit,
         isProcessing: chatQueueProcessingRef.current,
-        nextItemHeld: messageQueue[0]?.held ?? false,
+        nextItemHeld: drainableQueue[0]?.held ?? false,
       })
     )
       return
 
-    const [nextItem] = messageQueue
+    const [nextItem] = drainableQueue
     if (!nextItem) return
     // A held message blocks the queue: don't auto-send it (or anything after
     // it) until the user explicitly unlocks it. The server-side drain applies
@@ -4176,7 +4218,7 @@ function App() {
       .finally(() => {
         chatQueueProcessingRef.current = false
       })
-  }, [activeSessionId, dequeueMessage, enqueueMessage, allowQueuedMessageAfterInterruptedExit, hitMaxRounds, isLoading, isLoadingHistory, messageQueue, sendMessage, sendTarget, token])
+  }, [activeSessionId, dequeueMessage, enqueueMessage, allowQueuedMessageAfterInterruptedExit, drainableQueue, hitMaxRounds, isLoading, isLoadingHistory, sendMessage, sendTarget, token])
 
   const handleContinueChat = useCallback(
     (options: { token: string | null; sessionId: string | null }) => {
@@ -4214,6 +4256,11 @@ function App() {
         return
       }
 
+      // Same deferral as the composer path: the gateway only injects the steer
+      // at the running loop's next round boundary, so the queued message moves
+      // into a pending "queued" slot instead of appearing as if already sent.
+      const steerId = item.id
+      enqueuePendingSteer({ ...item, steerQueuedMessageId: steerId })
       void (async () => {
         const response = await fetch(`${API_URL}/api/sessions/${encodeURIComponent(activeSessionId)}/steer`, {
           method: 'POST',
@@ -4224,6 +4271,7 @@ function App() {
           body: JSON.stringify({
             message: item.content,
             displayContent: item.displayContent,
+            queuedMessageId: steerId,
           }),
         })
         if (!response.ok) {
@@ -4232,14 +4280,16 @@ function App() {
           const error = typeof err.error === 'string' ? err.error : null
           throw new Error(details || error || `Failed to steer: ${response.statusText}`)
         }
+        // The pending copy now owns the message; drop the plain queued entry so
+        // it cannot also be drained as a separate turn.
         dequeueMessage(id)
-        recordSteeredMessage(item.content, item.displayContent)
-        toast.success('Steered with queued message')
+        toast.success('Queued — steers when the current step finishes')
       })().catch((err) => {
+        discardPendingSteer(steerId)
         toast.error(getNonEmptyMessage(err instanceof Error ? err.message : null, 'Failed to steer with queued message'))
       })
     },
-    [activeSessionId, dequeueMessage, isLoading, messageQueue, recordSteeredMessage, token],
+    [activeSessionId, dequeueMessage, discardPendingSteer, enqueuePendingSteer, isLoading, messageQueue, token],
   )
 
   const stopAndSteerQueuedChatMessage = useCallback((id: string) => {

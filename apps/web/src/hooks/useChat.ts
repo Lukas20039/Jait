@@ -301,7 +301,15 @@ export type MessageSegment =
   | { type: 'toolGroup'; callIds: string[] }
   | { type: 'error'; content: string }
   /** A user message injected into a running turn via steering, anchored at the point it was received. */
-  | { type: 'steering'; content: string; displayContent?: string }
+  | {
+      type: 'steering'
+      content: string
+      displayContent?: string
+      /** Id of the queued steer this marker consumed (absent on replays). */
+      queuedMessageId?: string
+      /** True when the gateway accepted the steer before injecting it. */
+      deferred?: boolean
+    }
 
 /**
  * Segments for a turn the gateway ended with an error — a rate limit, spent
@@ -685,6 +693,15 @@ interface QueuedChatMessage extends QueuedMessage {
   referencedFiles?: { path: string; name: string }[]
   displaySegments?: UserMessageSegment[]
   attachments?: ChatAttachment[]
+  /**
+   * The entry is a steer that the gateway has accepted but not injected yet.
+   * It renders like a queued message (VS Code style) and must never be drained
+   * as a new turn: it is removed only when the gateway emits the `steering`
+   * event that consumes it at the current agent-loop round boundary.
+   */
+  pendingSteer?: boolean
+  /** The id the gateway echoes back on the `steering` event for this steer. */
+  steerQueuedMessageId?: string
 }
 
 type SendMessageResult = 'sent' | 'retry' | 'aborted' | 'queued'
@@ -1177,6 +1194,21 @@ export function useChat(
               if (filePath) trackChangedFile(filePath, filePath.split('/').pop() ?? filePath)
             }
           }
+        }
+      } else if (data.type === 'steering') {
+        // The gateway accepted this steer earlier and only now injected it, at
+        // the current agent-loop round boundary. Promote the parked queue entry
+        // to a sent marker so the transcript matches the model's real history.
+        // Replays rebuild the turn from the durable log, so they must not touch
+        // the live queue (the WS snapshot owns that).
+        const steerId = typeof data.queuedMessageId === 'string' ? data.queuedMessageId : null
+        const steerContent = typeof data.message === 'string'
+          ? data.message
+          : typeof data.content === 'string' ? data.content : ''
+        if (isReplay || !steerId) {
+          recordSteeredMessage(steerContent, typeof data.displayContent === 'string' ? data.displayContent : undefined)
+        } else {
+          resolveSteeredMessage(steerId, steerContent, typeof data.displayContent === 'string' ? data.displayContent : undefined)
         }
       } else if (data.type === 'content_rollback') {
         // The gateway discarded a degenerate generation after streaming
@@ -1939,6 +1971,49 @@ export function useChat(
     setState(prev => ({ ...prev, messages: [...prev.messages, steeredMessage] }))
   }, [])
 
+  /**
+   * Park a steer as a queued entry instead of writing a sent bubble right away.
+   * The gateway only injects the steer at the next round boundary of the running
+   * agent loop, so showing it as sent at POST time would misrepresent the
+   * transcript (and put the marker above tool calls that had not run yet).
+   * `resolveSteeredMessage` promotes it once the `steering` event arrives.
+   */
+  const enqueuePendingSteer = useCallback((
+    item: Omit<QueuedChatMessage, 'id' | 'queuedAt' | 'pendingSteer'> & { steerQueuedMessageId: string },
+  ) => {
+    updateQueue(prev => {
+      const rest = prev.filter(entry => entry.steerQueuedMessageId !== item.steerQueuedMessageId)
+      return [...rest, {
+        ...item,
+        id: `steer-${item.steerQueuedMessageId}`,
+        queuedAt: Date.now(),
+        pendingSteer: true,
+      }]
+    })
+  }, [updateQueue])
+
+  /**
+   * The gateway injected a deferred steer: drop the pending queue entry and
+   * splice the marker into the transcript at its real position. Falls back to
+   * the pending entry's own content when the event omits it.
+   */
+  const resolveSteeredMessage = useCallback((steerId: string, content?: string, displayContent?: string) => {
+    const pending = messageQueueRef.current.find(entry => entry.steerQueuedMessageId === steerId)
+    updateQueue(prev => prev.filter(entry => entry.steerQueuedMessageId !== steerId))
+    const body = content ?? pending?.content
+    if (!body) return
+    recordSteeredMessage(body, displayContent ?? pending?.displayContent)
+  }, [recordSteeredMessage, updateQueue])
+
+  /**
+   * The steer request was rejected (or never left the app): drop the pending
+   * queue entry. Without this the entry would render as queued forever because
+   * no `steering` event will ever arrive to resolve it.
+   */
+  const discardPendingSteer = useCallback((steerId: string) => {
+    updateQueue(prev => prev.filter(entry => entry.steerQueuedMessageId !== steerId))
+  }, [updateQueue])
+
   /** Update the content of a queued message (inline edit). */
   const updateQueueItem = useCallback((id: string, content: string, attachments?: ChatAttachment[], displaySegments?: UserMessageSegment[], promptContent?: string) => {
     updateQueue(prev => prev.map(q => {
@@ -2530,6 +2605,9 @@ export function useChat(
     enqueueMessage,
     dequeueMessage,
     recordSteeredMessage,
+    enqueuePendingSteer,
+    resolveSteeredMessage,
+    discardPendingSteer,
     updateQueueItem,
     reorderQueueItem,
     toggleHoldQueueItem,

@@ -32,6 +32,7 @@ pub mod thread_title;
 
 pub mod chat_notifications;
 pub mod input_requests;
+pub mod steering;
 
 pub mod notifications;
 pub mod usage_refresh_cache;

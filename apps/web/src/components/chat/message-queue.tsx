@@ -25,6 +25,12 @@ export interface QueuedMessage {
   queuedAt: number
   /** When true, the queue drain skips this message until the user unlocks it. */
   held?: boolean
+  /**
+   * A steer the gateway has accepted but not injected yet. It stays visible as
+   * an unsent row ("Queued") until the running loop reaches its round boundary
+   * and consumes it; the drain must never send it as its own turn.
+   */
+  pendingSteer?: boolean
 }
 
 interface MessageQueueProps {
@@ -249,7 +255,7 @@ function QueueItem({
       </button>
       </TooltipHint>
 
-      {onReorder && !editing && (
+      {onReorder && !editing && !item.pendingSteer && (
         <TooltipHint content="Drag to reorder">
         <button
           type="button"
@@ -266,13 +272,23 @@ function QueueItem({
       <div className={cn('flex-1 min-w-0', iconOnly && editing && 'pt-6')}>
         {!editing && (
           <span className={cn('mb-0.5 flex items-center gap-1.5', iconOnly && 'mb-3')}>
-            {index === 0 ? (
+            {item.pendingSteer ? (
+              <span className="text-2xs font-medium uppercase tracking-wider text-primary/70">
+                Queued #{index + 1}
+              </span>
+            ) : index === 0 ? (
               <span className="text-2xs font-medium uppercase tracking-wider text-primary/70">
                 Next
               </span>
             ) : (
               <span className="text-2xs font-medium uppercase tracking-wider text-muted-foreground">
                 Queued #{index + 1}
+              </span>
+            )}
+            {item.pendingSteer && !editing && (
+              <span className="inline-flex items-center gap-0.5 rounded bg-primary/15 px-1 py-px text-2xs font-medium uppercase tracking-wider text-primary">
+                <ArrowRight className="h-2.5 w-2.5" />
+                Sends after this step
               </span>
             )}
             {item.held && !editing && (
@@ -318,7 +334,7 @@ function QueueItem({
       )}>
         {editing ? null : (
           <>
-            {onEdit && (
+            {onEdit && !item.pendingSteer && (
               <TooltipHint content="Edit message">
               <button
                 type="button"
@@ -330,7 +346,7 @@ function QueueItem({
               </button>
               </TooltipHint>
             )}
-            {onSteer && (
+            {onSteer && !item.pendingSteer && (
               <div className="inline-flex items-center" data-no-drag="true">
               <TooltipHint content="Steer with message">
               <button
@@ -399,7 +415,7 @@ function QueueItem({
               </button>
               </TooltipHint>
             )}
-            {onToggleHold && (
+            {onToggleHold && !item.pendingSteer && (
               <TooltipHint content={item.held ? 'Unlock — allow this message to be sent' : 'Hold — keep this message from being sent until you unlock it'}>
               <button
                 type="button"

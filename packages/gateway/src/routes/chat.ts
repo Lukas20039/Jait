@@ -55,6 +55,7 @@ import {
   type LlmContextFlowRound,
   type OpenAIToolCall,
   type RoundMetrics,
+  type SteeringMessageMeta,
 } from "../tools/agent-loop.js";
 import { interventionRunResumeRegistry } from "../services/intervention-run-resume.js";
 import { backgroundCommandMonitor, type BackgroundCommandResult } from "../services/background-command-monitor.js";
@@ -3098,12 +3099,18 @@ export function registerChatRoutes(
   /** Plans produced by plan mode — keyed by session ID */
   const sessionPlans = new Map<string, { id: string; summary: string; actions: PlannedAction[] }>();
 
-  const steerActiveSession = async (sessionId: string, message: string): Promise<{ ok: boolean; reason?: string }> => {
+  const steerActiveSession = async (
+    sessionId: string,
+    message: string,
+    meta?: SteeringMessageMeta,
+  ): Promise<{ ok: boolean; reason?: string }> => {
     if (!message.trim()) return { ok: false, reason: "empty-message" };
     if (!activeStreams.has(sessionId)) return { ok: false, reason: "not-streaming" };
     const controller = sessionSteeringControllers.get(sessionId);
     if (!controller) return { ok: false, reason: "no-controller" };
-    controller.steer(message);
+    // Deferred: the loop drains this at the next tool-round boundary (or when the
+    // current run finishes) and only then emits `steering` back to the client.
+    controller.steer(message, meta);
     return { ok: true };
   };
 
@@ -4771,12 +4778,27 @@ export function registerChatRoutes(
 
           flushToolGroup();
           flushTextSegment();
-          for (const message of steered) {
-            cliSegments.push({ type: "steering", content: message });
+          for (const pending of steered) {
+            cliSegments.push({
+              type: "steering",
+              content: pending.message,
+              ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+            });
+            // Mirror the agent loop's consumption event so a client that had the
+            // message queued can promote it into the transcript exactly once.
+            const steerEvent = {
+              type: "steering" as const,
+              message: pending.message,
+              ...(pending.displayContent ? { displayContent: pending.displayContent } : {}),
+              ...(pending.queuedMessageId ? { queuedMessageId: pending.queuedMessageId } : {}),
+              deferred: true,
+            };
+            emitToSubscribers(sessionId, steerEvent as unknown as StreamEvent);
+            safeWrite(`data: ${JSON.stringify(steerEvent)}\n\n`);
           }
           lastSegmentWasText = false;
 
-          const steerContent = steered.map(m => `[STEERING] ${m}`).join("\n\n");
+          const steerContent = steered.map(m => `[STEERING] ${m.message}`).join("\n\n");
           app.log.info(`[chat/cli] Steering follow-up for session ${sessionId}: ${steerContent.slice(0, 100)}`);
 
           // Set up a new turn-completion listener
@@ -6350,6 +6372,13 @@ export function registerChatRoutes(
     const body = (request.body as Record<string, unknown>) ?? {};
     const message = typeof body["message"] === "string" ? body["message"] : "";
     const displayContent = typeof body["displayContent"] === "string" ? body["displayContent"] : undefined;
+    // Every accepted steer carries an id the client can correlate with the
+    // `steering` event that finally injects it at the loop's round boundary.
+    // The client supplies its own id (so it can render the pending entry
+    // before the HTTP response lands); synthesize one for other callers.
+    const requestedSteerId = typeof body["queuedMessageId"] === "string" ? body["queuedMessageId"].trim() : "";
+    const queuedMessageId = requestedSteerId || `steer-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
     if (!message.trim()) {
       return reply.status(400).send({ error: "VALIDATION_ERROR", details: "message is required" });
     }
@@ -6363,9 +6392,16 @@ export function registerChatRoutes(
       return reply.status(404).send({ error: "NOT_FOUND", details: "No steering controller for this session" });
     }
 
-    controller.steer(message);
+    const meta: SteeringMessageMeta = {
+      ...(displayContent ? { displayContent } : {}),
+      queuedMessageId,
+    };
+    controller.steer(message, meta);
     accumulateSteering(sessionId, message, displayContent);
-    return { ok: true, steered: true };
+    // `deferred` tells the client this is accepted-but-not-yet-injected: the
+    // message must stay rendered as queued until the loop's `steering` event
+    // arrives (emitted once, at the tool-round boundary).
+    return { ok: true, steered: true, deferred: true, queuedMessageId };
   });
 
   // ══ GET /api/sessions/:sessionId/plan — Get pending plan ═══════════
