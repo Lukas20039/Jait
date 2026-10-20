@@ -14,4 +14,14 @@ mkdirSync(temporaryDirectory);
 for (const key of ["TMPDIR", "TEMP", "TMP"]) process.env[key] = temporaryDirectory;
 
 // Keep the override after cleanup so late callbacks cannot fall back to ~/.jait.
-afterAll(() => rmSync(stateDirectory, { recursive: true, force: true }));
+// Node flushes its compile cache into TMPDIR lazily, so a late write can race the
+// recursive unlink and surface ENOTEMPTY on tmp/node-compile-cache. Retry the
+// removal instead of failing whichever test file happened to finish last.
+afterAll(() =>
+  rmSync(stateDirectory, {
+    recursive: true,
+    force: true,
+    maxRetries: 10,
+    retryDelay: 100,
+  }),
+);

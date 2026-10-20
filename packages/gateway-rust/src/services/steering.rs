@@ -198,7 +198,10 @@ mod tests {
         let id = queue.steer(msg("steer-1", "actually, check the tests first"));
         assert_eq!(id, "steer-1");
         assert!(queue.has_pending());
-        assert!(steered.lock().unwrap().is_empty(), "steer must not be injected mid-round");
+        assert!(
+            steered.lock().unwrap().is_empty(),
+            "steer must not be injected mid-round"
+        );
         assert_eq!(queue.pending().len(), 1);
 
         // Tool round finishes → the loop drains at the boundary.
@@ -247,12 +250,15 @@ mod tests {
         let drained = queue.drain_round_for("s1");
         assert_eq!(drained.len(), 1);
         assert_eq!(drained[0].content, "for chat one");
-        assert_eq!(queue.pending(), vec![SteeringMessage {
-            id: queue.pending()[0].id.clone(),
-            session_id: "s2".into(),
-            content: "for chat two".into(),
-            display_content: None,
-        }]);
+        assert_eq!(
+            queue.pending(),
+            vec![SteeringMessage {
+                id: queue.pending()[0].id.clone(),
+                session_id: "s2".into(),
+                content: "for chat two".into(),
+                display_content: None,
+            }]
+        );
     }
 
     #[test]
