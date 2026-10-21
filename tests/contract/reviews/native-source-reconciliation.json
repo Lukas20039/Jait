@@ -1675,8 +1675,8 @@
     },
     {
       "path": "packages/gateway/src/services/user-questions.ts",
-      "sha256": "597fb05460ffc2145ca72c64c94a2cd5e49b49785c39bfb4393995382535a2e6",
-      "review": "Pending insertion order; ECMAScript title trimming; nullable owners; session/user filtering; owner-checked submit/cancel; one-shot resolution and reentrant metadata callbacks; no expiry.",
+      "sha256": "c2141663547d247644ed6eaf1219d60480ff541eba701849c476c2e581ba5ace",
+      "review": "Pending insertion order; ECMAScript title trimming; nullable owners; session/user filtering; owner-checked submit/cancel; one-shot resolution and reentrant metadata callbacks; no expiry. Refreshed for resumable owner/session-bound waits, answer retention between calls, 60-second pending deadline, one-time collection and MCP tool envelopes; exact metadata, twelve refresh contract tests, three native tests and three restored mutations caught by both suites.",
       "cases": [
         {
           "id": "questions_preserve_order_filters_defaults_and_owner_resolution",
@@ -1940,8 +1940,8 @@
     },
     {
       "path": "packages/gateway/src/tools/user-question-tools.ts",
-      "sha256": "9b86a97507ac3d9892dfc1352200ba35c61153ad6dfa740bb09898cb8c9453ee",
-      "review": "Full metadata/schema parity, native pending-question lifecycle, Unicode input normalization, ordered duplicate errors, authenticated context ownership, answer/cancel results and no-expiry pending behavior.",
+      "sha256": "9a6f3d13b918f3ff3457ed9fc327cd86e7dcc239ddfc128d5329dca44b330151",
+      "review": "Full metadata/schema parity, native pending-question lifecycle, Unicode input normalization, ordered duplicate errors, authenticated context ownership, answer/cancel results and no-expiry pending behavior. Refreshed for resumable owner/session-bound waits, answer retention between calls, 60-second pending deadline, one-time collection and MCP tool envelopes; exact metadata, twelve refresh contract tests, three native tests and three restored mutations caught by both suites.",
       "cases": [
         {
           "id": "user_ask_metadata_matches_real_constructor",
