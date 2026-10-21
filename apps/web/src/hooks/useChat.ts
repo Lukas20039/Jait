@@ -783,7 +783,8 @@ export function useChat(
     setTodoList((items) => items.some((item) => item.status !== 'completed') ? [] : items)
   }, [])
 
-  const prevSessionIdRef = useRef<string | null>(null)
+  // `undefined` = "re-run the session effect"; `null` = deliberately no chat (a new-chat draft).
+  const prevSessionIdRef = useRef<string | null | undefined>(undefined)
   const subscriptionRunIdRef = useRef(0)
   const requestVersionRef = useRef(0)
   /**
@@ -868,7 +869,7 @@ export function useChat(
    */
   const resumeSessionStream = useCallback(() => {
     preserveMessagesOnNextResumeRef.current = true
-    prevSessionIdRef.current = null
+    prevSessionIdRef.current = undefined
     setRefreshTrigger(n => n + 1)
   }, [])
 
@@ -1568,7 +1569,7 @@ export function useChat(
       scheduler.cancel()
       if (activeStreamRef.current?.isCurrent === isCurrent) activeStreamRef.current = null
       // Reset so React strict-mode re-mount can re-run the effect
-      prevSessionIdRef.current = null
+      prevSessionIdRef.current = undefined
     }
   }, [authToken, cacheScope, clearUnfinishedTodoList, onLoginRequired, sessionId, refreshTrigger, updateQueue])
 
