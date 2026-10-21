@@ -35,6 +35,7 @@ Run from repository root unless noted.
 - `bun run test`: run Vitest unit/integration tests.
 - `bun run lint`: run `oxlint` across repo.
 - `bun run healthcheck`: run the release guard, typecheck, build, tests, and lint in CI order.
+- `node scripts/release.mjs --bump patch`: the supported way to do a version up — bump, regenerate `CHANGELOG.md`, run the release guard, commit, and push so CI tags and publishes. Use `--dry-run` to preview; never bump versions by hand.
 - `bun run test:e2e`: run the Playwright suite from the repo root.
 - `bun run test:e2e:ui`: run the isolated UI fixture checks with two workers and a frontend only. Keep API-backed tests in the standard single-worker suite; use `--workers=1` to compare timings. The two-worker UI suite and production builds need an explicit, bounded terminal memory budget above the default 1.5 GiB throttle / 2 GiB cap (the measured UI suite peaked at 3.3 GiB). Use a temporary 6 GiB high / 8 GiB max budget for these checks and restore it afterward; raising Node's heap alone does not raise the cgroup limit.
 
@@ -70,6 +71,8 @@ Run from repository root unless noted.
 The monorepo uses an automated release pipeline driven by a single version bump.
 Everything lives in `.github/workflows/release.yml`:
 
+> **Always use `node scripts/release.mjs` for a version up.** When asked to "bump the version", "cut a release", "up version and push", or anything equivalent, supply parameters to that script — do not hand-edit `version` fields, do not hand-write the `CHANGELOG.md` entry, do not compose the release commit yourself. The script performs steps 1–2 below atomically (version bump, changelog regeneration, `release:check`, scoped commit, push) and rolls every file back if any step fails. Preview with `--dry-run`; see *Doing a version up* below for the flag list.
+
 1. **Regenerate the changelog.** When doing a "version up", update `CHANGELOG.md` with the new release's entry by deriving it from git history:
    ```
    git log --oneline --no-merges v<previous>..v<new>
@@ -85,7 +88,20 @@ Everything lives in `.github/workflows/release.yml`:
 
 The workflow can also be triggered by pushing a `v*` tag directly or via `workflow_dispatch`.
 
-**No manual `git tag` or `npm publish` is needed.** The gateway `package.json` version is the single source of truth for release versions. The changelog is the one thing you *do* update by hand on every version up.
+**No manual `git tag` or `npm publish` is needed.** The gateway `package.json` version is the single source of truth for release versions.
+
+### Doing a version up
+
+Use `scripts/release.mjs` instead of running steps 1–2 by hand. It bumps the gateway (and any `--also` sub-packages), regenerates `CHANGELOG.md` from git history, runs `release:check`, commits only the release files as `chore(release): v<version>`, and pushes to `main` so CI tags and publishes.
+
+```bash
+node scripts/release.mjs --bump patch --dry-run        # preview, changes nothing
+node scripts/release.mjs --bump patch                  # bump, changelog, commit, push
+node scripts/release.mjs --bump minor --also shared,web
+node scripts/release.mjs --set 0.1.960 --notes "Prose paragraph for the changelog."
+```
+
+Flags: `--bump patch|minor|major`, `--set <version>`, `--also <list>`, `--notes <text>`, `--message <text>`, `--date <date>`, `--remote`, `--branch`, `--no-push`, `--dry-run`, `--allow-dirty`, `--skip-checks`, `--self-test`. It never force-pushes, refuses to run on the wrong branch or on an already-tagged version, and restores every touched file if anything fails partway.
 
 To deploy to a server after publish: `npm install -g @jait/gateway@<version>` and restart the service.
 

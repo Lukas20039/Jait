@@ -45,6 +45,7 @@
     "lint": "bunx oxlint . && bun run lint:hooks",
     "lint:hooks": "bunx oxlint --react-plugin --allow all --deny react/rules-of-hooks apps/web/src",
     "typecheck": "bun run --filter '*' typecheck",
+    "release": "node scripts/release.mjs",
     "release:check": "node scripts/check-release-version-source.js",
     "check:artifacts": "node scripts/check-artifact-paths.mjs",
     "healthcheck": "bun run release:check && bun run check:artifacts && bun run typecheck && bun run build && bun run test && bun run lint",
