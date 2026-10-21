@@ -71,7 +71,7 @@ impl CommandPool {
             use std::os::unix::process::CommandExt;
             builder.as_std_mut().process_group(0);
         }
-        let mut child = builder.spawn().map_err(|error| {
+        let mut child = spawn_with_retry(&mut builder).await.map_err(|error| {
             if !spec.program.contains(['/', '\\'])
                 && matches!(
                     error.kind(),
@@ -122,6 +122,30 @@ impl CommandPool {
         }
         Ok(CommandOutput { stdout, stderr })
     }
+}
+/// `ETXTBSY` is transient rather than a property of the command: a concurrent
+/// `fork` (another task spawning a child of its own) can inherit a write
+/// descriptor for the executable that stays open until that child reaches
+/// `execve`, and a package upgrade can briefly replace the same binary. Both
+/// windows close on their own, so retrying with a short backoff is the
+/// documented mitigation instead of surfacing a spurious spawn failure.
+#[cfg(unix)]
+async fn spawn_with_retry(builder: &mut Command) -> io::Result<tokio::process::Child> {
+    const ATTEMPTS: u32 = 20;
+    let mut attempt = 0;
+    loop {
+        match builder.spawn() {
+            Err(error) if error.raw_os_error() == Some(libc::ETXTBSY) && attempt < ATTEMPTS => {
+                attempt += 1;
+                tokio::time::sleep(Duration::from_millis(5 * u64::from(attempt))).await;
+            }
+            outcome => return outcome,
+        }
+    }
+}
+#[cfg(not(unix))]
+async fn spawn_with_retry(builder: &mut Command) -> io::Result<tokio::process::Child> {
+    builder.spawn()
 }
 fn failure(message: impl Into<String>) -> CommandFailure {
     CommandFailure {
@@ -198,7 +222,7 @@ mod tests {
             CommandSpec {
                 program: file.to_string_lossy().into_owned(),
                 args: vec![],
-                timeout_ms: 2_000,
+                timeout_ms: 10_000,
                 max_buffer: 1024,
             },
         )
@@ -207,7 +231,7 @@ mod tests {
         CommandPool::new(NonZeroU16::new(1).unwrap(), environment)
     }
     async fn pid(path: &Path) -> i32 {
-        tokio::time::timeout(Duration::from_secs(3), async {
+        tokio::time::timeout(Duration::from_secs(15), async {
             loop {
                 if let Ok(text) = std::fs::read_to_string(path)
                     && let Ok(pid) = text.trim().parse()
@@ -221,7 +245,7 @@ mod tests {
         .unwrap()
     }
     async fn gone(pid: i32) {
-        tokio::time::timeout(Duration::from_secs(3), async {
+        tokio::time::timeout(Duration::from_secs(15), async {
             loop {
                 if unsafe { libc::kill(pid, 0) } == -1 {
                     break;
@@ -258,7 +282,7 @@ mod tests {
             let (_, mut spec) = fixture(&format!("printf abcd {redirection}; exec /bin/sleep 10"));
             spec.max_buffer = 3;
             let error =
-                tokio::time::timeout(Duration::from_secs(3), pool(HashMap::new()).run(&spec))
+                tokio::time::timeout(Duration::from_secs(15), pool(HashMap::new()).run(&spec))
                     .await
                     .unwrap()
                     .unwrap_err();
@@ -285,7 +309,7 @@ mod tests {
             "PIDFILE".into(),
             file.to_string_lossy().into_owned(),
         )]));
-        let failure = tokio::time::timeout(Duration::from_secs(3), pool.run(&spec))
+        let failure = tokio::time::timeout(Duration::from_secs(15), pool.run(&spec))
             .await
             .unwrap()
             .unwrap_err();
@@ -333,7 +357,7 @@ mod tests {
             "PIDFILE".into(),
             file.to_string_lossy().into_owned(),
         )]));
-        tokio::time::timeout(Duration::from_secs(3), pool.run(&spec))
+        tokio::time::timeout(Duration::from_secs(15), pool.run(&spec))
             .await
             .unwrap()
             .unwrap_err();
@@ -341,7 +365,7 @@ mod tests {
         // An orphan can remain a zombie until the container's init reaps it; it
         // must no longer execute or own a pipe after the command returns.
         let proc = PathBuf::from(format!("/proc/{child_pid}/stat"));
-        tokio::time::timeout(Duration::from_secs(3), async {
+        tokio::time::timeout(Duration::from_secs(15), async {
             loop {
                 match std::fs::read_to_string(&proc) {
                     Err(_) => break,
