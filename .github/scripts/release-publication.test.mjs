@@ -79,6 +79,14 @@ describe("release publication", () => {
     assert.equal(steps.find((step) => step.name === "Publish @jait/gateway").if, undefined);
   });
 
+  it("validates the installed tarball before publishing the gateway", () => {
+    const check = steps.findIndex((step) => step.name === "Validate packed gateway with registry dependencies");
+    const publish = steps.findIndex((step) => step.name === "Publish @jait/gateway");
+    assert.ok(check >= 0 && check < publish);
+    assert.equal(steps[check].if, undefined);
+    assert.equal(steps[check].run, "node scripts/check-gateway-package.mjs");
+  });
+
   it("requires successful platform builds before publishing the release", () => {
     assert.ok(workflow.jobs.desktop.if.includes("needs.desktop-gateway-runtime.result == 'success'"));
     assert.ok(workflow.jobs.release.if.includes("needs.desktop.result == 'success'"));

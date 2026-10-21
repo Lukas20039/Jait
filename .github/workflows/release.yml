@@ -864,6 +864,12 @@ jobs:
           echo "Refusing to publish an uninstallable gateway. Publish the missing workspace package(s) first."
           exit 1
 
+      # Workspace aliases can hide a shared package that changed without a
+      # version bump. Test the tarball with real registry dependencies before
+      # exposing it through npm's latest tag.
+      - name: Validate packed gateway with registry dependencies
+        run: node scripts/check-gateway-package.mjs
+
       - name: Publish @jait/gateway
         working-directory: packages/gateway
         run: |

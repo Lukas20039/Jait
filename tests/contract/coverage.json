@@ -66016,7 +66016,7 @@
     },
     {
       "path": "packages/gateway/bin/safe-update.mjs",
-      "fingerprint": "01f227b1f512b513",
+      "fingerprint": "16395ef7c2f5e403",
       "lane": "http-tools-config",
       "direct_test_references": [
         "packages/gateway/src/safe-update.test.ts"

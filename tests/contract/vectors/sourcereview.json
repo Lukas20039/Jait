@@ -64056,6 +64056,18 @@
                 {
                   "timeout": 30000
                 }
+              ],
+              [
+                "run",
+                "$EXEC",
+                [
+                  "--input-type=module",
+                  "--eval",
+                  "process.env.__JAIT_CLI = \"1\"; await import(\"file://$ROOT/candidate/dist/index.js\"); process.exit(0);"
+                ],
+                {
+                  "timeout": 30000
+                }
               ]
             ]
           }
@@ -64209,6 +64221,18 @@
                 [
                   "$ROOT/.jait-update-STAGE/lib/node_modules/@jait/gateway/bin/jait.mjs",
                   "--version"
+                ],
+                {
+                  "timeout": 30000
+                }
+              ],
+              [
+                "run",
+                "$EXEC",
+                [
+                  "--input-type=module",
+                  "--eval",
+                  "process.env.__JAIT_CLI = \"1\"; await import(\"file://$ROOT/.jait-update-STAGE/lib/node_modules/@jait/gateway/dist/index.js\"); process.exit(0);"
                 ],
                 {
                   "timeout": 30000

@@ -52,7 +52,7 @@ jobs:
       - name: Test parity tooling and identity transport
         run: node --test tests/contract/tooling/*.test.mjs
       - name: Test contract parser and runner failure handling
-        run: node tests/contract/run.mjs test --bins --test runner --test compaction --test notification_sync --test boundaries --test consent_invariants --test tenant_recovery --test backend_launch --test tail_stream_cleanup --test active_stream --test recovery_corpus
+        run: node tests/contract/run.mjs test --bins --test runner --test compaction --test notification_sync --test boundaries --test consent_invariants --test tenant_recovery --test backend_launch --test tail_stream_cleanup --test active_stream --test recovery_corpus --test gateway_updates
       - name: Test the isolated TypeScript gateway from Rust
         run: bun run test:contract
       - name: Test TypeScript internals with Rust assertions
