@@ -13,6 +13,13 @@ export function fingerprint(bytes) {
  for (const b of Buffer.from(bytes)) h = BigInt.asUintN(64, (h ^ BigInt(b)) * 0x100000001b3n);
  return h.toString(16).padStart(16, '0');
 }
+// The Rust auditor recomputes this digest as serde_json::to_string(&to_value(&claims)),
+// which serializes the typed Claim structs in declaration order. Keys must therefore be
+// hashed exactly as emitted below: sorting or reordering them desynchronizes every entry.
+export const claimKeys = ['id','kind','name','start','end','fingerprint','details','status','required_test_ids','gap'];
+export function claimsDigest(claims) {
+ return fingerprint(JSON.stringify(claims));
+}
 export function pathsAt(base) {
  const out = [];
  for (const rel of [...directories,...extraFiles]) {
@@ -123,7 +130,7 @@ export function capture(base=root) {
    for (const [name,entry] of Object.entries(pkg.bin??{})) claims.push({id:`${p}#cli:${name}`,kind:'cli',name,start:0,end:bytes.length,fingerprint:fingerprint(bytes),details:{entry},status:'pending',required_test_ids:[],gap:'CLI behavior and platform fixture evidence required.'});
   }
   if (!/\.(ts|tsx|mjs|cjs|js|json)$/.test(p)) claims.push({id:`${p}#asset:0`,kind:'asset',name:p,start:0,end:bytes.length,fingerprint:fingerprint(bytes),details:{},status:'pending',required_test_ids:[],gap:'Asset packaging/runtime consumer and supported-platform verification required.'});
-  return {path:p,fingerprint:fingerprint(bytes),migration_owner:owner(p),status:'pending',required_test_ids:[],gap:'Workstream owner only; individual assignee and exact behavioral Rust test IDs/branch coverage pending. Static test imports are not evidence.',interface_ids:claims.map(c=>c.id).sort(),claims_fingerprint:fingerprint(canonical(claims)),claims};
+  return {path:p,fingerprint:fingerprint(bytes),migration_owner:owner(p),status:'pending',required_test_ids:[],gap:'Workstream owner only; individual assignee and exact behavioral Rust test IDs/branch coverage pending. Static test imports are not evidence.',interface_ids:claims.map(c=>c.id).sort(),claims_fingerprint:claimsDigest(claims),claims};
  });
  return {schema_version:1,fingerprint_algorithm:'fnv1a64-bytes',policy:'All claims are pending candidates, never completeness or parity. Rust runtime uses no Node/Bun. Recapture is a reviewed baseline change.',directories,extra_files:extraFiles,categories,
  category_gaps:categories.map(kind=>({kind,status:'pending',gap:({route:'Resolve receiver identities, aliases, plugin prefixes, all()/route() methods, handler validation and effective JSON schemas.',tool:'Resolve registry factories/spreads, MCP/ACP/plugin/runtime supplied tools and external schemas.',ws_event:'Resolve templated names, broadcast wrappers, discriminants, payloads and activation.',sse_event:'Resolve raw writes/templates, dynamic event producers, replay and payload schemas.',db_table:'Reconcile Drizzle tables with raw SQL/FTS/virtual/conditional tables and legacy migrations.',db_migration:'Ordered migration candidates do not establish upgrade/rollback coverage.',config:'Resolve computed env lookups, destructuring, persisted settings, precedence and defaults.',cli:'Resolve top-level and nested dispatch, options, help, aliases and platform-specific entrypoints.',dependency:'Resolve dynamic imports, optional native engines, subprocess executables and packaging.',bridge:'Audit Node/Bun workers, embedded scripts, ACP/MCP engines, shell integration and external assets.',asset:'Generated web-dist, bundled messenger runtime, screen-share and external assets are outside source capture; packaging provenance pending.',platform:'linux/darwin/win32/Android source branches are observations; supported architecture/OS/runtime matrix and platform CI evidence pending.',schema:'Resolve schema references, validators, wire encodings and emitted JSON Schema; TS declarations alone do not establish wire schemas.'})[kind]})),files};

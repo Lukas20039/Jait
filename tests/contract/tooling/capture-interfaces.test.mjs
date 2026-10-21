@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { capture, scan, root, directories, extraFiles, fingerprint, canonical } from './capture-interfaces.mjs';
+import { capture, scan, root, directories, extraFiles, fingerprint, claimsDigest, claimKeys } from './capture-interfaces.mjs';
 let next=0;
 function fixture() {
  const base=path.join(root,'.jait/artifacts/rust-continuation/interfaces/author-fixtures',`${process.pid}-${next++}`);
@@ -56,7 +56,8 @@ test('deterministic capture pins all runtime sources, assets and dependency/bin 
  assert.ok(!a.files.some(f=>f.path.endsWith('a.test.ts')));
  for(const f of a.files) {
   assert.ok(f.migration_owner && f.gap && f.status==='pending');
-  assert.equal(f.claims_fingerprint,fingerprint(canonical(f.claims)));
+  assert.equal(f.claims_fingerprint,claimsDigest(f.claims));
+  for(const claim of f.claims) assert.deepEqual(Object.keys(claim),claimKeys);
  }
  for(const kind of ['asset','cli','dependency']) assert.ok(a.files.flatMap(f=>f.claims).some(c=>c.kind===kind));
  assert.equal(a.category_gaps.length,a.categories.length);
