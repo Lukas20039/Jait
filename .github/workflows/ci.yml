@@ -29,6 +29,9 @@ jobs:
       - name: Release version source check
         run: bun run release:check
 
+      - name: Release workflow regression tests
+        run: node --test .github/scripts/*.test.mjs
+
       - name: Typecheck
         run: bun run typecheck
 
