@@ -72,6 +72,40 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_providers_acp_opencode_models_test_ts_22_1": {
+
+
+const agent = `
+const readline = require('node:readline');
+readline.createInterface({input:process.stdin}).on('line',line=>{
+ const request=JSON.parse(line);
+ if(request.id===undefined)return;
+ const result=request.method==='initialize'
+ ? {protocolVersion:1,agentCapabilities:{},authMethods:[]}
+ : request.method==='session/new'
+ ? {sessionId:'test',configOptions:[{id:'model',category:'model',name:'Model',type:'select',currentValue:'opencode-go/glm-5.2',options:[{value:'opencode-go/glm-5.2',name:'OpenCode Go/GLM-5.2'}]}]}
+ : {};
+ process.stdout.write(JSON.stringify({jsonrpc:'2.0',id:request.id,result})+'\\n');
+});`;
+
+try {
+await (async()=>{
+
+ const invalidAndUnnamed = agent.replace("{value:'opencode-go/glm-5.2',name:'OpenCode Go/GLM-5.2'}",
+   "{value:'   ',name:'Invalid'}, {value:'opencode-go/glm-5.2',name:'   '}");
+ const provider = new AcpProvider({id:'opencode',name:'OpenCode',description:'test',command:process.execPath,args:['-e',invalidAndUnnamed]});
+ try {__jait_capture(0, (await provider.listModels()));}
+ finally {await provider.dispose();}
+
+})();
+
+} finally {
+
+}
+
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

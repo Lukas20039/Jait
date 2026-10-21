@@ -7,3 +7,6 @@ pub mod hooks;
 pub mod cron;
 
 pub mod contracts;
+
+pub mod minute;
+pub mod service;

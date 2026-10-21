@@ -144,6 +144,43 @@ await __jait_hook_570();
 
 break;
 }
+case "tailstatic_packages_gateway_src_services_jait_models_test_ts_79_1": {
+
+const { decodeJaitModelId, serializeJaitBackendInstances } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const config = {
+  openaiApiKey: "",
+  openaiBaseUrl: "https://api.openai.com/v1",
+  openaiModel: "gpt-4o",
+  ollamaUrl: "http://localhost:11434",
+  omnirouteBaseUrl: "http://localhost:20128/v1",
+} as AppConfig;
+const originalFetch = globalThis.fetch;
+const __jait_hook_570 = () => {
+  globalThis.fetch = originalFetch;
+  resetModelFetcherCaches();
+  vi.restoreAllMocks();
+};
+
+try {
+await (async()=>{
+
+  globalThis.fetch = vi.fn(async () => { throw new Error("offline"); }) as unknown as typeof fetch;
+  const models = await listJaitModels({ config, fallbackModels: [], apiKeys: {
+    JAIT_BACKEND_INSTANCES: JSON.stringify([{id: "main", type: "openai", name: "Main", baseUrl: "https://api.openai.com/v1", apiKey: "k", model: "gpt-4o-mini"}]),
+  }});
+  __jait_capture(0, (models.map(m => decodeJaitModelId(m.id))));
+  __jait_capture(1, (models[0]?.isDefault));
+  __jait_capture(2, (models[0]?.group));
+
+})();
+
+} finally {
+await __jait_hook_570();
+}
+
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

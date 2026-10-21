@@ -356,6 +356,10 @@ case "gateway-src-voice-assistant-tools-test-63473008": return await (await impo
 case "gateway-src-voice-service-test-ca7a8a80": return await (await import('./tailstatic/fixture-gateway-src-voice-service-test-ca7a8a80.ts')).run(call.name);
 case "gateway-src-ws-computer-permissions-test-50a0bc53": return await (await import('./tailstatic/fixture-gateway-src-ws-computer-permissions-test-50a0bc53.ts')).run(call.name);
 case "gateway-src-ws-test-e15862de": return await (await import('./tailstatic/fixture-gateway-src-ws-test-e15862de.ts')).run(call.name);
+case "gateway-src-providers-acp-provider-startup-test-cde482e5": return await (await import('./tailstatic/fixture-gateway-src-providers-acp-provider-startup-test-cde482e5.ts')).run(call.name);
+case "gateway-src-security-tool-profiles-test-52d190b3": return await (await import('./tailstatic/fixture-gateway-src-security-tool-profiles-test-52d190b3.ts')).run(call.name);
+case "gateway-src-services-email-gmail-test-601b1abf": return await (await import('./tailstatic/fixture-gateway-src-services-email-gmail-test-601b1abf.ts')).run(call.name);
+case "gateway-src-services-session-waits-test-d59e762f": return await (await import('./tailstatic/fixture-gateway-src-services-session-waits-test-d59e762f.ts')).run(call.name);
  default: throw new Error('unknown tailstatic file');
  } } finally { console.log=log; }
 }

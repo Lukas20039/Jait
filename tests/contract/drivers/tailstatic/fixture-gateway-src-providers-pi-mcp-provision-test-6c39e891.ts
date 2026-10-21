@@ -66,7 +66,7 @@ await (async()=>{
     __jait_captureType(0, (provisionPiMcp("codex", httpRefs, { sessionId: "s1" })));
     __jait_captureType(1, (provisionPiMcp("claude-code", httpRefs, { sessionId: "s1" })));
     __jait_captureType(2, (provisionPiMcp("cursor", httpRefs, { sessionId: "s1" })));
-
+  
 })();
 
 } finally {
@@ -95,7 +95,7 @@ await (async()=>{
 
     __jait_captureType(0, (provisionPiMcp("pi", undefined, { sessionId: "s1" })));
     __jait_captureType(1, (provisionPiMcp("pi", [], { sessionId: "s1" })));
-
+  
 })();
 
 } finally {
@@ -125,7 +125,7 @@ await (async()=>{
     __jait_capture(0, (isPiBasedProvider("pi")));
     __jait_capture(1, (isPiBasedProvider("pi-gemini")));
     __jait_capture(2, (isPiBasedProvider("codex")));
-
+  
 })();
 
 } finally {
@@ -178,7 +178,7 @@ await (async()=>{
     } finally {
       provision.cleanup();
     }
-
+  
 })();
 
 } finally {
@@ -212,7 +212,7 @@ await (async()=>{
     } finally {
       provision.cleanup();
     }
-
+  
 })();
 
 } finally {
@@ -249,7 +249,7 @@ await (async()=>{
     } finally {
       provision.cleanup();
     }
-
+  
 })();
 
 } finally {
@@ -284,7 +284,7 @@ await (async()=>{
     __jait_capture(1, (existsSync(dir)));
     // idempotent
     provision.cleanup();
-
+  
 })();
 
 } finally {
@@ -327,7 +327,7 @@ await (async()=>{
     } finally {
       provision.cleanup(); restoreTmpdir(previous); rmSync(fixture, { recursive: true, force: true });
     }
-
+  
 })();
 
 } finally {
@@ -365,7 +365,7 @@ await (async()=>{
       __jait_thrown(0, () => { result = provisionPiMcp("pi", httpRefs, { sessionId: "root-error" }); });
       __jait_captureType(1, (result)); __jait_capture(2, (warning.mock.calls));
     } finally { restoreTmpdir(previous); warning.mockRestore(); rmSync(fixture, { recursive: true, force: true }); }
-
+  
 })();
 
 } finally {
@@ -399,7 +399,83 @@ await (async()=>{
       __jait_capture(0, (Object.hasOwn(config.mcpServers, "__proto__")));
       __jait_capture(1, (config.mcpServers.__proto__));
     } finally { provision.cleanup(); }
+  
+})();
 
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_pi_mcp_provision_test_ts_145_3": {
+
+
+const httpRefs: McpServerRef[] = [
+  { name: JAIT_CORE_MCP_SERVER_NAME, transport: "http", url: "http://127.0.0.1:8765/mcp?sessionId=s1&toolSet=core" },
+  { name: JAIT_DEFERRED_MCP_SERVER_NAME, transport: "http", url: "http://127.0.0.1:8765/mcp?sessionId=s1&toolSet=deferred" },
+];
+const reproRoot = resolve(__jait_original_dir, "../../../../.jait/artifacts/gateway-rust/pi-provision-repro");
+function restoreTmpdir(previous: string | undefined) {
+  if (previous === undefined) delete process.env.TMPDIR;
+  else process.env.TMPDIR = previous;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // Session ids become directory names; a path separator must never let a
+    // provisioned config land outside the temp root. Provisioning is
+    // best-effort, so the session starts without Jait tools instead of failing.
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      __jait_captureType(0, (provisionPiMcp("pi", httpRefs, { sessionId: "../escape" })));
+      __jait_capture(1, (warning.mock.calls));
+      __jait_capture(2, (String(warning.mock.calls[0]?.[0])));
+    } finally { warning.mockRestore(); }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_providers_pi_mcp_provision_test_ts_160_3": {
+
+
+const httpRefs: McpServerRef[] = [
+  { name: JAIT_CORE_MCP_SERVER_NAME, transport: "http", url: "http://127.0.0.1:8765/mcp?sessionId=s1&toolSet=core" },
+  { name: JAIT_DEFERRED_MCP_SERVER_NAME, transport: "http", url: "http://127.0.0.1:8765/mcp?sessionId=s1&toolSet=deferred" },
+];
+const reproRoot = resolve(__jait_original_dir, "../../../../.jait/artifacts/gateway-rust/pi-provision-repro");
+function restoreTmpdir(previous: string | undefined) {
+  if (previous === undefined) delete process.env.TMPDIR;
+  else process.env.TMPDIR = previous;
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    mkdirSync(reproRoot, { recursive: true });
+    const previous = process.env.TMPDIR;
+    process.env.TMPDIR = reproRoot;
+    const provision = provisionPiMcp("pi", [{ name: "minimal", transport: "stdio", command: "node" }],
+      { sessionId: "minimal-stdio", realPiCommand: "  " })!;
+    __jait_captureType(0, (provision));
+    try {
+      const wrapper = provision.env.PI_ACP_PI_COMMAND!;
+      const config = JSON.parse(readFileSync(join(dirname(wrapper), "mcp.json"), "utf8"));
+      __jait_capture(1, (config.mcpServers.minimal));
+      __jait_capture(2, (config.mcpServers.minimal));
+      __jait_capture(3, (readFileSync(wrapper, "utf8")));
+    } finally { provision.cleanup(); restoreTmpdir(previous); }
+  
 })();
 
 } finally {

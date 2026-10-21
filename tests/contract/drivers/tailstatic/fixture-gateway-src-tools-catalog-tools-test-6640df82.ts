@@ -193,6 +193,78 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_77_3": {
+
+const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
+  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
+  category, parameters: { type: "object", properties: {} },
+  async execute() { return { ok: true, message: "Done" }; },
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // registry.register() always stamps a page, so a tool can only reach the
+    // catalog unadvertised when a page-less source feeds it directly.
+    const { category: _category, ...uncategorised } = stub("zeta.orphan.inspector");
+    const tools = [stub("agent.profiles"), uncategorised as unknown as ToolDefinition];
+    const registry = { list: () => tools, listForMcp: () => tools, search: () => [] } as unknown as ToolRegistry;
+    const catalog = createJaitCatalogTool(registry);
+
+    const data = (await catalog.execute({}, context)).data as any;
+
+    __jait_capture(0, (data.uncataloguedTools));
+    __jait_capture(1, (data.uncataloguedTools.map((tool: any) => tool.name)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_tools_catalog_tools_test_ts_91_3": {
+
+const { JAIT_PAGE_IDS } = await import((typeof Bun!=="undefined"?Bun.resolveSync("@jait/shared", __jait_original_dir):__jait_require.resolve("@jait/shared")));
+const context: ToolContext = { userId: "owner", sessionId: "chat", projectRoot: "/tmp", requestedBy: "agent", actionId: "test" };
+const stub = (name: string, category: ToolDefinition["category"] = "agent"): ToolDefinition => ({
+  name, description: name === "agent.profiles" ? "Create persistent people and Scrum teams" : "Inspect capabilities",
+  category, parameters: { type: "object", properties: {} },
+  async execute() { return { ok: true, message: "Done" }; },
+});
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const registry = new ToolRegistry();
+    for (let index = 0; index < 2; index++) {
+      registry.register({ ...stub(`agent.profiles.bulky${index}`), parameters: { type: "object", properties: {
+        payload: { type: "string", description: "x".repeat(20_000) },
+      } } });
+    }
+    const catalog = createJaitCatalogTool(registry);
+
+    const data = (await catalog.execute({ pageId: "agents" }, context)).data as any;
+
+    __jait_capture(0, (JSON.stringify(data).length));
+    __jait_capture(1, (data.matches));
+    __jait_capture(2, (data.schemaLookupRequired));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

@@ -1,5 +1,5 @@
 // Translated fixture from packages/gateway/src/skills/index.test.ts; expected literals are in tail_static.rs.
-import { parseFrontmatter } from "../../../../packages/gateway/src/skills/index.js";
+import { binExists, invalidateBinCache, parseFrontmatter } from "../../../../packages/gateway/src/skills/index.js";
 import { createRequire as __jait_createRequire } from 'node:module';
 import { observe as __jait_observe } from '../tailtransport.ts';
 import { mkdir as __jait_mkdir } from 'node:fs/promises';
@@ -112,6 +112,55 @@ await (async()=>{
     const fm = parseFrontmatter(["---", "name: Plain", "description: A skill", "  : broken", "---"].join("\n"));
     __jait_capture(0, (fm.name));
     __jait_capture(1, (fm.description));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_index_test_ts_50_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const bin = "jait-definitely-not-installed-bin";
+    invalidateBinCache();
+
+    __jait_capture(0, (binExists("   ")));
+    __jait_capture(1, (binExists(bin)));
+    // Second lookup is served from the cache — an install must invalidate it.
+    __jait_capture(2, (binExists(bin)));
+
+    invalidateBinCache(bin);
+    __jait_capture(3, (binExists(` ${bin} `)));
+    invalidateBinCache();
+    __jait_capture(4, (binExists(bin)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_skills_index_test_ts_65_3": {
+
+
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    __jait_capture(0, (binExists(process.platform === "win32" ? "cmd" : "sh")));
   
 })();
 

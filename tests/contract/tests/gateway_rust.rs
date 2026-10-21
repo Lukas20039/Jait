@@ -17,6 +17,17 @@ use std::{
 };
 use tokio::{sync::oneshot, task::JoinHandle};
 
+/// Serializes ephemeral-port acquisition against the release windows verified by
+/// `assert_address_reusable`. Without it a gateway bound concurrently through
+/// `127.0.0.1:0` can be handed the port a stopped gateway just released, which
+/// makes the rebind assertion fail on a port this process still legitimately owns.
+static PORT_LEASE: std::sync::LazyLock<tokio::sync::Mutex<()>> =
+    std::sync::LazyLock::new(|| tokio::sync::Mutex::new(()));
+
+async fn port_lease() -> tokio::sync::MutexGuard<'static, ()> {
+    PORT_LEASE.lock().await
+}
+
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
@@ -38,10 +49,13 @@ struct LiveGateway {
 }
 impl LiveGateway {
     async fn start(health: HealthState) -> Self {
-        let config = GatewayConfig {
-            address: "127.0.0.1:0".parse().unwrap(),
+        let gateway = {
+            let _lease = port_lease().await;
+            let config = GatewayConfig {
+                address: SocketAddr::from(([127, 0, 0, 1], 0)),
+            };
+            Gateway::bind(config, health).await.unwrap()
         };
-        let gateway = Gateway::bind(config, health).await.unwrap();
         let address = gateway.local_addr().unwrap();
         let (send, receive) = oneshot::channel();
         let task = tokio::spawn(gateway.serve(async {
@@ -55,13 +69,14 @@ impl LiveGateway {
         }
     }
     async fn stop(mut self) {
+        let _lease = port_lease().await;
         self.shutdown.take().unwrap().send(()).unwrap();
         tokio::time::timeout(Duration::from_secs(7), self.task.take().unwrap())
             .await
             .unwrap()
             .unwrap()
             .unwrap();
-        assert_address_reusable(self.address).await;
+        assert_address_reusable(self.address);
     }
 }
 impl Drop for LiveGateway {
@@ -143,7 +158,10 @@ async fn raw_config_cannot_bypass_loopback_and_bind_errors_are_reported() {
         address: "0.0.0.0:0".parse().unwrap(),
     };
     assert!(Gateway::bind(config, HealthState::default()).await.is_err());
-    let occupied = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let occupied = {
+        let _lease = port_lease().await;
+        std::net::TcpListener::bind("127.0.0.1:0").unwrap()
+    };
     let config = GatewayConfig {
         address: occupied.local_addr().unwrap(),
     };
@@ -338,7 +356,7 @@ fn native_binary_runs_without_node_bun_or_path_and_exits_on_sigterm() {
     );
     assert!(wait_for_exit(&mut child.0).success());
     assert!(fs::read_to_string(log).unwrap().contains("gateway.stopped"));
-    assert!(std::net::TcpListener::bind(&address).is_ok());
+    assert_address_reusable(address.parse().unwrap());
     assert_eq!(
         fs::read_dir(&directory).unwrap().count(),
         1,
@@ -382,6 +400,7 @@ async fn stopped_gateway_rebinds_with_a_peer_that_has_not_closed_yet() {
     })
     .await
     .unwrap();
+    let _lease = port_lease().await;
     gateway.shutdown.take().unwrap().send(()).unwrap();
     tokio::time::timeout(Duration::from_secs(7), gateway.task.take().unwrap())
         .await
@@ -396,22 +415,100 @@ async fn stopped_gateway_rebinds_with_a_peer_that_has_not_closed_yet() {
     })
     .await
     .unwrap();
-    assert_address_reusable(address).await;
+    assert_address_reusable(address);
     drop(peer);
 }
 
-async fn assert_address_reusable(address: SocketAddr) {
-    if let Err(error) = std::net::TcpListener::bind(address) {
-        let needle = format!(":{:04X}", address.port());
-        let net = fs::read_to_string("/proc/net/tcp").unwrap_or_default();
-        let sockets = net
-            .lines()
-            .filter(|line| {
-                line.split_whitespace()
-                    .nth(1)
-                    .is_some_and(|local| local.ends_with(&needle))
-            })
-            .collect::<Vec<_>>();
-        panic!("listener must be released: {error}; address={address}; kernel={sockets:?}");
+/// Rebinding the way a restart would: `SO_REUSEADDR` still fails while any
+/// listener holds the port, but tolerates connections the stopped process left
+/// behind. A plain `bind` cannot tell those two states apart and flakes whenever
+/// a peer socket outlives shutdown.
+fn assert_address_reusable(address: SocketAddr) {
+    let listening = listening_inodes(address.port());
+    let owned = socket_inodes();
+    let ours = listening
+        .iter()
+        .filter(|inode| owned.contains(inode))
+        .collect::<Vec<_>>();
+    assert!(
+        ours.is_empty(),
+        "this process still listens on {address}: inodes={ours:?}"
+    );
+    let socket = match address {
+        SocketAddr::V4(_) => tokio::net::TcpSocket::new_v4(),
+        SocketAddr::V6(_) => tokio::net::TcpSocket::new_v6(),
     }
+    .unwrap();
+    socket.set_reuseaddr(true).unwrap();
+    if let Err(error) = socket.bind(address) {
+        // The kernel allows a single listener per port, so a foreign inode proves
+        // this process released its own: the port was simply reclaimed by another
+        // program and the failed bind says nothing about the shutdown under test.
+        assert!(
+            !listening.is_empty(),
+            "listener must be released: {error}; address={address}; kernel={:?}",
+            kernel_rows(address)
+        );
+    }
+}
+
+/// Inodes this process holds open, used to attribute kernel socket rows to it.
+fn socket_inodes() -> Vec<u64> {
+    let Ok(entries) = fs::read_dir("/proc/self/fd") else {
+        return Vec::new();
+    };
+    entries
+        .filter_map(Result::ok)
+        .filter_map(|entry| fs::read_link(entry.path()).ok())
+        .filter_map(|target| socket_inode(target.to_string_lossy().as_ref()))
+        .collect()
+}
+
+fn socket_inode(link: &str) -> Option<u64> {
+    link.strip_prefix("socket:[")?
+        .strip_suffix(']')?
+        .parse()
+        .ok()
+}
+
+/// Inodes with a listening socket on `port`, per the kernel socket tables.
+fn listening_inodes(port: u16) -> Vec<u64> {
+    kernel_table()
+        .into_iter()
+        .filter_map(|line| {
+            let mut fields = line.split_whitespace();
+            let _slot = fields.next()?;
+            let local = fields.next()?;
+            let _remote = fields.next()?;
+            let state = fields.next()?;
+            let inode = fields.nth(5)?;
+            if state != "0A" {
+                return None;
+            }
+            let bound = local.rsplit(':').next()?;
+            (u16::from_str_radix(bound, 16).ok()? == port)
+                .then(|| inode.parse().ok())
+                .flatten()
+        })
+        .collect()
+}
+
+fn kernel_rows(address: SocketAddr) -> Vec<String> {
+    let needle = format!(":{:04X}", address.port());
+    kernel_table()
+        .into_iter()
+        .filter(|line| {
+            line.split_whitespace()
+                .nth(1)
+                .is_some_and(|local| local.ends_with(&needle))
+        })
+        .collect()
+}
+
+fn kernel_table() -> Vec<String> {
+    ["/proc/net/tcp", "/proc/net/tcp6"]
+        .into_iter()
+        .filter_map(|path| fs::read_to_string(path).ok())
+        .flat_map(|table| table.lines().map(str::to_owned).collect::<Vec<_>>())
+        .collect()
 }

@@ -147,6 +147,19 @@ describe("console flood guard", () => {
     pushBrowserRuntimeEvent(events, { type: "console", level, text }, guard);
   }
 
+  it("falls back to the default window, threshold and clock when no options are given", () => {
+    const guard = createConsoleFloodGuard();
+    const events: BrowserRuntimeEvent[] = [];
+
+    // Defaults: 60s window, 200 events, 30s cooldown, real clock.
+    pushConsole(events, guard, "first");
+
+    expect(events).toHaveLength(1);
+    expect(events[0].text).toBe("first");
+    expect(guard.isPaused()).toBe(false);
+    expect(guard.state()).toMatchObject({ paused: false, resumesAt: null, dropped: 0 });
+  });
+
   it("passes a normal volume of console events through untouched", () => {
     let now = 0;
     const guard = createConsoleFloodGuard({ windowMs: 1000, threshold: 4, cooldownMs: 5000, now: () => now });

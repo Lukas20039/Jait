@@ -6,7 +6,21 @@ use std::{
     net::SocketAddr,
     time::Duration,
 };
-use tokio::net::TcpListener;
+use tokio::net::{TcpListener, TcpSocket};
+
+/// Binds the loopback listener with `SO_REUSEADDR` so a restarted gateway can
+/// reclaim its address while connections from the previous instance are still
+/// draining. A concurrent listener on the same address still conflicts, because
+/// `SO_REUSEADDR` never overrides a listening socket.
+async fn bind_loopback(address: SocketAddr) -> io::Result<TcpListener> {
+    let socket = match address {
+        SocketAddr::V4(_) => TcpSocket::new_v4()?,
+        SocketAddr::V6(_) => TcpSocket::new_v6()?,
+    };
+    socket.set_reuseaddr(true)?;
+    socket.bind(address)?;
+    socket.listen(1024)
+}
 
 pub struct Gateway {
     listener: TcpListener,
@@ -24,7 +38,7 @@ impl Gateway {
             .route("/health", get(health_response))
             .with_state(health);
         Ok(Self {
-            listener: TcpListener::bind(config.address).await?,
+            listener: bind_loopback(config.address).await?,
             router,
         })
     }
@@ -97,6 +111,14 @@ impl Gateway {
     }
     /// Explicit registry/checker/installer adapters; no automatic tool installs.
     pub fn with_skills(mut self, routes: routes::skills::SkillRoutes) -> Self {
+        self.router = self.router.merge(routes.router());
+        self
+    }
+    /// Explicitly mounted scope and TCP assessment API.
+    pub fn with_security_assessments(
+        mut self,
+        routes: routes::security_assessments::SecurityAssessmentRoutes,
+    ) -> Self {
         self.router = self.router.merge(routes.router());
         self
     }

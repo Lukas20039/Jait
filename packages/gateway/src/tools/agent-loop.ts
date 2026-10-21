@@ -2565,6 +2565,18 @@ function formatSummarySection(title: string, items: string[]): string[] {
   return [title, ...values.map((item) => `- ${item}`)];
 }
 
+/**
+ * Prior checkpoints carried by the pruned set, formatted for a replacement handoff.
+ *
+ * A new checkpoint supersedes the one it was derived from, so a partial rewrite
+ * would silently drop state that survived earlier compactions. Callers merge
+ * these sections in rather than trusting that the model repeated them.
+ */
+function previousCheckpointSections(removedMessages: AgentMessage[]): string[] {
+  return removedMessages.filter(isContextCheckpoint).map(message =>
+    `Previous checkpoint:\n${conversationContentText(message.content).replace(/\[\/?(?:conversation-summary|active-turn-summary)\]/g, "").trim()}`);
+}
+
 function buildStructuredConversationSummary(removedMessages: AgentMessage[]): string {
   const goals: string[] = [];
   const constraints: string[] = [];
@@ -2631,8 +2643,7 @@ function buildStructuredConversationSummary(removedMessages: AgentMessage[]): st
   return [
     "[conversation-summary]",
     `Earlier messages pruned: ${removedMessages.length}.`,
-    ...removedMessages.filter(isContextCheckpoint).map(message =>
-      `Previous checkpoint:\n${conversationContentText(message.content).replace(/\[\/?(?:conversation-summary|active-turn-summary)\]/g, "").trim()}`),
+    ...previousCheckpointSections(removedMessages),
     ...formatSummarySection("Goal:", goals),
     ...formatSummarySection("Constraints:", constraints),
     ...formatSummarySection("Decisions:", decisions),
@@ -2891,7 +2902,11 @@ export async function generateLLMConversationSummary(
     }
 
     signal?.throwIfAborted();
-    return `[conversation-summary]\n${summary}${truncated ? `\n\n${CHECKPOINT_TRUNCATION_NOTE}` : ""}\n[/conversation-summary]`;
+    // A truncated rewrite covers the pruned turns only partway, so the
+    // checkpoint it supersedes is still the only record of earlier state.
+    // Carry it forward instead of trading durable context for partial context.
+    const previous = truncated ? previousCheckpointSections(removedMessages) : [];
+    return `[conversation-summary]\n${summary}${previous.length > 0 ? `\n\n${previous.join("\n\n")}` : ""}${truncated ? `\n\n${CHECKPOINT_TRUNCATION_NOTE}` : ""}\n[/conversation-summary]`;
   } catch {
     // Cancellation must never commit a lossy replacement history.
     signal?.throwIfAborted();

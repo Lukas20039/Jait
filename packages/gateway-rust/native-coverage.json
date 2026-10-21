@@ -2823,6 +2823,182 @@
         "gateway_rust_messenger_bridge"
       ],
       "review": "Strict shared commands and complete owner-bound dispatch lifecycle; seven real TypeScript comparisons, five native lifetime/timer/output/cancellation checks, three caught/restored mutations, and fail/pass synchronous-send/deep-JSON regressions. No live messages or external services. Full gate controls credit; authenticated WS registration and native Matrix handler activation remain separate."
+    },
+    {
+      "reference": "packages/gateway/src/tools/validate.ts",
+      "reference_sha256": "b0ece8caa4c0f2f4766a13455e38b6b88185c72b6ee29bdbb0dc2aee693f1427",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/validate.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_validate.rs",
+        "tests/contract/drivers/nativevalidate.ts",
+        "tests/contract/vectors/native-validate.json",
+        "tests/contract/reviews/native-tool-input-validation.md"
+      ],
+      "targets": [
+        "gateway_rust_validate"
+      ],
+      "review": "602 actual-source differential cases for result/error order, coercion, mutation/conditional aliasing, UTF-16 regex/bounds, raw JSON overflow and lone surrogates; four caught/restored mutations. JSON graph and explicit non-finite input boundary; full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/tools/mobile-tools.ts",
+      "reference_sha256": "3166a332e5f92c1bcea95f7c15da6b8da3fec84084879cb8ed056d8dbc6aaddd",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/mobile_alarm.rs",
+        "packages/gateway-rust/src/tools/mobile-alarm-metadata.json",
+        "packages/gateway-rust/src/services/subscription_usage_fetchers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_mobile_alarm.rs",
+        "tests/contract/drivers/nativemobilealarm.ts",
+        "tests/contract/reviews/native-mobile-alarm.md"
+      ],
+      "targets": [
+        "gateway_rust_mobile_alarm",
+        "gateway_rust_subscription_usage"
+      ],
+      "review": "Complete tool metadata, authentication/time validation, dispatch/defaults/trimming/count and failure parity through explicit push-service port; three caught/restored mutations. Actual-source fail/pass fixes unpadded ISO T timestamps in shared Date.parse helper; subscription contracts pass. No device or network sends; full gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/tools/session-sql-tools.ts",
+      "reference_sha256": "e19bf5ca88088ec561615119e4a534449098c32da3530388dc4a81165b7d29ed",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/session_sql.rs",
+        "packages/gateway-rust/src/tools/session-sql-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_session_sql_tool.rs",
+        "tests/contract/drivers/nativesessionsqltool.ts",
+        "tests/contract/reviews/native-session-sql-tool.md"
+      ],
+      "targets": [
+        "gateway_rust_session_sql_tool"
+      ],
+      "review": "Actual-source metadata, dispatch/input preservation, schema/query/result/failure and invalid-input comparisons through explicit read-only service port; three caught/restored mutations. No database/query execution or native SessionSqlService credit. Full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/services/ollama-device-auth.ts",
+      "reference_sha256": "5966a17ea8c143bf6abe7f9b5cfe73223bd64963abeb350bc49c917115bf5b94",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/ollama_device_auth.rs",
+        "packages/gateway-rust/src/services/provider_quota_fetchers.rs",
+        "packages/gateway-rust/src/services/ollama_usage_setup.rs",
+        "packages/gateway-rust/src/services/subscription_usage_fetchers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_ollama_device_auth.rs",
+        "tests/contract/drivers/nativeollamaauth.ts",
+        "tests/contract/drivers/nativeollamaio.ts",
+        "tests/contract/reviews/native-ollama-quota.md"
+      ],
+      "targets": [
+        "gateway_rust_ollama_device_auth"
+      ],
+      "review": "Native OpenSSH Ed25519 import/signatures, operator-only key reads, account-bound fixed-origin requests and typed local-only fallback. Seven real-export comparisons, bounded/redacted system-reader checks, three mutation controls and shared real HTTP transport checks. No real keys/providers. See native-ollama-quota.md for resource, JSON, platform and composition limits."
+    },
+    {
+      "reference": "packages/gateway/src/services/provider-quota-fetchers.ts",
+      "reference_sha256": "4968e5bfbd513bc6b88e27c041236f77bc1fd194e186c8f44f7e9dc4d908253b",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/ollama_device_auth.rs",
+        "packages/gateway-rust/src/services/provider_quota_fetchers.rs",
+        "packages/gateway-rust/src/services/ollama_usage_setup.rs",
+        "packages/gateway-rust/src/services/subscription_usage_fetchers.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_provider_quota.rs",
+        "tests/contract/drivers/nativequota.ts",
+        "tests/contract/reviews/native-ollama-quota.md"
+      ],
+      "targets": [
+        "gateway_rust_provider_quota"
+      ],
+      "review": "Native Ollama/Codex quota/activity validation and normalization, account probes/guidance, owned native Codex protocol/process cleanup and concrete Reqwest HTTP. Real-export matrices, literal CLI argv/account isolation, owned-loopback redirects/timeout/body/header checks and five mutation controls. Explicit 2 MiB HTTP and 256 KiB CLI resource-policy differences remain replacement gates; no production/live account is accessed."
+    },
+    {
+      "reference": "packages/gateway/src/services/session-sql.ts",
+      "reference_sha256": "585518ca6556c9fa7f967658f63f73dc44a2343a1311bd7f54d1b34f245851ab",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/services/session_sql.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_session_sql.rs",
+        "tests/contract/drivers/nativesessionsql.ts",
+        "tests/contract/vectors/native-session-sql-source-cases.json",
+        "tests/contract/reviews/native-session-sql-engine.md"
+      ],
+      "targets": [
+        "gateway_rust_session_sql",
+        "gateway_rust_session_sql_tool"
+      ],
+      "review": "Full schema/query engine with ordered read-only/function/sensitive-table refusals, limits, metadata, sanitization and first-success state. Actual-source comparisons include 195 original-suite SQL strings, native tool/DB-worker integration, pre-dispatch cancellation, late errors and four caught/restored mutations. Corrected SQLite wrapper and ASCII-regex differences. Started statements retain reference no-interrupt limitation; full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/tools/cron-tools.ts",
+      "reference_sha256": "778ebd00cb4d5a62a84adfae30c1de0ee29c0cea1947608ab85975f402eb9e44",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/cron.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_cron.rs",
+        "tests/contract/drivers/nativecron.ts",
+        "tests/contract/reviews/native-cron-tools.md"
+      ],
+      "targets": [
+        "gateway_rust_cron"
+      ],
+      "review": "84 actual-source differential cases cover all metadata, defaults, alias normalization, optional/distinct identity, raw inputs, update filtering/nullish results, list preview limits and service errors; four caught/restored mutations. Explicit scheduler port only; native SchedulerService remains uncredited. Full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/security/assessment.ts",
+      "reference_sha256": "b293429a9d30cbadb77f6b9d9589be5dcb9350e766e2c3b291c0a6e612caa569",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/assessments/scope.rs",
+        "packages/gateway-rust/src/assessments/service.rs",
+        "packages/gateway-rust/src/assessments/store.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_assessment.rs",
+        "tests/contract/tests/gateway_rust_assessment_scope.rs",
+        "tests/contract/drivers/nativeassessment.ts",
+        "tests/contract/drivers/nativeassessscope.ts",
+        "tests/contract/vectors/native-assessment-scopes.json",
+        "tests/contract/reviews/native-assessment.md"
+      ],
+      "targets": [
+        "gateway_rust_assessment",
+        "gateway_rust_assessment_scope"
+      ],
+      "review": "Actual-source scope validation (89 cases), lifecycle/owner/method/node/expiry checks, serial dispatch and exclusions, cancellation and monotonic budgets, probe failures, SQLite failure/recovery/history, loopback-only real connector, shared execution lease; four caught/restored mutations. Explicit transport/host identity and persisted-context validation. Baseline TCP service only; other workbench adapters remain uncredited. Full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/routes/security-assessments.ts",
+      "reference_sha256": "c58c536d586a8463939c825aeaba2bd9067550099e9ae18aa8c2e39e5b22627a",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/routes/security_assessments.rs",
+        "packages/gateway-rust/src/runtime/server.rs"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_assessment_http.rs",
+        "tests/contract/drivers/nativeassessmenthttp.ts",
+        "tests/contract/reviews/native-assessment-http.md"
+      ],
+      "targets": [
+        "gateway_rust_assessment_http",
+        "gateway_rust_assessment",
+        "gateway_rust_assessment_scope"
+      ],
+      "review": "Actual TypeScript/native loopback HTTP comparisons for all five routes, auth/cookie/origin/owner isolation, valid and malformed DTOs, 202 starts/cancellation/missing runs, real shared SQLite persistence, project-session/foreign-project/remote-node binding, metadata/path escape and read failures. Four caught/restored route mutations. Only IDs, timestamps, transport/host identity and JSON parser diagnostic wording are normalized. Explicit opt-in mounting; unknown-route/framework fallback outside target; full source-bound gate controls credit."
     }
   ]
 }

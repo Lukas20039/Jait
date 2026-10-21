@@ -51,14 +51,21 @@ fn validate_required_helper_ids(cases: &[Case]) -> Result<()> {
     Ok(())
 }
 
-// Native differential targets own these two documents and their schemas;
-// they are not declarative internal-driver vectors. Keep the exceptions exact:
-// every other JSON file must still satisfy the reference Case schema.
+// Native differential targets own these documents and their schemas; they are
+// not declarative internal-driver vectors. Keep the exceptions exact: every
+// other JSON file must still satisfy the reference Case schema, and a new
+// `native-*.json` fixture document has to be registered here.
 fn is_reference_vector(path: &Path) -> bool {
     path.extension().is_some_and(|ext| ext == "json")
         && !matches!(
             path.file_name().and_then(|name| name.to_str()),
-            Some("native-feedback.json" | "native-user-ask.json")
+            Some(
+                "native-feedback.json"
+                    | "native-user-ask.json"
+                    | "native-assessment-scopes.json"
+                    | "native-session-sql-source-cases.json"
+                    | "native-validate.json"
+            )
         )
 }
 
@@ -139,6 +146,16 @@ mod helper_registration_tests {
     fn only_named_native_documents_bypass_reference_vector_parsing() {
         assert!(!is_reference_vector(Path::new("native-feedback.json")));
         assert!(!is_reference_vector(Path::new("native-user-ask.json")));
+        for native in [
+            "native-assessment-scopes.json",
+            "native-session-sql-source-cases.json",
+            "native-validate.json",
+        ] {
+            assert!(
+                !is_reference_vector(Path::new(native)),
+                "{native} is a native fixture document, not a reference vector"
+            );
+        }
         assert!(is_reference_vector(Path::new("fixtures.json")));
         assert!(is_reference_vector(Path::new("native-other.json")));
         assert!(!is_reference_vector(Path::new("fixtures.txt")));

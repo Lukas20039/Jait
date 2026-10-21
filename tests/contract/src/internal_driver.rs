@@ -6,13 +6,46 @@ use std::{
     io::Read,
     path::Path,
     process::{Child, Command, Stdio},
-    sync::mpsc,
+    sync::{Condvar, Mutex, mpsc},
     thread,
     time::{Duration, Instant},
 };
 
 const INPUT_LIMIT: usize = 65_536;
 const OUTPUT_LIMIT: u64 = 262_144;
+// The deadline guards against a wedged driver, not against normal startup cost.
+// Every call boots a fresh Bun process, so a whole contract binary running in
+// parallel pays interpreter startup on each thread at once; that latency is
+// load-dependent and far exceeds the sub-second cost of an isolated call.
+const DRIVER_DEADLINE: Duration = Duration::from_secs(180);
+const MAX_CONCURRENT_DRIVERS: usize = 4;
+static ACTIVE_DRIVERS: Mutex<usize> = Mutex::new(0);
+static DRIVER_SLOT_READY: Condvar = Condvar::new();
+
+struct DriverSlot;
+impl DriverSlot {
+    fn acquire() -> Self {
+        let mut active = ACTIVE_DRIVERS
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        while *active >= MAX_CONCURRENT_DRIVERS {
+            active = DRIVER_SLOT_READY
+                .wait(active)
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+        }
+        *active += 1;
+        Self
+    }
+}
+impl Drop for DriverSlot {
+    fn drop(&mut self) {
+        let mut active = ACTIVE_DRIVERS
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        *active = active.saturating_sub(1);
+        DRIVER_SLOT_READY.notify_one();
+    }
+}
 struct OwnedChild(Child);
 impl Drop for OwnedChild {
     fn drop(&mut self) {
@@ -94,6 +127,7 @@ pub fn call_request(
     if let Some(value) = std::env::var_os("SYSTEMROOT") {
         command.env("SYSTEMROOT", value);
     }
+    let _slot = DriverSlot::acquire();
     let mut child = OwnedChild(
         command
             .spawn()
@@ -101,14 +135,15 @@ pub fn call_request(
     );
     let stdout = reader(child.0.stdout.take().context("missing driver stdout")?);
     let stderr = reader(child.0.stderr.take().context("missing driver stderr")?);
-    let deadline = Instant::now() + Duration::from_secs(10);
+    let deadline = Instant::now() + DRIVER_DEADLINE;
     let mut output = None;
     let mut errors = None;
     loop {
         ensure!(!cancelled(), "internal driver cancelled");
         ensure!(
             Instant::now() < deadline,
-            "internal driver exceeded 10 seconds"
+            "internal driver exceeded {} seconds",
+            DRIVER_DEADLINE.as_secs()
         );
         if output.is_none()
             && let Ok(bytes) = stdout.try_recv()

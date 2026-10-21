@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { fileURLToPath } from 'node:url';
-import { MessengerService } from './messenger-service.js';
+import { MessengerService, messengerHomeserver } from './messenger-service.js';
 
 function setup() {
   const service = new MessengerService('test', fileURLToPath(new URL('../../../../.jait/artifacts/messenger-fixes/state', import.meta.url)));
@@ -80,5 +80,39 @@ describe('Messenger message actions and history', () => {
     expect(c.client.leaveRoom).toHaveBeenCalledWith('!room:test');
     expect(c.client.doRequest).toHaveBeenCalledWith('POST', '/_matrix/client/v3/rooms/!room%3Atest/forget', undefined, {});
     expect(c.snapshot().rooms).toEqual([]);
+  });
+});
+
+describe('Messenger homeserver validation', () => {
+  it('normalises an https homeserver to its origin', () => {
+    expect(messengerHomeserver('https://matrix.example.org')).toBe('https://matrix.example.org');
+    expect(messengerHomeserver('  https://matrix.example.org/  ')).toBe('https://matrix.example.org');
+    expect(messengerHomeserver('https://matrix.example.org:8448/')).toBe('https://matrix.example.org:8448');
+  });
+
+  it('rejects credentials in the url', () => {
+    expect(() => messengerHomeserver('https://alice@matrix.example.org')).toThrow('Use an HTTPS Matrix homeserver');
+    expect(() => messengerHomeserver('https://alice:secret@matrix.example.org')).toThrow('Use an HTTPS Matrix homeserver');
+  });
+
+  it('rejects query strings and fragments', () => {
+    expect(() => messengerHomeserver('https://matrix.example.org/?access_token=abc')).toThrow('Use an HTTPS Matrix homeserver');
+    expect(() => messengerHomeserver('https://matrix.example.org/#/room')).toThrow('Use an HTTPS Matrix homeserver');
+  });
+
+  it('rejects any path beyond the server root', () => {
+    expect(() => messengerHomeserver('https://matrix.example.org/_matrix/client')).toThrow('Use an HTTPS Matrix homeserver');
+  });
+
+  it('rejects plaintext http unless it is loopback', () => {
+    expect(() => messengerHomeserver('http://matrix.example.org')).toThrow('Use an HTTPS Matrix homeserver');
+    expect(messengerHomeserver('http://localhost:8008')).toBe('http://localhost:8008');
+    expect(messengerHomeserver('http://127.0.0.1:8008')).toBe('http://127.0.0.1:8008');
+    expect(messengerHomeserver('http://[::1]:8008')).toBe('http://[::1]:8008');
+  });
+
+  it('rejects schemes other than http and https', () => {
+    expect(() => messengerHomeserver('ftp://matrix.example.org')).toThrow('Use an HTTPS Matrix homeserver');
+    expect(() => messengerHomeserver('ws://matrix.example.org')).toThrow('Use an HTTPS Matrix homeserver');
   });
 });

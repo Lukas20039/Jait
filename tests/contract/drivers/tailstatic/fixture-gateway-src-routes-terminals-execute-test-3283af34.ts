@@ -212,6 +212,235 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_routes_terminals_execute_test_ts_72_3": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const osc = (payload: string) => `\x1b]633;${payload}\x07`;
+async function executeWithOutput(command: string, chunks: Array<[number, string]>) {
+  const app = Fastify();
+  const config = { ...loadConfig(), jwtSecret: "terminal-execution-test-secret" };
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const listeners = new Set<(data: string) => void>();
+  const timers: Array<ReturnType<typeof setTimeout>> = [];
+  const surface = {
+    id: "windows-terminal", type: "terminal", state: "running",
+    snapshot: () => ({ metadata: { shell: "C:\\Program Files\\PowerShell\\7\\pwsh.exe" } }),
+    waitForPrompt: async () => {},
+    addOutputListener: (listener: (data: string) => void) => listeners.add(listener),
+    removeOutputListener: (listener: (data: string) => void) => listeners.delete(listener),
+    write: vi.fn(() => {
+      for (const [delay, output] of chunks) {
+        timers.push(setTimeout(() => { for (const listener of listeners) listener(output); }, delay));
+      }
+    }),
+  };
+  registerTerminalRoutes(app, { getSurface: () => surface } as unknown as SurfaceRegistry,
+    new ToolRegistry(), { write: vi.fn() } as unknown as AuditWriter, undefined, undefined,
+    { config, access: { surface: () => true } as unknown as ControlAccess });
+  try {
+    const response = await app.inject({ method: "POST", url: "/api/terminals/windows-terminal/execute",
+      headers: { authorization: `Bearer ${token}` }, payload: { command, timeout: 2000 } });
+    __jait_capture(0, (response.statusCode));
+    return response.json();
+  } finally {
+    for (const timer of timers) clearTimeout(timer);
+    await app.close();
+  }
+}
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    const app = Fastify();
+    const config = { ...loadConfig(), jwtSecret: "terminal-list-test-secret" };
+    const registry = new ToolRegistry();
+    registry.register({ name: "terminal.coverage_fixture", description: "Fixture tool", category: "terminal",
+      tier: "standard", source: "builtin", parameters: { type: "object", properties: {} },
+      execute: async () => ({ ok: true, message: "ok" }),
+    });
+    registerTerminalRoutes(app, {} as SurfaceRegistry, registry, { write: vi.fn() } as unknown as AuditWriter,
+      undefined, undefined, { config, access: {} as ControlAccess });
+    try {
+      const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+      const response = await app.inject({ method: "GET", url: "/api/tools", headers: { authorization: `Bearer ${token}` } });
+      __jait_capture(1, (response.statusCode));
+      __jait_capture(2, (response.json().tools));
+    } finally {
+      await app.close();
+    }
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_terminals_execute_test_ts_95_1_each0": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const osc = (payload: string) => `\x1b]633;${payload}\x07`;
+async function executeWithOutput(command: string, chunks: Array<[number, string]>) {
+  const app = Fastify();
+  const config = { ...loadConfig(), jwtSecret: "terminal-execution-test-secret" };
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const listeners = new Set<(data: string) => void>();
+  const timers: Array<ReturnType<typeof setTimeout>> = [];
+  const surface = {
+    id: "windows-terminal", type: "terminal", state: "running",
+    snapshot: () => ({ metadata: { shell: "C:\\Program Files\\PowerShell\\7\\pwsh.exe" } }),
+    waitForPrompt: async () => {},
+    addOutputListener: (listener: (data: string) => void) => listeners.add(listener),
+    removeOutputListener: (listener: (data: string) => void) => listeners.delete(listener),
+    write: vi.fn(() => {
+      for (const [delay, output] of chunks) {
+        timers.push(setTimeout(() => { for (const listener of listeners) listener(output); }, delay));
+      }
+    }),
+  };
+  registerTerminalRoutes(app, { getSurface: () => surface } as unknown as SurfaceRegistry,
+    new ToolRegistry(), { write: vi.fn() } as unknown as AuditWriter, undefined, undefined,
+    { config, access: { surface: () => true } as unknown as ControlAccess });
+  try {
+    const response = await app.inject({ method: "POST", url: "/api/terminals/windows-terminal/execute",
+      headers: { authorization: `Bearer ${token}` }, payload: { command, timeout: 2000 } });
+    __jait_capture(0, (response.statusCode));
+    return response.json();
+  } finally {
+    for (const timer of timers) clearTimeout(timer);
+    await app.close();
+  }
+}
+/*__jait_scope_open__*/{
+const output = "permission denied";
+const exitCode = 126;
+
+try {
+await (async()=>{
+
+  const result = await executeWithOutput("run-fixture", [[0, `run-fixture\r\n${output}\r\nPS C:\\project> `]]);
+  __jait_capture(1, (result), ({ output, exitCode, timedOut: false }));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_terminals_execute_test_ts_95_1_each1": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const osc = (payload: string) => `\x1b]633;${payload}\x07`;
+async function executeWithOutput(command: string, chunks: Array<[number, string]>) {
+  const app = Fastify();
+  const config = { ...loadConfig(), jwtSecret: "terminal-execution-test-secret" };
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const listeners = new Set<(data: string) => void>();
+  const timers: Array<ReturnType<typeof setTimeout>> = [];
+  const surface = {
+    id: "windows-terminal", type: "terminal", state: "running",
+    snapshot: () => ({ metadata: { shell: "C:\\Program Files\\PowerShell\\7\\pwsh.exe" } }),
+    waitForPrompt: async () => {},
+    addOutputListener: (listener: (data: string) => void) => listeners.add(listener),
+    removeOutputListener: (listener: (data: string) => void) => listeners.delete(listener),
+    write: vi.fn(() => {
+      for (const [delay, output] of chunks) {
+        timers.push(setTimeout(() => { for (const listener of listeners) listener(output); }, delay));
+      }
+    }),
+  };
+  registerTerminalRoutes(app, { getSurface: () => surface } as unknown as SurfaceRegistry,
+    new ToolRegistry(), { write: vi.fn() } as unknown as AuditWriter, undefined, undefined,
+    { config, access: { surface: () => true } as unknown as ControlAccess });
+  try {
+    const response = await app.inject({ method: "POST", url: "/api/terminals/windows-terminal/execute",
+      headers: { authorization: `Bearer ${token}` }, payload: { command, timeout: 2000 } });
+    __jait_capture(0, (response.statusCode));
+    return response.json();
+  } finally {
+    for (const timer of timers) clearTimeout(timer);
+    await app.close();
+  }
+}
+/*__jait_scope_open__*/{
+const output = "command not found";
+const exitCode = 127;
+
+try {
+await (async()=>{
+
+  const result = await executeWithOutput("run-fixture", [[0, `run-fixture\r\n${output}\r\nPS C:\\project> `]]);
+  __jait_capture(1, (result), ({ output, exitCode, timedOut: false }));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_terminals_execute_test_ts_95_1_each2": {
+
+const { default: Fastify } = await import((typeof Bun!=="undefined"?Bun.resolveSync("fastify", __jait_original_dir):__jait_require.resolve("fastify")));
+const osc = (payload: string) => `\x1b]633;${payload}\x07`;
+async function executeWithOutput(command: string, chunks: Array<[number, string]>) {
+  const app = Fastify();
+  const config = { ...loadConfig(), jwtSecret: "terminal-execution-test-secret" };
+  const token = await signAuthToken({ id: "owner", username: "owner" }, config.jwtSecret);
+  const listeners = new Set<(data: string) => void>();
+  const timers: Array<ReturnType<typeof setTimeout>> = [];
+  const surface = {
+    id: "windows-terminal", type: "terminal", state: "running",
+    snapshot: () => ({ metadata: { shell: "C:\\Program Files\\PowerShell\\7\\pwsh.exe" } }),
+    waitForPrompt: async () => {},
+    addOutputListener: (listener: (data: string) => void) => listeners.add(listener),
+    removeOutputListener: (listener: (data: string) => void) => listeners.delete(listener),
+    write: vi.fn(() => {
+      for (const [delay, output] of chunks) {
+        timers.push(setTimeout(() => { for (const listener of listeners) listener(output); }, delay));
+      }
+    }),
+  };
+  registerTerminalRoutes(app, { getSurface: () => surface } as unknown as SurfaceRegistry,
+    new ToolRegistry(), { write: vi.fn() } as unknown as AuditWriter, undefined, undefined,
+    { config, access: { surface: () => true } as unknown as ControlAccess });
+  try {
+    const response = await app.inject({ method: "POST", url: "/api/terminals/windows-terminal/execute",
+      headers: { authorization: `Bearer ${token}` }, payload: { command, timeout: 2000 } });
+    __jait_capture(0, (response.statusCode));
+    return response.json();
+  } finally {
+    for (const timer of timers) clearTimeout(timer);
+    await app.close();
+  }
+}
+/*__jait_scope_open__*/{
+const output = "completed";
+const exitCode = 0;
+
+try {
+await (async()=>{
+
+  const result = await executeWithOutput("run-fixture", [[0, `run-fixture\r\n${output}\r\nPS C:\\project> `]]);
+  __jait_capture(1, (result), ({ output, exitCode, timedOut: false }));
+
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

@@ -1,26 +1,23 @@
 # Native Rust gateway
 
-## Current native checkpoint — 2026-10-20
+## Current native checkpoint — 2026-10-21
 
-The latest completed source-bound gate verifies **155/365 components (42.47%)**
-against its frozen snapshot. All format, strict Clippy, native-test and 89
-differential-target checks passed with unchanged snapshot sources. Concurrent
-ACP provider and session HTTP test changes require a refreshed gate before
-claiming an exact live-source match.
+The latest completed source-bound gate verifies **165/365 components (45.21%)**.
+Formatting, strict Clippy, native library tests and 100 differential targets
+passed with matching live fingerprints at completion. The report is
+`.jait/artifacts/gateway-rust/checkpoints/165-report.json`.
 
-Since the 150-component checkpoint, reviewed native implementations add consent
-management, security tool profiles, nested-agent history persistence, session-wait
-tracking and the maintenance tool adapter. The full report is
-`.jait/artifacts/gateway-rust/checkpoints/155-report.json`.
-A 156-component candidate adds the GraphRAG export adapter, with exact JSONL and
-manifest comparisons and caught/restored mutation checks. Its complete gate is
-pending. Native title normalization also now rejects tool-protocol payloads,
-with a reproduced failure and enabled regression tests.
+The TCP assessment baseline and cron tool adapter are now included. Scope
+validation compares 89 reference cases; service contracts cover bounded dispatch,
+ownership, cancellation, persistence/recovery and an owned loopback listener.
+Four deliberate assessment mutations were caught and restored. HTTP assessment
+routes are being implemented and earn no additional component credit until their
+contracts, review and full gate pass. A concurrent health-test change and new
+route work require a refreshed gate for an exact match to current sources.
 
-The inventory grew from 364 to 365 when the session-wait service was added.
-The completion target includes every inventoried component. Component counts
-measure focused native behavior coverage; production remains the TypeScript
-gateway and broader replacement/readiness gates remain open.
+The inventory contains 365 source components. Equal component weights measure
+focused native behavior coverage, not effort remaining or production readiness.
+The production TypeScript gateway remains in place.
 
 Parallel native implementation beside `packages/gateway`. The standalone process
 currently serves only `GET /health` (and HEAD). It does not yet serve the application.

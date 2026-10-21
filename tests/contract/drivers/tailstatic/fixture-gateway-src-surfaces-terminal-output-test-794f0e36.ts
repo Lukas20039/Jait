@@ -171,6 +171,30 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_surfaces_terminal_output_test_ts_56_3": {
+
+
+const NEXT_PROMPT_WITH_DONE_MARKER =
+  "\x1b]633;D;0\x07\x1b]633;A\x07\x1b]633;B\x07user@host:~/repo$ \x1b]633;C\x07";
+/*__jait_scope_open__*/{
+
+try {
+await (async()=>{
+
+    // A toolcard reconnecting before any output exists asks for a range that
+    // starts at the cursor; there is nothing to reconnect and no prompt to keep.
+    __jait_capture(0, (getTerminalOutputSlice([], 0, Number.NaN)));
+    __jait_capture(1, (getTerminalOutputSlice([], 0, 3)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;

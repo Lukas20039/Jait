@@ -53,14 +53,22 @@ fn handoff_preserves_prior_state_and_evidence_with_consistent_provider_budgets()
         assert!(input.contains("CONTEXT CHECKPOINT COMPACTION"));
         assert!(!input.contains("Use this EXACT format"));
         assert_eq!(request["stream"], false);
+        // The checkpoint budget is the salvaged-handoff cap, independent of the
+        // model context window. Backends that reject it retry at the 2048 floor
+        // (see checkpoint_budget_retries_at_the_conservative_floor_when_rejected),
+        // so a single 8192 request is the expected first attempt on both wires.
         assert_eq!(
             if backend == "ollama" {
                 &request["options"]["num_predict"]
             } else {
                 &request["max_tokens"]
             },
-            2048
+            8192
         );
+        if backend == "ollama" {
+            // The window still bounds prompt context; only the output cap is fixed.
+            assert_eq!(request["options"]["num_ctx"], 2000);
+        }
     }
 }
 
@@ -152,14 +160,51 @@ fn cancellation_keeps_original_history_and_returns_aborted_run() {
 }
 
 #[test]
-fn unavailable_or_truncated_summary_keeps_old_checkpoint_with_degradation_marker() {
-    for flag in ["fail", "truncated"] {
-        let mut call = json!({"op":"compaction.summary", "summary":"incomplete", "history":[{"role":"system", "content":"[conversation-summary]scope-expires-at-18:00[/conversation-summary]"}, {"role":"user", "content":"Verify rollback"}]});
-        call[flag] = json!(true);
-        let result = observe(call);
+fn unavailable_summary_keeps_old_checkpoint_with_degradation_marker() {
+    let result = observe(
+        json!({"op":"compaction.summary", "fail":true, "summary":"incomplete", "history":[{"role":"system", "content":"[conversation-summary]scope-expires-at-18:00[/conversation-summary]"}, {"role":"user", "content":"Verify rollback"}]}),
+    );
+    let summary = result["summary"].as_str().unwrap();
+    assert!(summary.contains("scope-expires-at-18:00"));
+    assert!(summary.contains("Degraded checkpoint"));
+    // The unusable model text must not be mistaken for a real checkpoint.
+    assert!(!summary.contains("incomplete"));
+}
+
+#[test]
+fn truncated_summary_is_kept_with_disclosure_and_the_superseded_checkpoint() {
+    let result = observe(
+        json!({"op":"compaction.summary", "truncated":true, "summary":"incomplete", "history":[{"role":"system", "content":"[conversation-summary]scope-expires-at-18:00[/conversation-summary]"}, {"role":"user", "content":"Verify rollback"}]}),
+    );
+    let summary = result["summary"].as_str().unwrap();
+    // A cut-off handoff still carries real state, so it replaces the regex
+    // fallback — but it is disclosed and the previous checkpoint survives.
+    assert!(summary.contains("incomplete"));
+    assert!(summary.contains("output token budget"));
+    assert!(summary.contains("scope-expires-at-18:00"));
+    assert!(!summary.contains("Degraded checkpoint"));
+}
+
+#[test]
+fn checkpoint_budget_retries_at_the_conservative_floor_when_rejected() {
+    for backend in ["ollama", "openai"] {
+        let result = observe(
+            json!({"op":"compaction.summary", "backend":backend, "rejectBudget":2048, "summary":"Verified; next check rollback.", "history":[{"role":"system", "content":"[conversation-summary]scope-expires-at-18:00[/conversation-summary]"}, {"role":"user", "content":"Verify rollback"}]}),
+        );
+        let requests = result["requests"].as_array().unwrap();
+        let budgets: Vec<&Value> = requests
+            .iter()
+            .map(|r| {
+                if backend == "ollama" {
+                    &r["options"]["num_predict"]
+                } else {
+                    &r["max_tokens"]
+                }
+            })
+            .collect();
+        assert_eq!(budgets, vec![&json!(8192), &json!(2048)]);
         let summary = result["summary"].as_str().unwrap();
-        assert!(summary.contains("scope-expires-at-18:00"));
-        assert!(summary.contains("Degraded checkpoint"));
-        assert!(!summary.contains("incomplete"));
+        assert!(summary.contains("Verified; next check rollback."));
+        assert!(!summary.contains("Degraded checkpoint"));
     }
 }

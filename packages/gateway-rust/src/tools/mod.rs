@@ -28,3 +28,11 @@ pub mod skill_discovery;
 pub mod chat_modes;
 
 pub mod maintenance;
+
+pub mod validate;
+
+pub mod mobile_alarm;
+
+pub mod session_sql;
+
+pub mod cron;

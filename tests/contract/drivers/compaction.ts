@@ -13,6 +13,10 @@ export async function dispatch(call: any): Promise<unknown> {
     if (!body.stream) {
       if (call.cancel) { abort.abort(); throw new DOMException('cancelled', 'AbortError'); }
       if (call.fail) return new Response('unavailable', { status: 503 });
+      // Models with a small output limit reject an oversized budget instead of clamping it.
+      if (typeof call.rejectBudget === 'number' && (body.max_tokens ?? body.options?.num_predict) > call.rejectBudget) {
+        return new Response('budget above model output limit', { status: 400 });
+      }
       return Response.json(llm.backend === 'ollama'
         ? { message: { content: call.summary }, done_reason: call.truncated ? 'length' : 'stop' }
         : { choices: [{ message: { content: call.summary }, finish_reason: call.truncated ? 'length' : 'stop' }] });

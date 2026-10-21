@@ -502,13 +502,13 @@ fn js_number(value: f64) -> Value {
 ///
 /// Local datetimes use the host zone with the reference's gap/fold disambiguation;
 /// date-only ISO forms remain UTC. Legacy years and US zone abbreviations are supported.
-fn js_date_parse(value: &str) -> Option<i64> {
+pub(crate) fn js_date_parse(value: &str) -> Option<i64> {
     // JSC does not trim: `" 2026-01-05T06:00:00Z"` and `"2026-01-05T06:00:00Z "` are NaN.
     parse_iso_date_time(value).or_else(|| parse_legacy_date(value))
 }
 
 /// ECMAScript Date Time String Format, including the legacy freedoms JSC keeps: 1-2 digit
-/// month/day, `t`/`z` in either case, `+HHMM`, a fraction longer than 3 digits (truncated),
+/// month/day in space-separated legacy forms, `t`/`z` in either case, `+HHMM`, a fraction longer than 3 digits (truncated),
 /// `24:00`, and out-of-range days that roll forward.
 fn parse_iso_date_time(value: &str) -> Option<i64> {
     let bytes = value.as_bytes();
@@ -544,6 +544,15 @@ fn parse_iso_date_time(value: &str) -> Option<i64> {
                 .get(index + 1)
                 .is_some_and(|byte| byte.is_ascii_digit()));
     if separator {
+        // The ISO T separator requires padded month/day fields when present; the
+        // space-separated legacy form accepts one-digit month/day fields.
+        if matches!(bytes.get(index), Some(&b'T') | Some(&b't')) {
+            let date = value[..index].trim_start_matches(['+', '-']);
+            let parts: Vec<_> = date.split('-').collect();
+            if parts[1..].iter().any(|part| part.len() != 2) {
+                return None;
+            }
+        }
         local = true;
         index += 1;
         let (value, next) = scan_digits(bytes, index, 2, 2)?;

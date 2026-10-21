@@ -17,3 +17,5 @@ pub mod architecture;
 pub mod agent_control;
 
 pub mod skills;
+
+pub mod security_assessments;

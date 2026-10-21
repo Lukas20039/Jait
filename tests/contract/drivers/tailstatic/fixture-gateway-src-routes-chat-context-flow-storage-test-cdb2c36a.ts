@@ -140,6 +140,108 @@ await (async()=>{
 
 break;
 }
+case "tailstatic_packages_gateway_src_routes_chat_context_flow_storage_test_ts_75_3": {
+
+
+/*__jait_scope_open__*/{
+const round = (n: number) => ({ round: n, createdAt: "2026-10-20T00:00:00Z", model: "test",
+    messages: [{ role: "user", content: "x".repeat(200_000), thinking: "y".repeat(20_000),
+      tool_calls: [{ function: { name: "tool", arguments: "z".repeat(20_000) } }] }],
+    tools: [{ name: "tool" }],
+  });
+
+try {
+await (async()=>{
+
+    const flow = { provider: "test", rounds: [1, 2, 3, 4].map(round) };
+    const stored = __chatTestUtils.serializePersistedContextFlow(flow);
+    const parsed = JSON.parse(stored);
+    __jait_capture(0, (parsed.truncatedRounds));
+    __jait_capture(1, (parsed.rounds.map((r: { round: number }) => r.round)));
+    __jait_capture(2, (parsed.rounds[0].messages[0].tool_calls));
+    __jait_capture(3, (parsed.rounds[0].messages[0].thinking));
+    __jait_capture(4, (parsed.rounds.every((r: { tools?: unknown }) => r.tools === undefined)));
+    __jait_capture(5, (flow.rounds[0]!.messages[0]!.content));
+    __jait_capture(6, (Buffer.byteLength(stored)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_chat_context_flow_storage_test_ts_88_3": {
+
+
+/*__jait_scope_open__*/{
+const round = (n: number) => ({ round: n, createdAt: "2026-10-20T00:00:00Z", model: "test",
+    messages: [{ role: "user", content: "x".repeat(200_000), thinking: "y".repeat(20_000),
+      tool_calls: [{ function: { name: "tool", arguments: "z".repeat(20_000) } }] }],
+    tools: [{ name: "tool" }],
+  });
+
+try {
+await (async()=>{
+
+    const memory = { query: "q".repeat(20_000), injectedIds: ["m"], ignoredIds: [], savedIds: [],
+      retrieved: [{ id: "m", scope: "session" as const, source: "test", sourceType: "test",
+        sourceId: "s", sourceSurface: "chat", updatedAt: "2026-10-20", content: "m".repeat(10_000) }],
+    };
+    const rounds = [1, 2, 3].map(n => ({ ...round(n), messages: Array.from({ length: 20 },
+      (_, i) => ({ role: "user", content: `${i}:` + "x".repeat(20_000) })) }));
+    const stored = __chatTestUtils.serializePersistedContextFlow({ provider: "test", rounds, memory });
+    const parsed = JSON.parse(stored);
+    __jait_capture(0, (parsed.truncated));
+    __jait_capture(1, (parsed.rounds[0].messages));
+    __jait_capture(2, (parsed.rounds[0].messages[0].content));
+    __jait_capture(3, (parsed.rounds[0].messages[1].content));
+    __jait_capture(4, (parsed.memory.query), ("q".repeat(2000) + "\n[Stored context truncated]"));
+    __jait_capture(5, (parsed.memory.retrieved[0].content), ("m".repeat(1000) + "\n[Stored context truncated]"));
+    __jait_capture(6, (parsed.memory.injectedIds));
+    __jait_capture(7, (Buffer.byteLength(stored)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
+case "tailstatic_packages_gateway_src_routes_chat_context_flow_storage_test_ts_107_3": {
+
+
+/*__jait_scope_open__*/{
+const round = (n: number) => ({ round: n, createdAt: "2026-10-20T00:00:00Z", model: "test",
+    messages: [{ role: "user", content: "x".repeat(200_000), thinking: "y".repeat(20_000),
+      tool_calls: [{ function: { name: "tool", arguments: "z".repeat(20_000) } }] }],
+    tools: [{ name: "tool" }],
+  });
+
+try {
+await (async()=>{
+
+    const stored = __chatTestUtils.serializePersistedContextFlow({ provider: "test", rounds: [{
+      ...round(1), messages: [{ role: "tool", content: { payload: "x".repeat(600_000) } }],
+    }] });
+    const parsed = JSON.parse(stored);
+    __jait_capture(0, (parsed.rounds[0].messages));
+    __jait_capture(1, (parsed.truncated));
+    __jait_capture(2, (Buffer.byteLength(stored)));
+  
+})();
+
+} finally {
+
+}
+}
+
+break;
+}
 default: throw new Error('unknown tailstatic fixture');
  }
  return __jait_observations;
