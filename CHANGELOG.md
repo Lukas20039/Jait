@@ -4,6 +4,15 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.955](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.955) — 2026-10-21
+
+- fix(web): drop the provider badge beside the Models heading — bbf28c60
+
+The model selector no longer repeats the active provider beside the “Models”
+heading. The provider column and the trigger already name the provider, so the
+badge only squeezed the heading; the models column now stands on its own. The
+favorites-aware initial scroll keeps the selected row visible on open.
+
 ## [v0.1.954](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.954) — 2026-10-20
 
 - feat(gateway-rust,gateway,web,shared): port consent, tool profiles and session waits natively — 5abe77b7
