@@ -13,7 +13,13 @@ permissions:
 jobs:
   gateway-contracts:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # The full contract suite is deterministic but long: setup plus the native
+    # lane, internals and reference-source mutation passes already account for
+    # ~50 minutes on a 2-core runner, and the translated-assertion and audit
+    # steps follow. A 30 minute budget killed the job mid-suite (before the
+    # source-inventory audit ran) and reported it as cancelled, which is both
+    # misleading and hides real regressions behind a timeout.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
