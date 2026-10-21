@@ -4,6 +4,18 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.957](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.957) — 2026-10-21
+
+- fix(update): publish shared session waits and validate installed gateway imports — 21d460b1
+
+Publishes shared 0.1.107 with the session-wait exports required by the gateway,
+repairing the startup failure introduced in 0.1.954 and still present in 0.1.956.
+Updates now load the installed gateway's imports before stopping the running
+service, and release CI validates an installed npm tarball against registry
+dependencies before publishing the gateway. Rust regressions cover missing
+shared exports without downtime, successful activation with compatible exports,
+and restoration of the previous installation after a startup failure.
+
 ## [v0.1.956](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.956) — 2026-10-21
 
 - fix(release): detect full push bumps and reject missing packages — c93464e7
