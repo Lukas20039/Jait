@@ -5,7 +5,19 @@ import { webcrypto } from 'node:crypto';
 import { join } from 'node:path';
 import type * as Jose from '../../../packages/gateway/node_modules/jose/dist/types/index.d.ts';
 const jose: typeof Jose = await import(new URL('../../../packages/gateway/node_modules/jose/dist/webapi/index.js', import.meta.url).href);
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+
+// CI runners install node outside /usr/bin (hosted toolcache), so resolve the interpreter
+// from PATH once instead of trusting a fixed location. JAIT_CONTRACT_NODE pins it explicitly.
+const nodeBinary: string = (() => {
+  const override = process.env.JAIT_CONTRACT_NODE;
+  if (override) return override;
+  const bunWhich = (globalThis as { Bun?: { which?: (name: string) => string | null } }).Bun?.which;
+  const resolved = typeof bunWhich === 'function' ? bunWhich('node') : null;
+  if (resolved) return resolved;
+  for (const candidate of ['/usr/bin/node', '/usr/local/bin/node']) if (existsSync(candidate)) return candidate;
+  return 'node';
+})();
 
 // Every dynamically loaded module sees an isolated fixture environment.
 process.env.__JAIT_CLI = '1';
@@ -1012,10 +1024,11 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
   if(call.op==='sourcereview.script') {
     const fs=await import('node:fs');const path=await import('node:path');const cp=await import('node:child_process');
     const base=fs.mkdtempSync(path.join(new URL('../../../', import.meta.url).pathname,'.jait/artifacts/source-review','script-'));
-    const node='/usr/bin/node',root=path.join(base,'project/packages/gateway'),home=path.join(base,'home'),bin=path.join(base,'bin');
+    const node=nodeBinary,root=path.join(base,'project/packages/gateway'),home=path.join(base,'home'),bin=path.join(base,'bin');
     fs.mkdirSync(home,{recursive:true});fs.mkdirSync(bin);
     const env:NodeJS.ProcessEnv={PATH:bin,HOME:home,LANG:'C.UTF-8',__JAIT_CLI:'1'};
     const normalize=(text:string)=>text.replaceAll(base,'ROOT');
+    const spawnNode=(args:string[],options:Record<string,unknown>)=>{const spawned=cp.spawnSync(node,args,options as never);if(spawned.error)throw new Error('fixture node spawn failed ('+node+'): '+spawned.error.message);return spawned;};
     try{
       const relative=call.module==='compileCacheScript'||call.module==='installRuntimeScript'?'bin/subject.mjs':'scripts/subject.mjs';
       const subject=path.join(root,relative);fs.mkdirSync(path.dirname(subject),{recursive:true});
@@ -1041,7 +1054,7 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
         fs.mkdirSync(path.join(first, '.git')); fs.writeFileSync(path.join(first, '.git/private'), 'not packaged');
         const dest = path.join(project, 'apps/desktop/src-tauri/gateway');
         fs.mkdirSync(dest, { recursive: true }); fs.writeFileSync(path.join(dest, 'old'), 'removed');
-        const result = cp.spawnSync(node, [subject], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
+        const result = spawnNode([subject], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
         const read = (relative: string) => { const p = path.join(dest, relative); return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null; };
         const manifest = read('manifest.json');
         const pkgVersion = (relative: string) => { const content = read('node_modules/' + relative + '/package.json'); return content ? JSON.parse(content).version : null; };
@@ -1070,13 +1083,13 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
           fs.mkdirSync(target, { recursive: true }); fs.writeFileSync(path.join(target, 'old'), 'existing asset');
           fs.mkdirSync(path.dirname(bridge), { recursive: true });
           if (call.variant !== 'missing-bridge') fs.writeFileSync(bridge, 'fixture bridge');
-          const result = cp.spawnSync(node, [subject], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
+          const result = spawnNode([subject], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
           const read = (p: string) => fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
           return { code: result.status, copied: Object.fromEntries(Object.keys(assets).map(name => [name, read(path.join(target, name))])), nested: read(path.join(target, 'nested/item')), old: read(path.join(target, 'old')), bridge: read(path.join(root, 'dist/surfaces/playwright-node-bridge.cjs')), stdout: normalize(result.stdout), missingSource: result.stderr.includes('shell integration source directory not found:'), missingBridge: result.stderr.includes('playwright-node-bridge.cjs') };
         }
         if (call.variant === 'check-stale') fs.writeFileSync(out, 'stale fixture');
         if (call.variant === 'check-current') cp.execFileSync(node, [subject], { env, cwd: base, timeout: 8000 });
-        const result = cp.spawnSync(node, [subject, ...(call.variant?.startsWith('check-') ? ['--check'] : [])], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
+        const result = spawnNode([subject, ...(call.variant?.startsWith('check-') ? ['--check'] : [])], { env, cwd: base, encoding: 'utf8', timeout: 8000 });
         let exports = null;
         if (result.status === 0 && fs.existsSync(out)) {
           const generated = await import(out);
@@ -1089,7 +1102,7 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
         if(['state','empty','explicit'].includes(call.variant))env.JAIT_STATE_DIR=' '+path.join(base,'state')+' ';
         if(call.variant==='empty')env.NODE_COMPILE_CACHE='';
         const program="import {pathToFileURL} from 'node:url';import * as mod from 'node:module';await import(pathToFileURL(process.argv[1]).href);const cache=process.env.NODE_COMPILE_CACHE;const actual=mod.getCompileCacheDir?.();process.stdout.write(JSON.stringify({cache,cacheActive:typeof actual==='string'&&(actual===cache||actual.startsWith(cache+'/'))}));";
-        const result=cp.spawnSync(node,['--input-type=module','-e',program,subject],{env,cwd:base,encoding:'utf8',timeout:8000});
+        const result=spawnNode(['--input-type=module','-e',program,subject],{env,cwd:base,encoding:'utf8',timeout:8000});
         if(result.status!==0)throw new Error('isolated compile cache failed: '+result.stderr);
         const resultData=JSON.parse(result.stdout);resultData.cache=normalize(resultData.cache);return resultData;
       }
@@ -1097,7 +1110,7 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
         const src=path.join(base,'project/apps/web/dist'),dest=path.join(root,'web-dist');
         fs.mkdirSync(src,{recursive:true});fs.mkdirSync(dest);fs.writeFileSync(path.join(dest,'old'),'old');
         if(call.variant==='present'){fs.writeFileSync(path.join(src,'index.html'),'fixture index');fs.mkdirSync(path.join(src,'assets'));fs.writeFileSync(path.join(src,'assets/nested'),'fixture asset');}
-        const result=cp.spawnSync(node,[subject],{env,cwd:base,encoding:'utf8',timeout:8000});
+        const result=spawnNode([subject],{env,cwd:base,encoding:'utf8',timeout:8000});
         const read=(p:string)=>fs.existsSync(p)?fs.readFileSync(p,'utf8'):null;
         return {code:result.status,stdout:result.stdout,stderr:result.stderr,index:read(path.join(dest,'index.html')),nested:read(path.join(dest,'assets/nested')),oldPreserved:fs.existsSync(path.join(dest,'old')),sourcePreserved:fs.existsSync(src)};
       }
@@ -1106,7 +1119,7 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
         const program="#!"+node+"\nimport {writeFileSync} from 'node:fs';writeFileSync(process.env.JAIT_BUILD_FIXTURE_LOG,JSON.stringify({args:process.argv.slice(2),cwd:process.cwd()}));console.log('fixture builder');if(process.env.JAIT_BUILD_FIXTURE_MODE==='exit')process.exit(7);if(process.env.JAIT_BUILD_FIXTURE_MODE==='signal')process.kill(process.pid,'SIGTERM');\n";
         fs.writeFileSync(fake,program,{mode:0o700});env.JAIT_BUILD_FIXTURE_LOG=log;env.JAIT_BUILD_FIXTURE_MODE=call.variant;
         if(call.variant!=='default')env.JAIT_BUILD_BUN=call.variant==='missing'?path.join(base,'absent-builder'):fake;
-        const result=cp.spawnSync(node,[subject],{env,cwd:base,encoding:'utf8',timeout:8000});
+        const result=spawnNode([subject],{env,cwd:base,encoding:'utf8',timeout:8000});
         return {code:result.status,stdout:result.stdout,enoent:result.stderr.includes('ENOENT'),calls:fs.existsSync(log)?[JSON.parse(normalize(fs.readFileSync(log,'utf8')))]:[]};
       }
       if(call.module==='installRuntimeScript'){
@@ -1116,7 +1129,7 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
           fs.writeFileSync(path.join(root,'package.json'),'{"type":"module"}');
           fs.writeFileSync(runtime,"export async function ensureGraphifyRuntime(options){"+(call.variant==='error'?"throw new Error('fixture runtime failure');":call.variant==='primitive'?"throw 'primitive failure';":"options.onProgress('fixture progress');")+"}");
         }
-        const result=cp.spawnSync(node,[subject],{env,cwd:base,encoding:'utf8',timeout:8000});
+        const result=spawnNode([subject],{env,cwd:base,encoding:'utf8',timeout:8000});
         return {code:result.status,stdout:result.stdout,stderr:result.stderr};
       }
       throw new Error('unknown packaging fixture');
@@ -1792,8 +1805,9 @@ else{let secrets;try{secrets=JSON.parse(fs.readFileSync(path.join(state,'host-se
         const child=new Child();await m.terminateChild(child);await m.terminateChild(child);return {killCount:child.killCount,listenersAtKill:child.listenersAtKill,exitListeners:child.listenerCount('exit'),after:m.hasExited(child)};
       }
       const {spawn}=await import('node:child_process');
-      const child=spawn('/usr/bin/node',['-e',"process.stdout.write('ready');setInterval(()=>{},1000)"],{stdio:['ignore','pipe','pipe'],env:{LANG:'C.UTF-8'}});
-      try{await once(child.stdout,'data');const before=m.hasExited(child);await m.terminateChild(child);await m.terminateChild(child);return {before,after:m.hasExited(child),exitCode:child.exitCode,signal:child.signalCode};}
+      const child=spawn(nodeBinary,['-e',"process.stdout.write('ready');setInterval(()=>{},1000)"],{stdio:['ignore','pipe','pipe'],env:{LANG:'C.UTF-8'}});
+      const failed=new Promise((_,reject)=>child.once('error',(e:Error)=>reject(new Error('fixture child spawn failed ('+nodeBinary+'): '+e.message))));
+      try{await Promise.race([once(child.stdout,'data'),failed]);const before=m.hasExited(child);await m.terminateChild(child);await m.terminateChild(child);return {before,after:m.hasExited(child),exitCode:child.exitCode,signal:child.signalCode};}
       finally{if(!m.hasExited(child))child.kill('SIGKILL');}
     }
 
