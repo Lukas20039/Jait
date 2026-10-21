@@ -1409,134 +1409,138 @@ export function Conversation({ variant = 'assistant', sessionId, authToken, chil
   return (
     <AIConversation className={cn('relative flex min-h-0 flex-1 flex-col overflow-hidden', className)}>
       {browser && <ChatBrowserView key={sessionId ?? 'conversation-browser'} data={browser.data} sessionId={sessionId} authToken={authToken} autoOpen />}
-      {loading && !hasContent ? (
-        <ConversationPositioningSkeleton label={loadingLabel} />
-      ) : (
-        <div
-          ref={attachScrollElement}
-          data-conversation-scroll
-          role={variant === 'messenger' ? 'log' : undefined}
-          aria-label={variant === 'messenger' ? 'Messages' : undefined}
-          onScroll={updateBottomState}
-          className="min-h-0 min-w-0 flex-1 overflow-y-auto scrollbar-none"
-          style={{
-            ...MOBILE_SCROLL_CONTAINMENT_STYLE,
-            visibility: !hasContent || initialScrollReady ? 'visible' : 'hidden',
-          }}
-        >
-          {loading && (
-            <div className="sticky top-3 z-10 flex justify-center">
-              <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-primary/50" />
-                <span>{loadingLabel}</span>
-              </div>
-            </div>
-          )}
-          <div ref={innerRef} className={cn('mx-auto max-w-4xl px-4 pb-6 sm:py-6 sm:px-5', variant === 'messenger' ? 'pt-6' : 'pt-12')}>
-            {hasMore && (
-              <div className="flex justify-center py-3">
-                <button
-                  type="button"
-                  onClick={requestOlderMessages}
-                  className="flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-muted/50"
-                >
-                  <Loader2 className="h-3 w-3 text-primary animate-spin" style={{ animationPlayState: loadMoreTriggeredRef.current ? 'running' : 'paused' }} />
-                  <span>Load earlier messages</span>
-                </button>
+      {/* The minimap and transcript share one row below the browser. Its full
+          height must not consume the transcript's space in the outer column. */}
+      <div className="relative flex min-h-0 flex-1 overflow-hidden" data-conversation-viewport>
+        {loading && !hasContent ? (
+          <ConversationPositioningSkeleton label={loadingLabel} />
+        ) : (
+          <div
+            ref={attachScrollElement}
+            data-conversation-scroll
+            role={variant === 'messenger' ? 'log' : undefined}
+            aria-label={variant === 'messenger' ? 'Messages' : undefined}
+            onScroll={updateBottomState}
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto scrollbar-none"
+            style={{
+              ...MOBILE_SCROLL_CONTAINMENT_STYLE,
+              visibility: !hasContent || initialScrollReady ? 'visible' : 'hidden',
+            }}
+          >
+            {loading && (
+              <div className="sticky top-3 z-10 flex justify-center">
+                <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-primary/50" />
+                  <span>{loadingLabel}</span>
+                </div>
               </div>
             )}
-            <div
-              ref={sizerRef}
-              style={{
-                height: committedSize + newTurnTailPadding,
-                width: '100%',
-                position: 'relative',
-              }}
-            >
-              {virtualItems.map((virtualItem) => (
-                <div
-                  key={virtualItem.key}
-                  data-index={virtualItem.index}
-                  // Stable identity for scroll anchoring — index shifts when
-                  // older messages are prepended, the key does not.
-                  data-conv-key={String(virtualItem.key)}
-                  ref={virtualizer.measureElement}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualItem.start}px)`,
-                    zIndex: getConversationItemZIndex(virtualItem.key, elevatedMessageId),
-                  }}
-                >
-                  {childItems[virtualItem.index]}
+            <div ref={innerRef} className={cn('mx-auto max-w-4xl px-4 pb-6 sm:py-6 sm:px-5', variant === 'messenger' ? 'pt-6' : 'pt-12')}>
+              {hasMore && (
+                <div className="flex justify-center py-3">
+                  <button
+                    type="button"
+                    onClick={requestOlderMessages}
+                    className="flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur transition-colors hover:bg-muted/50"
+                  >
+                    <Loader2 className="h-3 w-3 text-primary animate-spin" style={{ animationPlayState: loadMoreTriggeredRef.current ? 'running' : 'paused' }} />
+                    <span>Load earlier messages</span>
+                  </button>
                 </div>
-              ))}
+              )}
+              <div
+                ref={sizerRef}
+                style={{
+                  height: committedSize + newTurnTailPadding,
+                  width: '100%',
+                  position: 'relative',
+                }}
+              >
+                {virtualItems.map((virtualItem) => (
+                  <div
+                    key={virtualItem.key}
+                    data-index={virtualItem.index}
+                    // Stable identity for scroll anchoring — index shifts when
+                    // older messages are prepended, the key does not.
+                    data-conv-key={String(virtualItem.key)}
+                    ref={virtualizer.measureElement}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualItem.start}px)`,
+                      zIndex: getConversationItemZIndex(virtualItem.key, elevatedMessageId),
+                    }}
+                  >
+                    {childItems[virtualItem.index]}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {hasContent && !initialScrollReady && (
-        <ConversationPositioningSkeleton label={loading ? loadingLabel : 'Preparing conversation'} />
-      )}
+        {hasContent && !initialScrollReady && (
+          <ConversationPositioningSkeleton label={loading ? loadingLabel : 'Preparing conversation'} />
+        )}
 
-      {variant === 'assistant' && initialScrollReady && !loading && canJumpUp && !previousMessagePreviewSuppressed && (
-        // Styled after the user chat bubble itself (bg-muted, rounded, right
-        // where user messages sit) because the chip *is* the previous message:
-        // clicking it jumps to that message and starts editing it. The frame
-        // mirrors the transcript column (mx-auto max-w-4xl px-*) so the chip
-        // never extends past the chat's width; pointer-events pass through so
-        // the strip only captures clicks on the button itself.
-        <div
-          className="pointer-events-none absolute inset-x-0 top-14 z-20 mx-auto flex max-w-4xl justify-end px-4 sm:top-10 sm:px-5"
-        >
-          <TooltipHint content="Jump to and edit previous user message">
-          <button
-            type="button"
-            aria-label="Jump to and edit previous user message"
-            className="pointer-events-auto block w-fit max-w-full cursor-text rounded-lg bg-muted px-4 py-3 text-left text-[0.9rem] leading-relaxed text-foreground shadow-sm transition-colors hover:bg-muted/80"
-            onClick={jumpToPreviousMessage}
+        {variant === 'assistant' && initialScrollReady && !loading && canJumpUp && !previousMessagePreviewSuppressed && (
+          // Styled after the user chat bubble itself (bg-muted, rounded, right
+          // where user messages sit) because the chip *is* the previous message:
+          // clicking it jumps to that message and starts editing it. The frame
+          // mirrors the transcript column (mx-auto max-w-4xl px-*) so the chip
+          // never extends past the chat's width; pointer-events pass through so
+          // the strip only captures clicks on the button itself.
+          <div
+            className="pointer-events-none absolute inset-x-0 top-14 z-20 mx-auto flex max-w-4xl justify-end px-4 sm:top-10 sm:px-5"
           >
-            <span className="block truncate">{previousMessagePreview}</span>
-          </button>
+            <TooltipHint content="Jump to and edit previous user message">
+            <button
+              type="button"
+              aria-label="Jump to and edit previous user message"
+              className="pointer-events-auto block w-fit max-w-full cursor-text rounded-lg bg-muted px-4 py-3 text-left text-[0.9rem] leading-relaxed text-foreground shadow-sm transition-colors hover:bg-muted/80"
+              onClick={jumpToPreviousMessage}
+            >
+              <span className="block truncate">{previousMessagePreview}</span>
+            </button>
+            </TooltipHint>
+          </div>
+        )}
+
+        {initialScrollReady && !loading && !isAtBottom && (
+          <TooltipHint content="Scroll to latest message">
+          <ConversationScrollButton
+            aria-label="Scroll to latest message"
+            className="left-auto bottom-5 translate-x-0"
+            style={{ right: floatingControlInset }}
+            onClick={() => {
+              detachedRef.current = false
+              setStickToBottom(true)
+              stickToBottomRef.current = true
+              pendingTopAlignIdRef.current = null
+              heldNewTurnSpaceRef.current = false
+              alignedTurnSizeRef.current = null
+              setTopAnchoredMessageId(null)
+              scrollToBottom('smooth', true)
+            }}
+          />
           </TooltipHint>
-        </div>
-      )}
+        )}
 
-      {initialScrollReady && !loading && !isAtBottom && (
-        <TooltipHint content="Scroll to latest message">
-        <ConversationScrollButton
-          aria-label="Scroll to latest message"
-          className="left-auto bottom-5 translate-x-0"
-          style={{ right: floatingControlInset }}
-          onClick={() => {
-            detachedRef.current = false
-            setStickToBottom(true)
-            stickToBottomRef.current = true
-            pendingTopAlignIdRef.current = null
-            heldNewTurnSpaceRef.current = false
-            alignedTurnSizeRef.current = null
-            setTopAnchoredMessageId(null)
-            scrollToBottom('smooth', true)
-          }}
-        />
-        </TooltipHint>
-      )}
-
-      {showMinimap && (
-        <ConversationMinimap
-          virtualizer={virtualizer}
-          scrollElement={scrollElement}
-          sizerOffset={sizerOffset}
-          roles={minimapRoles}
-          texts={messageContents ?? EMPTY_MESSAGE_CONTENTS}
-          messageInputs={messageEstimateInputs ?? []}
-          textWidth={containerWidth}
-          onScrub={handleMinimapScrub}
-        />
-      )}
+        {showMinimap && (
+          <ConversationMinimap
+            virtualizer={virtualizer}
+            scrollElement={scrollElement}
+            sizerOffset={sizerOffset}
+            roles={minimapRoles}
+            texts={messageContents ?? EMPTY_MESSAGE_CONTENTS}
+            messageInputs={messageEstimateInputs ?? []}
+            textWidth={containerWidth}
+            onScrub={handleMinimapScrub}
+          />
+        )}
+      </div>
     </AIConversation>
   )
 }

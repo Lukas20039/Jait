@@ -38,7 +38,7 @@
     "test:contract:lint": "node tests/contract/run.mjs clippy --all-targets -- -D warnings",
     "test:e2e": "npm --prefix tests/e2e test --",
     "test:e2e:ui": "npm --prefix tests/e2e test -- --config playwright.ui.config.ts",
-    "test:smoke": "npm --prefix tests/e2e test -- core-basics.spec.ts manager-pages.spec.ts chat-streaming-auth.spec.ts message-attachment-regressions.spec.ts security-workbench.spec.ts",
+    "test:smoke": "npm --prefix tests/e2e test -- core-basics.spec.ts manager-pages.spec.ts chat-streaming-auth.spec.ts message-attachment-regressions.spec.ts security-workbench.spec.ts conversation-viewport-layout.spec.ts",
     "test:watch": "vitest",
     "test:tools": "vitest run packages/gateway/src/tools --reporter=verbose",
     "test:tools:browser": "JAIT_BROWSER_INTEGRATION=1 vitest run packages/gateway/src/tools/browser-tools-integration.test.ts --reporter=verbose",
