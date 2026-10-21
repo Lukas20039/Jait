@@ -157,6 +157,23 @@ mod tests {
         DatabaseWorker::new(db, NonZeroU16::new(capacity).unwrap()).unwrap()
     }
 
+    /// A job cancelled by its caller stays in the bounded mailbox until the worker
+    /// thread pops it, which happens only after the previous job has returned its
+    /// response. Wait for that free slot instead of racing it.
+    async fn wait_for_mailbox_space(worker: &DatabaseWorker) {
+        for _ in 0..1_000 {
+            let has_space = {
+                let sender = worker.inner.sender.lock().unwrap();
+                sender.as_ref().unwrap().capacity() > 0
+            };
+            if has_space {
+                return;
+            }
+            tokio::time::sleep(Duration::from_millis(1)).await;
+        }
+        panic!("worker mailbox did not drain the cancelled job");
+    }
+
     #[tokio::test]
     async fn serializes_transactions_and_closes_for_all_clones() {
         let worker = worker(32);
@@ -245,6 +262,7 @@ mod tests {
         let _ = second.await;
         release.send(()).unwrap();
         first.await.unwrap();
+        wait_for_mailbox_space(&worker).await;
         assert_eq!(
             worker
                 .run(|db| Ok(
