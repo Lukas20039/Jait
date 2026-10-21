@@ -519,40 +519,22 @@ async fn rejected_owners_callback_errors_flags_and_fractional_retention_match() 
 
 #[test]
 fn bundled_named_zones_match_icu_validity_and_representative_wall_times() {
-    // The system tzdb can be a release newer than the ICU data bundled with
-    // the Node runtime, so the two zone lists are not guaranteed to be equal
-    // (tzdata 2025b added America/Coyhaique, for instance). Every zone the
-    // reference knows must exist here and agree on every case. Zones only the
-    // newer system database knows are still required to resolve, but there is
-    // no reference to compare their wall times against.
+    // The native gateway must preserve the reference's accepted names and
+    // rejection behavior. A newer IANA database is additional test input,
+    // never authority to silently broaden the accepted scheduling contract.
     let reference_zones: BTreeSet<String> = reference(json!({"op":"nativescheduler.zones"}))
         .as_array()
-        .expect("reference zone list")
+        .unwrap()
         .iter()
-        .map(|zone| zone.as_str().expect("zone name").to_string())
+        .map(|zone| zone.as_str().unwrap().to_owned())
         .collect();
     let bundled_zones: BTreeSet<String> = jiff::tz::db()
         .available()
         .map(|zone| zone.to_string())
         .collect();
-    let missing: Vec<&String> = reference_zones.difference(&bundled_zones).collect();
-    assert!(
-        missing.is_empty(),
-        "bundled time zone database is missing zones known to the reference: {missing:?}"
-    );
-    let extra: Vec<&String> = bundled_zones.difference(&reference_zones).collect();
-    for zone in &extra {
-        assert!(
-            matches_cron_minute("* * * * *", Some(0), Some(zone.as_str())),
-            "zone only the bundled database knows failed to resolve: {zone}"
-        );
-    }
-    assert!(
-        !matches_cron_minute("* * * * *", Some(0), Some("Not/A/Zone")),
-        "unknown time zones must not resolve"
-    );
+    let zones: BTreeSet<String> = reference_zones.union(&bundled_zones).cloned().collect();
     let mut cases = vec![];
-    for zone in &reference_zones {
+    for zone in &zones {
         for date in [0i64, 1_767_225_600_000, 1_782_864_000_000] {
             for cron in [
                 "* * * * *",
@@ -573,8 +555,8 @@ fn bundled_named_zones_match_icu_validity_and_representative_wall_times() {
     );
     assert_eq!(
         cases.len(),
-        reference_zones.len() * 3 * 6,
-        "corpus must probe every reference zone across every date and cron"
+        zones.len() * 3 * 6,
+        "corpus must probe every reference and bundled zone across every date and cron"
     );
     for batch in cases.chunks(100) {
         let expected = reference(json!({"op":"nativescheduler.minute","cases":batch}));
@@ -590,4 +572,164 @@ fn bundled_named_zones_match_icu_validity_and_representative_wall_times() {
             );
         }
     }
+}
+
+fn worker_at(path: &std::path::Path) -> DatabaseWorker {
+    let connection = db::open_database(path).unwrap();
+    db::migrate_database(&connection).unwrap();
+    DatabaseWorker::new(connection, NonZeroU16::new(128).unwrap()).unwrap()
+}
+fn request(name: &str, cron: &str, tool: &str) -> jait_gateway::scheduler::service::CreateJob {
+    serde_json::from_value(json!({"name":name,"cron":cron,"toolName":tool,"userId":"alice","projectRoot":"/owned/fixture"})).unwrap()
+}
+#[tokio::test]
+async fn simultaneous_jobs_and_later_ticks_progress_while_same_job_is_guarded() {
+    use std::time::Duration;
+    let worker = worker_at(std::path::Path::new(":memory:"));
+    let calls = Arc::new(Mutex::new(Vec::<String>::new()));
+    let entered = Arc::new(tokio::sync::Semaphore::new(0));
+    let release = Arc::new(tokio::sync::Semaphore::new(0));
+    let captured = calls.clone();
+    let notify = entered.clone();
+    let gate = release.clone();
+    let mut options = SchedulerOptions::new(
+        worker.clone(),
+        "/fixture".into(),
+        Arc::new(move |execution| {
+            let tool = execution["toolName"].as_str().unwrap().to_owned();
+            captured.lock().unwrap().push(tool.clone());
+            notify.add_permits(1);
+            let gate = gate.clone();
+            Box::pin(async move {
+                if tool == "slow.tool" {
+                    let permit = gate.acquire().await.unwrap();
+                    permit.forget();
+                }
+                Ok(json!({"ok":true,"message":"done"}))
+            })
+        }),
+    );
+    options.log = Arc::new(|_| {});
+    let service = SchedulerService::new(options);
+    service
+        .create(request("slow", "* * * * *", "slow.tool"))
+        .await
+        .unwrap();
+    service
+        .create(request("fast", "* * * * *", "fast.tool"))
+        .await
+        .unwrap();
+    service
+        .create(request("later", "1 * * * *", "later.tool"))
+        .await
+        .unwrap();
+    let active = service.clone();
+    let first_ms = date(&json!("2026-10-01T00:00:00Z")).unwrap();
+    let first = tokio::spawn(async move { active.tick(first_ms).await.unwrap() });
+    tokio::time::timeout(Duration::from_secs(5), entered.acquire_many(2))
+        .await
+        .unwrap()
+        .unwrap()
+        .forget();
+    tokio::time::timeout(Duration::from_secs(5), service.tick(first_ms + 60_000))
+        .await
+        .unwrap()
+        .unwrap();
+    {
+        let calls = calls.lock().unwrap();
+        assert_eq!(
+            calls.iter().filter(|s| s.as_str() == "slow.tool").count(),
+            1
+        );
+        assert_eq!(
+            calls.iter().filter(|s| s.as_str() == "fast.tool").count(),
+            2
+        );
+        assert_eq!(
+            calls.iter().filter(|s| s.as_str() == "later.tool").count(),
+            1
+        );
+    }
+    release.add_permits(1);
+    tokio::time::timeout(Duration::from_secs(5), first)
+        .await
+        .unwrap()
+        .unwrap();
+    service.stop();
+    worker.shutdown().await.unwrap();
+}
+#[tokio::test]
+async fn real_database_restart_preserves_runs_and_minute_deduplication_through_cron_adapter() {
+    use jait_gateway::tools::cron::{self, CronContext};
+    let directory = root()
+        .join(".jait/artifacts/gateway-rust/scheduler/restart")
+        .join(uuid::Uuid::new_v4().to_string());
+    std::fs::create_dir_all(&directory).unwrap();
+    let path = directory.join("scheduler.db");
+    let worker = worker_at(&path);
+    let calls = Arc::new(AtomicUsize::new(0));
+    let captured = calls.clone();
+    let at = date(&json!("2026-10-01T00:00:00Z")).unwrap();
+    let mut options = SchedulerOptions::new(
+        worker.clone(),
+        "/owned/fixture".into(),
+        Arc::new(move |_| {
+            captured.fetch_add(1, Ordering::SeqCst);
+            Box::pin(async { Ok(json!({"ok":true,"message":"done","data":{"fixture":[1,2]}})) })
+        }),
+    );
+    options.clock = Arc::new(move || at);
+    options.log = Arc::new(|_| {});
+    let service = SchedulerService::new(options);
+    let created=service.with_repository(|repository|{
+        Ok(cron::execute(repository,"add",&json!({"name":"restart","cron":"* * * * *","toolName":"fixture_execute","input":{"version":1}}),
+            CronContext{user_id:Some("alice"),project_root:repository.project_root})?)
+    }).await.unwrap();
+    let id = created["data"]["id"].as_str().unwrap().to_owned();
+    service
+        .trigger(id.clone(), Some("alice".into()), at, "schedule".into())
+        .await
+        .unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    service.stop();
+    worker.shutdown().await.unwrap();
+
+    let worker = worker_at(&path);
+    let captured = calls.clone();
+    let mut options = SchedulerOptions::new(
+        worker.clone(),
+        "/owned/fixture".into(),
+        Arc::new(move |_| {
+            captured.fetch_add(1, Ordering::SeqCst);
+            Box::pin(async { Ok(json!({"ok":true,"message":"restarted"})) })
+        }),
+    );
+    options.clock = Arc::new(move || at + 60_000);
+    options.log = Arc::new(|_| {});
+    let service = SchedulerService::new(options);
+    let job = service
+        .get(id.clone(), Some("alice".into()))
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(job.input, json!({"version":1}));
+    assert_eq!(job.tool_name, "fixture.execute");
+    assert!(
+        service
+            .get(id.clone(), Some("bob".into()))
+            .await
+            .unwrap()
+            .is_none()
+    );
+    let runs = service.list_runs(id.clone()).await.unwrap();
+    assert_eq!(runs.len(), 1);
+    assert_eq!(runs[0]["status"], "completed");
+    assert_eq!(runs[0]["output"], "{\"fixture\":[1,2]}");
+    service.tick(at + 30_000).await.unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    service.tick(at + 60_000).await.unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert_eq!(service.list_runs(id).await.unwrap().len(), 2);
+    service.stop();
+    worker.shutdown().await.unwrap();
 }

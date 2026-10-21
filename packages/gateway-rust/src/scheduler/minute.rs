@@ -5,6 +5,28 @@ use crate::{
     time::iso,
 };
 use chrono::TimeZone;
+use std::{
+    collections::BTreeMap,
+    sync::{LazyLock, Mutex},
+};
+#[path = "tzdata_2024a.rs"]
+mod tzdata_2024a;
+pub const TIME_ZONE_DATA_VERSION: &str = tzdata_2024a::VERSION;
+fn named_zone(zone: &str) -> Option<jiff::tz::TimeZone> {
+    static CACHE: LazyLock<Mutex<BTreeMap<&'static str, jiff::tz::TimeZone>>> =
+        LazyLock::new(|| Mutex::new(BTreeMap::new()));
+    let &(name, start, size) = tzdata_2024a::INDEX
+        .iter()
+        .find(|(name, _, _)| name.eq_ignore_ascii_case(zone))?;
+    let mut cache = CACHE.lock().ok()?;
+    if let Some(zone) = cache.get(name) {
+        return Some(zone.clone());
+    }
+    let timezone =
+        jiff::tz::TimeZone::tzif(name, tzdata_2024a::DATA.get(start..start + size)?).ok()?;
+    cache.insert(name, timezone.clone());
+    Some(timezone)
+}
 struct Parts {
     minute: u32,
     hour: u32,
@@ -83,7 +105,7 @@ fn zoned_parts(ms: i64, zone: &str) -> Option<Parts> {
             jiff::tz::Offset::from_seconds(sign * (hours * 3600 + minutes * 60)).ok()?,
         )
     } else {
-        jiff::tz::TimeZone::get(zone).ok()?
+        named_zone(zone)?
     };
     if timezone.is_unknown() {
         return None;

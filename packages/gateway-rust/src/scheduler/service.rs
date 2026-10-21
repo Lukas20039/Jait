@@ -509,8 +509,9 @@ impl SchedulerService {
             loop {
                 interval.tick().await;
                 let service = service.clone();
+                let now_ms = (service.inner.options.clock)();
                 tokio::spawn(async move {
-                    if let Err(error) = service.tick((service.inner.options.clock)()).await {
+                    if let Err(error) = service.tick(now_ms).await {
                         (service.inner.options.log)(&format!(
                             "Scheduler preflight failed: {error}"
                         ));
@@ -620,5 +621,55 @@ impl crate::tools::cron::CronScheduler for SchedulerRepository<'_> {
             })
         })();
         result.map_err(|error| error.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::{num::NonZeroU16, path::Path, sync::atomic::AtomicUsize};
+    #[tokio::test(start_paused = true)]
+    async fn interval_start_is_idempotent_and_stop_prevents_future_polls() {
+        let connection = crate::db::open_database(Path::new(":memory:")).unwrap();
+        crate::db::migrate_database(&connection).unwrap();
+        let worker = DatabaseWorker::new(connection, NonZeroU16::new(32).unwrap()).unwrap();
+        let count = Arc::new(AtomicUsize::new(0));
+        let captured = count.clone();
+        let mut options = SchedulerOptions::new(
+            worker.clone(),
+            "/fixture".into(),
+            Arc::new(|_| Box::pin(async { panic!("empty scheduler must not execute") })),
+        );
+        options.clock = Arc::new(|| 0);
+        options.log = Arc::new(|_| {});
+        options.before_tick = Some(Arc::new(move || {
+            captured.fetch_add(1, Ordering::SeqCst);
+            Box::pin(async { Ok(()) })
+        }));
+        let service = SchedulerService::new(options);
+        service.start(Some(10));
+        service.start(Some(1));
+        tokio::task::yield_now().await;
+        tokio::time::advance(Duration::from_millis(9)).await;
+        tokio::task::yield_now().await;
+        assert_eq!(count.load(Ordering::SeqCst), 0);
+        tokio::time::advance(Duration::from_millis(1)).await;
+        tokio::task::yield_now().await;
+        assert_eq!(count.load(Ordering::SeqCst), 1);
+        service.stop();
+        service.stop();
+        tokio::time::advance(Duration::from_secs(1)).await;
+        tokio::task::yield_now().await;
+        assert_eq!(count.load(Ordering::SeqCst), 1);
+        service.start(Some(7));
+        tokio::task::yield_now().await;
+        tokio::time::advance(Duration::from_millis(6)).await;
+        tokio::task::yield_now().await;
+        assert_eq!(count.load(Ordering::SeqCst), 1);
+        tokio::time::advance(Duration::from_millis(1)).await;
+        tokio::task::yield_now().await;
+        assert_eq!(count.load(Ordering::SeqCst), 2);
+        service.stop();
+        worker.shutdown().await.unwrap();
     }
 }

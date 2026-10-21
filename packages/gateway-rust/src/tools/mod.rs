@@ -36,3 +36,5 @@ pub mod mobile_alarm;
 pub mod session_sql;
 
 pub mod cron;
+
+pub mod core_agent;

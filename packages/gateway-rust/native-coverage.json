@@ -2999,6 +2999,24 @@
         "gateway_rust_assessment_scope"
       ],
       "review": "Actual TypeScript/native loopback HTTP comparisons for all five routes, auth/cookie/origin/owner isolation, valid and malformed DTOs, 202 starts/cancellation/missing runs, real shared SQLite persistence, project-session/foreign-project/remote-node binding, metadata/path escape and read failures. Four caught/restored route mutations. Only IDs, timestamps, transport/host identity and JSON parser diagnostic wording are normalized. Explicit opt-in mounting; unknown-route/framework fallback outside target; full source-bound gate controls credit."
+    },
+    {
+      "reference": "packages/gateway/src/tools/core/agent.ts",
+      "reference_sha256": "a38dec982cbb9b4168aadd587968b21319fa6661d44ad832cfbee1552c480916",
+      "status": "verified",
+      "native": [
+        "packages/gateway-rust/src/tools/core_agent.rs",
+        "packages/gateway-rust/src/tools/core-agent-metadata.json"
+      ],
+      "contracts": [
+        "tests/contract/tests/gateway_rust_core_agent.rs",
+        "tests/contract/drivers/nativecoreagent.ts",
+        "tests/contract/reviews/native-core-agent.md"
+      ],
+      "targets": [
+        "gateway_rust_core_agent"
+      ],
+      "review": "49 actual-source differential cases for exact metadata, eager one-time factory construction, raw input/generic context forwarding, borrowed-reference and result-allocation identity, repeat calls, factory/runtime Error and opaque throws. Four isolated caught/restored mutations bind rustfmt-equivalent integrated code. Inner authorized spawn engine remains an explicit port and separate uncredited component. Well-formed Unicode JSON input/results and typed host context. Full source-bound gate controls credit."
     }
   ]
 }
