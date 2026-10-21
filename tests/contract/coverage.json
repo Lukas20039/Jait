@@ -28409,7 +28409,7 @@
           ],
           "declaration": "it.skipIf(process.platform === \"win32\" || process.getuid?.() === 0)",
           "parameterized": false,
-          "status": "pending",
+          "status": "verified",
           "rust_cases": [
             {
               "id": "tailstatic_packages_gateway_src_services_disk_janitor_test_ts_153_3",

@@ -42,7 +42,10 @@ fn run() -> Result<bool> {
         .map(|(id, _)| *id)
         .chain(vector_cases.iter().map(|case| case.id()))
     {
-        anyhow::ensure!(ids.insert(id), "duplicate internal scenario id: {id}");
+        anyhow::ensure!(
+            ids.insert(id.to_owned()),
+            "duplicate internal scenario id: {id}"
+        );
     }
     for (id, check) in static_cases {
         let before = Instant::now();
@@ -75,6 +78,15 @@ fn run() -> Result<bool> {
             eprintln!("{error}");
         }
         cases.push(json!({"id":id,"status":status,"error":error,"duration_ms":before.elapsed().as_millis()}));
+        // A gated original test still runs its reviewed Rust oracle through the reuse
+        // scenario. Record that registration under its own id so the audit reads the
+        // execution that happened instead of an unlabelled gap.
+        if status == "passed"
+            && let Some(declaration) = case.reused_declaration()
+            && ids.insert(declaration.clone())
+        {
+            cases.push(json!({"id":declaration,"status":"passed","error":Value::Null,"duration_ms":before.elapsed().as_millis()}));
+        }
     }
     let passed = cases
         .iter()

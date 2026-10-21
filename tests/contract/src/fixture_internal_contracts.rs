@@ -20,6 +20,22 @@ impl Case {
     pub fn id(&self) -> &str {
         &self.id
     }
+
+    /// Reviewed declaration whose gated original test this case executes.
+    /// The reuse scenario runs the Rust oracle registered for that declaration,
+    /// so its registration id is the evidence the declaration actually ran.
+    #[allow(dead_code)]
+    pub fn reused_declaration(&self) -> Option<String> {
+        if !self
+            .assertions
+            .iter()
+            .any(|rule| rule["kind"] == "reused-tail")
+        {
+            return None;
+        }
+        let calls: Vec<Value> = serde_json::from_str(self.calls.get()).ok()?;
+        calls.first()?.get("test")?.as_str().map(ToOwned::to_owned)
+    }
 }
 
 // Required registrations for the reviewed token-estimation and validation tests.
