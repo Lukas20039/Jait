@@ -4,6 +4,26 @@ This changelog is generated from git history. Each "version up" must regenerate
 it (see the Release & Deployment section in `AGENTS.md`). Entries are listed
 newest-first; each release links back to the commits that shipped in it.
 
+## [v0.1.956](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.956) — 2026-10-21
+
+- fix(release): detect full push bumps and reject missing packages — c93464e7
+- fix(contract): record reused declaration execution under its own id — 0c333d82
+- fix(contract): refresh the behavior inventory so the coverage audit is consistent — 32d6ab57
+- test(gateway-rust): wait for the worker mailbox to drain a cancelled job — cb1325fb
+- ci(contract): give the Rust gateway contract lane room to finish — 94da7f98
+- fix(contract): hash interface claim digests in serde declaration order — f0bd51b1
+- fix(contract): re-pin stale source review digests for user questions — 87e4d96b
+- fix(contract): resolve the fixture node binary from PATH instead of /usr/bin/node — 1e4afdef
+- feat(scheduler,core-agent): embed tzdata 2024a and add core agent surface — 6a58e1be
+- fix(gateway): retry exec on ETXTBSY so concurrent spawns stop failing under load — ea602d43
+- test(contract): port native assessment, cron, session-sql and validate suites — f7a0c467
+
+Release detection now checks the entire pushed commit range. A version that
+never becomes available on npm fails the workflow, and gateway publication
+and install checks run for every release. GitHub releases require successful
+Windows and Android builds. This release also includes the gateway spawn
+retry and the latest Rust migration and contract fixes listed above.
+
 ## [v0.1.955](https://github.com/Widev-e-U/Jait/releases/tag/v0.1.955) — 2026-10-21
 
 - fix(web): drop the provider badge beside the Models heading — bbf28c60
